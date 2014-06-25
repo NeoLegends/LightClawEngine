@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public class GameObject : ListChildEntity<Component>
+    public interface IGame : IDisposable
     {
+        void Run();
     }
 }

@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public class GameObject : ListChildEntity<Component>
+    public interface IDisposer : IDisposable
     {
+        void Register(object instance);
+
+        void Unregister(object instance);
+
+        void UnregisterAll();
     }
 }

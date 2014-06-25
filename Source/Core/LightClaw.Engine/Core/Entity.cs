@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -11,20 +12,22 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
-    public class Entity : IControllable, INotifyPropertyChanged
+    public abstract class Entity : IControllable, INameable, INotifyPropertyChanged
     {
+        private readonly object loadedStateLock = new object();
+
         public event EventHandler<ControllableEventArgs> Loaded;
 
         public event EventHandler<ControllableEventArgs> Updated;
 
-        public event EventHandler<ControllableEventArgs> ShutDown;
+        public event EventHandler<ControllableEventArgs> Unloaded;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _IsLoaded = false;
 
         [ProtoMember(2)]
-        public bool IsLoaded
+        public virtual bool IsLoaded
         {
             get
             {
@@ -43,7 +46,7 @@ namespace LightClaw.Engine.Core
                 }
                 else
                 {
-                    EventHandler<ControllableEventArgs> handler = this.ShutDown;
+                    EventHandler<ControllableEventArgs> handler = this.Unloaded;
                     if (handler != null)
                     {
                         handler(this, new ControllableEventArgs());
@@ -52,10 +55,10 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private String _Name;
+        private string _Name;
 
         [ProtoMember(1)]
-        public String Name
+        public string Name
         {
             get
             {
@@ -72,38 +75,71 @@ namespace LightClaw.Engine.Core
             this.Name = this.GetType().FullName;
         }
 
+        ~Entity()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        public void Load()
+        {
+            lock (this.loadedStateLock)
+            {
+                if (!this.IsLoaded)
+                {
+                    this.OnLoad();
+                    this.IsLoaded = true;
+                }
+            }
+        }
+
+        public void Update()
+        {
+            lock (this.loadedStateLock)
+            {
+                if (this.IsLoaded)
+                {
+                    this.OnUpdate();
+                    EventHandler<ControllableEventArgs> handler = this.Updated;
+                    if (handler != null)
+                    {
+                        handler(this, new ControllableEventArgs());
+                    }
+                }
+            }
+        }
+
+        public void Unload()
+        {
+            lock (this.loadedStateLock)
+            {
+                if (this.IsLoaded)
+                {
+                    this.OnShutdown();
+                    this.IsLoaded = false;
+                }
+            }
+        }
+
         public override string ToString()
         {
-            return this.Name;
+            return this.Name ?? base.ToString();
         }
 
-        public Task Load()
+        protected virtual void Dispose(bool disposing)
         {
-            return this.OnLoad().ContinueWith(t => this.IsLoaded = true, TaskContinuationOptions.ExecuteSynchronously);
+            this.Unload();
         }
 
-        public Task Update()
-        {
-            return this.OnUpdate().ContinueWith(t =>
-            {
-                EventHandler<ControllableEventArgs> handler = this.Updated;
-                if (handler != null)
-                {
-                    handler(this, new ControllableEventArgs());
-                }
-            }, TaskContinuationOptions.ExecuteSynchronously);
-        }
+        protected abstract void OnLoad();
 
-        public Task Shutdown()
-        {
-            return this.OnShutdown().ContinueWith(t => this.IsLoaded = false, TaskContinuationOptions.ExecuteSynchronously);
-        }
+        protected abstract void OnUpdate();
 
-        protected abstract Task OnLoad();
-
-        protected abstract Task OnUpdate();
-
-        protected abstract Task OnShutdown();
+        protected abstract void OnShutdown();
 
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] String propertyName = null)
         {

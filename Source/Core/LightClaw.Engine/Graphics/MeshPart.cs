@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Core
+namespace LightClaw.Engine.Graphics
 {
-    public class GameObject : ListChildEntity<Component>
+    public class MeshPart
     {
+
     }
 }

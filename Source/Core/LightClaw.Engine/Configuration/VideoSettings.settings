@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LightClaw.Engine.Configuration" GeneratedClassName="VideoSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="VSync" Type="OpenTK.VSyncMode" Scope="User">
+      <Value Profile="(Default)">Adaptive</Value>
+    </Setting>
+    <Setting Name="IsFullscreen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Resolution" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">1280, 720</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
