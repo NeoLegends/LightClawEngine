@@ -5,12 +5,13 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
-    public abstract class ChildEntity<T> : Entity
+    public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
         private IEnumerable<T> _Items = new List<T>();
@@ -30,13 +31,12 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        protected ChildEntity() { }
+        protected ChildManager() { }
 
-        protected ChildEntity(IEnumerable<T> items)
+        protected ChildManager(IEnumerable<T> items)
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
-            Contract.Assume(this.Items != null);
             ((List<T>)this.Items).AddRange(items);
         }
 
@@ -68,11 +68,14 @@ namespace LightClaw.Engine.Core
                     items = items.ToArray();
 #pragma warning restore 0728
                 }
-                foreach (IControllable item in items)
-                {
-                    action(item);
-                }
+                items.ForEach(item => action(item));
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Items != null);
         }
     }
 }

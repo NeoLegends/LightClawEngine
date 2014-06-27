@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using LightClaw.Engine.Extensions;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics

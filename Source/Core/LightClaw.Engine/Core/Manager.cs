@@ -12,9 +12,9 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
-    public abstract class Entity : IControllable, INameable, INotifyPropertyChanged
+    public abstract class Manager : IControllable, INameable, INotifyPropertyChanged
     {
-        private readonly object loadedStateLock = new object();
+        private object loadedStateLock = new object();
 
         public event EventHandler<ControllableEventArgs> Loaded;
 
@@ -70,19 +70,19 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public Entity()
+        protected Manager()
         {
             this.Name = this.GetType().FullName;
         }
 
-        ~Entity()
+        protected Manager(String name)
         {
-            this.Dispose(false);
+            this.Name = name;
         }
 
-        public void Dispose()
+        ~Manager()
         {
-            this.Dispose(true);
+            this.Dispose(false);
         }
 
         public void Load()
@@ -123,6 +123,11 @@ namespace LightClaw.Engine.Core
                     this.IsLoaded = false;
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
         }
 
         public override string ToString()

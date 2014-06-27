@@ -11,11 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.TeamServer.Server
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.TeamServer.Server.Frontend.Gui", "TeamServer\LightClaw.TeamServer.Server.Frontend.Gui\LightClaw.TeamServer.Server.Frontend.Gui.csproj", "{0DD4E95A-4B7A-4886-A897-2884FA68F4DD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F6370993-A75F-489D-B3FC-549C16458B76}"
-	ProjectSection(SolutionItems) = preProject
-		PreprocessorDirectives.xml = PreprocessorDirectives.xml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{90BDBAC5-FCD4-4725-8543-0C8E42892A7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.AssetPipeline", "Core\LightClaw.AssetPipeline\LightClaw.AssetPipeline.csproj", "{D4EBF159-7265-442B-B56D-AD60D3DABFC4}"
@@ -42,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9D0D0C
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.Extensions", "Core\LightClaw.Extensions\LightClaw.Extensions.csproj", "{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +154,16 @@ Global
 		{6F222CCD-B0E8-4147-816E-9C550BA427C0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6F222CCD-B0E8-4147-816E-9C550BA427C0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6F222CCD-B0E8-4147-816E-9C550BA427C0}.Release|Win32.ActiveCfg = Release|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -173,5 +180,6 @@ Global
 		{96A1364F-5356-4A80-8E4E-AA6DD6EE70E3} = {BE61581A-8C2D-4DF4-953A-92D5CF754FF2}
 		{FB747FAE-AA1B-4AD3-AFA2-CBCEC3546000} = {BE61581A-8C2D-4DF4-953A-92D5CF754FF2}
 		{6F222CCD-B0E8-4147-816E-9C550BA427C0} = {BE61581A-8C2D-4DF4-953A-92D5CF754FF2}
+		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3} = {90BDBAC5-FCD4-4725-8543-0C8E42892A7C}
 	EndGlobalSection
 EndGlobal

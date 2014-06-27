@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public class GameObject : ListChildEntity<Component>
+    public class GameObject : ListChildManager<Component>
     {
     }
 }

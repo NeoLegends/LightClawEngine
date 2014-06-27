@@ -164,20 +164,23 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>VideoSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Core\ChildEntity.cs" />
+    <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
-    <Compile Include="Core\Entity.cs" />
+    <Compile Include="Core\Manager.cs" />
     <Compile Include="Core\Game.cs" />
     <Compile Include="Core\GameObject.cs" />
     <Compile Include="Core\IControllable.cs" />
-    <Compile Include="Core\IDisposer.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\INameable.cs" />
-    <Compile Include="Core\ListChildEntity.cs" />
+    <Compile Include="Core\ListChildManager.cs" />
+    <Compile Include="Core\Mathf.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ControllableEventArgs.cs" />
-    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Core\Vector2.cs" />
+    <Compile Include="Core\Vector3.cs" />
+    <Compile Include="Core\Vector4.cs" />
+    <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
@@ -244,7 +247,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Configuration\GeneralSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>GeneralSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Configuration\VideoSettings.settings">
@@ -262,6 +265,10 @@
   </Target>
   -->
   <ItemGroup>
+    <ProjectReference Include="..\LightClaw.Extensions\LightClaw.Extensions.csproj">
+      <Project>{fd0e2831-4a34-44d8-be62-10a0cf38fcb3}</Project>
+      <Name>LightClaw.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LightClaw.Resources\LightClaw.Resources.csproj">
       <Project>{d4a92d30-b7db-4bd9-a2cb-f31bf9dad522}</Project>
       <Name>LightClaw.Resources</Name>

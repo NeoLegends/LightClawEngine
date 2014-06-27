@@ -7,7 +7,7 @@ using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
-    public class Scene : ListChildEntity<GameObject>, IDrawable
+    public class Scene : ListChildManager<GameObject>, IDrawable
     {
         public void Draw()
         {

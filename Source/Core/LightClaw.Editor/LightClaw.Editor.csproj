@@ -88,6 +88,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LightClaw.Extensions\LightClaw.Extensions.csproj">
+      <Project>{fd0e2831-4a34-44d8-be62-10a0cf38fcb3}</Project>
+      <Name>LightClaw.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LightClaw.Engine\LightClaw.Engine.csproj">
       <Project>{F0CA0ED3-796C-4B0B-B17D-3AFD8C55FA7F}</Project>
       <Name>LightClaw.Engine</Name>

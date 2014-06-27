@@ -9,7 +9,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(IgnoreListHandling = true)]
-    public class ListChildEntity<T> : ChildEntity<T>, IList<T>
+    public class ListChildManager<T> : ChildManager<T>, IList<T>
         where T : IControllable
     {
         [ProtoIgnore]
@@ -58,6 +58,15 @@ namespace LightClaw.Engine.Core
             {
                 return false;
             }
+        }
+
+        public ListChildManager() { }
+
+        public ListChildManager(IEnumerable<T> items)
+        {
+            Contract.Requires<ArgumentNullException>(items != null);
+
+            this.AddRange(items);
         }
 
         public virtual void Add(T item)

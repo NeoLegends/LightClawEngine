@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Extensions
+namespace LightClaw.Extensions
 {
     public static class IEnumerableExtensions
     {

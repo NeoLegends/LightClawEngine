@@ -22,9 +22,9 @@ namespace LightClaw.Engine.Graphics
         }
 
         ~GLObject()
-        {
+	    {
             this.Dispose(false);
-        }
+	    }
 
         public void Dispose()
         {

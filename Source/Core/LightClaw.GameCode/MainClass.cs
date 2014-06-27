@@ -7,4 +7,8 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.GameCode
 {
+    public class MainClass
+    {
+
+    }
 }
