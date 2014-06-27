@@ -305,14 +305,14 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> representing the <see cref="Vector4"/>.
+        /// Returns a <see cref="System.string"/> representing the <see cref="Vector4"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> representing the <see cref="Vector4"/>.</returns>
-        public override String ToString()
+        /// <returns>A <see cref="System.string"/> representing the <see cref="Vector4"/>.</returns>
+        public override string ToString()
         {
-            Contract.Ensures(Contract.Result<String>() != null);
+            Contract.Ensures(Contract.Result<string>() != null);
 
-            return String.Format("({0}|{1}|{2}|{3})", this.X, this.Y, this.Z, this.W);
+            return string.Format("({0}|{1}|{2}|{3})", this.X, this.Y, this.Z, this.W);
         }
 
         /// <summary>

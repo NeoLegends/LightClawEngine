@@ -75,7 +75,7 @@ namespace LightClaw.Engine.Core
             this.Name = this.GetType().FullName;
         }
 
-        protected Manager(String name)
+        protected Manager(string name)
         {
             this.Name = name;
         }
@@ -146,7 +146,7 @@ namespace LightClaw.Engine.Core
 
         protected abstract void OnShutdown();
 
-        protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] String propertyName = null)
+        protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
             location = newValue;
             PropertyChangedEventHandler handler = this.PropertyChanged;

@@ -838,7 +838,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The hexadecimal color code representing this <see cref="Color"/>.
         /// </summary>
-        public String HexadecimalColorCode
+        public string HexadecimalColorCode
         {
             get
             {
@@ -1147,12 +1147,12 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Converts this <see cref="Color"/> into the representative hex <see cref="String"/>.
+        /// Converts this <see cref="Color"/> into the representative hex <see cref="string"/>.
         /// </summary>
-        /// <returns>A <see cref="String"/> value representing the color values in this <see cref="Color"/>.</returns>
-        public override String ToString()
+        /// <returns>A <see cref="string"/> value representing the color values in this <see cref="Color"/>.</returns>
+        public override string ToString()
         {
-            Contract.Ensures(Contract.Result<String>() != null);
+            Contract.Ensures(Contract.Result<string>() != null);
 
             StringBuilder hexadecimalColorCode = new StringBuilder(8);
 

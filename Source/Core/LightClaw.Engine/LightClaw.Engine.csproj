@@ -151,7 +151,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LightClaw.Engine.Core.Game</StartupObject>
+    <StartupObject>LightClaw.Engine.Core.LightClawEngine</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Configuration\GeneralSettings.Designer.cs">
@@ -167,6 +167,7 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
+    <Compile Include="Core\LightClawEngine.cs" />
     <Compile Include="Core\Manager.cs" />
     <Compile Include="Core\Game.cs" />
     <Compile Include="Core\GameObject.cs" />
@@ -175,6 +176,8 @@
     <Compile Include="Core\INameable.cs" />
     <Compile Include="Core\ListChildManager.cs" />
     <Compile Include="Core\Mathf.cs" />
+    <Compile Include="Core\SceneLoadedEventArgs.cs" />
+    <Compile Include="Core\SceneLoadingEventArgs.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ControllableEventArgs.cs" />
     <Compile Include="Core\Vector2.cs" />

@@ -10,7 +10,7 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract]
+    [ProtoContract(IgnoreListHandling = true)]
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
