@@ -15,11 +15,11 @@ namespace LightClaw.Engine.Core
     {
         private GameWindow gameWindow;
 
-        private Scene scene;
-
         public event EventHandler<SceneLoadingEventArgs> SceneLoading;
 
         public event EventHandler<SceneLoadedEventArgs> SceneLoaded;
+
+        public Scene Scene { get; private set; }
 
         public void Run()
         {
@@ -34,8 +34,8 @@ namespace LightClaw.Engine.Core
             };
 
             this.gameWindow.Resize += (s, e) => GL.Viewport(0, 0, this.gameWindow.Width, this.gameWindow.Height);
-            this.gameWindow.UpdateFrame += (s, e) => this.scene.Update();
-            this.gameWindow.RenderFrame += (s, e) => this.scene.Draw();
+            this.gameWindow.UpdateFrame += (s, e) => this.Scene.Update();
+            this.gameWindow.RenderFrame += (s, e) => this.Scene.Draw();
 
             this.gameWindow.Run(60d);
         }

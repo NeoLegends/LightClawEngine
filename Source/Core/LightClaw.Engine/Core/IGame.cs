@@ -12,6 +12,8 @@ namespace LightClaw.Engine.Core
 
         event EventHandler<SceneLoadedEventArgs> SceneLoaded;
 
+        Scene Scene { get; }
+
         void Run();
     }
 }

@@ -34,6 +34,7 @@ namespace LightClaw.Engine.Graphics
         protected virtual void Dispose(bool disposing)
         {
             this.Id = 0;
+            GC.SuppressFinalize(this);
         }
 
         public static implicit operator int (GLObject glObject)

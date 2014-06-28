@@ -164,6 +164,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>VideoSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Core\AsyncLock.cs" />
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
@@ -192,6 +193,11 @@
     <Compile Include="Graphics\ShaderProgram.cs" />
     <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
+    <Compile Include="IO\ContentManager.cs" />
+    <Compile Include="IO\IContentManager.cs" />
+    <Compile Include="IO\IContentReader.cs" />
+    <Compile Include="IO\IContentResolver.cs" />
+    <Compile Include="IO\StringContentReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

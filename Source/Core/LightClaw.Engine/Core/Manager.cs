@@ -138,6 +138,7 @@ namespace LightClaw.Engine.Core
         protected virtual void Dispose(bool disposing)
         {
             this.Unload();
+            GC.SuppressFinalize(this);
         }
 
         protected abstract void OnLoad();

@@ -14,10 +14,10 @@ namespace LightClaw.Engine.Graphics
         [ProtoMember(1)]
         public Vector2 TexCoord { get; private set; }
 
-        [ProtoMember(3)]
+        [ProtoMember(2)]
         public Vector3 Position { get; private set; }
 
-        [ProtoMember(2)]
+        [ProtoMember(3)]
         public Vector3 Normal { get; private set; }
 
         public Vertex(Vector2 texCoord, Vector3 position, Vector3 normal)

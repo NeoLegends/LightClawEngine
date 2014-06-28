@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
 using OpenTK.Graphics.OpenGL4;
 using ProtoBuf;
 
@@ -39,11 +40,11 @@ namespace LightClaw.Engine.Graphics
         }
 
         [ProtoAfterDeserialization]
-        private void Initialize()
+        private async void Initialize()
         {
-            throw new NotImplementedException(); // Load Source from resource string using resource system
-
             this.Id = GL.CreateShader(this.Type);
+            this.Source = await LightClawEngine.DefaultIoc.Resolve<IContentManager>().LoadAsync<string>(this.ResourceString);
+
             GL.ShaderSource(this, this.Source);
             GL.CompileShader(this);
         }
