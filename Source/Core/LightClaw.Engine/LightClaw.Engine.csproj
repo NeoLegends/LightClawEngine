@@ -100,7 +100,7 @@
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -168,6 +168,7 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
+    <Compile Include="Core\IGameSystem.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
     <Compile Include="Core\Manager.cs" />
     <Compile Include="Core\Game.cs" />

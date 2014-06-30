@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -68,7 +67,10 @@ namespace LightClaw.Engine.Core
                     items = items.ToArray();
 #pragma warning restore 0728
                 }
-                items.ForEach(item => action(item));
+                foreach (T item in items)
+                {
+                    action(item);
+                }
             }
         }
 

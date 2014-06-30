@@ -147,9 +147,16 @@
       <DependentUpon>LightClawLogo.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shaders.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shaders.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-1280x720.png" />
+    <None Include="Shaders\Basic.frag" />
+    <None Include="Shaders\Basic.vert" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-160x90.png" />
@@ -219,9 +226,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LightClawLogo.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
+    <EmbeddedResource Include="Shaders.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
@@ -1161,26 +1162,6 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Converts the given float from range 0 to 1 to a byte.
-        /// </summary>
-        /// <param name="component">The float to convert.</param>
-        /// <returns>The resulting byte value.</returns>
-        private static byte ToByte(float component)
-        {
-            return (byte)(Mathf.Clamp(component * 255.0f, 0.0f, 255.0f));
-        }
-
-        /// <summary>
-        /// Converts the specified <see cref="Byte"/> from range 0-255 into a <see cref="Single"/> from 0-1.
-        /// </summary>
-        /// <param name="b">The <see cref="Byte"/> to convert.</param>
-        /// <returns>The result.</returns>
-        private static float ToFloat(byte b)
-        {
-            return (b / 255.0f);
-        }
-
-        /// <summary>
         /// Converts the color from a packed BGRA integer.
         /// </summary>
         /// <param name="color">A packed integer containing all four color components in BGRA order.</param>
@@ -1228,6 +1209,26 @@ namespace LightClaw.Engine.Graphics
         public static Color FromRgba(int color)
         {
             return new Color(color);
+        }
+
+        /// <summary>
+        /// Converts the given float from range 0 to 1 to a byte.
+        /// </summary>
+        /// <param name="component">The float to convert.</param>
+        /// <returns>The resulting byte value.</returns>
+        private static byte ToByte(float component)
+        {
+            return (byte)(Mathf.Clamp(component * 255.0f, 0.0f, 255.0f));
+        }
+
+        /// <summary>
+        /// Converts the specified <see cref="Byte"/> from range 0-255 into a <see cref="Single"/> from 0-1.
+        /// </summary>
+        /// <param name="b">The <see cref="Byte"/> to convert.</param>
+        /// <returns>The result.</returns>
+        private static float ToFloat(byte b)
+        {
+            return (b / 255.0f);
         }
 
         /// <summary>

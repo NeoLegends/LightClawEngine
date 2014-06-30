@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,8 +35,8 @@ namespace LightClaw.Engine.Core
             };
 
             this.gameWindow.Resize += (s, e) => GL.Viewport(0, 0, this.gameWindow.Width, this.gameWindow.Height);
-            this.gameWindow.UpdateFrame += (s, e) => this.Scene.Update();
-            this.gameWindow.RenderFrame += (s, e) => this.Scene.Draw();
+            this.gameWindow.UpdateFrame += (s, e) => this.OnUpdate();
+            this.gameWindow.RenderFrame += (s, e) => this.OnDraw();
 
             this.gameWindow.Run(60d);
         }
@@ -43,6 +44,21 @@ namespace LightClaw.Engine.Core
         public void Dispose()
         {
             throw new NotImplementedException();
+        }
+
+        private void OnDraw()
+        {
+
+        }
+
+        private void OnResize()
+        {
+
+        }
+
+        private void OnUpdate()
+        {
+
         }
     }
 }
