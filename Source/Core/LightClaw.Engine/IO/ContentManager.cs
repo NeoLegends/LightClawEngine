@@ -115,7 +115,7 @@ namespace LightClaw.Engine.IO
             this.cachedAssets.TryRemove(resourceString, out weakRef);
         }
 
-        void IGameSystem.Initialize(IGame game)
+        void IGameSystem.Initialize(Game game)
         {
 
         }

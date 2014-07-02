@@ -12,13 +12,13 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Core
 {
-    public class Game : IGame
+    public class Game
     {
         private GameWindow gameWindow;
 
-        public event EventHandler<SceneLoadEventArgs> SceneLoading;
+        public event EventHandler<ValueChangedEventArgs<Scene>> SceneLoading;
 
-        public event EventHandler<SceneLoadEventArgs> SceneLoaded;
+        public event EventHandler<ValueChangedEventArgs<Scene>> SceneLoaded;
 
         public Scene Scene { get; private set; }
 
@@ -63,19 +63,19 @@ namespace LightClaw.Engine.Core
 
         private void RaiseSceneLoaded(Scene newScene, Scene oldScene)
         {
-            EventHandler<SceneLoadEventArgs> handler = this.SceneLoaded;
+            EventHandler<ValueChangedEventArgs<Scene>> handler = this.SceneLoaded;
             if (handler != null)
             {
-                handler(this, new SceneLoadEventArgs(newScene, oldScene));
+                handler(this, new ValueChangedEventArgs<Scene>(newScene, oldScene));
             }
         }
 
         private void RaiseSceneLoading(Scene newScene, Scene oldScene)
         {
-            EventHandler<SceneLoadEventArgs> handler = this.SceneLoading;
+            EventHandler<ValueChangedEventArgs<Scene>> handler = this.SceneLoading;
             if (handler != null)
             {
-                handler(this, new SceneLoadEventArgs(newScene, oldScene));
+                handler(this, new ValueChangedEventArgs<Scene>(newScene, oldScene));
             }
         }
     }

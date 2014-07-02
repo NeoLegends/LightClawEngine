@@ -10,13 +10,13 @@ namespace LightClaw.Engine.Core
     [ContractClass(typeof(IGameSystemContracts))]
     public interface IGameSystem
     {
-        void Initialize(IGame game);
+        void Initialize(Game game);
     }
 
     [ContractClassFor(typeof(IGameSystem))]
     abstract class IGameSystemContracts : IGameSystem
     {
-        void IGameSystem.Initialize(IGame game)
+        void IGameSystem.Initialize(Game game)
         {
             Contract.Requires<ArgumentNullException>(game != null);
         }

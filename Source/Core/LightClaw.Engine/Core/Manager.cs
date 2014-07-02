@@ -16,44 +16,13 @@ namespace LightClaw.Engine.Core
     {
         private object loadedStateLock = new object();
 
-        public event EventHandler<ControllableEventArgs> Loaded;
+        public event EventHandler<EnabledChangedEventArgs> EnabledChanged;
+
+        public event EventHandler<LoadedChangedEventArgs> LoadedChanged;
 
         public event EventHandler<ControllableEventArgs> Updated;
 
-        public event EventHandler<ControllableEventArgs> Unloaded;
-
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private bool _IsLoaded = false;
-
-        [ProtoMember(2)]
-        public virtual bool IsLoaded
-        {
-            get
-            {
-                return _IsLoaded;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsLoaded, value);
-                if (value)
-                {
-                    EventHandler<ControllableEventArgs> handler = this.Loaded;
-                    if (handler != null)
-                    {
-                        handler(this, new ControllableEventArgs());
-                    }
-                }
-                else
-                {
-                    EventHandler<ControllableEventArgs> handler = this.Unloaded;
-                    if (handler != null)
-                    {
-                        handler(this, new ControllableEventArgs());
-                    }
-                }
-            }
-        }
 
         private string _Name;
 
@@ -70,12 +39,54 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        private bool _IsEnabled = false;
+
+        [ProtoMember(2)]
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.IsLoaded && _IsEnabled;
+            }
+            set
+            {
+                this.OnEnabledChanged(value);
+                this.SetProperty(ref _IsEnabled, value);
+                EventHandler<EnabledChangedEventArgs> handler = this.EnabledChanged;
+                if (handler != null)
+                {
+                    handler(this, new EnabledChangedEventArgs(value));
+                }
+            }
+        }
+
+        private bool _IsLoaded = false;
+
+        [ProtoMember(3)]
+        public virtual bool IsLoaded
+        {
+            get
+            {
+                return _IsLoaded;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsLoaded, value);
+                EventHandler<LoadedChangedEventArgs> handler = this.LoadedChanged;
+                if (handler != null)
+                {
+                    handler(this, new LoadedChangedEventArgs(value));
+                }
+            }
+        }
+
         protected Manager()
         {
             this.Name = this.GetType().FullName;
         }
 
         protected Manager(string name)
+            : this()
         {
             this.Name = name;
         }
@@ -101,7 +112,7 @@ namespace LightClaw.Engine.Core
         {
             lock (this.loadedStateLock)
             {
-                if (this.IsLoaded)
+                if (this.IsEnabled)
                 {
                     this.OnUpdate();
                     EventHandler<ControllableEventArgs> handler = this.Updated;
@@ -109,18 +120,6 @@ namespace LightClaw.Engine.Core
                     {
                         handler(this, new ControllableEventArgs());
                     }
-                }
-            }
-        }
-
-        public void Unload()
-        {
-            lock (this.loadedStateLock)
-            {
-                if (this.IsLoaded)
-                {
-                    this.OnShutdown();
-                    this.IsLoaded = false;
                 }
             }
         }
@@ -137,15 +136,16 @@ namespace LightClaw.Engine.Core
 
         protected virtual void Dispose(bool disposing)
         {
-            this.Unload();
+            this.IsEnabled = false;
+            this.IsLoaded = false;
             GC.SuppressFinalize(this);
         }
+
+        protected abstract void OnEnabledChanged(bool isEnabled);
 
         protected abstract void OnLoad();
 
         protected abstract void OnUpdate();
-
-        protected abstract void OnShutdown();
 
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
