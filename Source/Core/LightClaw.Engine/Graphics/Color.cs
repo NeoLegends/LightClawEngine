@@ -994,19 +994,13 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="Vector3"/>.
         /// </summary>
         /// <param name="vec">The <see cref="Vector3"/> to create the <see cref="Color"/> from.</param>
-        public Color(Vector3 vec) : this((byte)vec.X, (byte)vec.Y, (byte)vec.Z) { }
+        public Color(Vector3 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z)) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Vector4"/>.
         /// </summary>
         /// <param name="vec">The <see cref="Vector4"/> to create the <see cref="Color"/> from.</param>
-        public Color(Vector4 vec) : this((byte)vec.X, (byte)vec.Y, (byte)vec.Z, (byte)vec.W) { }
-
-        /// <summary>
-        /// Creates a new <see cref="Color"/> from the given <see cref="Color"/>.
-        /// </summary>
-        /// <param name="color">The <see cref="Color"/> to create the <see cref="Color"/> from.</param>
-        public Color(Color color) : this(color.R, color.G, color.B, color.A) { }
+        public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given packed RGBA <see cref="Int32"/>.
@@ -1216,7 +1210,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="component">The float to convert.</param>
         /// <returns>The resulting byte value.</returns>
-        private static byte ToByte(float component)
+        public static byte ToByte(float component)
         {
             return (byte)(Mathf.Clamp(component * 255.0f, 0.0f, 255.0f));
         }
@@ -1226,7 +1220,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="b">The <see cref="Byte"/> to convert.</param>
         /// <returns>The result.</returns>
-        private static float ToFloat(byte b)
+        public static float ToFloat(byte b)
         {
             return (b / 255.0f);
         }
@@ -1341,16 +1335,6 @@ namespace LightClaw.Engine.Graphics
                 G = (byte)(a.G * b),
                 B = (byte)(a.B * b)
             };
-        }
-
-        /// <summary>
-        /// Explicitly converts the given <see cref="Vector3"/> into a <see cref="Color"/>.
-        /// </summary>
-        /// <param name="vector">The <see cref="Vector3"/> to convert.</param>
-        /// <returns>The converted <see cref="Color"/>.</returns>
-        public static explicit operator Color(Vector3 vector)
-        {
-            return new Color(vector);
         }
 
         /// <summary>

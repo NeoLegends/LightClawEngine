@@ -7,9 +7,9 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Mesh : Component, IDrawable
+    public class Mesh<TVertex> : Component, IDrawable
     {
-        public IEnumerable<MeshPart> Parts { get; private set; }
+        public IEnumerable<MeshPart<TVertex>> Parts { get; private set; }
 
         public void Draw()
         {

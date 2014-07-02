@@ -16,9 +16,9 @@ namespace LightClaw.Engine.Core
     {
         private GameWindow gameWindow;
 
-        public event EventHandler<SceneLoadingEventArgs> SceneLoading;
+        public event EventHandler<SceneLoadEventArgs> SceneLoading;
 
-        public event EventHandler<SceneLoadedEventArgs> SceneLoaded;
+        public event EventHandler<SceneLoadEventArgs> SceneLoaded;
 
         public Scene Scene { get; private set; }
 
@@ -59,6 +59,24 @@ namespace LightClaw.Engine.Core
         private void OnUpdate()
         {
 
+        }
+
+        private void RaiseSceneLoaded(Scene newScene, Scene oldScene)
+        {
+            EventHandler<SceneLoadEventArgs> handler = this.SceneLoaded;
+            if (handler != null)
+            {
+                handler(this, new SceneLoadEventArgs(newScene, oldScene));
+            }
+        }
+
+        private void RaiseSceneLoading(Scene newScene, Scene oldScene)
+        {
+            EventHandler<SceneLoadEventArgs> handler = this.SceneLoading;
+            if (handler != null)
+            {
+                handler(this, new SceneLoadEventArgs(newScene, oldScene));
+            }
         }
     }
 }

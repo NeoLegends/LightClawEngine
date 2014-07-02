@@ -17,7 +17,7 @@ namespace LightClaw.Engine.IO
 
         Task<T> LoadAsync<T>(string resourceString, object parameter = null);
 
-        void Register(Type type, IContentReader resolver);
+        void Register(Type type, IContentReader reader);
 
         void Register(IContentResolver resolver);
 
@@ -51,10 +51,10 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        void IContentManager.Register(Type type, IContentReader resolver)
+        void IContentManager.Register(Type type, IContentReader reader)
         {
             Contract.Requires<ArgumentNullException>(type != null);
-            Contract.Requires<ArgumentNullException>(resolver != null);
+            Contract.Requires<ArgumentNullException>(reader != null);
         }
 
         void IContentManager.Register(IContentResolver resolver)

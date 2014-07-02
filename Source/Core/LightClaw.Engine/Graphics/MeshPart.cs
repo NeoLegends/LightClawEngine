@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class MeshPart
+    public class MeshPart<TVertex>
     {
 
     }

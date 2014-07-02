@@ -10,7 +10,7 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.IO
 {
-    public class ContentManager : IContentManager
+    public class ContentManager : IContentManager, IGameSystem
     {
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
@@ -113,6 +113,11 @@ namespace LightClaw.Engine.IO
         {
             WeakReference weakRef;
             this.cachedAssets.TryRemove(resourceString, out weakRef);
+        }
+
+        void IGameSystem.Initialize(IGame game)
+        {
+
         }
     }
 }

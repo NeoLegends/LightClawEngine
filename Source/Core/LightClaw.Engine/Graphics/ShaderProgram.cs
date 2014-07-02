@@ -13,13 +13,13 @@ namespace LightClaw.Engine.Graphics
     [ProtoContract]
     public class ShaderProgram : GLObject, INameable
     {
-        [ProtoMember(3)]
-        public AttributeBinding[] AttributeBindings { get; private set; }
-
         [ProtoMember(1)]
         public string Name { get; set; }
 
         [ProtoMember(2)]
+        public AttributeBinding[] AttributeBindings { get; private set; }
+
+        [ProtoMember(3)]
         public Shader[] Shaders { get; private set; }
 
         private ShaderProgram() : this(Enumerable.Empty<Shader>(), Enumerable.Empty<AttributeBinding>()) { }
@@ -36,8 +36,8 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentNullException>(attributeBindings != null);
 
-            this.AttributeBindings = attributeBindings.ToArray();
             this.Name = name;
+            this.AttributeBindings = attributeBindings.ToArray();
             this.Shaders = shaders.ToArray();
         }
 
@@ -93,26 +93,6 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Invariant(this.AttributeBindings != null);
             Contract.Invariant(this.Shaders != null);
-        }
-
-        [ProtoContract]
-        public struct AttributeBinding
-        {
-            [ProtoMember(1)]
-            public int Index { get; private set; }
-
-            [ProtoMember(2)]
-            public string Name { get; private set; }
-
-            public AttributeBinding(int index, string name)
-                : this()
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-                Contract.Requires<ArgumentNullException>(name != null);
-
-                this.Index = index;
-                this.Name = name;
-            }
         }
     }
 }

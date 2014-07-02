@@ -16,39 +16,39 @@ namespace LightClaw.Engine.Core
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
     [Serializable, DataContract, ProtoContract]
-    public struct Vector4 : ICloneable, IEquatable<Vector4>, IComparable<Vector4>
+    public struct Vector4d : ICloneable, IEquatable<Vector4d>, IComparable<Vector4d>
     {
         #region Predefined Vectors
 
         /// <summary>
         /// A <see cref="Vector4"/> with all components set to 0.
         /// </summary>
-        public static readonly Vector4 Zero = new Vector4(0, 0, 0, 0);
+        public static readonly Vector4d Zero = new Vector4d(0, 0, 0, 0);
 
         /// <summary>
         /// A <see cref="Vector4"/> with all components set to 1.
         /// </summary>
-        public static readonly Vector4 One = new Vector4(1, 1, 1, 1);
+        public static readonly Vector4d One = new Vector4d(1, 1, 1, 1);
 
         /// <summary>
         /// The X unit <see cref="Vector4"/> (1, 0, 0, 0).
         /// </summary>
-        public static readonly Vector4 UnitX = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+        public static readonly Vector4d UnitX = new Vector4d(1.0f, 0.0f, 0.0f, 0.0f);
 
         /// <summary>
         /// The Y unit <see cref="Vector4"/> (0, 1, 0, 0).
         /// </summary>
-        public static readonly Vector4 UnitY = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+        public static readonly Vector4d UnitY = new Vector4d(0.0f, 1.0f, 0.0f, 0.0f);
 
         /// <summary>
         /// The Z unit <see cref="Vector4"/> (0, 0, 1, 0).
         /// </summary>
-        public static readonly Vector4 UnitZ = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+        public static readonly Vector4d UnitZ = new Vector4d(0.0f, 0.0f, 1.0f, 0.0f);
 
         /// <summary>
         /// The W unit <see cref="Vector4"/> (0, 0, 0, 1).
         /// </summary>
-        public static readonly Vector4 UnitW = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+        public static readonly Vector4d UnitW = new Vector4d(0.0f, 0.0f, 0.0f, 1.0f);
 
         /// <summary>
         /// The <see cref="Random"/> instance used to obtain the random vector.
@@ -58,17 +58,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a random <see cref="Vector4"/>.
         /// </summary>
-        public static Vector4 Random
+        public static Vector4d Random
         {
             get
             {
                 lock (random)
                 {
-                    return new Vector4(
-                        (float)random.NextDouble() * 100,
-                        (float)random.NextDouble() * 100,
-                        (float)random.NextDouble() * 100,
-                        (float)random.NextDouble() * 100
+                    return new Vector4d(
+                        random.NextDouble() * 100,
+                        random.NextDouble() * 100,
+                        random.NextDouble() * 100,
+                        random.NextDouble() * 100
                     );
                 }
             }
@@ -80,30 +80,30 @@ namespace LightClaw.Engine.Core
         /// X length.
         /// </summary>
         [DataMember, ProtoMember(1)]
-        public float X { get; private set; }
+        public double X { get; private set; }
 
         /// <summary>
         /// Y length.
         /// </summary>
         [DataMember, ProtoMember(2)]
-        public float Y { get; private set; }
+        public double Y { get; private set; }
 
         /// <summary>
         /// Z length.
         /// </summary>
         [DataMember, ProtoMember(3)]
-        public float Z { get; private set; }
+        public double Z { get; private set; }
 
         /// <summary>
         /// W length.
         /// </summary>
         [DataMember, ProtoMember(4)]
-        public float W { get; private set; }
+        public double W { get; private set; }
 
         /// <summary>
         /// The squared length of this <see cref="Vector4"/>.
         /// </summary>
-        public float SquaredLength
+        public double SquaredLength
         {
             get
             {
@@ -118,24 +118,24 @@ namespace LightClaw.Engine.Core
         /// For comparison of vector lengths it's usually better to use <see cref="P:SquaredLength"/>, as squared lengths
         /// are enough for simple comparison. Thus, you can omit the expensive <see cref="Math.Sqrt"/>.
         /// </remarks>
-        public float Length
+        public double Length
         {
             get
             {
-                return (float)Math.Sqrt(this.SquaredLength);
+                return Math.Sqrt(this.SquaredLength);
             }
         }
 
         /// <summary>
         /// All three components contained in an array.
         /// </summary>
-        public float[] Array
+        public double[] Array
         {
             get
             {
-                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<double[]>() != null);
 
-                return new float[] { this.X, this.Y, this.Z, this.W };
+                return new double[] { this.X, this.Y, this.Z, this.W };
             }
         }
 
@@ -145,7 +145,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index of the component to access.</param>
         /// <returns>The component at the given index.</returns>
         [ProtoIgnore, IgnoreDataMember]
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -173,19 +173,19 @@ namespace LightClaw.Engine.Core
         /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Point"/>.
         /// </summary>
         /// <param name="point">The <see cref="System.Drawing.Point"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4(System.Drawing.Point point) : this(point.X, point.Y, 0.0f, 0.0f) { }
+        public Vector4d(System.Drawing.Point point) : this(point.X, point.Y, 0.0f, 0.0f) { }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Point"/>.
         /// </summary>
         /// <param name="point">The <see cref="System.Drawing.Point"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4(System.Drawing.PointF point) : this(point.X, point.Y, 0.0f, 0.0f) { }
+        public Vector4d(System.Drawing.PointF point) : this(point.X, point.Y, 0.0f, 0.0f) { }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Color"/>.
         /// </summary>
         /// <param name="color">The <see cref="System.Drawing.Color"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4(System.Drawing.Color color) : this(color.R, color.G, color.B, color.A) { }
+        public Vector4d(System.Drawing.Color color) : this(color.R, color.G, color.B, color.A) { }
 
 #endif
 
@@ -193,13 +193,13 @@ namespace LightClaw.Engine.Core
         /// Creates a new <see cref="Vector4"/> from the given <see cref="Vector4"/>.
         /// </summary>
         /// <param name="vector">The <see cref="Vector4"/> to create a <see cref="Vector4"/> from.</param>
-        public Vector4(Vector4d vector) : this((float)vector.X, (float)vector.Y, (float)vector.Z, (float)vector.W) { }
+        public Vector4d(Vector4d vector) : this(vector.X, vector.Y, vector.Z, vector.W) { }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> from the given <see cref="Color"/>.
         /// </summary>
         /// <param name="color">The <see cref="Color"/> to create a <see cref="Vector4"/> from.</param>
-        public Vector4(Color color) : this(Color.ToFloat(color.R), Color.ToFloat(color.G), Color.ToFloat(color.B), Color.ToFloat(color.A)) { }
+        public Vector4d(Color color) : this(color.R, color.G, color.B, color.A) { }
 
         /// <summary>
         /// Creates a new <see cref="Vector4"/> setting the X and Y and Z value.
@@ -208,7 +208,7 @@ namespace LightClaw.Engine.Core
         /// <param name="y">The <see cref="Vector4"/>'s Y value.</param>
         /// <param name="z">The <see cref="Vector4"/>'s Z value.</param>
         /// <param name="w">The <see cref="Vector4"/>'s W value.</param>
-        public Vector4(float x, float y, float z, float w)
+        public Vector4d(double x, double y, double z, double w)
             : this()
         {
             this.X = x;
@@ -221,18 +221,18 @@ namespace LightClaw.Engine.Core
         /// Returns a negated copy of the current <see cref="Vector4"/>.
         /// </summary>
         /// <returns>The negated <see cref="Vector4"/>.</returns>
-        public Vector4 Negate()
+        public Vector4d Negate()
         {
-            return Vector4.Negate(ref this);
+            return Vector4d.Negate(ref this);
         }
 
         /// <summary>
         /// Returns a normalized copy of the <see cref="Vector4"/>.
         /// </summary>
         /// <returns>The normalized <see cref="Vector4"/>.</returns>
-        public Vector4 Normalize()
+        public Vector4d Normalize()
         {
-            return Vector4.Normalize(this);
+            return Vector4d.Normalize(this);
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Ensures(Contract.Result<object>() != null);
 
-            return new Vector4(this.X, this.Y, this.Z, this.W);
+            return new Vector4d(this.X, this.Y, this.Z, this.W);
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Vector4"/> to compare against.</param>
         /// <returns>An integer indicating their relative size to each other.</returns>
-        public int CompareTo(Vector4 other)
+        public int CompareTo(Vector4d other)
         {
             return this.SquaredLength.CompareTo(other.SquaredLength);
         }
@@ -268,7 +268,7 @@ namespace LightClaw.Engine.Core
             else if (ReferenceEquals(obj, this))
                 return true;
 
-            return (obj is Vector4) ? this.Equals((Vector4)obj) : false;
+            return (obj is Vector4d) ? this.Equals((Vector4d)obj) : false;
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The other <see cref="Vector4"/> to check.</param>
         /// <returns>Whether both <see cref="Vector4"/>s are equal.</returns>
-        public bool Equals(Vector4 other)
+        public bool Equals(Vector4d other)
         {
             return ((this.X == other.X) && (this.Y == other.Y) && (this.Z == other.Z) && (this.W == other.W));
         }
@@ -315,9 +315,9 @@ namespace LightClaw.Engine.Core
         /// <param name="a">The first <see cref="Vector4"/>.</param>
         /// <param name="b">The second <see cref="Vector4"/>.</param>
         /// <returns>A new <see cref="Vector4"/> with the smallest value of both input values.</returns>
-        public static Vector4 Min(ref Vector4 a, ref Vector4 b)
+        public static Vector4d Min(ref Vector4d a, ref Vector4d b)
         {
-            return new Vector4()
+            return new Vector4d()
             {
                 X = (a.X < b.X) ? a.X : b.X,
                 Y = (a.Y < b.Y) ? a.Y : b.Y,
@@ -332,9 +332,9 @@ namespace LightClaw.Engine.Core
         /// <param name="a">The first <see cref="Vector4"/>.</param>
         /// <param name="b">The second <see cref="Vector4"/>.</param>
         /// <returns>A new <see cref="Vector4"/> with the biggest value of both input values.</returns>
-        public static Vector4 Max(ref Vector4 a, ref Vector4 b)
+        public static Vector4d Max(ref Vector4d a, ref Vector4d b)
         {
-            return new Vector4()
+            return new Vector4d()
             {
                 X = (a.X > b.X) ? a.X : b.X,
                 Y = (a.Y > b.Y) ? a.Y : b.Y,
@@ -348,9 +348,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="vec">The <see cref="Vector4"/> to negate.</param>
         /// <returns>The negated <see cref="Vector4"/>.</returns>
-        public static Vector4 Negate(ref Vector4 vec)
+        public static Vector4d Negate(ref Vector4d vec)
         {
-            return new Vector4()
+            return new Vector4d()
             {
                 X = -vec.X,
                 Y = -vec.Y,
@@ -367,9 +367,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value3">A <see cref="SharpDX.Vector4"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        public static Vector4 Barycentric(ref Vector4 value1, ref Vector4 value2, ref Vector4 value3, float amount1, float amount2)
+        public static Vector4d Barycentric(ref Vector4d value1, ref Vector4d value2, ref Vector4d value3, double amount1, double amount2)
         {
-            return new Vector4()
+            return new Vector4d()
             {
                 X = (value1.X + (amount1 * (value2.X - value1.X))) + (amount2 * (value3.X - value1.X)),
                 Y = (value1.Y + (amount1 * (value2.Y - value1.Y))) + (amount2 * (value3.Y - value1.Y)),
@@ -384,25 +384,25 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to clamp.</param>
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
-        public static Vector4 Clamp(ref Vector4 value, ref Vector4 min, ref Vector4 max)
+        public static Vector4d Clamp(ref Vector4d value, ref Vector4d min, ref Vector4d max)
         {
-            float x = value.X;
+            double x = value.X;
             x = (x > max.X) ? max.X : x;
             x = (x < min.X) ? min.X : x;
 
-            float y = value.Y;
+            double y = value.Y;
             y = (y > max.Y) ? max.Y : y;
             y = (y < min.Y) ? min.Y : y;
 
-            float z = value.Z;
+            double z = value.Z;
             z = (z > max.Z) ? max.Z : z;
             z = (z < min.Z) ? min.Z : z;
 
-            float w = value.W;
+            double w = value.W;
             w = (w > max.W) ? max.W : w;
             w = (w < min.W) ? min.W : w;
 
-            return new Vector4(x, y, z, w);
+            return new Vector4d(x, y, z, w);
         }
 
         /// <summary>
@@ -415,14 +415,14 @@ namespace LightClaw.Engine.Core
         /// <see cref="M:DistanceSquared(Vector4, Vector4)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
-        public static float Distance(Vector4 value1, Vector4 value2)
+        public static double Distance(Vector4d value1, Vector4d value2)
         {
-            float x = value1.X - value2.X;
-            float y = value1.Y - value2.Y;
-            float z = value1.Z - value2.Z;
-            float w = value1.W - value2.W;
+            double x = value1.X - value2.X;
+            double y = value1.Y - value2.Y;
+            double z = value1.Z - value2.Z;
+            double w = value1.W - value2.W;
 
-            return (float)Math.Sqrt(DistanceSquared(value1, value2));
+            return (double)Math.Sqrt(DistanceSquared(value1, value2));
         }
 
         /// <summary>
@@ -438,12 +438,12 @@ namespace LightClaw.Engine.Core
         /// involves two square roots, which are computationally expensive. However, using distance squared 
         /// provides the same information and avoids calculating two square roots.
         /// </remarks>
-        public static float DistanceSquared(Vector4 value1, Vector4 value2)
+        public static double DistanceSquared(Vector4d value1, Vector4d value2)
         {
-            float dX = value1.X - value2.X;
-            float dY = value1.Y - value2.Y;
-            float dZ = value1.Z - value2.Z;
-            float dW = value1.W - value2.W;
+            double dX = value1.X - value2.X;
+            double dY = value1.Y - value2.Y;
+            double dZ = value1.Z - value2.Z;
+            double dW = value1.W - value2.W;
 
             return (dX * dX) + (dY * dY) + (dZ * dZ) + (dW * dW);
         }
@@ -454,7 +454,7 @@ namespace LightClaw.Engine.Core
         /// <param name="left">First source vector.</param>
         /// <param name="right">Second source vector.</param>
         /// <returns>The dot product of the two vectors.</returns>
-        public static float Dot(Vector4 left, Vector4 right)
+        public static double Dot(Vector4d left, Vector4d right)
         {
             return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
         }
@@ -464,13 +464,13 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The vector to normalize.</param>
         /// <returns>The normalized vector.</returns>
-        public static Vector4 Normalize(Vector4 value)
+        public static Vector4d Normalize(Vector4d value)
         {
-            float length = value.Length;
+            double length = value.Length;
             if (length != 0.0f)
             {
-                float inv = 1.0f / length;
-                return new Vector4()
+                double inv = 1.0f / length;
+                return new Vector4d()
                 {
                     X = value.X * inv,
                     Y = value.Y * inv,
@@ -480,7 +480,7 @@ namespace LightClaw.Engine.Core
             }
             else
             {
-                return (Vector4)value.Clone();
+                return (Vector4d)value.Clone();
             }
         }
 
@@ -493,9 +493,9 @@ namespace LightClaw.Engine.Core
         /// <remarks>
         /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
         /// </remarks>
-        public static Vector4 Lerp(ref Vector4 start, ref Vector4 end, float amount)
+        public static Vector4d Lerp(ref Vector4d start, ref Vector4d end, double amount)
         {
-            return new Vector4()
+            return new Vector4d()
             {
                 X = start.X + ((end.X - start.X) * amount),
                 Y = start.Y + ((end.Y - start.Y) * amount),
@@ -510,12 +510,12 @@ namespace LightClaw.Engine.Core
         /// <param name="start">Start vector.</param>
         /// <param name="end">End vector.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        public static Vector4 SmoothStep(ref Vector4 start, ref Vector4 end, float amount)
+        public static Vector4d SmoothStep(ref Vector4d start, ref Vector4d end, double amount)
         {
             amount = Mathf.SmoothStep(amount);
             amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-            return new Vector4()
+            return new Vector4d()
             {
                 X = start.X + ((end.X - start.X) * amount),
                 Y = start.Y + ((end.Y - start.Y) * amount),
@@ -532,16 +532,16 @@ namespace LightClaw.Engine.Core
         /// <param name="value2">Second source position vector.</param>
         /// <param name="tangent2">Second source tangent vector.</param>
         /// <param name="amount">Weighting factor.</param>
-        public static Vector4 Hermite(ref Vector4 value1, ref Vector4 tangent1, ref Vector4 value2, ref Vector4 tangent2, float amount)
+        public static Vector4d Hermite(ref Vector4d value1, ref Vector4d tangent1, ref Vector4d value2, ref Vector4d tangent2, double amount)
         {
-            float squared = amount * amount;
-            float cubed = amount * squared;
-            float part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f;
-            float part2 = (-2.0f * cubed) + (3.0f * squared);
-            float part3 = (cubed - (2.0f * squared)) + amount;
-            float part4 = cubed - squared;
+            double squared = amount * amount;
+            double cubed = amount * squared;
+            double part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f;
+            double part2 = (-2.0f * cubed) + (3.0f * squared);
+            double part3 = (cubed - (2.0f * squared)) + amount;
+            double part4 = cubed - squared;
 
-            return new Vector4()
+            return new Vector4d()
             {
                 X = (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4),
                 Y = (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4),
@@ -558,12 +558,12 @@ namespace LightClaw.Engine.Core
         /// <param name="value3">The third position in the interpolation.</param>
         /// <param name="value4">The fourth position in the interpolation.</param>
         /// <param name="amount">Weighting factor.</param>
-        public static Vector4 CatmullRom(ref Vector4 value1, ref Vector4 value2, ref Vector4 value3, ref Vector4 value4, float amount)
+        public static Vector4d CatmullRom(ref Vector4d value1, ref Vector4d value2, ref Vector4d value3, ref Vector4d value4, double amount)
         {
-            float squared = amount * amount;
-            float cubed = amount * squared;
+            double squared = amount * amount;
+            double cubed = amount * squared;
 
-            return new Vector4()
+            return new Vector4d()
             {
                 X = 0.5f * ((((2.0f * value2.X) + ((-value1.X + value3.X) * amount)) + (((((2.0f * value1.X) - (5.0f * value2.X)) + (4.0f * value3.X)) - value4.X) * squared)) + ((((-value1.X + (3.0f * value2.X)) - (3.0f * value3.X)) + value4.X) * cubed)),
                 Y = 0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) + (((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) + ((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed)),
@@ -588,7 +588,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
-        public static void Orthogonalize(Vector4[] destination, params Vector4[] source)
+        public static void Orthogonalize(Vector4d[] destination, params Vector4d[] source)
         {
             //Uses the modified Gram-Schmidt process.
             //q1 = m1
@@ -602,11 +602,11 @@ namespace LightClaw.Engine.Core
 
             for (int i = 0; i < source.Length; ++i)
             {
-                Vector4 newvector = source[i];
+                Vector4d newvector = source[i];
 
                 for (int r = 0; r < i; ++r)
                 {
-                    newvector -= destination[r] * (Vector4.Dot(destination[r], newvector) / Vector4.Dot(destination[r], destination[r]));
+                    newvector -= destination[r] * (Vector4d.Dot(destination[r], newvector) / Vector4d.Dot(destination[r], destination[r]));
                 }
 
                 destination[i] = newvector;
@@ -629,7 +629,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
-        public static void Orthonormalize(Vector4[] destination, params Vector4[] source)
+        public static void Orthonormalize(Vector4d[] destination, params Vector4d[] source)
         {
             //Uses the modified Gram-Schmidt process.
             //Because we are making unit vectors, we can optimize the math for orthogonalization
@@ -645,11 +645,11 @@ namespace LightClaw.Engine.Core
 
             for (int i = 0; i < source.Length; ++i)
             {
-                Vector4 newvector = source[i];
+                Vector4d newvector = source[i];
 
                 for (int r = 0; r < i; ++r)
                 {
-                    newvector -= destination[r] * Vector4.Dot(destination[r], newvector);
+                    newvector -= destination[r] * Vector4d.Dot(destination[r], newvector);
                 }
 
                 destination[i] = newvector.Normalize();
@@ -662,9 +662,9 @@ namespace LightClaw.Engine.Core
         /// <param name="left">First <see cref="Vector4"/> to add.</param>
         /// <param name="right">Second <see cref="Vector4"/> to add.</param>
         /// <returns>The added vector.</returns>
-        public static Vector4 operator +(Vector4 left, Vector4 right)
+        public static Vector4d operator +(Vector4d left, Vector4d right)
         {
-            return new Vector4
+            return new Vector4d
             {
                 X = left.X + right.X,
                 Y = left.Y + right.Y,
@@ -679,9 +679,9 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The value to add.</param>
         /// <param name="right">The length to add to the vector.</param>
         /// <returns>The vector with the added length.</returns>
-        public static Vector4 operator +(Vector4 left, float right)
+        public static Vector4d operator +(Vector4d left, double right)
         {
-            return new Vector4
+            return new Vector4d
             {
                 X = left.X + right,
                 Y = left.Y + right,
@@ -695,9 +695,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="vector">The <see cref="Vector4"/> to negate.</param>
         /// <returns>The negated <see cref="Vector4"/>.</returns>
-        public static Vector4 operator -(Vector4 vector)
+        public static Vector4d operator -(Vector4d vector)
         {
-            return Vector4.Negate(ref vector);
+            return Vector4d.Negate(ref vector);
         }
 
         /// <summary>
@@ -706,9 +706,9 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The minuend.</param>
         /// <param name="right">The Substractor.</param>
         /// <returns>The substracted <see cref="Vector4"/>s.</returns>
-        public static Vector4 operator -(Vector4 left, Vector4 right)
+        public static Vector4d operator -(Vector4d left, Vector4d right)
         {
-            return new Vector4
+            return new Vector4d
             {
                 X = left.X - right.X,
                 Y = left.Y - right.Y,
@@ -723,9 +723,9 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The <see cref="Vector4"/> to substract from.</param>
         /// <param name="right">The length to substract from the Vector.</param>
         /// <returns>The <see cref="Vector4"/> substracted by the length.</returns>
-        public static Vector4 operator -(Vector4 left, float right)
+        public static Vector4d operator -(Vector4d left, double right)
         {
-            return new Vector4
+            return new Vector4d
             {
                 X = left.X - right,
                 Y = left.Y - right,
@@ -740,7 +740,7 @@ namespace LightClaw.Engine.Core
         /// <param name="right">The vector to be multiplied.</param>
         /// <param name="left">The length to multiply the <see cref="Vector4"/> with.</param>
         /// <returns>The with the length multiplied <see cref="Vector4"/>.</returns>
-        public static Vector4 operator *(float left, Vector4 right)
+        public static Vector4d operator *(double left, Vector4d right)
         {
             return right * left;
         }
@@ -751,9 +751,9 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The vector to be multiplied.</param>
         /// <param name="right">The length to multiply the <see cref="Vector4"/> with.</param>
         /// <returns>The with the length multiplied <see cref="Vector4"/>.</returns>
-        public static Vector4 operator *(Vector4 left, float right)
+        public static Vector4d operator *(Vector4d left, double right)
         {
-            return new Vector4
+            return new Vector4d
             {
                 X = left.X * right,
                 Y = left.Y * right,
@@ -768,10 +768,10 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The <see cref="Vector4"/> to be divided.</param>
         /// <param name="right">The length to divide by.</param>
         /// <returns>The divided <see cref="Vector4"/>.</returns>
-        public static Vector4 operator /(Vector4 left, float right)
+        public static Vector4d operator /(Vector4d left, double right)
         {
-            float reciprocal = 1 / right; // This way it's faster.
-            return new Vector4
+            double reciprocal = 1 / right; // This way it's faster.
+            return new Vector4d
             {
                 X = left.X * reciprocal,
                 Y = left.Y * reciprocal,
@@ -786,7 +786,7 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The first part of the equation.</param>
         /// <param name="right">The other <see cref="Vector3"/> to check.</param>
         /// <returns>Whether both <see cref="Vector4"/>s are equal.</returns>
-        public static bool operator ==(Vector4 left, Vector4 right)
+        public static bool operator ==(Vector4d left, Vector4d right)
         {
             return left.Equals(right);
         }
@@ -797,7 +797,7 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The first part of the equation.</param>
         /// <param name="right">The other <see cref="Vector3"/> to check.</param>
         /// <returns>Whether both <see cref="Vector4"/>s are not equal.</returns>
-        public static bool operator !=(Vector4 left, Vector4 right)
+        public static bool operator !=(Vector4d left, Vector4d right)
         {
             return !(left == right);
         }
@@ -807,24 +807,24 @@ namespace LightClaw.Engine.Core
             return new Vector4(vector);
         }
 
-        public static implicit operator Vector4(OpenTK.Vector4 vector)
+        public static implicit operator Vector4d(OpenTK.Vector4d vector)
         {
-            return new Vector4(vector.X, vector.Y, vector.Z, vector.W);
+            return new Vector4d(vector.X, vector.Y, vector.Z, vector.W);
         }
 
-        public static implicit operator OpenTK.Vector4(Vector4 vector)
-        {
-            return new OpenTK.Vector4(vector.X, vector.Y, vector.Z, vector.W);
-        }
-
-        public static explicit operator Vector4(OpenTK.Vector4d vector)
-        {
-            return new Vector4((float)vector.X, (float)vector.Y, (float)vector.Z, (float)vector.W);
-        }
-
-        public static explicit operator OpenTK.Vector4d(Vector4 vector)
+        public static implicit operator OpenTK.Vector4d(Vector4d vector)
         {
             return new OpenTK.Vector4d(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
+        public static implicit operator Vector4d(OpenTK.Vector4 vector)
+        {
+            return new Vector4d(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
+        public static explicit operator OpenTK.Vector4(Vector4d vector)
+        {
+            return new OpenTK.Vector4((float)vector.X, (float)vector.Y, (float)vector.Z, (float)vector.W);
         }
     }
 }

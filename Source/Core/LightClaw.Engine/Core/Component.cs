@@ -10,7 +10,7 @@ namespace LightClaw.Engine.Core
     [ProtoContract]
     public abstract class Component : Manager
     {
-        [ProtoIgnore]
-        internal bool IsRemovable { get; set; }
+        [ProtoMember(1)]
+        public int UpdatePriority { get; protected set; }
     }
 }

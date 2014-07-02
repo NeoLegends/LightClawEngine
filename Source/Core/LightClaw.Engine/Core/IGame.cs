@@ -8,9 +8,9 @@ namespace LightClaw.Engine.Core
 {
     public interface IGame : IDisposable
     {
-        event EventHandler<SceneLoadingEventArgs> SceneLoading;
+        event EventHandler<SceneLoadEventArgs> SceneLoading;
 
-        event EventHandler<SceneLoadedEventArgs> SceneLoaded;
+        event EventHandler<SceneLoadEventArgs> SceneLoaded;
 
         Scene Scene { get; }
 
