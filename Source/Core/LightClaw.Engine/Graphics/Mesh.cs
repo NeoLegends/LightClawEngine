@@ -8,6 +8,7 @@ using LightClaw.Engine.Core;
 namespace LightClaw.Engine.Graphics
 {
     public class Mesh<TVertex> : Component, IDrawable
+        where TVertex : struct
     {
         public IEnumerable<MeshPart<TVertex>> Parts { get; private set; }
 

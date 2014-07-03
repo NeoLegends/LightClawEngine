@@ -58,5 +58,14 @@ namespace LightClaw.Engine.Configuration {
                 return ((string)(this["EntryAssembly"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Game/Icon.ico")]
+        public string Icon {
+            get {
+                return ((string)(this["Icon"]));
+            }
+        }
     }
 }

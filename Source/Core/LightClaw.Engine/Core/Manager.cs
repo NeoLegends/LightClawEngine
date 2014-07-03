@@ -86,7 +86,6 @@ namespace LightClaw.Engine.Core
         }
 
         protected Manager(string name)
-            : this()
         {
             this.Name = name;
         }

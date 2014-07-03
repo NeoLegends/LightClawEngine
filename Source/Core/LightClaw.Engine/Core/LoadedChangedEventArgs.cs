@@ -12,8 +12,8 @@ namespace LightClaw.Engine.Core
 
         public LoadedChangedEventArgs(bool isLoaded) : this(isLoaded, null) { }
 
-        public LoadedChangedEventArgs(bool isLoaded, object state)
-            : base(state)
+        public LoadedChangedEventArgs(bool isLoaded, object parameter)
+            : base(parameter)
         {
             this.IsLoaded = isLoaded;
         }

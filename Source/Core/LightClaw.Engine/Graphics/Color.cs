@@ -1003,6 +1003,12 @@ namespace LightClaw.Engine.Graphics
         public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
 
         /// <summary>
+        /// Creates a new <see cref="Color"/> from the given <see cref="Vector4d"/>.
+        /// </summary>
+        /// <param name="vec">The <see cref="Vector4d"/> to create the <see cref="Color"/> from.</param>
+        public Color(Vector4d vec) : this(ToByte((float)vec.X), ToByte((float)vec.Y), ToByte((float)vec.Z), ToByte((float)vec.W)) { }
+
+        /// <summary>
         /// Creates a new <see cref="Color"/> from the given packed RGBA <see cref="Int32"/>.
         /// </summary>
         /// <param name="packedValue">The <see cref="System.Int32"/> containing the packed color values.</param>
@@ -1170,6 +1176,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="color">A packed integer containing all four color components in BGRA order.</param>
         /// <returns>A color.</returns>
+        [CLSCompliant(false)]
         public static Color FromBgra(uint color)
         {
             return FromBgra(unchecked((int)color));
@@ -1190,6 +1197,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="color">A packed integer containing all four color components in ABGR order.</param>
         /// <returns>A color.</returns>
+        [CLSCompliant(false)]
         public static Color FromAbgr(uint color)
         {
             return FromAbgr(unchecked((int)color));
@@ -1343,6 +1351,16 @@ namespace LightClaw.Engine.Graphics
         /// <param name="vector">The <see cref="Vector4"/> to convert.</param>
         /// <returns>The converted <see cref="Color"/>.</returns>
         public static explicit operator Color(Vector4 vector)
+        {
+            return new Color(vector);
+        }
+
+        /// <summary>
+        /// Explicitly converts the given <see cref="Vector4d"/> into a <see cref="Color"/>.
+        /// </summary>
+        /// <param name="vector">The <see cref="Vector4d"/> to convert.</param>
+        /// <returns>The converted <see cref="Color"/>.</returns>
+        public static explicit operator Color(Vector4d vector)
         {
             return new Color(vector);
         }

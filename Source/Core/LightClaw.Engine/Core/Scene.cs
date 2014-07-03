@@ -20,6 +20,15 @@ namespace LightClaw.Engine.Core
             throw new NotImplementedException();
         }
 
+        [ProtoAfterDeserialization]
+        private void InitializeGameObjects()
+        {
+            foreach (GameObject gameObject in this)
+            {
+                gameObject.Scene = this;
+            }
+        }
+
         private void RaiseSaved()
         {
             EventHandler handler = this.Saved;

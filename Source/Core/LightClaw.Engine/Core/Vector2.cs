@@ -390,18 +390,10 @@ namespace LightClaw.Engine.Core
         /// <param name="max">The maximum value.</param>
         public static Vector2 Clamp(Vector2 value, Vector2 min, Vector2 max)
         {
-            float x = value.X;
-            x = (x > max.X) ? max.X : x;
-            x = (x < min.X) ? min.X : x;
-
-            float y = value.Y;
-            y = (y > max.Y) ? max.Y : y;
-            y = (y < min.Y) ? min.Y : y;
-
             return new Vector2()
             {
-                X = x,
-                Y = y
+                X = (value.X > max.X) ? max.X : (value.X < min.X) ? min.X : value.X,
+                Y = (value.Y > max.Y) ? max.Y : (value.Y < min.Y) ? min.Y : value.Y
             };
         }
 

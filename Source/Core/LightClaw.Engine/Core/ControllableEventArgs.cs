@@ -8,13 +8,13 @@ namespace LightClaw.Engine.Core
 {
     public class ControllableEventArgs : EventArgs
     {
-        public object State { get; private set; }
+        public object Parameter { get; private set; }
 
         public ControllableEventArgs() { }
 
-        public ControllableEventArgs(object state)
+        public ControllableEventArgs(object parameter)
         {
-            this.State = state;
+            this.Parameter = parameter;
         }
     }
 }

@@ -20,6 +20,11 @@ namespace LightClaw.Engine.IO
 
         private readonly ConcurrentBag<IContentResolver> resolvers = new ConcurrentBag<IContentResolver>();
 
+        public ContentManager()
+        {
+
+        }
+
         public async Task<bool> ExistsAsync(string resourceString)
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
@@ -33,6 +38,12 @@ namespace LightClaw.Engine.IO
                 }
                 return false;
             }
+        }
+
+        public void ForceReload(string resourceString)
+        {
+            WeakReference weakRef;
+            this.cachedAssets.TryRemove(resourceString, out weakRef);
         }
 
         public async Task<Stream> GetStreamAsync(string resourceString)
@@ -97,6 +108,7 @@ namespace LightClaw.Engine.IO
         public void Register(IEnumerable<Type> types, IContentReader reader)
         {
             Contract.Requires<ArgumentNullException>(types != null);
+            Contract.Requires<ArgumentNullException>(reader != null);
 
             foreach (Type type in types)
             {
@@ -107,12 +119,6 @@ namespace LightClaw.Engine.IO
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
-        }
-
-        public void RemoveFromCache(string resourceString)
-        {
-            WeakReference weakRef;
-            this.cachedAssets.TryRemove(resourceString, out weakRef);
         }
 
         void IGameSystem.Initialize(Game game)

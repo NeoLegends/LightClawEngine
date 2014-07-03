@@ -14,5 +14,8 @@
     <Setting Name="EntryAssembly" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw.GameCode</Value>
     </Setting>
+    <Setting Name="Icon" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Game/Icon.ico</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -12,8 +12,8 @@ namespace LightClaw.Engine.Core
 
         public EnabledChangedEventArgs(bool isEnabled) : this(isEnabled, null) { }
 
-        public EnabledChangedEventArgs(bool isEnabled, object state)
-            : base(state)
+        public EnabledChangedEventArgs(bool isEnabled, object parameter)
+            : base(parameter)
         {
             this.IsEnabled = isEnabled;
         }

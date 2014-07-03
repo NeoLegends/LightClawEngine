@@ -864,7 +864,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="point">The <see cref="System.Drawing.Point"/> to convert</param>
         /// <returns>The converted <see cref="Vector2"/></returns>
-        public static implicit operator Vector2(System.Drawing.Point point)
+        public static implicit operator Vector2d(System.Drawing.Point point)
         {
             return new Vector2(point);
         }
@@ -874,7 +874,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="vector">The <see cref="Vector2"/> to convert</param>
         /// <returns>The converted <see cref="System.Drawing.Point"/></returns>
-        public static implicit operator System.Drawing.Point(Vector2 vector)
+        public static implicit operator System.Drawing.Point(Vector2d vector)
         {
             return new System.Drawing.Point((int)vector.X, (int)vector.Y);
         }
@@ -884,7 +884,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="point">The <see cref="System.Drawing.PointF"/> to convert</param>
         /// <returns>The converted <see cref="Vector2"/></returns>
-        public static implicit operator Vector2(System.Drawing.PointF point)
+        public static implicit operator Vector2d(System.Drawing.PointF point)
         {
             return new Vector2(point);
         }
@@ -894,9 +894,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="vector">The <see cref="Vector2"/> to convert</param>
         /// <returns>The converted <see cref="System.Drawing.PointF"/></returns>
-        public static implicit operator System.Drawing.PointF(Vector2 vector)
+        public static implicit operator System.Drawing.PointF(Vector2d vector)
         {
-            return new System.Drawing.PointF(vector.X, vector.Y);
+            return new System.Drawing.PointF((float)vector.X, (float)vector.Y);
         }
 
 #endif

@@ -16,6 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -54,7 +54,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SYSTEMDRAWING_INTEROP</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugType>full</DebugType>
@@ -104,7 +104,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SYSTEMDRAWING_INTEROP</DefineConstants>
     <DocumentationFile>bin\Release\LightClaw.Engine.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -179,6 +179,7 @@
     <Compile Include="Core\INameable.cs" />
     <Compile Include="Core\ListChildManager.cs" />
     <Compile Include="Core\Mathf.cs" />
+    <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ControllableEventArgs.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
@@ -196,9 +197,12 @@
     <Compile Include="Graphics\MeshPart.cs" />
     <Compile Include="Graphics\Shader.cs" />
     <Compile Include="Graphics\ShaderProgram.cs" />
-    <Compile Include="Graphics\Vertex.cs" />
+    <Compile Include="Graphics\T2P3N3Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
+    <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="IO\ContentManager.cs" />
+    <Compile Include="IO\DiskContentResolver.cs" />
+    <Compile Include="IO\IconReader.cs" />
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />

@@ -13,6 +13,8 @@ namespace LightClaw.Engine.IO
     {
         Task<bool> ExistsAsync(string resourceString);
 
+        void ForceReload(string resourceString);
+
         Task<Stream> GetStreamAsync(string resourceString);
 
         Task<T> LoadAsync<T>(string resourceString, object parameter = null);
@@ -20,8 +22,6 @@ namespace LightClaw.Engine.IO
         void Register(Type type, IContentReader reader);
 
         void Register(IContentResolver resolver);
-
-        void RemoveFromCache(string resourceString);
     }
 
     [ContractClassFor(typeof(IContentManager))]
@@ -33,6 +33,11 @@ namespace LightClaw.Engine.IO
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
 
             return null;
+        }
+
+        void IContentManager.ForceReload(string resourceString)
+        {
+            Contract.Requires<ArgumentNullException>(resourceString != null);
         }
 
         Task<Stream> IContentManager.GetStreamAsync(string resourceString)
@@ -60,11 +65,6 @@ namespace LightClaw.Engine.IO
         void IContentManager.Register(IContentResolver resolver)
         {
             Contract.Requires<ArgumentNullException>(resolver != null);
-        }
-
-        void IContentManager.RemoveFromCache(string resourceString)
-        {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
         }
     }
 }

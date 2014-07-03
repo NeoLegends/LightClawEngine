@@ -170,44 +170,39 @@ namespace LightClaw.Engine.Core
 #if SYSTEMDRAWING_INTEROP
 
         /// <summary>
-        /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Point"/>.
-        /// </summary>
-        /// <param name="point">The <see cref="System.Drawing.Point"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4d(System.Drawing.Point point) : this(point.X, point.Y, 0.0f, 0.0f) { }
-
-        /// <summary>
-        /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Point"/>.
-        /// </summary>
-        /// <param name="point">The <see cref="System.Drawing.Point"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4d(System.Drawing.PointF point) : this(point.X, point.Y, 0.0f, 0.0f) { }
-
-        /// <summary>
         /// Creates a new <see cref="Vector4"/> from the given <see cref="System.Drawing.Color"/>.
         /// </summary>
         /// <param name="color">The <see cref="System.Drawing.Color"/> to create a new <see cref="Vector4"/> from.</param>
-        public Vector4d(System.Drawing.Color color) : this(color.R, color.G, color.B, color.A) { }
+        public Vector4d(System.Drawing.Color color) : this(Color.ToFloat(color.R), Color.ToFloat(color.G), Color.ToFloat(color.B), Color.ToFloat(color.A)) { }
 
 #endif
 
         /// <summary>
-        /// Creates a new <see cref="Vector4"/> from the given <see cref="Vector4"/>.
+        /// Creates a new <see cref="Vector4d"/> from the given <see cref="Vector3d"/> and the <see cref="Double"/>.
         /// </summary>
-        /// <param name="vector">The <see cref="Vector4"/> to create a <see cref="Vector4"/> from.</param>
-        public Vector4d(Vector4d vector) : this(vector.X, vector.Y, vector.Z, vector.W) { }
+        /// <param name="vector">The <see cref="Vector3d"/> to create a <see cref="Vector4d"/> from.</param>
+        /// <param name="w">The W-component.</param>
+        public Vector4d(Vector3d vector, double w) : this(vector.X, vector.Y, vector.Z, w) { }
 
         /// <summary>
-        /// Creates a new <see cref="Vector4"/> from the given <see cref="Color"/>.
+        /// Creates a new <see cref="Vector4d"/> from the given <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="vector">The <see cref="Vector4"/> to create a <see cref="Vector4"/> from.</param>
+        public Vector4d(Vector4 vector) : this(vector.X, vector.Y, vector.Z, vector.W) { }
+
+        /// <summary>
+        /// Creates a new <see cref="Vector4d"/> from the given <see cref="Color"/>.
         /// </summary>
         /// <param name="color">The <see cref="Color"/> to create a <see cref="Vector4"/> from.</param>
         public Vector4d(Color color) : this(color.R, color.G, color.B, color.A) { }
 
         /// <summary>
-        /// Creates a new <see cref="Vector4"/> setting the X and Y and Z value.
+        /// Creates a new <see cref="Vector4d"/> setting the X and Y and Z value.
         /// </summary>
-        /// <param name="x">The <see cref="Vector4"/>'s X value.</param>
-        /// <param name="y">The <see cref="Vector4"/>'s Y value.</param>
-        /// <param name="z">The <see cref="Vector4"/>'s Z value.</param>
-        /// <param name="w">The <see cref="Vector4"/>'s W value.</param>
+        /// <param name="x">The <see cref="Vector4d"/>'s X value.</param>
+        /// <param name="y">The <see cref="Vector4d"/>'s Y value.</param>
+        /// <param name="z">The <see cref="Vector4d"/>'s Z value.</param>
+        /// <param name="w">The <see cref="Vector4d"/>'s W value.</param>
         public Vector4d(double x, double y, double z, double w)
             : this()
         {
@@ -232,7 +227,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The normalized <see cref="Vector4"/>.</returns>
         public Vector4d Normalize()
         {
-            return Vector4d.Normalize(this);
+            return Vector4d.Normalize(ref this);
         }
 
         /// <summary>
@@ -310,56 +305,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// 	Constructs a new <see cref="Vector4"/> based on the smallest values in one of the two <see cref="Vector4"/>s.
-        /// </summary>
-        /// <param name="a">The first <see cref="Vector4"/>.</param>
-        /// <param name="b">The second <see cref="Vector4"/>.</param>
-        /// <returns>A new <see cref="Vector4"/> with the smallest value of both input values.</returns>
-        public static Vector4d Min(ref Vector4d a, ref Vector4d b)
-        {
-            return new Vector4d()
-            {
-                X = (a.X < b.X) ? a.X : b.X,
-                Y = (a.Y < b.Y) ? a.Y : b.Y,
-                Z = (a.Z < b.Z) ? a.Z : b.Z,
-                W = (a.W < b.W) ? a.W : b.W
-            };
-        }
-
-        /// <summary>
-        /// 	Constructs a new <see cref="Vector4"/> based on the biggest values in one of the two <see cref="Vector4"/>s.
-        /// </summary>
-        /// <param name="a">The first <see cref="Vector4"/>.</param>
-        /// <param name="b">The second <see cref="Vector4"/>.</param>
-        /// <returns>A new <see cref="Vector4"/> with the biggest value of both input values.</returns>
-        public static Vector4d Max(ref Vector4d a, ref Vector4d b)
-        {
-            return new Vector4d()
-            {
-                X = (a.X > b.X) ? a.X : b.X,
-                Y = (a.Y > b.Y) ? a.Y : b.Y,
-                Z = (a.Z > b.Z) ? a.Z : b.Z,
-                W = (a.W > b.W) ? a.W : b.W
-            };
-        }
-
-        /// <summary>
-        /// Returns a negated copy of the given <see cref="Vector4"/>.
-        /// </summary>
-        /// <param name="vec">The <see cref="Vector4"/> to negate.</param>
-        /// <returns>The negated <see cref="Vector4"/>.</returns>
-        public static Vector4d Negate(ref Vector4d vec)
-        {
-            return new Vector4d()
-            {
-                X = -vec.X,
-                Y = -vec.Y,
-                Z = -vec.Z,
-                W = -vec.W
-            };
-        }
-
-        /// <summary>
         /// Returns a <see cref="SharpDX.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
         /// </summary>
         /// <param name="value1">A <see cref="SharpDX.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
@@ -415,14 +360,14 @@ namespace LightClaw.Engine.Core
         /// <see cref="M:DistanceSquared(Vector4, Vector4)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
-        public static double Distance(Vector4d value1, Vector4d value2)
+        public static double Distance(ref Vector4d value1, ref Vector4d value2)
         {
             double x = value1.X - value2.X;
             double y = value1.Y - value2.Y;
             double z = value1.Z - value2.Z;
             double w = value1.W - value2.W;
 
-            return (double)Math.Sqrt(DistanceSquared(value1, value2));
+            return (double)Math.Sqrt(DistanceSquared(ref value1, ref value2));
         }
 
         /// <summary>
@@ -438,7 +383,7 @@ namespace LightClaw.Engine.Core
         /// involves two square roots, which are computationally expensive. However, using distance squared 
         /// provides the same information and avoids calculating two square roots.
         /// </remarks>
-        public static double DistanceSquared(Vector4d value1, Vector4d value2)
+        public static double DistanceSquared(ref Vector4d value1, ref Vector4d value2)
         {
             double dX = value1.X - value2.X;
             double dY = value1.Y - value2.Y;
@@ -454,9 +399,59 @@ namespace LightClaw.Engine.Core
         /// <param name="left">First source vector.</param>
         /// <param name="right">Second source vector.</param>
         /// <returns>The dot product of the two vectors.</returns>
-        public static double Dot(Vector4d left, Vector4d right)
+        public static double Dot(ref Vector4d left, ref Vector4d right)
         {
             return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        }
+
+        /// <summary>
+        /// 	Constructs a new <see cref="Vector4"/> based on the biggest values in one of the two <see cref="Vector4"/>s.
+        /// </summary>
+        /// <param name="a">The first <see cref="Vector4"/>.</param>
+        /// <param name="b">The second <see cref="Vector4"/>.</param>
+        /// <returns>A new <see cref="Vector4"/> with the biggest value of both input values.</returns>
+        public static Vector4d Max(ref Vector4d a, ref Vector4d b)
+        {
+            return new Vector4d()
+            {
+                X = (a.X > b.X) ? a.X : b.X,
+                Y = (a.Y > b.Y) ? a.Y : b.Y,
+                Z = (a.Z > b.Z) ? a.Z : b.Z,
+                W = (a.W > b.W) ? a.W : b.W
+            };
+        }
+
+        /// <summary>
+        /// 	Constructs a new <see cref="Vector4"/> based on the smallest values in one of the two <see cref="Vector4"/>s.
+        /// </summary>
+        /// <param name="a">The first <see cref="Vector4"/>.</param>
+        /// <param name="b">The second <see cref="Vector4"/>.</param>
+        /// <returns>A new <see cref="Vector4"/> with the smallest value of both input values.</returns>
+        public static Vector4d Min(ref Vector4d a, ref Vector4d b)
+        {
+            return new Vector4d()
+            {
+                X = (a.X < b.X) ? a.X : b.X,
+                Y = (a.Y < b.Y) ? a.Y : b.Y,
+                Z = (a.Z < b.Z) ? a.Z : b.Z,
+                W = (a.W < b.W) ? a.W : b.W
+            };
+        }
+
+        /// <summary>
+        /// Returns a negated copy of the given <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="vec">The <see cref="Vector4"/> to negate.</param>
+        /// <returns>The negated <see cref="Vector4"/>.</returns>
+        public static Vector4d Negate(ref Vector4d vec)
+        {
+            return new Vector4d()
+            {
+                X = -vec.X,
+                Y = -vec.Y,
+                Z = -vec.Z,
+                W = -vec.W
+            };
         }
 
         /// <summary>
@@ -464,7 +459,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The vector to normalize.</param>
         /// <returns>The normalized vector.</returns>
-        public static Vector4d Normalize(Vector4d value)
+        public static Vector4d Normalize(ref Vector4d value)
         {
             double length = value.Length;
             if (length != 0.0f)
@@ -606,7 +601,7 @@ namespace LightClaw.Engine.Core
 
                 for (int r = 0; r < i; ++r)
                 {
-                    newvector -= destination[r] * (Vector4d.Dot(destination[r], newvector) / Vector4d.Dot(destination[r], destination[r]));
+                    newvector -= destination[r] * (Vector4d.Dot(ref destination[r], ref newvector) / Vector4d.Dot(ref destination[r], ref destination[r]));
                 }
 
                 destination[i] = newvector;
@@ -649,7 +644,7 @@ namespace LightClaw.Engine.Core
 
                 for (int r = 0; r < i; ++r)
                 {
-                    newvector -= destination[r] * Vector4d.Dot(destination[r], newvector);
+                    newvector -= destination[r] * Vector4d.Dot(ref destination[r], ref newvector);
                 }
 
                 destination[i] = newvector.Normalize();
@@ -805,6 +800,11 @@ namespace LightClaw.Engine.Core
         public static explicit operator Vector4(Vector4d vector)
         {
             return new Vector4(vector);
+        }
+
+        public static explicit operator Vector4d(Color color)
+        {
+            return new Vector4d(color);
         }
 
         public static implicit operator Vector4d(OpenTK.Vector4d vector)

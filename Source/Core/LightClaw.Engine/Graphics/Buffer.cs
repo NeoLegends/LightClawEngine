@@ -51,6 +51,7 @@ namespace LightClaw.Engine.Graphics
 
             GL.BindBuffer(target, this);
             GL.BufferData(target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, hint);
+            GL.BindBuffer(target, 0);
         }
 
         public void Bind()

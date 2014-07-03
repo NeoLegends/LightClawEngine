@@ -10,10 +10,11 @@ namespace LightClaw.Engine.Core
     [ProtoContract(IgnoreListHandling = true)]
     public class GameObject : ListChildManager<Component>
     {
-        protected event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;
+        public event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;
 
         private Scene _Scene;
 
+        [ProtoIgnore]
         public Scene Scene
         {
             get
@@ -29,6 +30,15 @@ namespace LightClaw.Engine.Core
                 {
                     handler(this, new ValueChangedEventArgs<Scene>(value, previousValue));
                 }
+            }
+        }
+
+        [ProtoAfterDeserialization]
+        private void InitializeComponents()
+        {
+            foreach (Component component in this)
+            {
+                component.GameObject = this;
             }
         }
     }

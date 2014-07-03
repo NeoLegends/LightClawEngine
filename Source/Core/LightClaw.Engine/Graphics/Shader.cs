@@ -42,6 +42,7 @@ namespace LightClaw.Engine.Graphics
         [ProtoAfterDeserialization]
         private async void Initialize()
         {
+            // Create ID first to make sure it's created synchronously and that the ID is ready immediately after deserialization
             this.Id = GL.CreateShader(this.Type);
             this.Source = await LightClawEngine.DefaultIoc.Resolve<IContentManager>().LoadAsync<string>(this.ResourceString);
 

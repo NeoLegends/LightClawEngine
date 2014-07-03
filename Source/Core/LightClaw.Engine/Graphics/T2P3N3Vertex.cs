@@ -9,7 +9,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract]
-    public struct Vertex
+    public struct T2P3N3Vertex
     {
         [ProtoMember(1)]
         public Vector2 TexCoord { get; private set; }
@@ -20,7 +20,7 @@ namespace LightClaw.Engine.Graphics
         [ProtoMember(3)]
         public Vector3 Normal { get; private set; }
 
-        public Vertex(Vector2 texCoord, Vector3 position, Vector3 normal)
+        public T2P3N3Vertex(Vector2 texCoord, Vector3 position, Vector3 normal)
             : this()
         {
             this.Normal = normal;

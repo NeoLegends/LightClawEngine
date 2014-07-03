@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     {
         private static readonly IocContainer _DefaultIoc = new IocContainer();
 
+        [CLSCompliant(false)]
         public static IocContainer DefaultIoc
         {
             get

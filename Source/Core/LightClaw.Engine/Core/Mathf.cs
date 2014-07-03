@@ -132,6 +132,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="x">The value to round up.</param>
         /// <returns>The value's next power of two.</returns>
+        [CLSCompliant(false)]
         public static uint NextPowerOfTwo(uint x)
         {
             // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
@@ -152,6 +153,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="x">The value to round up.</param>
         /// <returns>The value's next power of two.</returns>
+        [CLSCompliant(false)]
         public static ulong NextPowerOfTwo(ulong x)
         {
             // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html

@@ -17,6 +17,7 @@ namespace LightClaw.Engine.Core
 
         private GameObject _GameObject;
 
+        [ProtoIgnore]
         public GameObject GameObject
         {
             get
