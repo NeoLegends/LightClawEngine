@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using LightClaw.Engine.Graphics;
 using ProtoBuf;
@@ -15,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
+    [StructureInformation(4, 32, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector4 : ICloneable, IEquatable<Vector4>, IComparable<Vector4>
     {

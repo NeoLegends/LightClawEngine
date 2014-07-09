@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
-    /// Class that represents a color with RGBA data
+    /// Class that represents a color with RGBA data.
     /// </summary>
+    [StructureInformation(4, 8, false)]
     [Serializable, DataContract, ProtoContract]
     public partial struct Color : ICloneable,
 #if SYSTEMDRAWING_INTEROP
@@ -821,7 +821,6 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The negated color value.
         /// </summary>
-        [ProtoIgnore, IgnoreDataMember]
         public Color Negated
         {
             get
@@ -935,20 +934,13 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// All components contained in an array.
         /// </summary>
-        [ProtoIgnore, IgnoreDataMember]
         public byte[] Array
         {
             get
             {
                 Contract.Ensures(Contract.Result<byte[]>() != null);
 
-                return new byte[] 
-                { 
-                    this.R,
-                    this.G, 
-                    this.B,
-                    this.A
-                };
+                return new byte[] { this.R, this.G, this.B, this.A };
             }
         }
 
@@ -957,7 +949,6 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="index">The component at the given index.</param>
         /// <returns>The desired color component.</returns>
-        [ProtoIgnore, IgnoreDataMember]
         public byte this[int index]
         {
             get
@@ -1107,6 +1098,12 @@ namespace LightClaw.Engine.Graphics
             else if (ReferenceEquals(obj, this))
                 return true;
 
+#if SYSTEMDRAWING_INTEROP
+            if (obj is System.Drawing.Color)
+            {
+                return this.Equals((System.Drawing.Color)obj);
+            }
+#endif
             return (obj is Color) ? this.Equals((Color)obj) : false;
         }
 
@@ -1139,7 +1136,15 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            const int hashFactor = 486187739;
+            unchecked
+            {
+                int hash = 397 * hashFactor + this.R.GetHashCode();
+                hash = hash * hashFactor + this.G.GetHashCode();
+                hash = hash * hashFactor + this.B.GetHashCode();
+                hash = hash * hashFactor + this.A.GetHashCode();
+                return hash;
+            }
         }
 
         /// <summary>
@@ -1150,15 +1155,28 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Ensures(Contract.Result<string>() != null);
 
-            StringBuilder hexadecimalColorCode = new StringBuilder(8);
+            return this.ToString(FormatOrder.Rgba);
+        }
 
-            hexadecimalColorCode.Append("#");
-            hexadecimalColorCode.AppendFormat("{0:x2}", this.R);
-            hexadecimalColorCode.AppendFormat("{0:x2}", this.G);
-            hexadecimalColorCode.AppendFormat("{0:x2}", this.B);
-            hexadecimalColorCode.AppendFormat("{0:x2}", this.A);
+        /// <summary>
+        /// Converts this <see cref="Color"/> into the representative hex <see cref="string"/>.
+        /// </summary>
+        /// <param name="order">The order in which to format the output.</param>
+        /// <returns>A <see cref="string"/> value representing the color values in this <see cref="Color"/>.</returns>
+        public string ToString(FormatOrder order)
+        {
+            Contract.Ensures(Contract.Result<string>() != null);
 
-            return hexadecimalColorCode.ToString();
+            switch (order)
+            {
+                case FormatOrder.Argb:
+                    return Mathf.HexTable[this.A] + Mathf.HexTable[this.R] + Mathf.HexTable[this.G] + Mathf.HexTable[this.B];
+                case FormatOrder.Bgra:
+                    return Mathf.HexTable[this.B] + Mathf.HexTable[this.G] + Mathf.HexTable[this.R] + Mathf.HexTable[this.A];
+                default:
+                case FormatOrder.Rgba:
+                    return Mathf.HexTable[this.R] + Mathf.HexTable[this.G] + Mathf.HexTable[this.B] + Mathf.HexTable[this.A];
+            }
         }
 
         /// <summary>
@@ -1388,5 +1406,14 @@ namespace LightClaw.Engine.Graphics
         }
 
 #endif
+
+        public enum FormatOrder
+        {
+            Rgba,
+
+            Argb,
+
+            Bgra
+        }
     }
 }

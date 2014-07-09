@@ -180,6 +180,7 @@
     <Compile Include="Core\ListChildManager.cs" />
     <Compile Include="Core\Mathf.cs" />
     <Compile Include="Core\NonRemovableAttribute.cs" />
+    <Compile Include="Core\PropertyChangedBase.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ControllableEventArgs.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Core\Vector3.cs" />
     <Compile Include="Core\Vector4d.cs" />
     <Compile Include="Core\Vector4.cs" />
+    <Compile Include="Core\StructureInformationAttribute.cs" />
     <Compile Include="Graphics\AttributeBinding.cs" />
     <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />

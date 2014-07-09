@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
@@ -11,9 +12,41 @@ namespace LightClaw.Engine.Core
     public static class Mathf
     {
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private static readonly string[] _HexTable = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
+
+        /// <summary>
+        /// Contains the hexadecimal representation of all byte values.
+        /// </summary>
+        public static string[] HexTable
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<string[]>() != null);
+                Contract.Ensures(Contract.Result<string[]>().Length == 256);
+
+                return _HexTable.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private static readonly double _RootTwo = Math.Sqrt(2);
+
+        /// <summary>
         /// The square root of two.
         /// </summary>
-        public static readonly double RootTwo = Math.Sqrt(2);
+        public static double RootTwo
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<double>() > 1 && Contract.Result<double>() < 2);
+
+                return _RootTwo;
+            }
+        }
 
         /// <summary>
         /// Makes sure the value stays in the given area.

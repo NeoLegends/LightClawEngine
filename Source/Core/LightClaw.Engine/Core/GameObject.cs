@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,15 @@ namespace LightClaw.Engine.Core
                     handler(this, new ValueChangedEventArgs<Scene>(value, previousValue));
                 }
             }
+        }
+
+        public GameObject() { }
+
+        public GameObject(IEnumerable<Component> components)
+        {
+            Contract.Requires<ArgumentNullException>(components != null);
+
+            this.Items.AddRange(components);
         }
 
         [ProtoAfterDeserialization]

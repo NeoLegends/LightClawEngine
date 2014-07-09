@@ -17,7 +17,12 @@ namespace LightClaw.Engine.Graphics
             throw new NotImplementedException();
         }
 
-        protected override void OnEnabledChanged(bool isEnabled)
+        protected override void OnEnable()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnDisable()
         {
             throw new NotImplementedException();
         }

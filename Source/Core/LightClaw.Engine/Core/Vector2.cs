@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using LightClaw.Engine.Graphics;
 using ProtoBuf;
@@ -15,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
+    [StructureInformation(2, 32, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector2 : ICloneable,
 #if SYSTEMDRAWING_INTEROP

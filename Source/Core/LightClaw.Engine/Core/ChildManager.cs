@@ -39,9 +39,14 @@ namespace LightClaw.Engine.Core
             ((List<T>)this.Items).AddRange(items);
         }
 
-        protected override void OnEnabledChanged(bool isEnabled)
+        protected override void OnEnable()
         {
-            this.PerformChildAction(item => item.IsEnabled = isEnabled);
+            this.PerformChildAction(item => item.Enable());
+        }
+
+        protected override void OnDisable()
+        {
+            this.PerformChildAction(item => item.Disable());
         }
 
         protected override void OnLoad()

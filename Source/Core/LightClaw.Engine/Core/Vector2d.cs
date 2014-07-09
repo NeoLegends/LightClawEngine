@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using LightClaw.Engine.Graphics;
 using ProtoBuf;
@@ -15,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
+    [StructureInformation(2, 64, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector2d : ICloneable,
 #if SYSTEMDRAWING_INTEROP
@@ -354,7 +354,7 @@ namespace LightClaw.Engine.Core
         /// <param name="value3">A <see cref="SharpDX.Vector2"/> containing the 2D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        public static Vector2d Barycentric(ref Vector2d value1, Vector2d value2, Vector2d value3, double amount1, double amount2)
+        public static Vector2d Barycentric(Vector2d value1, Vector2d value2, Vector2d value3, double amount1, double amount2)
         {
             return new Vector2d()
             {

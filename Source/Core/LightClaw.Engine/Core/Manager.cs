@@ -12,7 +12,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
-    public abstract class Manager : IControllable, INameable, INotifyPropertyChanged
+    public abstract class Manager : PropertyChangedBase, IControllable, INameable
     {
         private object loadedStateLock = new object();
 
@@ -21,8 +21,6 @@ namespace LightClaw.Engine.Core
         public event EventHandler<LoadedChangedEventArgs> LoadedChanged;
 
         public event EventHandler<ControllableEventArgs> Updated;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private string _Name;
 
@@ -48,9 +46,8 @@ namespace LightClaw.Engine.Core
             {
                 return this.IsLoaded && _IsEnabled;
             }
-            set
+            private set
             {
-                this.OnEnabledChanged(value);
                 this.SetProperty(ref _IsEnabled, value);
                 EventHandler<EnabledChangedEventArgs> handler = this.EnabledChanged;
                 if (handler != null)
@@ -93,6 +90,30 @@ namespace LightClaw.Engine.Core
         ~Manager()
         {
             this.Dispose(false);
+        }
+
+        public void Enable()
+        {
+            lock (this.loadedStateLock)
+            {
+                if (!this.IsEnabled)
+                {
+                    this.OnEnable();
+                    this.IsEnabled = true;
+                }
+            }
+        }
+
+        public void Disable()
+        {
+            lock (this.loadedStateLock)
+            {
+                if (this.IsEnabled)
+                {
+                    this.OnDisable();
+                    this.IsEnabled = false;
+                }
+            }
         }
 
         public void Load()
@@ -140,20 +161,12 @@ namespace LightClaw.Engine.Core
             GC.SuppressFinalize(this);
         }
 
-        protected abstract void OnEnabledChanged(bool isEnabled);
+        protected abstract void OnEnable();
+
+        protected abstract void OnDisable();
 
         protected abstract void OnLoad();
 
         protected abstract void OnUpdate();
-
-        protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
-        {
-            location = newValue;
-            PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 }

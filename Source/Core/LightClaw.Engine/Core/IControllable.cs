@@ -15,9 +15,13 @@ namespace LightClaw.Engine.Core
 
         event EventHandler<ControllableEventArgs> Updated;
 
-        bool IsEnabled { get; set; }
+        bool IsEnabled { get; }
 
         bool IsLoaded { get; }
+
+        void Enable();
+
+        void Disable();
 
         void Load();
 

@@ -28,7 +28,7 @@ namespace LightClaw.Engine.Graphics
                 _Count = value;
             }
         }
-
+         
         public Buffer(T[] data)
             : this(data, BufferTarget.ArrayBuffer)
         {

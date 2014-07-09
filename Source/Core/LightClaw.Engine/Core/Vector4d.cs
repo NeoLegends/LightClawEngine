@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using LightClaw.Engine.Graphics;
 using ProtoBuf;
@@ -15,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
+    [StructureInformation(4, 64, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector4d : ICloneable, IEquatable<Vector4d>, IComparable<Vector4d>
     {
@@ -112,7 +112,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The <see cref="Vector4"/>s length. See remarks.
+        /// The <see cref="Vector4d"/>s length. See remarks.
         /// </summary>
         /// <remarks>
         /// For comparison of vector lengths it's usually better to use <see cref="P:SquaredLength"/>, as squared lengths
