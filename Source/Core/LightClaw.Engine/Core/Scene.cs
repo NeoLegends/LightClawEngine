@@ -20,6 +20,16 @@ namespace LightClaw.Engine.Core
             throw new NotImplementedException();
         }
 
+        protected override void OnLoad()
+        {
+            base.OnLoad();
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+        }
+
         [ProtoAfterDeserialization]
         private void InitializeGameObjects()
         {

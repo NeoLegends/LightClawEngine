@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Core
     [ProtoContract]
     public abstract class Manager : PropertyChangedBase, IControllable, INameable
     {
-        private object loadedStateLock = new object();
+        private object stateLock = new object();
 
         public event EventHandler<EnabledChangedEventArgs> EnabledChanged;
 
@@ -60,7 +60,7 @@ namespace LightClaw.Engine.Core
         private bool _IsLoaded = false;
 
         [ProtoMember(3)]
-        public virtual bool IsLoaded
+        public bool IsLoaded
         {
             get
             {
@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Core
 
         public void Enable()
         {
-            lock (this.loadedStateLock)
+            lock (this.stateLock)
             {
                 if (!this.IsEnabled)
                 {
@@ -106,7 +106,7 @@ namespace LightClaw.Engine.Core
 
         public void Disable()
         {
-            lock (this.loadedStateLock)
+            lock (this.stateLock)
             {
                 if (this.IsEnabled)
                 {
@@ -118,7 +118,7 @@ namespace LightClaw.Engine.Core
 
         public void Load()
         {
-            lock (this.loadedStateLock)
+            lock (this.stateLock)
             {
                 if (!this.IsLoaded)
                 {
@@ -130,7 +130,7 @@ namespace LightClaw.Engine.Core
 
         public void Update()
         {
-            lock (this.loadedStateLock)
+            lock (this.stateLock)
             {
                 if (this.IsEnabled)
                 {

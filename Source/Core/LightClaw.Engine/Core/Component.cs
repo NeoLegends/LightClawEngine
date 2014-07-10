@@ -7,7 +7,7 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract]
+    [ProtoContract(IgnoreListHandling = true)]
     public abstract class Component : Manager
     {
         public event EventHandler<ValueChangedEventArgs<GameObject>> GameObjectChanged;

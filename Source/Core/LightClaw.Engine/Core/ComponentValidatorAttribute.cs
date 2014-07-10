@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,25 +10,63 @@ namespace LightClaw.Engine.Core
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public abstract class ComponentValidatorAttribute : Attribute
     {
-        public Type ComponentType { get; private set; }
+        public Type ComponentType { get; protected set; }
+
+        protected ComponentValidatorAttribute() { }
 
         protected ComponentValidatorAttribute(Type componentType)
         {
             this.ComponentType = componentType;
         }
-
-        public abstract bool Validate(GameObject gameObject);
     }
 
+    [ContractClass(typeof(AttachmentValidatorAttributeContracts))]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public abstract class ComponentAttachmentValidatorAttribute : ComponentValidatorAttribute 
-    { 
-        protected ComponentAttachmentValidatorAttribute(Type componentType) : base(componentType) { }
+    public abstract class AttachmentValidatorAttribute : ComponentValidatorAttribute
+    {
+        public AttachmentValidatorAttribute() { }
+
+        public AttachmentValidatorAttribute(Type compoentType) : base(compoentType) { }
+
+        public bool Validate(GameObject gameObjectToAttachTo)
+        {
+            return this.Validate(gameObjectToAttachTo, Enumerable.Empty<Component>());
+        }
+
+        public abstract bool Validate(GameObject gameObjectToAttachTo, IEnumerable<Component> componentsToAttach);
+    }
+    
+    [ContractClass(typeof(RemovalValidatorAttributeContracts))]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+    public abstract class RemovalValidatorAttribute : ComponentValidatorAttribute
+    {
+        public RemovalValidatorAttribute() { }
+
+        public RemovalValidatorAttribute(Type componentType) : base(componentType) { }
+
+        public abstract bool Validate(GameObject gameObjectToRemoveFrom);
     }
 
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public abstract class ComponentRemovalValidatorAttribute : ComponentValidatorAttribute 
-    { 
-        protected ComponentRemovalValidatorAttribute(Type componentType) : base(componentType) { }
+    [ContractClassFor(typeof(AttachmentValidatorAttribute))]
+    abstract class AttachmentValidatorAttributeContracts : AttachmentValidatorAttribute
+    {
+        public override bool Validate(GameObject gameObjectToAttachTo, IEnumerable<Component> componentsToAttach)
+        {
+            Contract.Requires<ArgumentNullException>(gameObjectToAttachTo != null);
+            Contract.Requires<ArgumentNullException>(componentsToAttach != null);
+
+            return false;
+        }
+    }
+
+    [ContractClassFor(typeof(RemovalValidatorAttribute))]
+    abstract class RemovalValidatorAttributeContracts : RemovalValidatorAttribute
+    {
+        public override bool Validate(GameObject gameObjectToRemoveFrom)
+        {
+            Contract.Requires<ArgumentNullException>(gameObjectToRemoveFrom != null);
+
+            return false;
+        }
     }
 }

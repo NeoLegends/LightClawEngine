@@ -16,11 +16,11 @@ namespace LightClaw.Engine.Core
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
     [StructureInformation(2, 32, true)]
     [Serializable, DataContract, ProtoContract]
-    public struct Vector2 : ICloneable,
+    public struct Vector2 : ICloneable, IEquatable<Vector2>, IComparable<Vector2>
 #if SYSTEMDRAWING_INTEROP
-                            IEquatable<System.Drawing.PointF>,
+                            , IEquatable<System.Drawing.PointF>
 #endif
-                            IEquatable<Vector2>, IComparable<Vector2>
+                            
     {
         #region Predefined Vectors
 

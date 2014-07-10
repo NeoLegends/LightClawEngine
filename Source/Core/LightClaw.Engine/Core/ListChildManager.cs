@@ -12,21 +12,6 @@ namespace LightClaw.Engine.Core
         where T : IControllable
     {
         [ProtoIgnore]
-        protected new List<T> Items
-        {
-            get
-            {
-                return (List<T>)base.Items;
-            }
-            set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                base.Items = value;
-            }
-        }
-
-        [ProtoIgnore]
         public virtual T this[int index]
         {
             get
@@ -77,7 +62,10 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
-            this.Items.AddRange(items);
+            foreach (T item in items)
+            {
+                this.Add(item);
+            }
         }
 
         public virtual void Clear()
@@ -121,9 +109,12 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
             Contract.Requires<ArgumentNullException>(items != null);
-            Contract.Assume(index <= this.Count);
+            Contract.Assert(index <= this.Count);
 
-            this.Items.InsertRange(index, items);
+            foreach (T item in items)
+            {
+                this.Insert(index++, item);
+            }
         }
 
         public virtual bool Remove(T item)

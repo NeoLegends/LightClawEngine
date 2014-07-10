@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace LightClaw.Engine.Core
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-    internal sealed class NonRemovableAttribute : ComponentRemovalValidatorAttribute
+    internal sealed class NonRemovableAttribute : RemovalValidatorAttribute
     {
         public NonRemovableAttribute() : base(null) { }
 
-        public override bool Validate(GameObject gameObject)
+        public override bool Validate(GameObject gameObjectToRemoveFrom)
         {
             return false;
         }

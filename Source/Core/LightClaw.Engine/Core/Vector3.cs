@@ -367,6 +367,12 @@ namespace LightClaw.Engine.Core
             };
         }
 
+        /// <summary>
+        /// Restricts a value to be within a specified range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="min">The minimum value.</param>
+        /// <param name="max">The maximum value.</param>
         public static Vector3 Clamp(ref Vector3 value, ref Vector3 max, ref Vector3 min)
         {
             return new Vector3()

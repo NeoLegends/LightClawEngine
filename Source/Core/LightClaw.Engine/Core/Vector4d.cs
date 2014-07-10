@@ -33,22 +33,22 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X unit <see cref="Vector4"/> (1, 0, 0, 0).
         /// </summary>
-        public static readonly Vector4d UnitX = new Vector4d(1.0f, 0.0f, 0.0f, 0.0f);
+        public static readonly Vector4d UnitX = new Vector4d(1.0, 0.0, 0.0, 0.0);
 
         /// <summary>
         /// The Y unit <see cref="Vector4"/> (0, 1, 0, 0).
         /// </summary>
-        public static readonly Vector4d UnitY = new Vector4d(0.0f, 1.0f, 0.0f, 0.0f);
+        public static readonly Vector4d UnitY = new Vector4d(0.0, 1.0, 0.0, 0.0);
 
         /// <summary>
         /// The Z unit <see cref="Vector4"/> (0, 0, 1, 0).
         /// </summary>
-        public static readonly Vector4d UnitZ = new Vector4d(0.0f, 0.0f, 1.0f, 0.0f);
+        public static readonly Vector4d UnitZ = new Vector4d(0.0, 0.0, 1.0, 0.0);
 
         /// <summary>
         /// The W unit <see cref="Vector4"/> (0, 0, 0, 1).
         /// </summary>
-        public static readonly Vector4d UnitW = new Vector4d(0.0f, 0.0f, 0.0f, 1.0f);
+        public static readonly Vector4d UnitW = new Vector4d(0.0, 0.0, 0.0, 1.0);
 
         /// <summary>
         /// The <see cref="Random"/> instance used to obtain the random vector.
@@ -324,6 +324,39 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Performs a Catmull-Rom interpolation using the specified positions.
+        /// </summary>
+        /// <param name="value1">The first position in the interpolation.</param>
+        /// <param name="value2">The second position in the interpolation.</param>
+        /// <param name="value3">The third position in the interpolation.</param>
+        /// <param name="value4">The fourth position in the interpolation.</param>
+        /// <param name="amount">Weighting factor.</param>
+        public static Vector4d CatmullRom(ref Vector4d value1, ref Vector4d value2, ref Vector4d value3, ref Vector4d value4, double amount)
+        {
+            double squared = amount * amount;
+            double cubed = amount * squared;
+
+            return new Vector4d()
+            {
+                X = 0.5 * ((((2.0 * value2.X) + ((-value1.X + value3.X) * amount))
+                    + (((((2.0 * value1.X) - (5.0 * value2.X)) + (4.0 * value3.X)) - value4.X) * squared)) +
+                    ((((-value1.X + (3.0 * value2.X)) - (3.0 * value3.X)) + value4.X) * cubed)),
+
+                Y = 0.5 * ((((2.0 * value2.Y) + ((-value1.Y + value3.Y) * amount))
+                    + (((((2.0 * value1.Y) - (5.0 * value2.Y)) + (4.0 * value3.Y)) - value4.Y) * squared)) +
+                    ((((-value1.Y + (3.0 * value2.Y)) - (3.0 * value3.Y)) + value4.Y) * cubed)),
+
+                Z = 0.5 * ((((2.0 * value2.Z) + ((-value1.Z + value3.Z) * amount))
+                    + (((((2.0 * value1.Z) - (5.0 * value2.Z)) + (4.0 * value3.Z)) - value4.Z) * squared)) +
+                    ((((-value1.Z + (3.0 * value2.Z)) - (3.0 * value3.Z)) + value4.Z) * cubed)),
+
+                W = 0.5 * ((((2.0 * value2.W) + ((-value1.W + value3.W) * amount))
+                    + (((((2.0 * value1.W) - (5.0 * value2.W)) + (4.0 * value3.W)) - value4.W) * squared)) +
+                    ((((-value1.W + (3.0 * value2.W)) - (3.0 * value3.W)) + value4.W) * cubed))
+            };
+        }
+
+        /// <summary>
         /// Restricts a value to be within a specified range.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
@@ -331,23 +364,13 @@ namespace LightClaw.Engine.Core
         /// <param name="max">The maximum value.</param>
         public static Vector4d Clamp(ref Vector4d value, ref Vector4d min, ref Vector4d max)
         {
-            double x = value.X;
-            x = (x > max.X) ? max.X : x;
-            x = (x < min.X) ? min.X : x;
-
-            double y = value.Y;
-            y = (y > max.Y) ? max.Y : y;
-            y = (y < min.Y) ? min.Y : y;
-
-            double z = value.Z;
-            z = (z > max.Z) ? max.Z : z;
-            z = (z < min.Z) ? min.Z : z;
-
-            double w = value.W;
-            w = (w > max.W) ? max.W : w;
-            w = (w < min.W) ? min.W : w;
-
-            return new Vector4d(x, y, z, w);
+            return new Vector4d()
+            {
+                X = (value.X > max.X) ? max.X : (value.X < min.X) ? min.X : value.X,
+                Y = (value.Y > max.Y) ? max.Y : (value.Y < min.Y) ? min.Y : value.Y,
+                Z = (value.Z > max.Z) ? max.Z : (value.Z < min.Z) ? min.Z : value.Z,
+                W = (value.W > max.W) ? max.W : (value.W < min.W) ? min.W : value.W
+            };
         }
 
         /// <summary>
@@ -402,6 +425,52 @@ namespace LightClaw.Engine.Core
         public static double Dot(ref Vector4d left, ref Vector4d right)
         {
             return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        }
+
+        /// <summary>
+        /// Performs a Hermite spline interpolation.
+        /// </summary>
+        /// <param name="value1">First source position vector.</param>
+        /// <param name="tangent1">First source tangent vector.</param>
+        /// <param name="value2">Second source position vector.</param>
+        /// <param name="tangent2">Second source tangent vector.</param>
+        /// <param name="amount">Weighting factor.</param>
+        public static Vector4d Hermite(ref Vector4d value1, ref Vector4d tangent1, ref Vector4d value2, ref Vector4d tangent2, double amount)
+        {
+            double squared = amount * amount;
+            double cubed = amount * squared;
+            double part1 = ((2.0 * cubed) - (3.0 * squared)) + 1.0;
+            double part2 = (-2.0 * cubed) + (3.0 * squared);
+            double part3 = (cubed - (2.0 * squared)) + amount;
+            double part4 = cubed - squared;
+
+            return new Vector4d()
+            {
+                X = (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4),
+                Y = (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4),
+                Z = (((value1.Z * part1) + (value2.Z * part2)) + (tangent1.Z * part3)) + (tangent2.Z * part4),
+                W = (((value1.W * part1) + (value2.W * part2)) + (tangent1.W * part3)) + (tangent2.W * part4)
+            };
+        }
+
+        /// <summary>
+        /// Performs a linear interpolation between two vectors.
+        /// </summary>
+        /// <param name="start">Start vector.</param>
+        /// <param name="end">End vector.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <remarks>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// </remarks>
+        public static Vector4d Lerp(ref Vector4d start, ref Vector4d end, double amount)
+        {
+            return new Vector4d()
+            {
+                X = start.X + ((end.X - start.X) * amount),
+                Y = start.Y + ((end.Y - start.Y) * amount),
+                Z = start.Z + ((end.Z - start.Z) * amount),
+                W = start.W + ((end.W - start.W) * amount)
+            };
         }
 
         /// <summary>
@@ -462,9 +531,9 @@ namespace LightClaw.Engine.Core
         public static Vector4d Normalize(ref Vector4d value)
         {
             double length = value.Length;
-            if (length != 0.0f)
+            if (length != 0.0)
             {
-                double inv = 1.0f / length;
+                double inv = 1.0 / length;
                 return new Vector4d()
                 {
                     X = value.X * inv,
@@ -477,94 +546,6 @@ namespace LightClaw.Engine.Core
             {
                 return (Vector4d)value.Clone();
             }
-        }
-
-        /// <summary>
-        /// Performs a linear interpolation between two vectors.
-        /// </summary>
-        /// <param name="start">Start vector.</param>
-        /// <param name="end">End vector.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
-        /// </remarks>
-        public static Vector4d Lerp(ref Vector4d start, ref Vector4d end, double amount)
-        {
-            return new Vector4d()
-            {
-                X = start.X + ((end.X - start.X) * amount),
-                Y = start.Y + ((end.Y - start.Y) * amount),
-                Z = start.Z + ((end.Z - start.Z) * amount),
-                W = start.W + ((end.W - start.W) * amount)
-            };
-        }
-
-        /// <summary>
-        /// Performs a cubic interpolation between two vectors.
-        /// </summary>
-        /// <param name="start">Start vector.</param>
-        /// <param name="end">End vector.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        public static Vector4d SmoothStep(ref Vector4d start, ref Vector4d end, double amount)
-        {
-            amount = Mathf.SmoothStep(amount);
-            amount = (amount * amount) * (3.0f - (2.0f * amount));
-
-            return new Vector4d()
-            {
-                X = start.X + ((end.X - start.X) * amount),
-                Y = start.Y + ((end.Y - start.Y) * amount),
-                Z = start.Z + ((end.Z - start.Z) * amount),
-                W = start.W + ((end.W - start.W) * amount)
-            };
-        }
-
-        /// <summary>
-        /// Performs a Hermite spline interpolation.
-        /// </summary>
-        /// <param name="value1">First source position vector.</param>
-        /// <param name="tangent1">First source tangent vector.</param>
-        /// <param name="value2">Second source position vector.</param>
-        /// <param name="tangent2">Second source tangent vector.</param>
-        /// <param name="amount">Weighting factor.</param>
-        public static Vector4d Hermite(ref Vector4d value1, ref Vector4d tangent1, ref Vector4d value2, ref Vector4d tangent2, double amount)
-        {
-            double squared = amount * amount;
-            double cubed = amount * squared;
-            double part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f;
-            double part2 = (-2.0f * cubed) + (3.0f * squared);
-            double part3 = (cubed - (2.0f * squared)) + amount;
-            double part4 = cubed - squared;
-
-            return new Vector4d()
-            {
-                X = (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4),
-                Y = (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4),
-                Z = (((value1.Z * part1) + (value2.Z * part2)) + (tangent1.Z * part3)) + (tangent2.Z * part4),
-                W = (((value1.W * part1) + (value2.W * part2)) + (tangent1.W * part3)) + (tangent2.W * part4)
-            };
-        }
-
-        /// <summary>
-        /// Performs a Catmull-Rom interpolation using the specified positions.
-        /// </summary>
-        /// <param name="value1">The first position in the interpolation.</param>
-        /// <param name="value2">The second position in the interpolation.</param>
-        /// <param name="value3">The third position in the interpolation.</param>
-        /// <param name="value4">The fourth position in the interpolation.</param>
-        /// <param name="amount">Weighting factor.</param>
-        public static Vector4d CatmullRom(ref Vector4d value1, ref Vector4d value2, ref Vector4d value3, ref Vector4d value4, double amount)
-        {
-            double squared = amount * amount;
-            double cubed = amount * squared;
-
-            return new Vector4d()
-            {
-                X = 0.5f * ((((2.0f * value2.X) + ((-value1.X + value3.X) * amount)) + (((((2.0f * value1.X) - (5.0f * value2.X)) + (4.0f * value3.X)) - value4.X) * squared)) + ((((-value1.X + (3.0f * value2.X)) - (3.0f * value3.X)) + value4.X) * cubed)),
-                Y = 0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) + (((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) + ((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed)),
-                Z = 0.5f * ((((2.0f * value2.Z) + ((-value1.Z + value3.Z) * amount)) + (((((2.0f * value1.Z) - (5.0f * value2.Z)) + (4.0f * value3.Z)) - value4.Z) * squared)) + ((((-value1.Z + (3.0f * value2.Z)) - (3.0f * value3.Z)) + value4.Z) * cubed)),
-                W = 0.5f * ((((2.0f * value2.W) + ((-value1.W + value3.W) * amount)) + (((((2.0f * value1.W) - (5.0f * value2.W)) + (4.0f * value3.W)) - value4.W) * squared)) + ((((-value1.W + (3.0f * value2.W)) - (3.0f * value3.W)) + value4.W) * cubed))
-            };
         }
 
         /// <summary>
@@ -649,6 +630,48 @@ namespace LightClaw.Engine.Core
 
                 destination[i] = newvector.Normalize();
             }
+        }
+
+        /// <summary>
+        /// Returns the reflection of a <see cref="Vector3"/> off a surface that has the specified normal.
+        /// </summary>
+        /// <param name="vec">The source <see cref="Vector3"/>.</param>
+        /// <param name="surfaceNormal">Normal of the surface.</param>
+        /// <remarks>
+        /// Reflect only gives the direction of a reflection off a surface, it does not determine 
+        /// whether the original <see cref="Vector3"/> was close enough to the surface to hit it.
+        /// </remarks>
+        public static Vector4d Reflect(ref Vector4d vec, ref Vector4d surfaceNormal)
+        {
+            double dot = Vector4d.Dot(ref vec, ref surfaceNormal);
+
+            return new Vector4d()
+            {
+                X = vec.X - ((2.0 * dot) * surfaceNormal.X),
+                Y = vec.Y - ((2.0 * dot) * surfaceNormal.Y),
+                Z = vec.Z - ((2.0 * dot) * surfaceNormal.Z),
+                W = vec.W - ((2.0 * dot) * surfaceNormal.W)
+            };
+        }
+
+        /// <summary>
+        /// Performs a cubic interpolation between two vectors.
+        /// </summary>
+        /// <param name="start">Start vector.</param>
+        /// <param name="end">End vector.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        public static Vector4d SmoothStep(ref Vector4d start, ref Vector4d end, double amount)
+        {
+            amount = Mathf.SmoothStep(amount);
+            amount = (amount * amount) * (3.0 - (2.0 * amount));
+
+            return new Vector4d()
+            {
+                X = start.X + ((end.X - start.X) * amount),
+                Y = start.Y + ((end.Y - start.Y) * amount),
+                Z = start.Z + ((end.Z - start.Z) * amount),
+                W = start.W + ((end.W - start.W) * amount)
+            };
         }
 
         /// <summary>

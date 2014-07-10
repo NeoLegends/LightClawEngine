@@ -16,43 +16,42 @@ namespace LightClaw.Engine.Core
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
     [StructureInformation(2, 64, true)]
     [Serializable, DataContract, ProtoContract]
-    public struct Vector2d : ICloneable,
+    public struct Vector2d : ICloneable, IEquatable<Vector2d>, IComparable<Vector2d>
 #if SYSTEMDRAWING_INTEROP
-                            IEquatable<System.Drawing.Point>,
+                            , IEquatable<System.Drawing.PointF>
 #endif
-                            IEquatable<Vector2d>, IComparable<Vector2d>
     {
         #region Predefined Vectors
 
         /// <summary>
         /// A <see cref="Vector2"/> with all components set to zero.
         /// </summary>
-        public static readonly Vector2d Zero = new Vector2d(0.0f, 0.0f);
+        public static readonly Vector2d Zero = new Vector2d(0.0, 0.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> with all components set to one.
         /// </summary>
-        public static readonly Vector2d One = new Vector2d(1.0f, 1.0f);
+        public static readonly Vector2d One = new Vector2d(1.0, 1.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing upwards.
         /// </summary>
-        public static readonly Vector2d Up = new Vector2d(0f, 1.0f);
+        public static readonly Vector2d Up = new Vector2d(0f, 1.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing downwards.
         /// </summary>
-        public static readonly Vector2d Down = new Vector2d(0.0f, -1.0f);
+        public static readonly Vector2d Down = new Vector2d(0.0, -1.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing right.
         /// </summary>
-        public static readonly Vector2d Right = new Vector2d(1.0f, 0.0f);
+        public static readonly Vector2d Right = new Vector2d(1.0, 0.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing left.
         /// </summary>
-        public static readonly Vector2d Left = new Vector2d(-1.0f, 0.0f);
+        public static readonly Vector2d Left = new Vector2d(-1.0, 0.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing into the top right corner with a length of sqrt(2).
@@ -62,17 +61,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Vector2"/> pointing into the top left corner with a length of sqrt(2).
         /// </summary>
-        public static readonly Vector2d TopLeft = new Vector2d(-1.0f, 1.0f);
+        public static readonly Vector2d TopLeft = new Vector2d(-1.0, 1.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing into the bottom right corner with a length of sqrt(2).
         /// </summary>
-        public static readonly Vector2d BottomRight = new Vector2d(1.0f, -1.0f);
+        public static readonly Vector2d BottomRight = new Vector2d(1.0, -1.0);
 
         /// <summary>
         /// A <see cref="Vector2"/> pointing into the bottom right corner with a length of sqrt(2).
         /// </summary>
-        public static readonly Vector2d BottomLeft = new Vector2d(-1.0f, -1.0f);
+        public static readonly Vector2d BottomLeft = new Vector2d(-1.0, -1.0);
 
         /// <summary>
         /// The <see cref="Random"/> instance used to obtain the random vector.
@@ -312,7 +311,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="System.Drawing.PointF"/> to check.</param>
         /// <returns>Whether both instances are equal.</returns>
-        public bool Equals(System.Drawing.Point other)
+        public bool Equals(System.Drawing.PointF other)
         {
             return (this.X == other.X) && (this.Y == other.Y);
         }
@@ -335,9 +334,9 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="System.string"/> representing the <see cref="Vector3"/>
+        /// Returns a <see cref="System.string"/> representing the <see cref="Vector2d"/>
         /// </summary>
-        /// <returns>A <see cref="System.string"/> representing the <see cref="Vector3"/></returns>
+        /// <returns>A <see cref="System.string"/> representing the <see cref="Vector2d"/></returns>
         public override string ToString()
         {
             Contract.Ensures(Contract.Result<string>() != null);
@@ -378,13 +377,13 @@ namespace LightClaw.Engine.Core
 
             return new Vector2d()
             {
-                X = 0.5f * ((((2.0f * valueB.X) + ((-valueA.X + valueC.X) * amount)) +
-                    (((((2.0f * valueA.X) - (5.0f * valueB.X)) + (4.0f * valueC.X)) - valueD.X) * squared)) +
-                    ((((-valueA.X + (3.0f * valueB.X)) - (3.0f * valueC.X)) + valueD.X) * cubed)),
+                X = 0.5 * ((((2.0 * valueB.X) + ((-valueA.X + valueC.X) * amount)) +
+                    (((((2.0 * valueA.X) - (5.0 * valueB.X)) + (4.0 * valueC.X)) - valueD.X) * squared)) +
+                    ((((-valueA.X + (3.0 * valueB.X)) - (3.0 * valueC.X)) + valueD.X) * cubed)),
 
-                Y = 0.5f * ((((2.0f * valueB.Y) + ((-valueA.Y + valueC.Y) * amount)) +
-                    (((((2.0f * valueA.Y) - (5.0f * valueB.Y)) + (4.0f * valueC.Y)) - valueD.Y) * squared)) +
-                    ((((-valueA.Y + (3.0f * valueB.Y)) - (3.0f * valueC.Y)) + valueD.Y) * cubed))
+                Y = 0.5 * ((((2.0 * valueB.Y) + ((-valueA.Y + valueC.Y) * amount)) +
+                    (((((2.0 * valueA.Y) - (5.0 * valueB.Y)) + (4.0 * valueC.Y)) - valueD.Y) * squared)) +
+                    ((((-valueA.Y + (3.0 * valueB.Y)) - (3.0 * valueC.Y)) + valueD.Y) * cubed))
             };
         }
 
@@ -458,9 +457,9 @@ namespace LightClaw.Engine.Core
         {
             double squared = amount * amount,
                    cubed = amount * squared,
-                   part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f,
-                   part2 = (-2.0f * cubed) + (3.0f * squared),
-                   part3 = (cubed - (2.0f * squared)) + amount,
+                   part1 = ((2.0 * cubed) - (3.0 * squared)) + 1.0,
+                   part2 = (-2.0 * cubed) + (3.0 * squared),
+                   part3 = (cubed - (2.0 * squared)) + amount,
                    part4 = cubed - squared;
 
             return new Vector2d()
@@ -542,9 +541,9 @@ namespace LightClaw.Engine.Core
         public static Vector2d Normalize(Vector2d value)
         {
             double length = value.Length;
-            if (length != 0.0f)
+            if (length != 0.0)
             {
-                double inv = 1.0f / length;
+                double inv = 1.0 / length;
                 return new Vector2d()
                 {
                     X = value.X * inv,
@@ -656,8 +655,8 @@ namespace LightClaw.Engine.Core
 
             return new Vector2d()
             {
-                X = vec.X - ((2.0f * dot) * surfaceNormal.X),
-                Y = vec.Y - ((2.0f * dot) * surfaceNormal.Y)
+                X = vec.X - ((2.0 * dot) * surfaceNormal.X),
+                Y = vec.Y - ((2.0 * dot) * surfaceNormal.Y)
             };
         }
 

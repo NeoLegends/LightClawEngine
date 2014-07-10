@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public interface IControllable : IDisposable
+    public interface IControllable : IDisposable, IUpdateable
     {
         event EventHandler<EnabledChangedEventArgs> EnabledChanged;
     
@@ -24,7 +24,5 @@ namespace LightClaw.Engine.Core
         void Disable();
 
         void Load();
-
-        void Update();
     }
 }

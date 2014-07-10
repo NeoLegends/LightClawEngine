@@ -29,12 +29,14 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentNullException>(attributeBindings != null);
+            Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
         }
 
         public ShaderProgram(String name, IEnumerable<Shader> shaders, IEnumerable<AttributeBinding> attributeBindings)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentNullException>(attributeBindings != null);
+            Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
 
             this.Name = name;
             this.AttributeBindings = attributeBindings.ToArray();
@@ -70,12 +72,7 @@ namespace LightClaw.Engine.Graphics
         {
             try
             {
-                int[] attachedShaders = null;
-                int count = 0;
-                GL.GetAttachedShaders(this, int.MaxValue, out count, attachedShaders);
-                Contract.Assume(attachedShaders != null);
-
-                foreach (int shader in attachedShaders)
+                foreach (Shader shader in this.Shaders)
                 {
                     GL.DetachShader(this, shader);
                 }

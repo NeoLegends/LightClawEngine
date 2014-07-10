@@ -353,17 +353,33 @@ namespace LightClaw.Engine.Core
 
             return new Vector3d()
             {
-                X = 0.5f * ((((2.0 * value2.X) + ((-value1.X + value3.X) * amount)) +
+                X = 0.5 * ((((2.0 * value2.X) + ((-value1.X + value3.X) * amount)) +
                     (((((2.0 * value1.X) - (5.0 * value2.X)) + (4.0 * value3.X)) - value4.X) * squared)) +
                     ((((-value1.X + (3.0 * value2.X)) - (3.0 * value3.X)) + value4.X) * cubed)),
 
-                Y = 0.5f * ((((2.0 * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
+                Y = 0.5 * ((((2.0 * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
                     (((((2.0 * value1.Y) - (5.0 * value2.Y)) + (4.0 * value3.Y)) - value4.Y) * squared)) +
                     ((((-value1.Y + (3.0 * value2.Y)) - (3.0 * value3.Y)) + value4.Y) * cubed)),
 
-                Z = 0.5f * ((((2.0 * value2.Z) + ((-value1.Z + value3.Z) * amount)) +
+                Z = 0.5 * ((((2.0 * value2.Z) + ((-value1.Z + value3.Z) * amount)) +
                     (((((2.0 * value1.Z) - (5.0 * value2.Z)) + (4.0 * value3.Z)) - value4.Z) * squared)) +
                     ((((-value1.Z + (3.0 * value2.Z)) - (3.0 * value3.Z)) + value4.Z) * cubed))
+            };
+        }
+
+        /// <summary>
+        /// Restricts a value to be within a specified range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="min">The minimum value.</param>
+        /// <param name="max">The maximum value.</param>
+        public static Vector3d Clamp(ref Vector3d value, ref Vector3d max, ref Vector3d min)
+        {
+            return new Vector3d()
+            {
+                X = (value.X > max.X) ? max.X : (value.X < min.X) ? min.X : value.X,
+                Y = (value.Y > max.Y) ? max.Y : (value.Y < min.Y) ? min.Y : value.Y,
+                Z = (value.Z > max.Z) ? max.Z : (value.Z < min.Z) ? min.Z : value.Z
             };
         }
 
@@ -457,6 +473,25 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Performs a linear interpolation between two vectors.
+        /// </summary>
+        /// <param name="start">Start vector.</param>
+        /// <param name="end">End vector.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <remarks>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// </remarks>
+        public static Vector3d Lerp(ref Vector3d start, ref Vector3d end, double amount)
+        {
+            return new Vector3d()
+            {
+                X = Mathf.Lerp(start.X, end.X, amount),
+                Y = Mathf.Lerp(start.Y, end.Y, amount),
+                Z = Mathf.Lerp(start.Z, end.Z, amount)
+            };
+        }
+
+        /// <summary>
         /// 	Constructs a new <see cref="Vector3"/> based on the biggest values in one of the two <see cref="Vector3"/>s.
         /// </summary>
         /// <param name="a">The first <see cref="Vector3"/>.</param>
@@ -525,25 +560,6 @@ namespace LightClaw.Engine.Core
             {
                 return (Vector3d)value.Clone();
             }
-        }
-
-        /// <summary>
-        /// Performs a linear interpolation between two vectors.
-        /// </summary>
-        /// <param name="start">Start vector.</param>
-        /// <param name="end">End vector.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
-        /// </remarks>
-        public static Vector3d Lerp(ref Vector3d start, ref Vector3d end, double amount)
-        {
-            return new Vector3d()
-            {
-                X = Mathf.Lerp(start.X, end.X, amount),
-                Y = Mathf.Lerp(start.Y, end.Y, amount),
-                Z = Mathf.Lerp(start.Z, end.Z, amount)
-            };
         }
 
         /// <summary>

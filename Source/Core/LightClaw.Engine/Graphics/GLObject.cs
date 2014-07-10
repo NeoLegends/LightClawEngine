@@ -11,7 +11,7 @@ namespace LightClaw.Engine.Graphics
 {
     public abstract class GLObject : IDisposable
     {
-        [ProtoIgnore]
+        [IgnoreDataMember, ProtoIgnore]
         public int Id { get; protected set; }
 
         protected GLObject() { }
@@ -37,7 +37,7 @@ namespace LightClaw.Engine.Graphics
             GC.SuppressFinalize(this);
         }
 
-        public static implicit operator int (GLObject glObject)
+        public static implicit operator int(GLObject glObject)
         {
             return (glObject != null) ? glObject.Id : 0;
         }

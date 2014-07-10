@@ -19,15 +19,14 @@ namespace LightClaw.Engine.Core
             this.semaphore = new SemaphoreSlim(initialCount);
         }
 
-        public async Task<AsyncLockReleaser> LockAsync()
+        public Task<AsyncLockReleaser> LockAsync()
         {
-            await this.semaphore.WaitAsync();
-            return new AsyncLockReleaser(this.semaphore);
+            return this.semaphore.WaitAsync().ContinueWith(t => new AsyncLockReleaser(this.semaphore), TaskContinuationOptions.ExecuteSynchronously);
         }
 
         public struct AsyncLockReleaser : IDisposable
         {
-            private SemaphoreSlim semaphore;
+            private readonly SemaphoreSlim semaphore;
 
             public AsyncLockReleaser(SemaphoreSlim semaphore)
                 : this()

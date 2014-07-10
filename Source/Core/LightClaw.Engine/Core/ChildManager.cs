@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace LightClaw.Engine.Core
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
-        private IEnumerable<T> _Items = new List<T>();
+        private ObservableCollection<T> _Items = new ObservableCollection<T>();
 
         [ProtoMember(2, DynamicType = true)]
-        protected virtual IEnumerable<T> Items
+        protected virtual ObservableCollection<T> Items
         {
             get
             {
@@ -36,7 +37,10 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
-            ((List<T>)this.Items).AddRange(items);
+            foreach (T item in items)
+            {
+                this.Items.Add(item);
+            }
         }
 
         protected override void OnEnable()

@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(IgnoreListHandling = true)]
-    public class GameObject : ListChildManager<Component>
+    public sealed class GameObject : ListChildManager<Component>
     {
         public event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;
 
@@ -40,7 +42,61 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(components != null);
 
-            this.Items.AddRange(components);
+            this.AddRange(components);
+        }
+
+        public override void Add(Component item)
+        {
+            this.Insert(this.Count, item);
+        }
+
+        public override void AddRange(IEnumerable<Component> items)
+        {
+            this.InsertRange(this.Count, items);
+        }
+
+        public override void Clear()
+        {
+            foreach (Component comp in this.Items)
+            {
+                base.Remove(comp);
+            }
+            this.Items.Clear();
+        }
+
+        public override void Insert(int index, Component item)
+        {
+            if (item.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this)))
+            {
+                base.Insert(index, item);
+            }
+        }
+
+        public override void InsertRange(int index, IEnumerable<Component> items)
+        {
+            List<Component> alreadyAttachedComponents = new List<Component>(8);
+            foreach (Component comp in items)
+            {
+                alreadyAttachedComponents.Add(comp);
+                if (comp.GetType().GetCustomAttributes<AttachmentValidatorAttribute>()
+                                  .All(attr => attr.Validate(this, items.Except(alreadyAttachedComponents))))
+                {
+                    base.Insert(index++, comp);
+                }
+            }
+        }
+
+        public override bool Remove(Component item)
+        {
+            return item.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)) && base.Remove(item);
+        }
+
+        public override void RemoveAt(int index)
+        {
+            if (this[index].GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)))
+            {
+                base.RemoveAt(index);
+            }
         }
 
         [ProtoAfterDeserialization]
