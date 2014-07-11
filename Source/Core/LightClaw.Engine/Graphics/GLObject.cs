@@ -5,18 +5,27 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using Munq;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
+    [ProtoContract]
     public abstract class GLObject : IDisposable
     {
         [IgnoreDataMember, ProtoIgnore]
         public int Id { get; protected set; }
 
-        protected GLObject() { }
+        [IgnoreDataMember, ProtoIgnore]
+        public IocContainer Ioc { get; protected set; }
+
+        protected GLObject() 
+        {
+            this.Ioc = LightClawEngine.DefaultIoc;
+        }
 
         protected GLObject(int id)
+            : this()
         {
             this.Id = id;
         }

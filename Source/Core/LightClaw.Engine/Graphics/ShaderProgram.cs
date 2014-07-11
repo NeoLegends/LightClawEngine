@@ -17,14 +17,14 @@ namespace LightClaw.Engine.Graphics
         public string Name { get; set; }
 
         [ProtoMember(2)]
-        public AttributeBinding[] AttributeBindings { get; private set; }
+        public AttributeLocationBinding[] AttributeBindings { get; private set; }
 
         [ProtoMember(3)]
         public Shader[] Shaders { get; private set; }
 
-        private ShaderProgram() : this(Enumerable.Empty<Shader>(), Enumerable.Empty<AttributeBinding>()) { }
+        private ShaderProgram() : this(Enumerable.Empty<Shader>(), Enumerable.Empty<AttributeLocationBinding>()) { }
 
-        public ShaderProgram(IEnumerable<Shader> shaders, IEnumerable<AttributeBinding> attributeBindings)
+        public ShaderProgram(IEnumerable<Shader> shaders, IEnumerable<AttributeLocationBinding> attributeBindings)
             : this(null, shaders, attributeBindings)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
@@ -32,7 +32,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
         }
 
-        public ShaderProgram(String name, IEnumerable<Shader> shaders, IEnumerable<AttributeBinding> attributeBindings)
+        public ShaderProgram(String name, IEnumerable<Shader> shaders, IEnumerable<AttributeLocationBinding> attributeBindings)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentNullException>(attributeBindings != null);
@@ -61,7 +61,7 @@ namespace LightClaw.Engine.Graphics
             {
                 GL.AttachShader(this, shader);
             }
-            foreach (AttributeBinding binding in this.AttributeBindings)
+            foreach (AttributeLocationBinding binding in this.AttributeBindings)
             {
                 GL.BindAttribLocation(this, binding.Index, binding.Name);
             }
@@ -72,6 +72,7 @@ namespace LightClaw.Engine.Graphics
         {
             try
             {
+                this.Unbind();
                 foreach (Shader shader in this.Shaders)
                 {
                     GL.DetachShader(this, shader);

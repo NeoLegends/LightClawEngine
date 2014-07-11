@@ -39,6 +39,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        [ProtoAfterSerialization]
         private void RaiseSaved()
         {
             EventHandler handler = this.Saved;
@@ -48,6 +49,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        [ProtoBeforeSerialization]
         private void RaiseSaving()
         {
             EventHandler handler = this.Saving;

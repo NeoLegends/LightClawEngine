@@ -14,10 +14,10 @@ namespace LightClaw.Engine.Core
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
-        private ObservableCollection<T> _Items = new ObservableCollection<T>();
+        private List<T> _Items = new List<T>();
 
-        [ProtoMember(2, DynamicType = true)]
-        protected virtual ObservableCollection<T> Items
+        [ProtoMember(1, DynamicType = true, IsRequired = true)]
+        protected virtual List<T> Items
         {
             get
             {

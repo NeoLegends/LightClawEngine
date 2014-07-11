@@ -168,11 +168,8 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
-    <Compile Include="Core\EnabledChangedEventArgs.cs" />
-    <Compile Include="Core\IGameSystem.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
-    <Compile Include="Core\LoadedChangedEventArgs.cs" />
     <Compile Include="Core\Manager.cs" />
     <Compile Include="Core\Game.cs" />
     <Compile Include="Core\GameObject.cs" />
@@ -183,7 +180,7 @@
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\PropertyChangedBase.cs" />
     <Compile Include="Core\Scene.cs" />
-    <Compile Include="Core\ControllableEventArgs.cs" />
+    <Compile Include="Core\ParameterEventArgs.cs" />
     <Compile Include="Core\SolitaryAttribute.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Core\Vector2d.cs" />
@@ -195,10 +192,12 @@
     <Compile Include="Core\StructureInformationAttribute.cs" />
     <Compile Include="Coroutines\CoroutineContext.cs" />
     <Compile Include="Coroutines\CoroutineController.cs" />
+    <Compile Include="Coroutines\CoroutineExtensions.cs" />
     <Compile Include="Coroutines\ICoroutineContext.cs" />
     <Compile Include="Coroutines\ICoroutineController.cs" />
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
-    <Compile Include="Graphics\AttributeBinding.cs" />
+    <Compile Include="Graphics\VertexArrayObject.cs" />
+    <Compile Include="Graphics\AttributeLocationBinding.cs" />
     <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
@@ -209,14 +208,18 @@
     <Compile Include="Graphics\T2P3N3Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
+    <Compile Include="Graphics\VertexAttributeBinding.cs" />
     <Compile Include="IO\ContentManager.cs" />
+    <Compile Include="IO\ContentManagerExtensions.cs" />
     <Compile Include="IO\DiskContentResolver.cs" />
+    <Compile Include="IO\FileSystemContentResolver.cs" />
     <Compile Include="IO\IconReader.cs" />
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
     <Compile Include="IO\StringContentReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\LightClawSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Munq.IocContainer">

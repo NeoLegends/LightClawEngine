@@ -10,11 +10,34 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Buffer<T> : GLObject
+    public abstract class Buffer : GLObject
+    {
+        public BufferTarget Target { get; protected set; }
+
+        public Buffer() { }
+
+        public Buffer(BufferTarget target) : this(0, target) { }
+
+        public Buffer(int id, BufferTarget target)
+            : base(id)
+        {
+            this.Target = target;
+        }
+
+        public void Bind()
+        {
+            GL.BindBuffer(this.Target, this);
+        }
+
+        public void Unbind()
+        {
+            GL.BindBuffer(this.Target, 0);
+        }
+    }
+
+    public class Buffer<T> : Buffer
         where T : struct
     {
-        private BufferTarget target;
-
         private int _Count = 0;
 
         public int Count
@@ -42,21 +65,15 @@ namespace LightClaw.Engine.Graphics
         }
 
         public Buffer(T[] data, BufferTarget target, BufferUsageHint hint)
+            : base(GL.GenBuffer(), target)
         {
             Contract.Requires<ArgumentNullException>(data != null);
 
             this.Count = data.Length;
-            this.target = target;
-            this.Id = GL.GenBuffer();
 
             GL.BindBuffer(target, this);
             GL.BufferData(target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, hint);
             GL.BindBuffer(target, 0);
-        }
-
-        public void Bind()
-        {
-            GL.BindBuffer(this.target, this);
         }
 
         protected override void Dispose(bool disposing)

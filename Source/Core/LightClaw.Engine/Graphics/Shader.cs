@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Graphics
         {
             // Create ID first to make sure it's created synchronously and that the ID is ready immediately after deserialization
             this.Id = GL.CreateShader(this.Type);
-            this.Source = await LightClawEngine.DefaultIoc.Resolve<IContentManager>().LoadAsync<string>(this.ResourceString);
+            this.Source = await this.Ioc.Resolve<IContentManager>().LoadAsync<string>(this.ResourceString);
 
             GL.ShaderSource(this, this.Source);
             GL.CompileShader(this);

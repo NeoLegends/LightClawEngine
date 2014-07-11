@@ -8,6 +8,10 @@ namespace LightClaw.Engine.Core
 {
     public interface IUpdateable
     {
+        event EventHandler<ParameterEventArgs> Updating;
+
+        event EventHandler<ParameterEventArgs> Updated;
+
         void Update();
     }
 }

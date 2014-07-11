@@ -9,11 +9,17 @@ namespace LightClaw.Engine.Core
 {
     public interface IControllable : IDisposable, IUpdateable
     {
-        event EventHandler<EnabledChangedEventArgs> EnabledChanged;
-    
-        event EventHandler<LoadedChangedEventArgs> LoadedChanged;
+        event EventHandler<ParameterEventArgs> Enabling;
 
-        event EventHandler<ControllableEventArgs> Updated;
+        event EventHandler<ParameterEventArgs> Enabled;
+
+        event EventHandler<ParameterEventArgs> Disabling;
+
+        event EventHandler<ParameterEventArgs> Disabled;
+
+        event EventHandler<ParameterEventArgs> Loading;
+
+        event EventHandler<ParameterEventArgs> Loaded;
 
         bool IsEnabled { get; }
 

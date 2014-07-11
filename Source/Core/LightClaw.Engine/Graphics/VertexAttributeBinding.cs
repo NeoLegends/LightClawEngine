@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class MeshPart<TVertex>
-        where TVertex : struct
+    public struct VertexAttributeBinding
     {
-        private VertexArrayObject arrayObject;
+
     }
 }

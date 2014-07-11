@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public class ControllableEventArgs : EventArgs
+    public class ParameterEventArgs : EventArgs
     {
         public object Parameter { get; private set; }
 
-        public ControllableEventArgs() { }
+        public ParameterEventArgs() { }
 
-        public ControllableEventArgs(object parameter)
+        public ParameterEventArgs(object parameter)
         {
             this.Parameter = parameter;
         }

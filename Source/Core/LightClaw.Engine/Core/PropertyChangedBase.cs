@@ -5,9 +5,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
+    [ProtoContract(IgnoreListHandling = true)]
     public abstract class PropertyChangedBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

@@ -9,7 +9,7 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.Coroutines
 {
-    public interface ICoroutineContext : IUpdateable
+    public interface ICoroutineContext
     {
         bool IsEnabled { get; set; }
 
@@ -17,10 +17,6 @@ namespace LightClaw.Engine.Coroutines
 
         void Reset();
 
-        bool Step();
-
         bool Step(out object current);
-
-        void Step(TimeSpan timeOut);
     }
 }

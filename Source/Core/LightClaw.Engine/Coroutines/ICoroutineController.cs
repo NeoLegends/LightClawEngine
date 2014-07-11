@@ -20,6 +20,18 @@ namespace LightClaw.Engine.Coroutines
     [ContractClassFor(typeof(ICoroutineController))]
     abstract class ICoroutineControllerContracts : ICoroutineController
     {
+        event EventHandler<ParameterEventArgs> IUpdateable.Updating
+        {
+            add { }
+            remove { }
+        }
+
+        event EventHandler<ParameterEventArgs> IUpdateable.Updated
+        {
+            add { }
+            remove { }
+        }
+
         void ICoroutineController.Add(IEnumerable coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);

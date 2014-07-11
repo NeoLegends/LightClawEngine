@@ -9,7 +9,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract]
-    public struct AttributeBinding
+    public struct AttributeLocationBinding
     {
         [ProtoMember(1)]
         public int Index { get; private set; }
@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Graphics
         [ProtoMember(2)]
         public string Name { get; private set; }
 
-        public AttributeBinding(int index, string name)
+        public AttributeLocationBinding(int index, string name)
             : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);

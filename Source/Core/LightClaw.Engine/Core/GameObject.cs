@@ -59,6 +59,7 @@ namespace LightClaw.Engine.Core
         {
             foreach (Component comp in this.Items)
             {
+                comp.GameObject = null;
                 base.Remove(comp);
             }
             this.Items.Clear();
@@ -68,6 +69,7 @@ namespace LightClaw.Engine.Core
         {
             if (item.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this)))
             {
+                item.GameObject = this;
                 base.Insert(index, item);
             }
         }
@@ -81,6 +83,7 @@ namespace LightClaw.Engine.Core
                 if (comp.GetType().GetCustomAttributes<AttachmentValidatorAttribute>()
                                   .All(attr => attr.Validate(this, items.Except(alreadyAttachedComponents))))
                 {
+                    comp.GameObject = this;
                     base.Insert(index++, comp);
                 }
             }
@@ -88,13 +91,22 @@ namespace LightClaw.Engine.Core
 
         public override bool Remove(Component item)
         {
-            return item.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)) && base.Remove(item);
+            if (item.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)) && base.Remove(item))
+            {
+                item.GameObject = null;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override void RemoveAt(int index)
         {
             if (this[index].GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)))
             {
+                this[index].GameObject = null;
                 base.RemoveAt(index);
             }
         }

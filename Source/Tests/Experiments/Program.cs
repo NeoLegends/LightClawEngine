@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Coroutines;
+using ProtoBuf;
 
 namespace Experiments
 {
@@ -13,26 +15,34 @@ namespace Experiments
     {
         static void Main(string[] args)
         {
-            MethodInfo[] mInfos = typeof(Vector2).GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, new OuterList());
+            }
+        }
 
-            File.WriteAllText(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vector2Methods.txt"),
-                string.Join(Environment.NewLine, mInfos.Select(mInfo => mInfo.Name).Where(name => !name.StartsWith("op_")).OrderBy(name => name))
-            );
+        [ProtoContract]
+        public class OuterList
+        {
+            [ProtoMember(1)]
+            public List<InnerList> InnerList = new List<InnerList>();
+        }
 
-            mInfos = typeof(Vector3).GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+        [ProtoContract(IgnoreListHandling = true)]
+        public class InnerList : IEnumerable<int>
+        {
+            [ProtoMember(1)]
+            public List<int> innerList = new List<int>();
 
-            File.WriteAllText(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vector3Methods.txt"),
-                string.Join(Environment.NewLine, mInfos.Select(mInfo => mInfo.Name).Where(name => !name.StartsWith("op_")).OrderBy(name => name))
-            );
+            public IEnumerator<int> GetEnumerator()
+            {
+                return this.innerList.GetEnumerator();
+            }
 
-            mInfos = typeof(Vector4).GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
-
-            File.WriteAllText(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Vector4Methods.txt"),
-                string.Join(Environment.NewLine, mInfos.Select(mInfo => mInfo.Name).Where(name => !name.StartsWith("op_")).OrderBy(name => name))
-            );
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
         }
     }
 }

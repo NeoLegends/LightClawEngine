@@ -12,6 +12,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Coroutines
 {
     [ProtoContract]
+    [Solitary(typeof(CoroutineController))]
     public class CoroutineController : Component, ICoroutineController
     {
         [ProtoIgnore]

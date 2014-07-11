@@ -8,6 +8,7 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
+    [ProtoContract(IgnoreListHandling = true)]
     public class ListChildManager<T> : ChildManager<T>, IList<T>
         where T : IControllable
     {

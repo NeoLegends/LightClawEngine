@@ -7,20 +7,31 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Munq;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract]
+    [ProtoContract(IgnoreListHandling = true)]
     public abstract class Manager : PropertyChangedBase, IControllable, INameable
     {
         private object stateLock = new object();
 
-        public event EventHandler<EnabledChangedEventArgs> EnabledChanged;
+        public event EventHandler<ParameterEventArgs> Enabling;
 
-        public event EventHandler<LoadedChangedEventArgs> LoadedChanged;
+        public event EventHandler<ParameterEventArgs> Enabled;
 
-        public event EventHandler<ControllableEventArgs> Updated;
+        public event EventHandler<ParameterEventArgs> Disabling;
+
+        public event EventHandler<ParameterEventArgs> Disabled;
+
+        public event EventHandler<ParameterEventArgs> Loading;
+
+        public event EventHandler<ParameterEventArgs> Loaded;
+
+        public event EventHandler<ParameterEventArgs> Updating;
+
+        public event EventHandler<ParameterEventArgs> Updated;
 
         private string _Name;
 
@@ -29,7 +40,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return _Name;
+                return _Name ?? (Name = this.GetType().FullName);
             }
             set
             {
@@ -39,7 +50,7 @@ namespace LightClaw.Engine.Core
 
         private bool _IsEnabled = false;
 
-        [ProtoMember(2)]
+        [ProtoMember(2, IsRequired = true)]
         public bool IsEnabled
         {
             get
@@ -49,17 +60,12 @@ namespace LightClaw.Engine.Core
             private set
             {
                 this.SetProperty(ref _IsEnabled, value);
-                EventHandler<EnabledChangedEventArgs> handler = this.EnabledChanged;
-                if (handler != null)
-                {
-                    handler(this, new EnabledChangedEventArgs(value));
-                }
             }
         }
 
         private bool _IsLoaded = false;
 
-        [ProtoMember(3)]
+        [ProtoMember(3, IsRequired = true)]
         public bool IsLoaded
         {
             get
@@ -69,22 +75,17 @@ namespace LightClaw.Engine.Core
             private set
             {
                 this.SetProperty(ref _IsLoaded, value);
-                EventHandler<LoadedChangedEventArgs> handler = this.LoadedChanged;
-                if (handler != null)
-                {
-                    handler(this, new LoadedChangedEventArgs(value));
-                }
             }
         }
 
-        protected Manager()
-        {
-            this.Name = this.GetType().FullName;
-        }
+        public IocContainer Ioc { get; protected set; }
+
+        protected Manager() { }
 
         protected Manager(string name)
         {
             this.Name = name;
+            this.Ioc = LightClawEngine.DefaultIoc;
         }
 
         ~Manager()
@@ -98,8 +99,10 @@ namespace LightClaw.Engine.Core
             {
                 if (!this.IsEnabled)
                 {
+                    this.Raise(this.Enabling);
                     this.OnEnable();
                     this.IsEnabled = true;
+                    this.Raise(this.Enabled);
                 }
             }
         }
@@ -110,8 +113,10 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsEnabled)
                 {
+                    this.Raise(this.Disabling);
                     this.OnDisable();
                     this.IsEnabled = false;
+                    this.Raise(this.Disabled);
                 }
             }
         }
@@ -122,8 +127,10 @@ namespace LightClaw.Engine.Core
             {
                 if (!this.IsLoaded)
                 {
+                    this.Raise(this.Loading);
                     this.OnLoad();
                     this.IsLoaded = true;
+                    this.Raise(this.Loaded);
                 }
             }
         }
@@ -134,12 +141,9 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsEnabled)
                 {
+                    this.Raise(this.Updating);
                     this.OnUpdate();
-                    EventHandler<ControllableEventArgs> handler = this.Updated;
-                    if (handler != null)
-                    {
-                        handler(this, new ControllableEventArgs());
-                    }
+                    this.Raise(this.Updated);
                 }
             }
         }
@@ -168,5 +172,13 @@ namespace LightClaw.Engine.Core
         protected abstract void OnLoad();
 
         protected abstract void OnUpdate();
+
+        private void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
+        {
+            if (handler != null)
+            {
+                handler(this, args ?? new ParameterEventArgs());
+            }
+        }
     }
 }

@@ -10,19 +10,29 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.IO
 {
-    public class ContentManager : IContentManager, IGameSystem
+    public class ContentManager : IContentManager
     {
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
         private readonly ConcurrentDictionary<string, WeakReference> cachedAssets = new ConcurrentDictionary<string, WeakReference>();
 
-        private readonly ConcurrentDictionary<Type, IContentReader> readers = new ConcurrentDictionary<Type, IContentReader>();
+        private readonly ConcurrentBag<IContentReader> readers = new ConcurrentBag<IContentReader>();
 
         private readonly ConcurrentBag<IContentResolver> resolvers = new ConcurrentBag<IContentResolver>();
 
         public ContentManager()
-        {
+            : this(
+                new[] { new StringContentReader() },
+                new[] { new FileSystemContentResolver(AppDomain.CurrentDomain.BaseDirectory) }
+            ) { }
 
+        public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
+        {
+            Contract.Requires<ArgumentNullException>(readers != null);
+            Contract.Requires<ArgumentNullException>(resolvers != null);
+
+            this.Register(readers);
+            this.Register(resolvers);
         }
 
         public async Task<bool> ExistsAsync(string resourceString)
@@ -71,7 +81,7 @@ namespace LightClaw.Engine.IO
 
                 if (!this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || 
                     (asset = cachedAsset.Target) == null ||
-                    !(asset is T))
+                    !(asset is T)) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
                 {
                     using (Stream assetStream = await this.GetStreamAsync(resourceString))
                     {
@@ -81,7 +91,7 @@ namespace LightClaw.Engine.IO
                         }
 
                         IContentReader reader;
-                        if (!this.readers.TryGetValue(typeof(T), out reader))
+                        if ((reader = this.readers.FirstOrDefault(contentReader => contentReader.CanRead(typeof(T), parameter))) == null)
                         {
                             throw new InvalidOperationException("There was no suitable IContentReader to read the asset from the stream.");
                         }
@@ -100,30 +110,14 @@ namespace LightClaw.Engine.IO
             }
         }
 
-        public void Register(Type type, IContentReader reader)
+        public void Register(IContentReader reader)
         {
-            this.readers.TryAdd(type, reader);
-        }
-
-        public void Register(IEnumerable<Type> types, IContentReader reader)
-        {
-            Contract.Requires<ArgumentNullException>(types != null);
-            Contract.Requires<ArgumentNullException>(reader != null);
-
-            foreach (Type type in types)
-            {
-                this.Register(type, reader);
-            }
+            this.readers.Add(reader);
         }
 
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
-        }
-
-        void IGameSystem.Initialize(Game game)
-        {
-
         }
     }
 }
