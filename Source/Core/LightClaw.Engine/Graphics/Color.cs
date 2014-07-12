@@ -1186,7 +1186,12 @@ namespace LightClaw.Engine.Graphics
         /// <returns>A color.</returns>
         public static Color FromBgra(int color)
         {
-            return new Color((byte)((color >> 16) & 255), (byte)((color >> 8) & 255), (byte)(color & 255), (byte)((color >> 24) & 255));
+            return new Color(
+                (byte)((color >> 16) & byte.MaxValue),
+                (byte)((color >> 8) & byte.MaxValue),
+                (byte)(color & byte.MaxValue), 
+                (byte)((color >> 24) & byte.MaxValue)
+            );
         }
 
         /// <summary>
@@ -1407,7 +1412,7 @@ namespace LightClaw.Engine.Graphics
 
 #endif
 
-        public enum FormatOrder
+        public enum FormatOrder : byte
         {
             Rgba,
 
