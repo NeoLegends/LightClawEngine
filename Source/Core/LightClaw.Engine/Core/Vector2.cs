@@ -20,7 +20,6 @@ namespace LightClaw.Engine.Core
 #if SYSTEMDRAWING_INTEROP
                             , IEquatable<System.Drawing.PointF>
 #endif
-                            
     {
         #region Predefined Vectors
 
@@ -319,11 +318,10 @@ namespace LightClaw.Engine.Core
         /// <returns>Derived from <see cref="System.Object"/></returns>
         public override int GetHashCode()
         {
-            const int hashFactor = 486187739;
             unchecked
             {
-                int hash = 397 * hashFactor + this.X.GetHashCode();
-                hash = hash * hashFactor + this.Y.GetHashCode();
+                int hash = Constants.HashStart * Constants.HashFactor + this.X.GetHashCode();
+                hash = hash * Constants.HashFactor + this.Y.GetHashCode();
                 return hash;
             }
         }

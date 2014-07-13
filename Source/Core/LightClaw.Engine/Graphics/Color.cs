@@ -1136,13 +1136,12 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public override int GetHashCode()
         {
-            const int hashFactor = 486187739;
             unchecked
             {
-                int hash = 397 * hashFactor + this.R.GetHashCode();
-                hash = hash * hashFactor + this.G.GetHashCode();
-                hash = hash * hashFactor + this.B.GetHashCode();
-                hash = hash * hashFactor + this.A.GetHashCode();
+                int hash = Constants.HashStart * Constants.HashFactor + this.R.GetHashCode();
+                hash = hash * Constants.HashFactor + this.G.GetHashCode();
+                hash = hash * Constants.HashFactor + this.B.GetHashCode();
+                hash = hash * Constants.HashFactor + this.A.GetHashCode();
                 return hash;
             }
         }

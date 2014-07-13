@@ -282,13 +282,12 @@ namespace LightClaw.Engine.Core
         /// <returns>The instance's hash code.</returns>
         public override int GetHashCode()
         {
-            const int hashFactor = 486187739;
             unchecked
             {
-                int hash = 397 * hashFactor + this.X.GetHashCode();
-                hash = hash * hashFactor + this.Y.GetHashCode();
-                hash = hash * hashFactor + this.Z.GetHashCode();
-                hash = hash * hashFactor + this.W.GetHashCode();
+                int hash = Constants.HashStart * Constants.HashFactor + this.X.GetHashCode();
+                hash = hash * Constants.HashFactor + this.Y.GetHashCode();
+                hash = hash * Constants.HashFactor + this.Z.GetHashCode();
+                hash = hash * Constants.HashFactor + this.W.GetHashCode();
                 return hash;
             }
         }
