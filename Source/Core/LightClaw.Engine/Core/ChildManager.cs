@@ -67,19 +67,9 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            IEnumerable<T> items = this.Items;
-            if (items != null)
+            foreach (T item in this.Items)
             {
-                lock (items)
-                {
-#pragma warning disable 0728
-                    items = items.ToArray();
-#pragma warning restore 0728
-                }
-                foreach (T item in items)
-                {
-                    action(item);
-                }
+                action(item);
             }
         }
 
