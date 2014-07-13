@@ -9,6 +9,6 @@ namespace LightClaw.Engine.Graphics
     public class MeshPart<TVertex>
         where TVertex : struct
     {
-        private VertexArrayObject arrayObject;
+
     }
 }

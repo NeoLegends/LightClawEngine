@@ -16,6 +16,7 @@ namespace LightClaw.Engine.Graphics
         [IgnoreDataMember, ProtoIgnore]
         public int Id { get; protected set; }
 
+        [CLSCompliant(false)]
         [IgnoreDataMember, ProtoIgnore]
         public IocContainer Ioc { get; protected set; }
 

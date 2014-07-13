@@ -201,6 +201,7 @@
     <Compile Include="Coroutines\ICoroutineContext.cs" />
     <Compile Include="Coroutines\ICoroutineController.cs" />
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
+    <Compile Include="Graphics\BufferConfiguration.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\AttributeLocationBinding.cs" />
     <Compile Include="Graphics\Color.cs" />
@@ -213,7 +214,7 @@
     <Compile Include="Graphics\T2P3N3Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
-    <Compile Include="Graphics\VertexAttributeBinding.cs" />
+    <Compile Include="Graphics\VertexAttributePointer.cs" />
     <Compile Include="IO\ContentManager.cs" />
     <Compile Include="IO\ContentManagerExtensions.cs" />
     <Compile Include="IO\DiskContentResolver.cs" />

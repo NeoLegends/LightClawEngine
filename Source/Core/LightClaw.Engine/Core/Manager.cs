@@ -78,6 +78,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        [CLSCompliant(false)]
         public IocContainer Ioc { get; protected set; }
 
         protected Manager() { }
