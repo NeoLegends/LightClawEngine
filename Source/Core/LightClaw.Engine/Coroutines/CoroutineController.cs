@@ -12,7 +12,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Coroutines
 {
     [ProtoContract]
-    [Solitary(typeof(CoroutineController))]
+    [Solitary(typeof(CoroutineController), "More than one CoroutineController makes no sense and induces overhead.")]
     public class CoroutineController : Component, ICoroutineController
     {
         [ProtoIgnore]
@@ -47,18 +47,6 @@ namespace LightClaw.Engine.Coroutines
         public void Add(Func<IEnumerable> coroutine)
         {
             this.Add(coroutine());
-        }
-
-        protected override void OnEnable()
-        {
-        }
-
-        protected override void OnDisable()
-        {
-        }
-
-        protected override void OnLoad()
-        {
         }
 
         protected override void OnUpdate()

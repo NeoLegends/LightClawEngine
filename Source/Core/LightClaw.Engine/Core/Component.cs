@@ -35,5 +35,15 @@ namespace LightClaw.Engine.Core
                 }
             }
         }
+
+        protected override void OnEnable() { }
+
+        protected override void OnDisable() { }
+
+        protected override void OnLoad() { }
+
+        protected override void OnReset() { }
+
+        protected override void OnUpdate() { }
     }
 }

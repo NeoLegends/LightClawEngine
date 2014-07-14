@@ -29,6 +29,10 @@ namespace LightClaw.Engine.Core
 
         public event EventHandler<ParameterEventArgs> Loaded;
 
+        public event EventHandler<ParameterEventArgs> Resetting;
+
+        public event EventHandler<ParameterEventArgs> Resetted;
+
         public event EventHandler<ParameterEventArgs> Updating;
 
         public event EventHandler<ParameterEventArgs> Updated;
@@ -79,14 +83,17 @@ namespace LightClaw.Engine.Core
         }
 
         [CLSCompliant(false)]
-        public IocContainer Ioc { get; protected set; }
+        public IocContainer IocC { get; protected set; }
 
-        protected Manager() { }
+        protected Manager()
+        {
+            this.IocC = LightClawEngine.DefaultIocContainer;
+        }
 
         protected Manager(string name)
+            : this()
         {
             this.Name = name;
-            this.Ioc = LightClawEngine.DefaultIoc;
         }
 
         ~Manager()
@@ -136,6 +143,16 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        public void Reset()
+        {
+            lock (this.stateLock)
+            {
+                this.Raise(this.Resetting);
+                this.OnReset();
+                this.Raise(this.Resetted);
+            }
+        }
+
         public void Update()
         {
             lock (this.stateLock)
@@ -171,6 +188,8 @@ namespace LightClaw.Engine.Core
         protected abstract void OnDisable();
 
         protected abstract void OnLoad();
+
+        protected abstract void OnReset();
 
         protected abstract void OnUpdate();
 

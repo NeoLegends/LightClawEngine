@@ -49,24 +49,17 @@ namespace LightClaw.Engine.Graphics
             return this.GetEnumerator();
         }
 
-        protected override void OnEnable()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnDisable()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override async void OnLoad()
         {
-            this.Parts = await this.Ioc.Resolve<IContentManager>().LoadAsync<IEnumerable<MeshPart<TVertex>>>(this.ResourceString, this.MeshFormat);
-        }
-
-        protected override void OnUpdate()
-        {
-            throw new NotImplementedException();
+            try
+            {
+                this.Parts = await this.IocC.Resolve<IContentManager>()
+                                           .LoadAsync<IEnumerable<MeshPart<TVertex>>>(this.ResourceString, this.MeshFormat);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -49,5 +49,18 @@ namespace LightClaw.Engine.Graphics
         {
             GL.BindVertexArray(0);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                GL.DeleteVertexArray(this);
+            }
+            catch (AccessViolationException)
+            {
+                throw; // Log and swallow in the future
+            }
+            base.Dispose(disposing);
+        }
     }
 }

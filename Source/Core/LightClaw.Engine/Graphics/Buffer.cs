@@ -33,6 +33,19 @@ namespace LightClaw.Engine.Graphics
         {
             GL.BindBuffer(this.Target, 0);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                GL.DeleteBuffer(this);
+            }
+            catch (AccessViolationException)
+            {
+                throw; // Log and swallow in the future!
+            }
+            base.Dispose(disposing);
+        }
     }
 
     public class Buffer<T> : Buffer
@@ -74,19 +87,6 @@ namespace LightClaw.Engine.Graphics
             GL.BindBuffer(target, this);
             GL.BufferData(target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, hint);
             GL.BindBuffer(target, 0);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                GL.DeleteBuffer(this);
-            }
-            catch (AccessViolationException)
-            {
-                throw; // Log and swallow in the future!
-            }
-            base.Dispose(disposing);
         }
     }
 }

@@ -12,14 +12,14 @@ namespace LightClaw.Engine.Core
 {
     public class LightClawEngine
     {
-        private static readonly IocContainer _DefaultIoc = new IocContainer();
+        private static readonly IocContainer _DefaultIocContainer = new IocContainer();
 
         [CLSCompliant(false)]
-        public static IocContainer DefaultIoc
+        public static IocContainer DefaultIocContainer
         {
             get
             {
-                return _DefaultIoc;
+                return _DefaultIocContainer;
             }
         }
 

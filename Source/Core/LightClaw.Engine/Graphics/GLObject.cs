@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Graphics
 
         protected GLObject() 
         {
-            this.Ioc = LightClawEngine.DefaultIoc;
+            this.Ioc = LightClawEngine.DefaultIocContainer;
         }
 
         protected GLObject(int id)

@@ -36,13 +36,17 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public GameObject() { }
+        public GameObject() : this(new Component[] { }) { }
 
         public GameObject(IEnumerable<Component> components)
         {
             Contract.Requires<ArgumentNullException>(components != null);
 
             this.AddRange(components);
+            if (!components.Any(component => component is Transform))
+            {
+                this.Add(new Transform());
+            }
         }
 
         public override void Add(Component item)
@@ -59,10 +63,14 @@ namespace LightClaw.Engine.Core
         {
             foreach (Component comp in this.Items)
             {
-                comp.GameObject = null;
-                base.Remove(comp);
+                this.Remove(comp);
             }
-            this.Items.Clear();
+            base.Clear();
+        }
+
+        public Component Find(string name)
+        {
+            return this.FirstOrDefault(component => component.Name == name);
         }
 
         public override void Insert(int index, Component item)
@@ -87,6 +95,12 @@ namespace LightClaw.Engine.Core
                     base.Insert(index++, comp);
                 }
             }
+        }
+
+        public T OfType<T>()
+            where T : Component
+        {
+            return (T)this.FirstOrDefault(component => component is T);
         }
 
         public override bool Remove(Component item)

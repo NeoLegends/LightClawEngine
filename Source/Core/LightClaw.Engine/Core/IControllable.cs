@@ -21,6 +21,10 @@ namespace LightClaw.Engine.Core
 
         event EventHandler<ParameterEventArgs> Loaded;
 
+        event EventHandler<ParameterEventArgs> Resetting;
+
+        event EventHandler<ParameterEventArgs> Resetted;
+
         bool IsEnabled { get; }
 
         bool IsLoaded { get; }
@@ -30,5 +34,7 @@ namespace LightClaw.Engine.Core
         void Disable();
 
         void Load();
+
+        void Reset();
     }
 }
