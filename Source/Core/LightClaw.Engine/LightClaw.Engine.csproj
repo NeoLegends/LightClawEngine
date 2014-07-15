@@ -177,7 +177,7 @@
     <Compile Include="Core\IControllable.cs" />
     <Compile Include="Core\INameable.cs" />
     <Compile Include="Core\ListChildManager.cs" />
-    <Compile Include="Core\Mathf.cs" />
+    <Compile Include="Core\MathF.cs" />
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\PropertyChangedBase.cs" />
     <Compile Include="Core\Math\Quaternion.cs" />

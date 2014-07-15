@@ -484,9 +484,9 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3d()
             {
-                X = Mathf.Lerp(start.X, end.X, amount),
-                Y = Mathf.Lerp(start.Y, end.Y, amount),
-                Z = Mathf.Lerp(start.Z, end.Z, amount)
+                X = MathF.Lerp(start.X, end.X, amount),
+                Y = MathF.Lerp(start.Y, end.Y, amount),
+                Z = MathF.Lerp(start.Z, end.Z, amount)
             };
         }
 
@@ -500,9 +500,9 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3d()
             {
-                X = (a.X > b.X ? a.X : b.X),
-                Y = (a.Y > b.Y ? a.Y : b.Y),
-                Z = (a.Z > b.Z ? a.Z : b.Z)
+                X = Math.Max(a.X, b.X),
+                Y = Math.Max(a.Y, b.Y),
+                Z = Math.Max(a.Z, b.Z)
             };
         }
 
@@ -516,9 +516,9 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3d()
             {
-                X = (a.X < b.X ? a.X : b.X),
-                Y = (a.Y < b.Y ? a.Y : b.Y),
-                Z = (a.Z < b.Z ? a.Z : b.Z)
+                X = Math.Min(a.X, b.X),
+                Y = Math.Min(a.Y, b.Y),
+                Z = Math.Min(a.Z, b.Z)
             };
         }
 
@@ -674,7 +674,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         public static Vector3d SmoothStep(ref Vector3d start, ref Vector3d end, double amount)
         {
-            amount = Mathf.SmoothStep(amount);
+            amount = MathF.SmoothStep(amount);
             amount = (amount * amount) * (3.0 - (2.0 * amount));
 
             return new Vector3d()

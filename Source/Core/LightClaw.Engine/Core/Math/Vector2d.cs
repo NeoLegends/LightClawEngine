@@ -483,8 +483,8 @@ namespace LightClaw.Engine.Core
         {
             return new Vector2d()
             {
-                X = start.X + ((end.X - start.X) * amount),
-                Y = start.Y + ((end.Y - start.Y) * amount)
+                X = MathF.Lerp(start.X, end.X, amount),
+                Y = MathF.Lerp(start.Y, end.Y, amount)
             };
         }
 
@@ -498,8 +498,8 @@ namespace LightClaw.Engine.Core
         {
             return new Vector2d()
             {
-                X = (a.X > b.X) ? a.X : b.X,
-                Y = (a.Y > b.Y) ? a.Y : b.Y
+                X = Math.Max(a.X, b.X),
+                Y = Math.Max(a.Y, b.Y)
             };
         }
 
@@ -513,8 +513,8 @@ namespace LightClaw.Engine.Core
         {
             return new Vector2d()
             {
-                X = (a.X < b.X) ? a.X : b.X,
-                Y = (a.Y < b.Y) ? a.Y : b.Y
+                X = Math.Min(a.X, b.X),
+                Y = Math.Min(a.Y, b.Y)
             };
         }
 
@@ -667,7 +667,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         public static Vector2d SmoothStep(Vector2d start, Vector2d end, double amount)
         {
-            amount = Mathf.SmoothStep(amount);
+            amount = MathF.SmoothStep(amount);
             return Lerp(start, end, amount);
         }
 

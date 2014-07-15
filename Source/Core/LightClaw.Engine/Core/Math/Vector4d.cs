@@ -465,10 +465,10 @@ namespace LightClaw.Engine.Core
         {
             return new Vector4d()
             {
-                X = start.X + ((end.X - start.X) * amount),
-                Y = start.Y + ((end.Y - start.Y) * amount),
-                Z = start.Z + ((end.Z - start.Z) * amount),
-                W = start.W + ((end.W - start.W) * amount)
+                X = MathF.Lerp(start.X, end.X, amount),
+                Y = MathF.Lerp(start.Y, end.Y, amount),
+                Z = MathF.Lerp(start.Z, end.Z, amount),
+                W = MathF.Lerp(start.W, end.W, amount)
             };
         }
 
@@ -482,10 +482,10 @@ namespace LightClaw.Engine.Core
         {
             return new Vector4d()
             {
-                X = (a.X > b.X) ? a.X : b.X,
-                Y = (a.Y > b.Y) ? a.Y : b.Y,
-                Z = (a.Z > b.Z) ? a.Z : b.Z,
-                W = (a.W > b.W) ? a.W : b.W
+                X = Math.Max(a.X, b.X),
+                Y = Math.Max(a.Y, b.Y),
+                Z = Math.Max(a.Z, b.Z),
+                W = Math.Max(a.W, b.W)
             };
         }
 
@@ -499,10 +499,10 @@ namespace LightClaw.Engine.Core
         {
             return new Vector4d()
             {
-                X = (a.X < b.X) ? a.X : b.X,
-                Y = (a.Y < b.Y) ? a.Y : b.Y,
-                Z = (a.Z < b.Z) ? a.Z : b.Z,
-                W = (a.W < b.W) ? a.W : b.W
+                X = Math.Min(a.X, b.X),
+                Y = Math.Min(a.Y, b.Y),
+                Z = Math.Min(a.Z, b.Z),
+                W = Math.Min(a.W, b.W)
             };
         }
 
@@ -661,7 +661,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         public static Vector4d SmoothStep(ref Vector4d start, ref Vector4d end, double amount)
         {
-            amount = Mathf.SmoothStep(amount);
+            amount = MathF.SmoothStep(amount);
             amount = (amount * amount) * (3.0 - (2.0 * amount));
 
             return new Vector4d()

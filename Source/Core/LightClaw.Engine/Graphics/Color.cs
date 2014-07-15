@@ -1169,12 +1169,12 @@ namespace LightClaw.Engine.Graphics
             switch (order)
             {
                 case FormatOrder.Argb:
-                    return Mathf.HexTable[this.A] + Mathf.HexTable[this.R] + Mathf.HexTable[this.G] + Mathf.HexTable[this.B];
+                    return MathF.HexTable[this.A] + MathF.HexTable[this.R] + MathF.HexTable[this.G] + MathF.HexTable[this.B];
                 case FormatOrder.Bgra:
-                    return Mathf.HexTable[this.B] + Mathf.HexTable[this.G] + Mathf.HexTable[this.R] + Mathf.HexTable[this.A];
+                    return MathF.HexTable[this.B] + MathF.HexTable[this.G] + MathF.HexTable[this.R] + MathF.HexTable[this.A];
                 default:
                 case FormatOrder.Rgba:
-                    return Mathf.HexTable[this.R] + Mathf.HexTable[this.G] + Mathf.HexTable[this.B] + Mathf.HexTable[this.A];
+                    return MathF.HexTable[this.R] + MathF.HexTable[this.G] + MathF.HexTable[this.B] + MathF.HexTable[this.A];
             }
         }
 
@@ -1242,7 +1242,7 @@ namespace LightClaw.Engine.Graphics
         /// <returns>The resulting byte value.</returns>
         public static byte ToByte(float component)
         {
-            return (byte)(Mathf.Clamp(component * 255.0f, 0.0f, 255.0f));
+            return (byte)(MathF.Clamp(component * 255.0f, 0.0f, 255.0f));
         }
 
         /// <summary>

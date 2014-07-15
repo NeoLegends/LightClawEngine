@@ -472,6 +472,25 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Performs a linear interpolation between two vectors.
+        /// </summary>
+        /// <param name="start">Start vector.</param>
+        /// <param name="end">End vector.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <remarks>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// </remarks>
+        public static Vector3 Lerp(ref Vector3 start, ref Vector3 end, float amount)
+        {
+            return new Vector3()
+            {
+                X = MathF.Lerp(start.X, end.X, amount),
+                Y = MathF.Lerp(start.Y, end.Y, amount),
+                Z = MathF.Lerp(start.Z, end.Z, amount)
+            };
+        }
+
+        /// <summary>
         /// 	Constructs a new <see cref="Vector3"/> based on the biggest values in one of the two <see cref="Vector3"/>s.
         /// </summary>
         /// <param name="a">The first <see cref="Vector3"/>.</param>
@@ -481,9 +500,9 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3()
             {
-                X = (a.X > b.X ? a.X : b.X),
-                Y = (a.Y > b.Y ? a.Y : b.Y),
-                Z = (a.Z > b.Z ? a.Z : b.Z)
+                X = Math.Max(a.X, b.X),
+                Y = Math.Max(a.Y, b.Y),
+                Z = Math.Max(a.Z, b.Z)
             };
         }
 
@@ -497,9 +516,9 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3()
             {
-                X = (a.X < b.X ? a.X : b.X),
-                Y = (a.Y < b.Y ? a.Y : b.Y),
-                Z = (a.Z < b.Z ? a.Z : b.Z)
+                X = Math.Min(a.X, b.X),
+                Y = Math.Min(a.Y, b.Y),
+                Z = Math.Min(a.Z, b.Z)
             };
         }
 
@@ -540,25 +559,6 @@ namespace LightClaw.Engine.Core
             {
                 return (Vector3)value.Clone();
             }
-        }
-
-        /// <summary>
-        /// Performs a linear interpolation between two vectors.
-        /// </summary>
-        /// <param name="start">Start vector.</param>
-        /// <param name="end">End vector.</param>
-        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
-        /// </remarks>
-        public static Vector3 Lerp(ref Vector3 start, ref Vector3 end, float amount)
-        {
-            return new Vector3()
-            {
-                X = Mathf.Lerp(start.X, end.X, amount),
-                Y = Mathf.Lerp(start.Y, end.Y, amount),
-                Z = Mathf.Lerp(start.Z, end.Z, amount)
-            };
         }
 
         /// <summary>
@@ -674,7 +674,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         public static Vector3 SmoothStep(ref Vector3 start, ref Vector3 end, float amount)
         {
-            amount = Mathf.SmoothStep(amount);
+            amount = (float)MathF.SmoothStep(amount);
             amount = (amount * amount) * (3.0f - (2.0f * amount));
 
             return new Vector3()

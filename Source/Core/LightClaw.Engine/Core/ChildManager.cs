@@ -58,6 +58,11 @@ namespace LightClaw.Engine.Core
             this.PerformChildAction(item => item.Load());
         }
 
+        protected override void OnReset()
+        {
+            this.PerformChildAction(item => item.Reset());
+        }
+
         protected override void OnUpdate()
         {
             this.PerformChildAction(item => item.Update());

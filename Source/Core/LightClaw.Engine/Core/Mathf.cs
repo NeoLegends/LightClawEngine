@@ -9,7 +9,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains extensions to the math class.
     /// </summary>
-    public static class Mathf
+    public static class MathF
     {
         /// <summary>
         /// Backing field.
@@ -31,21 +31,16 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private static readonly double _RootTwo = Math.Sqrt(2);
-
-        /// <summary>
         /// The square root of two.
         /// </summary>
-        public static double RootTwo
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<double>() > 1 && Contract.Result<double>() < 2);
+        public static double RootTwo { get; private set; }
 
-                return _RootTwo;
-            }
+        /// <summary>
+        /// Initializes static members of <see cref="MathF"/>;
+        /// </summary>
+        static MathF()
+        {
+            RootTwo = Math.Sqrt(2);
         }
 
         /// <summary>
@@ -113,6 +108,97 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Checks whether a given value is almost zero using default accuracy.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>Whether the input number is almost zero or not.</returns>
+        public static bool IsAlmostZero(double value)
+        {
+            return (-0.0000001 < value && value < 0.0000001);
+        }
+
+        /// <summary>
+        /// Checks whether a given value is almost zero using the given accuracy.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
+        /// <returns>Whether the input number is almost zero or not.</returns>
+        public static bool IsAlmostZero(double value, int decimalPlaceCount)
+        {
+            decimalPlaceCount = MathF.Clamp(decimalPlaceCount, 1, 15);
+            double zero = 0.1;
+            for (int i = 1; i < decimalPlaceCount; i++)
+            {
+                zero *= 0.1;
+            }
+            return (-zero < value && value < zero);
+        }
+
+        /// <summary>
+        /// Checks whether a number is a divisor of another number.
+        /// </summary>
+        /// <param name="n">The number to be divided.</param>
+        /// <param name="divisor">The numbers divisor.</param>
+        /// <returns>Whether n is dividable by the divisor.</returns>
+        public static bool IsDivisorOf(int n, int divisor)
+        {
+            return (n % divisor == 0);
+        }
+
+        /// <summary>
+        /// Checks whether a number is a divisor of another number.
+        /// </summary>
+        /// <param name="n">The number to be divided.</param>
+        /// <param name="divisor">The numbers divisor.</param>
+        /// <returns>Whether n is dividable by the divisor.</returns>
+        public static bool IsDivisorOf(double n, double divisor)
+        {
+            return IsAlmostZero(n % divisor);
+        }
+
+        /// <summary>
+        /// Checks whether the specified <paramref name="value"/> is one.
+        /// </summary>
+        /// <param name="value">The value to check for whether it is one.</param>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        public static bool IsOne(double value)
+        {
+            return IsAlmostZero(value - 1);
+        }
+
+        /// <summary>
+        /// Checks whether the specified <paramref name="value"/> is one.
+        /// </summary>
+        /// <param name="value">The value to check for whether it is one.</param>
+        /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        public static bool IsOne(double value, int decimalPlaceCount)
+        {
+            return IsAlmostZero(value - 1, decimalPlaceCount);
+        }
+
+        /// <summary>
+        /// Determines the least common multiple of two numbers.
+        /// </summary>
+        /// <param name="a">The first number.</param>
+        /// <param name="b">The second number.</param>
+        /// <returns>The least common multiple of the two numbers.</returns>
+        public static int LeastCommonMultiple(int a, int b)
+        {
+            return (a * b) / GreatestCommonDivisor(a, b);
+        }
+
+        /// <summary>
+        /// Determines the least common multiple of a collection of numbers.
+        /// </summary>
+        /// <param name="values">The numbers.</param>
+        /// <returns>The least common multiple of all the numbers.</returns>
+        public static int LeastCommonMultiple(IEnumerable<int> values)
+        {
+            return values.Aggregate((lcm, arg) => LeastCommonMultiple(lcm, arg));
+        }
+
+        /// <summary>
         /// Interpolates between two values using a linear function by a given amount.
         /// </summary>
         /// <remarks>
@@ -123,7 +209,7 @@ namespace LightClaw.Engine.Core
         /// <param name="to">Value to interpolate to.</param>
         /// <param name="amount">Interpolation amount.</param>
         /// <returns>The result of linear interpolation of values based on the amount.</returns>
-        public static double Lerp(double from, double to, double amount)
+        public static float Lerp(float from, float to, float amount)
         {
             return (1 - amount) * from + amount * to;
         }
@@ -139,7 +225,7 @@ namespace LightClaw.Engine.Core
         /// <param name="to">Value to interpolate to.</param>
         /// <param name="amount">Interpolation amount.</param>
         /// <returns>The result of linear interpolation of values based on the amount.</returns>
-        public static float Lerp(float from, float to, float amount)
+        public static double Lerp(double from, double to, double amount)
         {
             return (1 - amount) * from + amount * to;
         }
@@ -201,83 +287,6 @@ namespace LightClaw.Engine.Core
             x++;
 
             return x;
-        }
-
-        /// <summary>
-        /// Checks whether a given value is almost zero using the given accuracy.
-        /// </summary>
-        /// <param name="value">The value to check.</param>
-        /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
-        /// <returns>Whether the input number is almost zero or not.</returns>
-        public static bool IsAlmostZero(float value, int decimalPlaceCount)
-        {
-            decimalPlaceCount = Mathf.Clamp(decimalPlaceCount, 1, 15);
-            double zero = 0.1;
-            for (int i = 1; i < decimalPlaceCount; i++)
-            {
-                zero *= 0.1;
-            }
-            return ((double)value < zero && (double)value > zero);
-        }
-
-        /// <summary>
-        /// Checks whether a given value is almost zero using the given accuracy.
-        /// </summary>
-        /// <param name="value">The value to check.</param>
-        /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
-        /// <returns>Whether the input number is almost zero or not.</returns>
-        public static bool IsAlmostZero(double value, int decimalPlaceCount)
-        {
-            decimalPlaceCount = Mathf.Clamp(decimalPlaceCount, 1, 15);
-            double zero = 0.1;
-            for (int i = 1; i < decimalPlaceCount; i++)
-            {
-                zero *= 0.1;
-            }
-            return (value < zero && value > zero);
-        }
-
-        /// <summary>
-        /// Checks whether a number is a divisor of another number.
-        /// </summary>
-        /// <param name="n">The number to be divided.</param>
-        /// <param name="divisor">The numbers divisor.</param>
-        /// <returns>Whether n is dividable by the divisor.</returns>
-        public static bool IsDivisorOf(int n, int divisor)
-        {
-            return (n % divisor == 0);
-        }
-
-        /// <summary>
-        /// Checks whether a number is a divisor of another number.
-        /// </summary>
-        /// <param name="n">The number to be divided.</param>
-        /// <param name="divisor">The numbers divisor.</param>
-        /// <returns>Whether n is dividable by the divisor.</returns>
-        public static bool IsDivisorOf(double n, double divisor)
-        {
-            return (n % divisor == 0.0d);
-        }
-
-        /// <summary>
-        /// Determines the least common multiple of two numbers.
-        /// </summary>
-        /// <param name="a">The first number.</param>
-        /// <param name="b">The second number.</param>
-        /// <returns>The least common multiple of the two numbers.</returns>
-        public static int LeastCommonMultiple(int a, int b)
-        {
-            return (a * b) / GreatestCommonDivisor(a, b);
-        }
-
-        /// <summary>
-        /// Determines the least common multiple of a collection of numbers.
-        /// </summary>
-        /// <param name="values">The numbers.</param>
-        /// <returns>The least common multiple of all the numbers.</returns>
-        public static int LeastCommonMultiple(IEnumerable<int> values)
-        {
-            return values.Aggregate((lcm, arg) => LeastCommonMultiple(lcm, arg));
         }
 
         /// <summary>
