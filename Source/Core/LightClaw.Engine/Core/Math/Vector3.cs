@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
-    [StructureInformation(3, 32, true)]
+    [StructureInformation(3, 4, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector3 : ICloneable, IEquatable<Vector3>, IComparable<Vector3>
     {
@@ -320,6 +320,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds two <see cref="Vector3"/>s together.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="left">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector3 Add(ref Vector3 left, ref Vector3 right)
+        {
+            return new Vector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+        }
+
+        /// <summary>
         /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 3D triangle.
         /// </summary>
         /// <param name="vertex1">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.</param>
@@ -329,12 +340,11 @@ namespace LightClaw.Engine.Core
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="vertex3"/>).</param>
         public static Vector3 Barycentric(ref Vector3 vertex1, ref Vector3 vertex2, ref Vector3 vertex3, float amount1, float amount2)
         {
-            return new Vector3()
-            {
-                X = (vertex1.X + (amount1 * (vertex2.X - vertex1.X))) + (amount2 * (vertex3.X - vertex1.X)),
-                Y = (vertex1.Y + (amount1 * (vertex2.Y - vertex1.Y))) + (amount2 * (vertex3.Y - vertex1.Y)),
-                Z = (vertex1.Z + (amount1 * (vertex2.Z - vertex1.Z))) + (amount2 * (vertex3.Z - vertex1.Z))
-            };
+            return new Vector3(
+                (vertex1.X + (amount1 * (vertex2.X - vertex1.X))) + (amount2 * (vertex3.X - vertex1.X)),
+                (vertex1.Y + (amount1 * (vertex2.Y - vertex1.Y))) + (amount2 * (vertex3.Y - vertex1.Y)),
+                (vertex1.Z + (amount1 * (vertex2.Z - vertex1.Z))) + (amount2 * (vertex3.Z - vertex1.Z))
+            );
         }
 
         /// <summary>
@@ -350,20 +360,19 @@ namespace LightClaw.Engine.Core
             float squared = amount * amount;
             float cubed = amount * squared;
 
-            return new Vector3()
-            {
-                X = 0.5f * ((((2.0f * value2.X) + ((-value1.X + value3.X) * amount)) +
-                    (((((2.0f * value1.X) - (5.0f * value2.X)) + (4.0f * value3.X)) - value4.X) * squared)) +
-                    ((((-value1.X + (3.0f * value2.X)) - (3.0f * value3.X)) + value4.X) * cubed)),
+            return new Vector3(
+                0.5f * ((((2.0f * value2.X) + ((-value1.X + value3.X) * amount)) +
+                (((((2.0f * value1.X) - (5.0f * value2.X)) + (4.0f * value3.X)) - value4.X) * squared)) +
+                ((((-value1.X + (3.0f * value2.X)) - (3.0f * value3.X)) + value4.X) * cubed)),
 
-                Y = 0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
-                    (((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) +
-                    ((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed)),
+                0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
+                (((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) +
+                ((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed)),
 
-                Z = 0.5f * ((((2.0f * value2.Z) + ((-value1.Z + value3.Z) * amount)) +
+                0.5f * ((((2.0f * value2.Z) + ((-value1.Z + value3.Z) * amount)) +
                     (((((2.0f * value1.Z) - (5.0f * value2.Z)) + (4.0f * value3.Z)) - value4.Z) * squared)) +
                     ((((-value1.Z + (3.0f * value2.Z)) - (3.0f * value3.Z)) + value4.Z) * cubed))
-            };
+            );
         }
 
         /// <summary>
@@ -374,12 +383,11 @@ namespace LightClaw.Engine.Core
         /// <param name="max">The maximum value.</param>
         public static Vector3 Clamp(ref Vector3 value, ref Vector3 max, ref Vector3 min)
         {
-            return new Vector3()
-            {
-                X = (value.X > max.X) ? max.X : (value.X < min.X) ? min.X : value.X,
-                Y = (value.Y > max.Y) ? max.Y : (value.Y < min.Y) ? min.Y : value.Y,
-                Z = (value.Z > max.Z) ? max.Z : (value.Z < min.Z) ? min.Z : value.Z
-            };
+            return new Vector3(
+                MathF.Clamp(value.X, min.X, max.X),
+                MathF.Clamp(value.Y, min.Y, max.Y),
+                MathF.Clamp(value.Z, min.Z, max.Z)
+            );
         }
 
         /// <summary>
@@ -389,12 +397,11 @@ namespace LightClaw.Engine.Core
         /// <param name="right">Second source <see cref="Vector3"/>.</param>
         public static Vector3 Cross(ref Vector3 left, ref Vector3 right)
         {
-            return new Vector3()
-            {
-                X = (left.Y * right.Z) - (left.Z * right.Y),
-                Y = (left.Z * right.X) - (left.X * right.Z),
-                Z = (left.X * right.Y) - (left.Y * right.X)
-            };
+            return new Vector3(
+                (left.Y * right.Z) - (left.Z * right.Y),
+                (left.Z * right.X) - (left.X * right.Z),
+                (left.X * right.Y) - (left.Y * right.X)
+            );
         }
 
         /// <summary>
@@ -436,6 +443,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Divides the <see cref="Vector3"/> by the specified value.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector3"/> to divide.</param>
+        /// <param name="right">The divisor.</param>
+        /// <returns>The result.</returns>
+        public static Vector3 Divide(ref Vector3 left, float right)
+        {
+            return Multiply(ref left, 1 / right);
+        }
+
+        /// <summary>
         /// Calculates the dot product of two <see cref="Vector3"/>s.
         /// </summary>
         /// <param name="left">First source <see cref="Vector3"/>.</param>
@@ -463,12 +481,11 @@ namespace LightClaw.Engine.Core
             float part3 = (cubed - (2.0f * squared)) + amount;
             float part4 = cubed - squared;
 
-            return new Vector3()
-            {
-                X = (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4),
-                Y = (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4),
-                Z = (((value1.Z * part1) + (value2.Z * part2)) + (tangent1.Z * part3)) + (tangent2.Z * part4)
-            };
+            return new Vector3(
+                (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4),
+                (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4),
+                (((value1.Z * part1) + (value2.Z * part2)) + (tangent1.Z * part3)) + (tangent2.Z * part4)
+            );
         }
 
         /// <summary>
@@ -523,6 +540,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Multiplies the <see cref="Vector3"/> with the specified factor.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector3"/> to multiply.</param>
+        /// <param name="right">The factor.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3 Multiply(ref Vector3 left, float right)
+        {
+            return new Vector3(left.X * right, left.Y * right, left.Z * right);
+        }
+
+        /// <summary>
         /// Reverses the direction of the given <see cref="Vector3"/>.
         /// </summary>
         /// <param name="value">The <see cref="Vector3"/> to negate.</param>
@@ -547,13 +575,7 @@ namespace LightClaw.Engine.Core
             float length = value.Length;
             if (length != 0.0f)
             {
-                float inv = 1.0f / length;
-                return new Vector3()
-                {
-                    X = value.X * inv,
-                    Y = value.Y * inv,
-                    Z = value.Z * inv
-                };
+                return Divide(ref value, length);
             }
             else
             {
@@ -683,6 +705,17 @@ namespace LightClaw.Engine.Core
                 Y = start.Y + ((end.Y - start.Y) * amount),
                 Z = start.Z + ((end.Z - start.Z) * amount)
             };
+        }
+
+        /// <summary>
+        /// Subtracts one <see cref="Vector3"/> from the other.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector3 Subtract(ref Vector3 left, ref Vector3 right)
+        {
+            return new Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
         }
 
         /// <summary>

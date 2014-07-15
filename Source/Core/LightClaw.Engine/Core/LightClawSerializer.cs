@@ -13,20 +13,12 @@ namespace LightClaw.Engine.Core
 {
     public class LightClawSerializer
     {
-        private readonly RuntimeTypeModel model = RuntimeTypeModel.Create();
-
-        public LightClawSerializer()
-        {
-            this.model.AutoAddMissingTypes = true;
-            this.model.AutoCompile = true;
-        }
-
         public Task<T> DeserializeAsync<T>(Stream source)
         {
             Contract.Requires<ArgumentNullException>(source != null);
             Contract.Requires<NotSupportedException>(source.CanRead);
 
-            return Task.Run(() => (T)this.model.DeserializeWithLengthPrefix(source, null, typeof(T), PrefixStyle.Fixed32, 1));
+            return Task.Run(() => Serializer.Deserialize<T>(source));
         }
 
         public Task<T> DeserializeAsync<T>(byte[] source)
@@ -39,23 +31,59 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public Task SerializeAsync(Stream destination, object instance)
+        public Task<T> DeserializeWithLengthPrefixAsync<T>(Stream source)
+        {
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<NotSupportedException>(source.CanRead);
+
+            return Task.Run(() => Serializer.DeserializeWithLengthPrefix<T>(source, PrefixStyle.Fixed32));
+        }
+
+        public Task<T> DeserializeWithLengthPrefiAsync<T>(byte[] source)
+        {
+            Contract.Requires<ArgumentNullException>(source != null);
+
+            using (MemoryStream ms = new MemoryStream(source))
+            {
+                return this.DeserializeWithLengthPrefixAsync<T>(ms);
+            }
+        }
+
+        public Task SerializeAsync<T>(Stream destination, T instance)
         {
             Contract.Requires<ArgumentNullException>(destination != null);
             Contract.Requires<ArgumentNullException>(instance != null);
             Contract.Requires<NotSupportedException>(destination.CanWrite);
 
-            Type instanceType = instance.GetType();
-            return Task.Run(() => this.model.SerializeWithLengthPrefix(destination, instance, instanceType, PrefixStyle.Fixed32, 1));
+            return Task.Run(() => Serializer.Serialize<T>(destination, instance));
         }
 
-        public Task<byte[]> SerializeAsync(object instance)
+        public Task<byte[]> SerializeAsync<T>(T instance)
         {
             Contract.Requires<ArgumentNullException>(instance != null);
 
             using (MemoryStream ms = new MemoryStream(32768))
             {
                 return this.SerializeAsync(ms, instance).ContinueWith(t => ms.ToArray());
+            }
+        }
+
+        public Task SerializeWithLengthPrefixAsync<T>(Stream destination, T instance)
+        {
+            Contract.Requires<ArgumentNullException>(destination != null);
+            Contract.Requires<ArgumentNullException>(instance != null);
+            Contract.Requires<NotSupportedException>(destination.CanWrite);
+
+            return Task.Run(() => Serializer.SerializeWithLengthPrefix<T>(destination, instance, PrefixStyle.Fixed32));
+        }
+
+        public Task<byte[]> SerializeWithLengthPrefixAsync<T>(T instance)
+        {
+            Contract.Requires<ArgumentNullException>(instance != null);
+
+            using (MemoryStream ms = new MemoryStream(32768))
+            {
+                return this.SerializeWithLengthPrefixAsync(ms, instance).ContinueWith(t => ms.ToArray());
             }
         }
     }

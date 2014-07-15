@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
-    [StructureInformation(4, 64, true)]
+    [StructureInformation(4, 8, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector4d : ICloneable, IEquatable<Vector4d>, IComparable<Vector4d>
     {
@@ -304,6 +304,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds two <see cref="Vector4d"/>s together.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="left">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector4d Add(ref Vector4d left, ref Vector4d right)
+        {
+            return new Vector4d(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W);
+        }
+
+        /// <summary>
         /// Returns a <see cref="SharpDX.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
         /// </summary>
         /// <param name="value1">A <see cref="SharpDX.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
@@ -416,6 +427,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Divides the <see cref="Vector4d"/> by the specified value.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector4d"/> to divide.</param>
+        /// <param name="right">The divisor.</param>
+        /// <returns>The result.</returns>
+        public static Vector4d Divide(ref Vector4d left, double right)
+        {
+            return Multiply(ref left, 1 / right);
+        }
+
+        /// <summary>
         /// Calculates the dot product of two vectors.
         /// </summary>
         /// <param name="left">First source vector.</param>
@@ -504,6 +526,17 @@ namespace LightClaw.Engine.Core
                 Z = Math.Min(a.Z, b.Z),
                 W = Math.Min(a.W, b.W)
             };
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Vector4d"/> with the specified factor.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector4d"/> to multiply.</param>
+        /// <param name="right">The factor.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector4d Multiply(ref Vector4d left, double right)
+        {
+            return new Vector4d(left.X * right, left.Y * right, left.Z * right, left.W * right);
         }
 
         /// <summary>
@@ -674,6 +707,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Subtracts one <see cref="Vector4d"/> from the other.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector4d Subtract(ref Vector4d left, ref Vector4d right)
+        {
+            return new Vector4d(left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W);
+        }
+
+        /// <summary>
         /// 	Adds <see cref="Vector4"/> A to <see cref="Vector4"/> B.
         /// </summary>
         /// <param name="left">First <see cref="Vector4"/> to add.</param>
@@ -681,30 +725,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The added vector.</returns>
         public static Vector4d operator +(Vector4d left, Vector4d right)
         {
-            return new Vector4d
-            {
-                X = left.X + right.X,
-                Y = left.Y + right.Y,
-                Z = left.Z + right.Z,
-                W = left.W + right.W
-            };
-        }
-
-        /// <summary>
-        /// 	Adds v given length to X and Y of v <see cref="Vector4"/>.
-        /// </summary>
-        /// <param name="left">The value to add.</param>
-        /// <param name="right">The length to add to the vector.</param>
-        /// <returns>The vector with the added length.</returns>
-        public static Vector4d operator +(Vector4d left, double right)
-        {
-            return new Vector4d
-            {
-                X = left.X + right,
-                Y = left.Y + right,
-                Z = left.Z + right,
-                W = left.W + right
-            };
+            return Add(ref left, ref right);
         }
 
         /// <summary>
@@ -714,7 +735,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The negated <see cref="Vector4"/>.</returns>
         public static Vector4d operator -(Vector4d vector)
         {
-            return Vector4d.Negate(ref vector);
+            return Negate(ref vector);
         }
 
         /// <summary>
@@ -725,30 +746,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The substracted <see cref="Vector4"/>s.</returns>
         public static Vector4d operator -(Vector4d left, Vector4d right)
         {
-            return new Vector4d
-            {
-                X = left.X - right.X,
-                Y = left.Y - right.Y,
-                Z = left.Z - right.Z,
-                W = left.W - right.W
-            };
-        }
-
-        /// <summary>
-        /// 	Substracts v given length from v <see cref="Vector4"/>.
-        /// </summary>
-        /// <param name="left">The <see cref="Vector4"/> to substract from.</param>
-        /// <param name="right">The length to substract from the Vector.</param>
-        /// <returns>The <see cref="Vector4"/> substracted by the length.</returns>
-        public static Vector4d operator -(Vector4d left, double right)
-        {
-            return new Vector4d
-            {
-                X = left.X - right,
-                Y = left.Y - right,
-                Z = left.Z - right,
-                W = left.W - right
-            };
+            return Subtract(ref left, ref right);
         }
 
         /// <summary>
@@ -770,13 +768,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The with the length multiplied <see cref="Vector4"/>.</returns>
         public static Vector4d operator *(Vector4d left, double right)
         {
-            return new Vector4d
-            {
-                X = left.X * right,
-                Y = left.Y * right,
-                Z = left.Z * right,
-                W = left.W * right
-            };
+            return Multiply(ref left, right);
         }
 
         /// <summary>
@@ -787,14 +779,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The divided <see cref="Vector4"/>.</returns>
         public static Vector4d operator /(Vector4d left, double right)
         {
-            double reciprocal = 1 / right; // This way it's faster.
-            return new Vector4d
-            {
-                X = left.X * reciprocal,
-                Y = left.Y * reciprocal,
-                Z = left.Z * reciprocal,
-                W = left.W * reciprocal
-            };
+            return Divide(ref left, right);
         }
 
         /// <summary>

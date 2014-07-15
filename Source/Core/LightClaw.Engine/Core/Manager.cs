@@ -12,7 +12,8 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
+    [ProtoContract]
+    [ProtoInclude(100, typeof(ChildManager<>)), ProtoInclude(101, typeof(Component))]
     public abstract class Manager : PropertyChangedBase, IControllable, INameable
     {
         private object stateLock = new object();

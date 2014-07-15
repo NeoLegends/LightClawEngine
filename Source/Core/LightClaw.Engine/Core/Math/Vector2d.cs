@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector3"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
-    [StructureInformation(2, 64, true)]
+    [StructureInformation(2, 8, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector2d : ICloneable, IEquatable<Vector2d>, IComparable<Vector2d>
 #if SYSTEMDRAWING_INTEROP
@@ -344,6 +344,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds two <see cref="Vector2d"/>s together.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="left">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector2d Add(Vector2d left, Vector2d right)
+        {
+            return new Vector2d(left.X + right.X, left.Y + right.Y);
+        }
+
+        /// <summary>
         /// Returns a <see cref="SharpDX.Vector2"/> containing the 2D Cartesian coordinates of a point specified in Barycentric 
         /// coordinates relative to a 2D triangle.
         /// </summary>
@@ -396,8 +407,8 @@ namespace LightClaw.Engine.Core
         {
             return new Vector2d()
             {
-                X = (value.X > max.X) ? max.X : (value.X < min.X) ? min.X : value.X,
-                Y = (value.Y > max.Y) ? max.Y : (value.Y < min.Y) ? min.Y : value.Y
+                X = MathF.Clamp(value.X, min.X, max.X),
+                Y = MathF.Clamp(value.Y, min.Y, max.Y)
             };
         }
 
@@ -431,6 +442,17 @@ namespace LightClaw.Engine.Core
             double dY = value1.Y - value2.Y;
 
             return (dX * dX) + (dY * dY);
+        }
+
+        /// <summary>
+        /// Divides the <see cref="Vector2d"/> by the specified value.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector2d"/> to divide.</param>
+        /// <param name="right">The divisor.</param>
+        /// <returns>The result.</returns>
+        public static Vector2d Divide(Vector2d left, double right)
+        {
+            return Multiply(left, 1 / right);
         }
 
         /// <summary>
@@ -469,10 +491,10 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Performs a linear interpolation between two <see cref="Vector2"/>s.
+        /// Performs a linear interpolation between two <see cref="Vector2d"/>s.
         /// </summary>
-        /// <param name="start">Start <see cref="Vector2"/>.</param>
-        /// <param name="end">End <see cref="Vector2"/>.</param>
+        /// <param name="start">Start <see cref="Vector2d"/>.</param>
+        /// <param name="end">End <see cref="Vector2d"/>.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramname="end"/>.</param>
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
@@ -516,6 +538,17 @@ namespace LightClaw.Engine.Core
                 X = Math.Min(a.X, b.X),
                 Y = Math.Min(a.Y, b.Y)
             };
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Vector2d"/> with the specified factor.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector2d"/> to multiply.</param>
+        /// <param name="right">The factor.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector2d Multiply(Vector2d left, double right)
+        {
+            return new Vector2d(left.X * right, left.Y * right);
         }
 
         /// <summary>
@@ -672,6 +705,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Subtracts one <see cref="Vector2d"/> from the other.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector2d Subtract(Vector2d left, Vector2d right)
+        {
+            return new Vector2d(left.X - right.X, left.Y - right.Y);
+        }
+
+        /// <summary>
         /// 	Adds <see cref="Vector2"/> A to <see cref="Vector2"/> B.
         /// </summary>
         /// <param name="left">First <see cref="Vector2"/> to add.</param>
@@ -679,26 +723,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The added vector.</returns>
         public static Vector2d operator +(Vector2d left, Vector2d right)
         {
-            return new Vector2d
-            {
-                X = left.X + right.X,
-                Y = left.Y + right.Y
-            };
-        }
-
-        /// <summary>
-        /// 	Adds v given length to X and Y of v <see cref="Vector2"/>.
-        /// </summary>
-        /// <param name="left">The value to add.</param>
-        /// <param name="right">The length to add to the vector.</param>
-        /// <returns>The vector with the added length.</returns>
-        public static Vector2d operator +(Vector2d left, double right)
-        {
-            return new Vector2d
-            {
-                X = left.X + right,
-                Y = left.Y + right
-            };
+            return Add(left, right);
         }
 
         /// <summary>
@@ -708,7 +733,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The negated <see cref="Vector2"/>.</returns>
         public static Vector2d operator -(Vector2d vector)
         {
-            return Vector2d.Negate(vector);
+            return Negate(vector);
         }
 
         /// <summary>
@@ -719,26 +744,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The substracted <see cref="Vector2"/>s.</returns>
         public static Vector2d operator -(Vector2d left, Vector2d right)
         {
-            return new Vector2d
-            {
-                X = left.X - right.X,
-                Y = left.Y - right.Y
-            };
-        }
-
-        /// <summary>
-        /// 	Subtracts v given length from v <see cref="Vector2"/>.
-        /// </summary>
-        /// <param name="left">The <see cref="Vector2"/> to substract from.</param>
-        /// <param name="right">The length to substract from the <see cref="Vector2"/>.</param>
-        /// <returns>The <see cref="Vector2"/> substracted by the length.</returns>
-        public static Vector2d operator -(Vector2d left, double right)
-        {
-            return new Vector2d
-            {
-                X = left.X - right,
-                Y = left.Y - right
-            };
+            return Subtract(left, right);
         }
 
         /// <summary>
@@ -760,11 +766,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The with the length multiplied <see cref="Vector2"/>.</returns>
         public static Vector2d operator *(Vector2d left, double right)
         {
-            return new Vector2d
-            {
-                X = left.X * right,
-                Y = left.Y * right
-            };
+            return Multiply(left, right);
         }
 
         /// <summary>
@@ -775,12 +777,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The divided <see cref="Vector2"/>.</returns>
         public static Vector2d operator /(Vector2d left, double right)
         {
-            double reciprocal = 1 / right; // This way it's faster.
-            return new Vector2d
-            {
-                X = left.X * reciprocal,
-                Y = left.Y * reciprocal
-            };
+            return Divide(left, right);
         }
 
         /// <summary>

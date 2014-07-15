@@ -12,15 +12,7 @@ namespace LightClaw.Engine.Core
     {
         public int ComponentCount { get; private set; }
 
-        public int ComponentSizeInBit { get; private set; }
-
-        public int ComponentSizeInBytes
-        {
-            get
-            {
-                return this.ComponentSizeInBit / 8;
-            }
-        }
+        public int ComponentSize { get; private set; }
 
         public bool IsFloatingPoint { get; private set; }
 
@@ -28,7 +20,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return this.ComponentCount * this.ComponentSizeInBit;
+                return this.ComponentCount * this.ComponentSize;
             }
         }
 
@@ -40,13 +32,13 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public StructureInformationAttribute(int componentCount, int componentSizeInBit, bool isFloatingPoint)
+        public StructureInformationAttribute(int componentCount, int componentSize, bool isFloatingPoint)
         {
             Contract.Requires<ArgumentOutOfRangeException>(componentCount > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(componentSizeInBit > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(componentSize > 0);
 
             this.ComponentCount = componentCount;
-            this.ComponentSizeInBit = componentSizeInBit;
+            this.ComponentSize = componentSize;
             this.IsFloatingPoint = isFloatingPoint;
         }
 
@@ -54,7 +46,7 @@ namespace LightClaw.Engine.Core
         private void ObjectInvariant()
         {
             Contract.Invariant(this.ComponentCount > 0);
-            Contract.Invariant(this.ComponentSizeInBit > 0);
+            Contract.Invariant(this.ComponentSize > 0);
         }
     }
 }

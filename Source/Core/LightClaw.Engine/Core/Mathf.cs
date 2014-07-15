@@ -14,6 +14,24 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
+        private static readonly double[] _ZeroThresholds = Enumerable.Range(0, 16).Select(i => Math.Pow(10, -i)).ToArray();
+
+        /// <summary>
+        /// Contains the thesholds used to determine whether a value is almost zero or not.
+        /// </summary>
+        public static double[] ZeroThresholds
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<double[]>() != null);
+
+                return _ZeroThresholds.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private static readonly string[] _HexTable = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
 
         /// <summary>
@@ -24,23 +42,25 @@ namespace LightClaw.Engine.Core
             get
             {
                 Contract.Ensures(Contract.Result<string[]>() != null);
-                Contract.Ensures(Contract.Result<string[]>().Length == 256);
 
                 return _HexTable.ToArray();
             }
         }
 
         /// <summary>
-        /// The square root of two.
+        /// Backing field.
         /// </summary>
-        public static double RootTwo { get; private set; }
+        private static readonly double _RootTwo = Math.Sqrt(2);
 
         /// <summary>
-        /// Initializes static members of <see cref="MathF"/>;
+        /// The square root of two.
         /// </summary>
-        static MathF()
+        public static double RootTwo
         {
-            RootTwo = Math.Sqrt(2);
+            get
+            {
+                return _RootTwo;
+            }
         }
 
         /// <summary>
@@ -108,13 +128,36 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Checks whether the specified <paramref name="value"/> is almost one.
+        /// </summary>
+        /// <param name="value">The value to check for whether it is one.</param>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        public static bool IsAlmostOne(double value)
+        {
+            return IsAlmostZero(value - 1);
+        }
+
+        /// <summary>
+        /// Checks whether the specified <paramref name="value"/> is almost one.
+        /// </summary>
+        /// <param name="value">The value to check for whether it is one.</param>
+        /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        public static bool IsAlmostOne(double value, int decimalPlaceCount)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < 16);
+
+            return IsAlmostZero(value - 1, decimalPlaceCount);
+        }
+
+        /// <summary>
         /// Checks whether a given value is almost zero using default accuracy.
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
         public static bool IsAlmostZero(double value)
         {
-            return (-0.0000001 < value && value < 0.0000001);
+            return IsAlmostOne(value, 10);
         }
 
         /// <summary>
@@ -125,13 +168,9 @@ namespace LightClaw.Engine.Core
         /// <returns>Whether the input number is almost zero or not.</returns>
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
-            decimalPlaceCount = MathF.Clamp(decimalPlaceCount, 1, 15);
-            double zero = 0.1;
-            for (int i = 1; i < decimalPlaceCount; i++)
-            {
-                zero *= 0.1;
-            }
-            return (-zero < value && value < zero);
+            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < 16);
+
+            return (-ZeroThresholds[decimalPlaceCount] < value) && (value < ZeroThresholds[decimalPlaceCount]);
         }
 
         /// <summary>
@@ -153,28 +192,7 @@ namespace LightClaw.Engine.Core
         /// <returns>Whether n is dividable by the divisor.</returns>
         public static bool IsDivisorOf(double n, double divisor)
         {
-            return IsAlmostZero(n % divisor);
-        }
-
-        /// <summary>
-        /// Checks whether the specified <paramref name="value"/> is one.
-        /// </summary>
-        /// <param name="value">The value to check for whether it is one.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
-        public static bool IsOne(double value)
-        {
-            return IsAlmostZero(value - 1);
-        }
-
-        /// <summary>
-        /// Checks whether the specified <paramref name="value"/> is one.
-        /// </summary>
-        /// <param name="value">The value to check for whether it is one.</param>
-        /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
-        public static bool IsOne(double value, int decimalPlaceCount)
-        {
-            return IsAlmostZero(value - 1, decimalPlaceCount);
+            return IsAlmostZero(n % divisor, 15);
         }
 
         /// <summary>

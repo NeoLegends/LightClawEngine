@@ -17,7 +17,8 @@ namespace Experiments
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Marshal.SizeOf(typeof(VertexAttributePointer)));
+            Console.WriteLine(string.Join(", ", Enumerable.Range(0, 16).Select(i => Math.Pow(10, -i))));
+
             Console.ReadLine();
         }
     }

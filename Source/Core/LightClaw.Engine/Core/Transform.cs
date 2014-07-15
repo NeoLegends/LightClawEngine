@@ -46,10 +46,10 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3d _Position;
+        private Vector3 _Position;
 
         [ProtoMember(3)]
-        public Vector3d Position
+        public Vector3 Position
         {
             get
             {
@@ -61,25 +61,25 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        //[ProtoMember(4)]
-        //private Quaterniond _Rotation;
+        private Quaternion _Rotation;
 
-        //public Quaterniond Rotation
-        //{
-        //    get
-        //    {
-        //        return _Rotation;
-        //    }
-        //    set
-        //    {
-        //        this.SetProperty(ref _Rotation, value);
-        //    }
-        //}
+        [ProtoMember(4)]
+        public Quaternion Rotation
+        {
+            get
+            {
+                return _Rotation;
+            }
+            set
+            {
+                this.SetProperty(ref _Rotation, value);
+            }
+        }
 
-        private Vector3d _Scale;
+        private Vector3 _Scale;
 
         [ProtoMember(5)]
-        public Vector3d Scale
+        public Vector3 Scale
         {
             get
             {
@@ -91,11 +91,18 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        public Transform() { }
+
+        public Transform(Vector3 position)
+        {
+            this.Position = position;
+        }
+
         protected override void OnReset()
         {
-            this.Position = Vector3d.Zero;
+            this.Position = Vector3.Zero;
             //this.Rotation = Quaterniond.Zero;
-            this.Scale = Vector3d.One;
+            this.Scale = Vector3.One;
         }
 
         private void RaiseParentChanged(Transform newParent, Transform oldParent)

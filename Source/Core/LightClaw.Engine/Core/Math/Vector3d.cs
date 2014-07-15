@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <seealso cref="LightClaw.Engine.Core.Vector2"/>
     /// <seealso cref="LightClaw.Engine.Core.Vector4"/>
-    [StructureInformation(3, 64, true)]
+    [StructureInformation(3, 8, true)]
     [Serializable, DataContract, ProtoContract]
     public struct Vector3d : ICloneable, IEquatable<Vector3d>, IComparable<Vector3d>
     {
@@ -320,6 +320,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds two <see cref="Vector3d"/>s together.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="left">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector3d Add(ref Vector3d left, ref Vector3d right)
+        {
+            return new Vector3d(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+        }
+
+        /// <summary>
         /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 3D triangle.
         /// </summary>
         /// <param name="vertex1">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.</param>
@@ -436,6 +447,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Divides the <see cref="Vector3d"/> by the specified value.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector3d"/> to divide.</param>
+        /// <param name="right">The divisor.</param>
+        /// <returns>The result.</returns>
+        public static Vector3d Divide(ref Vector3d left, double right)
+        {
+            return Multiply(ref left, 1 / right);
+        }
+
+        /// <summary>
         /// Calculates the dot product of two <see cref="Vector3"/>s.
         /// </summary>
         /// <param name="left">First source <see cref="Vector3"/>.</param>
@@ -520,6 +542,17 @@ namespace LightClaw.Engine.Core
                 Y = Math.Min(a.Y, b.Y),
                 Z = Math.Min(a.Z, b.Z)
             };
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Vector3d"/> with the specified factor.
+        /// </summary>
+        /// <param name="left">The <see cref="Vector3d"/> to multiply.</param>
+        /// <param name="right">The factor.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3d Multiply(ref Vector3d left, double right)
+        {
+            return new Vector3d(left.X * right, left.Y * right, left.Z * right);
         }
 
         /// <summary>
@@ -683,6 +716,17 @@ namespace LightClaw.Engine.Core
                 Y = start.Y + ((end.Y - start.Y) * amount),
                 Z = start.Z + ((end.Z - start.Z) * amount)
             };
+        }
+
+        /// <summary>
+        /// Subtracts one <see cref="Vector3d"/> from the other.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns>The result.</returns>
+        public static Vector3d Subtract(ref Vector3d left, ref Vector3d right)
+        {
+            return new Vector3d(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
         }
 
         /// <summary>
