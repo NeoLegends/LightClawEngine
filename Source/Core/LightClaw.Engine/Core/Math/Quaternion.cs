@@ -1,535 +1,1309 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// Represents a Quaternion.
+    /// Represents a four dimensional mathematical quaternion.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(4, 32, true)]
     public struct Quaternion : ICloneable, IEquatable<Quaternion>
     {
         /// <summary>
-        /// Defines the identity quaternion.
+        /// The size of the <see cref="Quaternion"/> type, in bytes.
         /// </summary>
-        public static readonly Quaternion Identity = new Quaternion(0, 0, 0, 1);
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Quaternion));
 
         /// <summary>
-        /// A <see cref="Quaternion"/> with all components set to 1.
+        /// A <see cref="Quaternion"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Quaternion One = new Quaternion(1, 1, 1, 1);
+        public static readonly Quaternion Zero = new Quaternion();
 
         /// <summary>
-        /// Gets a <see cref="Vector3"/> with the X, Y and Z components of the instance.
+        /// A <see cref="Quaternion"/> with all of its components set to one.
+        /// </summary>
+        public static readonly Quaternion One = new Quaternion(1.0f, 1.0f, 1.0f, 1.0f);
+
+        /// <summary>
+        /// The identity <see cref="Quaternion"/> (0, 0, 0, 1).
+        /// </summary>
+        public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+        /// <summary>
+        /// The X component of the quaternion.
         /// </summary>
         [DataMember, ProtoMember(1)]
-        public Vector3 Xyz { get; private set; }
+        public float X { get; private set; }
 
         /// <summary>
-        /// Gets the W component of the instance.
+        /// The Y component of the quaternion.
         /// </summary>
         [DataMember, ProtoMember(2)]
+        public float Y { get; private set; }
+
+        /// <summary>
+        /// The Z component of the quaternion.
+        /// </summary>
+        [DataMember, ProtoMember(3)]
+        public float Z { get; private set; }
+
+        /// <summary>
+        /// The W component of the quaternion.
+        /// </summary>
+        [DataMember, ProtoMember(4)]
         public float W { get; private set; }
 
         /// <summary>
-        /// Gets the X component of this instance.
+        /// Gets the component at the specified index.
         /// </summary>
-        public float X 
-        { 
-            get 
+        /// <value>The value of the X, Y, Z, or W component, depending on the index.</value>
+        /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, 2 for the Z component, and 3 for the W component.</param>
+        /// <returns>The value of the component at the specified index.</returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
+        public float this[int index]
+        {
+            get
             {
-                return this.Xyz.X;
-            } 
-        }
+                Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < 4);
 
-        /// <summary>
-        /// Gets the Y component of this instance.
-        /// </summary>
-        public float Y 
-        { 
-            get 
-            { 
-                return this.Xyz.Y;
-            } 
-        }
-
-        /// <summary>
-        /// Gets the Z component of this instance.
-        /// </summary>
-        public float Z 
-        { 
-            get 
-            {
-                return this.Xyz.Z;
+                switch (index)
+                {
+                    case 0:
+                        return X;
+                    case 1:
+                        return Y;
+                    case 2:
+                        return Z;
+                    case 3:
+                        return W;
+                    default:
+                        throw new ArgumentOutOfRangeException("index", "Indices for Quaternion run from 0 to 3, inclusive.");
+                }
             }
         }
 
         /// <summary>
-        /// Gets the length (magnitude) of the <see cref="Quaternion"/>.
+        /// Gets the angle of the quaternion.
         /// </summary>
-        /// <seealso cref="SquaredLength"/>
+        /// <value>The quaternion's angle.</value>
+        public float Angle
+        {
+            get
+            {
+                float length = (X * X) + (Y * Y) + (Z * Z);
+                if (MathUtil.IsZero(length))
+                    return 0.0f;
+
+                return (float)(2.0 * Math.Acos(Mathf.Clamp(W, -1f, 1f)));
+            }
+        }
+
+        /// <summary>
+        /// Gets the axis components of the quaternion.
+        /// </summary>
+        /// <value>The axis components of the quaternion.</value>
+        public Vector3 Axis
+        {
+            get
+            {
+                float length = (X * X) + (Y * Y) + (Z * Z);
+                if (MathUtil.IsZero(length))
+                    return Vector3.UnitX;
+
+                float inv = 1.0f / (float)Math.Sqrt(length);
+                return new Vector3(X * inv, Y * inv, Z * inv);
+            }
+        }
+
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 4);
+
+                return new[] { this.X, this.Y, this.Z, this.W };
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is equivalent to the identity quaternion.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is an identity quaternion; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsIdentity
+        {
+            get
+            {
+                return (this == Quaternion.Identity);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicting whether this instance is normalized.
+        /// </summary>
+        public bool IsNormalized
+        {
+            get
+            {
+                return this.SquaredLength == 1.0f;
+            }
+        }
+
         public float Length
         {
             get
             {
-                return (float)Math.Sqrt(W * W + Xyz.SquaredLength);
+                return (float)Math.Sqrt(this.SquaredLength);
             }
         }
 
-        /// <summary>
-        /// Gets the squared length (magnitude).
-        /// </summary>
-        /// <remarks>
-        /// When comparing lengths, use this property instead of <see cref="Length"/> as you can
-        /// save on the expensive <see cref="Math.Sqrt"/>-call.
-        /// </remarks>
         public float SquaredLength
         {
             get
             {
-                return (this.W * this.W) + Xyz.SquaredLength;
+                return (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z) + (this.W * this.W);
             }
         }
 
         /// <summary>
-        /// Initializes a new <see cref="Quaternion"/>.
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
-        /// <param name="x">The x component.</param>
-        /// <param name="y">The y component.</param>
-        /// <param name="z">The z component.</param>
-        /// <param name="w">The w component.</param>
-        public Quaternion(float x, float y, float z, float w) : this(new Vector3(x, y, z), w) { }
+        /// <param name="value">The value that will be assigned to all components.</param>
+        public Quaternion(float value) : this(value, value, value, value) { }
 
         /// <summary>
-        /// Initializes a new <see cref="Quaternion"/>.
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
-        /// <param name="v">The vector part.</param>
-        /// <param name="w">The w part.</param>
-        public Quaternion(Vector3 v, float w)
+        /// <param name="value">A vector containing the values with which to initialize the components.</param>
+        public Quaternion(Vector4 value) : this(value.X, value.Y, value.Z, value.W) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
+        /// <param name="value">A vector containing the values with which to initialize the X, Y, and Z components.</param>
+        /// <param name="w">Initial value for the W component of the quaternion.</param>
+        public Quaternion(Vector3 value, float w) : this(value.X, value.Y, value.Z, w) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
+        /// <param name="value">A vector containing the values with which to initialize the X and Y components.</param>
+        /// <param name="z">Initial value for the Z component of the quaternion.</param>
+        /// <param name="w">Initial value for the W component of the quaternion.</param>
+        public Quaternion(Vector2 value, float z, float w) : this(value.X, value.Y, z, w) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
+        /// <param name="values">The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
+        public Quaternion(float[] values)
+            : this(values[0], values[1], values[2], values[3]) 
         {
-            this.Xyz = v;
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 4);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
+        /// <param name="x">Initial value for the X component of the quaternion.</param>
+        /// <param name="y">Initial value for the Y component of the quaternion.</param>
+        /// <param name="z">Initial value for the Z component of the quaternion.</param>
+        /// <param name="w">Initial value for the W component of the quaternion.</param>
+        public Quaternion(float x, float y, float z, float w)
+            : this()
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
             this.W = w;
         }
 
         /// <summary>
         /// Creates a deep clone of the <see cref="Quaternion"/>.
         /// </summary>
-        /// <returns>The cloned <see cref="Quaternion"/>.</returns>
+        /// <returns>The clone.</returns>
         public object Clone()
         {
-            return new Quaternion(this.Xyz, this.W);
+            return new Quaternion(this.X, this.Y, this.Z, this.W);
         }
 
         /// <summary>
-        /// Inverts the <see cref="Vector3"/> component of this <see cref="Quaternion"/>.
+        /// Conjugates the quaternion.
         /// </summary>
         public Quaternion Conjugate()
         {
-            return Quaternion.Conjugate(ref this);
+            return new Quaternion(-this.X, -this.Y, -this.Z, this.W);
         }
 
         /// <summary>
-        /// Compares this object instance to another object for equality. 
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
         /// </summary>
-        /// <param name="obj">The other object to be used in the comparison.</param>
-        /// <returns>True if both objects are Quaternions of equal value. Otherwise it returns false.</returns>
-        public override bool Equals(object obj)
+        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object value)
         {
-            if (ReferenceEquals(obj, null))
+            if (ReferenceEquals(value, null))
                 return false;
 
-            return (obj is Quaternion) ? this.Equals((Quaternion)obj) : false;
+            return (value is Quaternion) ? this.Equals((Quaternion)value) : false;
         }
 
         /// <summary>
-        /// Compares this Quaternion instance to another Quaternion for equality. 
+        /// Determines whether the specified <see cref="Quaternion"/> is equal to this instance.
         /// </summary>
-        /// <param name="other">The other Quaternion to be used in the comparison.</param>
-        /// <returns>True if both instances are equal; false otherwise.</returns>
+        /// <param name="other">The <see cref="Quaternion"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
         public bool Equals(Quaternion other)
         {
-            return (this.Xyz == other.Xyz) && (this.W == other.W);
+            return (this.X == other.X) && (this.Y == other.Y) && (this.Z == other.Z) && (this.W == other.W);
         }
 
         /// <summary>
-        /// Provides the hash code for this object. 
+        /// Returns a hash code for this instance.
         /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public override int GetHashCode()
         {
             unchecked
             {
-                int hash = Constants.HashStart * Constants.HashFactor + this.Xyz.GetHashCode();
+                int hash = Constants.HashStart * Constants.HashFactor + this.X.GetHashCode();
+                hash = hash * Constants.HashFactor + this.Y.GetHashCode();
+                hash = hash * Constants.HashFactor + this.Z.GetHashCode();
                 hash = hash * Constants.HashFactor + this.W.GetHashCode();
                 return hash;
             }
         }
 
         /// <summary>
-        /// Reverses the rotation angle of this <see cref="Quaternion"/>.
+        /// Conjugates and renormalizes the quaternion.
         /// </summary>
-        public Quaternion Invert()
+        public void Invert()
         {
-            return Quaternion.Invert(ref this);
-        }
-
-        /// <summary>
-        /// Scales the <see cref="Quaternion"/> to unit length.
-        /// </summary>
-        public Quaternion Normalize()
-        {
-            return Quaternion.Normalize(ref this);
-        }
-
-        /// <summary>
-        /// Convert this instance to an axis-angle representation.
-        /// </summary>
-        /// <returns>A Vector4 that is the axis-angle representation of this quaternion.</returns>
-        public Vector4 ToAxisAngle()
-        {
-            Quaternion q = this;
-            if (Math.Abs(q.W) > 1.0f)
+            float lengthSq = this.SquaredLength;
+            if (!MathUtil.IsZero(lengthSq))
             {
-                q = q.Normalize();
+                lengthSq = 1.0f / lengthSq;
+
+                X = -X * lengthSq;
+                Y = -Y * lengthSq;
+                Z = -Z * lengthSq;
+                W = W * lengthSq;
             }
-
-            float w = 2.0f * (float)System.Math.Acos(q.W);
-            float den = (float)System.Math.Sqrt(1.0 - q.W * q.W);
-            Vector3 xyz = (den > 0.0001f) ? q.Xyz / den : Vector3.UnitX;
-
-            return new Vector4(xyz, w);
         }
 
         /// <summary>
-        /// Returns a <see cref="String"/> that represents the current Quaternion.
+        /// Converts the quaternion into a unit quaternion.
         /// </summary>
-        /// <returns>A <see cref="String"/> representing the <see cref="Quaternion"/>.</returns>
+        public void Normalize()
+        {
+            float length = this.Length;
+            if (!MathUtil.IsZero(length))
+            {
+                float inverse = 1.0f / length;
+                X *= inverse;
+                Y *= inverse;
+                Z *= inverse;
+                W *= inverse;
+            }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="String"/> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
-            return String.Format("({0}|{1})", this.Xyz, this.W);
+            return string.Format("X:{0} Y:{1} Z:{2} W:{3}", this.X, this.Y, this.Z, this.);
         }
 
         /// <summary>
         /// Adds two quaternions.
         /// </summary>
-        /// <param name="left">The first operand.</param>
-        /// <param name="right">The second operand.</param>
-        /// <returns>The result of the addition.</returns>
-        public static Quaternion Add(ref Quaternion left, ref Quaternion right)
+        /// <param name="left">The first quaternion to add.</param>
+        /// <param name="right">The second quaternion to add.</param>
+        /// <param name="result">When the method completes, contains the sum of the two quaternions.</param>
+        public static void Add(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
-            return new Quaternion(left.Xyz + right.Xyz, left.W + right.W);
+            result.X = left.X + right.X;
+            result.Y = left.Y + right.Y;
+            result.Z = left.Z + right.Z;
+            result.W = left.W + right.W;
         }
 
         /// <summary>
-        /// Subtracts two instances.
+        /// Adds two quaternions.
         /// </summary>
-        /// <param name="left">The left instance.</param>
-        /// <param name="right">The right instance.</param>
-        /// <returns>The result of the operation.</returns>
-        public static Quaternion Sub(ref Quaternion left, ref Quaternion right)
+        /// <param name="left">The first quaternion to add.</param>
+        /// <param name="right">The second quaternion to add.</param>
+        /// <returns>The sum of the two quaternions.</returns>
+        public static Quaternion Add(Quaternion left, Quaternion right)
         {
-            return  new Quaternion(left.Xyz - right.Xyz, left.W - right.W);
+            Quaternion result;
+            Add(ref left, ref right, out result);
+            return result;
         }
 
         /// <summary>
-        /// Multiplies two instances.
+        /// Subtracts two quaternions.
         /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>A new instance containing the result of the calculation.</returns>
-        public static Quaternion Multiply(ref Quaternion left, ref Quaternion right)
+        /// <param name="left">The first quaternion to subtract.</param>
+        /// <param name="right">The second quaternion to subtract.</param>
+        /// <param name="result">When the method completes, contains the difference of the two quaternions.</param>
+        public static void Subtract(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
-            Vector3 leftXyz = left.Xyz;
-            Vector3 rightXyz = right.Xyz;
-            return new Quaternion(
-                right.W * left.Xyz + left.W * right.Xyz + Vector3.Cross(ref leftXyz, ref rightXyz),
-                left.W * right.W - Vector3.Dot(ref leftXyz, ref rightXyz)
-            );
+            result.X = left.X - right.X;
+            result.Y = left.Y - right.Y;
+            result.Z = left.Z - right.Z;
+            result.W = left.W - right.W;
         }
 
         /// <summary>
-        /// Multiplies an instance by a scalar.
+        /// Subtracts two quaternions.
         /// </summary>
-        /// <param name="quaternion">The instance.</param>
-        /// <param name="scale">The scalar.</param>
-        /// <returns>A new instance containing the result of the calculation.</returns>
-        public static Quaternion Multiply(ref Quaternion quaternion, float scale)
+        /// <param name="left">The first quaternion to subtract.</param>
+        /// <param name="right">The second quaternion to subtract.</param>
+        /// <returns>The difference of the two quaternions.</returns>
+        public static Quaternion Subtract(Quaternion left, Quaternion right)
         {
-            return new Quaternion(
-                quaternion.X * scale, 
-                quaternion.Y * scale, 
-                quaternion.Z * scale, 
-                quaternion.W * scale
-            );
+            Quaternion result;
+            Subtract(ref left, ref right, out result);
+            return result;
         }
 
         /// <summary>
-        /// Get the conjugate of the given quaternion
+        /// Scales a quaternion by the given value.
         /// </summary>
-        /// <param name="q">The quaternion</param>
-        /// <returns>The conjugate of the given quaternion</returns>
-        public static Quaternion Conjugate(ref Quaternion q)
+        /// <param name="value">The quaternion to scale.</param>
+        /// <param name="scale">The amount by which to scale the quaternion.</param>
+        /// <param name="result">When the method completes, contains the scaled quaternion.</param>
+        public static void Multiply(ref Quaternion value, float scale, out Quaternion result)
         {
-            return new Quaternion(-q.Xyz, q.W);
+            result.X = value.X * scale;
+            result.Y = value.Y * scale;
+            result.Z = value.Z * scale;
+            result.W = value.W * scale;
         }
 
         /// <summary>
-        /// Get the inverse of the given quaternion
+        /// Scales a quaternion by the given value.
         /// </summary>
-        /// <param name="q">The quaternion to invert</param>
-        /// <returns>The inverse of the given quaternion</returns>
-        public static Quaternion Invert(ref Quaternion q)
+        /// <param name="value">The quaternion to scale.</param>
+        /// <param name="scale">The amount by which to scale the quaternion.</param>
+        /// <returns>The scaled quaternion.</returns>
+        public static Quaternion Multiply(Quaternion value, float scale)
         {
-            return new Quaternion(q.Xyz, -q.W);
+            Quaternion result;
+            Multiply(ref value, scale, out result);
+            return result;
         }
 
         /// <summary>
-        /// Scale the given quaternion to unit length
+        /// Multiplies a quaternion by another.
         /// </summary>
-        /// <param name="q">The quaternion to normalize</param>
-        /// <returns>The normalized quaternion</returns>
-        public static Quaternion Normalize(ref Quaternion q)
+        /// <param name="left">The first quaternion to multiply.</param>
+        /// <param name="right">The second quaternion to multiply.</param>
+        /// <param name="result">When the method completes, contains the multiplied quaternion.</param>
+        public static void Multiply(ref Quaternion left, ref Quaternion right, out Quaternion result)
         {
-            float scale = 1.0f / q.Length;
-            return new Quaternion(q.Xyz * scale, q.W * scale);
+            float lx = left.X;
+            float ly = left.Y;
+            float lz = left.Z;
+            float lw = left.W;
+            float rx = right.X;
+            float ry = right.Y;
+            float rz = right.Z;
+            float rw = right.W;
+            float a = (ly * rz - lz * ry);
+            float b = (lz * rx - lx * rz);
+            float c = (lx * ry - ly * rx);
+            float d = (lx * rx + ly * ry + lz * rz);
+            result.X = (lx * rw + rx * lw) + a;
+            result.Y = (ly * rw + ry * lw) + b;
+            result.Z = (lz * rw + rz * lw) + c;
+            result.W = lw * rw - d;
         }
 
         /// <summary>
-        /// Build a quaternion from the given axis and angle
+        /// Multiplies a quaternion by another.
         /// </summary>
-        /// <param name="axis">The axis to rotate about</param>
-        /// <param name="angle">The rotation angle in radians</param>
-        /// <returns>The equivalent quaternion</returns>
-        public static Quaternion FromAxisAngle(ref Vector3 axis, float angle)
+        /// <param name="left">The first quaternion to multiply.</param>
+        /// <param name="right">The second quaternion to multiply.</param>
+        /// <returns>The multiplied quaternion.</returns>
+        public static Quaternion Multiply(Quaternion left, Quaternion right)
         {
-            if (axis.SquaredLength == 0.0f)
+            Quaternion result;
+            Multiply(ref left, ref right, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Reverses the direction of a given quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to negate.</param>
+        /// <param name="result">When the method completes, contains a quaternion facing in the opposite direction.</param>
+        public static void Negate(ref Quaternion value, out Quaternion result)
+        {
+            result.X = -value.X;
+            result.Y = -value.Y;
+            result.Z = -value.Z;
+            result.W = -value.W;
+        }
+
+        /// <summary>
+        /// Reverses the direction of a given quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to negate.</param>
+        /// <returns>A quaternion facing in the opposite direction.</returns>
+        public static Quaternion Negate(Quaternion value)
+        {
+            Quaternion result;
+            Negate(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// </summary>
+        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
+        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
+        /// <param name="result">When the method completes, contains a new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</param>
+        public static void Barycentric(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, float amount1, float amount2, out Quaternion result)
+        {
+            Quaternion start, end;
+            Slerp(ref value1, ref value2, amount1 + amount2, out start);
+            Slerp(ref value1, ref value3, amount1 + amount2, out end);
+            Slerp(ref start, ref end, amount2 / (amount1 + amount2), out result);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// </summary>
+        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
+        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
+        /// <returns>A new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</returns>
+        public static Quaternion Barycentric(Quaternion value1, Quaternion value2, Quaternion value3, float amount1, float amount2)
+        {
+            Quaternion result;
+            Barycentric(ref value1, ref value2, ref value3, amount1, amount2, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Conjugates a quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to conjugate.</param>
+        /// <param name="result">When the method completes, contains the conjugated quaternion.</param>
+        public static void Conjugate(ref Quaternion value, out Quaternion result)
+        {
+            result.X = -value.X;
+            result.Y = -value.Y;
+            result.Z = -value.Z;
+            result.W = value.W;
+        }
+
+        /// <summary>
+        /// Conjugates a quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to conjugate.</param>
+        /// <returns>The conjugated quaternion.</returns>
+        public static Quaternion Conjugate(Quaternion value)
+        {
+            Quaternion result;
+            Conjugate(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Calculates the dot product of two quaternions.
+        /// </summary>
+        /// <param name="left">First source quaternion.</param>
+        /// <param name="right">Second source quaternion.</param>
+        /// <param name="result">When the method completes, contains the dot product of the two quaternions.</param>
+        public static void Dot(ref Quaternion left, ref Quaternion right, out float result)
+        {
+            result = (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        }
+
+        /// <summary>
+        /// Calculates the dot product of two quaternions.
+        /// </summary>
+        /// <param name="left">First source quaternion.</param>
+        /// <param name="right">Second source quaternion.</param>
+        /// <returns>The dot product of the two quaternions.</returns>
+        public static float Dot(Quaternion left, Quaternion right)
+        {
+            return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        }
+
+        /// <summary>
+        /// Exponentiates a quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to exponentiate.</param>
+        /// <param name="result">When the method completes, contains the exponentiated quaternion.</param>
+        public static void Exponential(ref Quaternion value, out Quaternion result)
+        {
+            float angle = (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
+            float sin = (float)Math.Sin(angle);
+
+            if (!MathUtil.IsZero(sin))
             {
-                return Identity;
-            }
-
-            angle *= 0.5f;
-            Quaternion q = new Quaternion(axis.Normalize() * (float)Math.Sin(angle), (float)Math.Cos(angle));
-            return Quaternion.Normalize(ref q);
-        }
-
-        ///// <summary>
-        ///// Builds a quaternion from the given rotation matrix
-        ///// </summary>
-        ///// <param name="matrix">A rotation matrix</param>
-        ///// <returns>The equivalent quaternion</returns>
-        //public static Quaternion FromMatrix(Matrix3 matrix)
-        //{
-        //    Quaternion result;
-        //    FromMatrix(ref matrix, out result);
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// Builds a quaternion from the given rotation matrix
-        ///// </summary>
-        ///// <param name="matrix">A rotation matrix</param>
-        ///// <param name="result">The equivalent quaternion</param>
-        //public static void FromMatrix(ref Matrix3 matrix, out Quaternion result)
-        //{
-        //    float trace = matrix.Trace;
-
-        //    if (trace > 0)
-        //    {
-        //        float s = (float)Math.Sqrt(trace + 1) * 2;
-        //        float invS = 1f / s;
-
-        //        result.w = s * 0.25f;
-        //        result.xyz.X = (matrix.Row2.Y - matrix.Row1.Z) * invS;
-        //        result.xyz.Y = (matrix.Row0.Z - matrix.Row2.X) * invS;
-        //        result.xyz.Z = (matrix.Row1.X - matrix.Row0.Y) * invS;
-        //    }
-        //    else
-        //    {
-        //        float m00 = matrix.Row0.X, m11 = matrix.Row1.Y, m22 = matrix.Row2.Z;
-
-        //        if (m00 > m11 && m00 > m22)
-        //        {
-        //            float s = (float)Math.Sqrt(1 + m00 - m11 - m22) * 2;
-        //            float invS = 1f / s;
-
-        //            result.w = (matrix.Row2.Y - matrix.Row1.Z) * invS;
-        //            result.xyz.X = s * 0.25f;
-        //            result.xyz.Y = (matrix.Row0.Y + matrix.Row1.X) * invS;
-        //            result.xyz.Z = (matrix.Row0.Z + matrix.Row2.X) * invS;
-        //        }
-        //        else if (m11 > m22)
-        //        {
-        //            float s = (float)Math.Sqrt(1 + m11 - m00 - m22) * 2;
-        //            float invS = 1f / s;
-
-        //            result.w = (matrix.Row0.Z - matrix.Row2.X) * invS;
-        //            result.xyz.X = (matrix.Row0.Y + matrix.Row1.X) * invS;
-        //            result.xyz.Y = s * 0.25f;
-        //            result.xyz.Z = (matrix.Row1.Z + matrix.Row2.Y) * invS;
-        //        }
-        //        else
-        //        {
-        //            float s = (float)Math.Sqrt(1 + m22 - m00 - m11) * 2;
-        //            float invS = 1f / s;
-
-        //            result.w = (matrix.Row1.X - matrix.Row0.Y) * invS;
-        //            result.xyz.X = (matrix.Row0.Z + matrix.Row2.X) * invS;
-        //            result.xyz.Y = (matrix.Row1.Z + matrix.Row2.Y) * invS;
-        //            result.xyz.Z = s * 0.25f;
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// Performs a spherical linear interpolation between two quaternions.
-        /// </summary>
-        /// <param name="q1">The first quaternion.</param>
-        /// <param name="q2">The second quaternion.</param>
-        /// <param name="blend">The blend factor.</param>
-        /// <returns>A smooth blend between the given quaternions.</returns>
-        public static Quaternion Slerp(ref Quaternion q1, ref Quaternion q2, float blend)
-        {
-            // if either input is zero, return the other.
-            if (q1.SquaredLength == 0.0f)
-            {
-                if (q2.SquaredLength == 0.0f)
-                {
-                    return Identity;
-                }
-                return q2;
-            }
-            else if (q2.SquaredLength == 0.0f)
-            {
-                return q1;
-            }
-
-            Vector3 q1Xyz = q1.Xyz;
-            Vector3 q2Xyz = q2.Xyz;
-            float cosHalfAngle = q1.W * q2.W + Vector3.Dot(ref q1Xyz, ref q2Xyz);
-
-            if (cosHalfAngle >= 1.0f || cosHalfAngle <= -1.0f)
-            {
-                // angle = 0.0f, so just return one input.
-                return q1;
-            }
-            else if (cosHalfAngle < 0.0f)
-            {
-                q2.Xyz = -q2.Xyz;
-                q2.W = -q2.W;
-                cosHalfAngle = -cosHalfAngle;
-            }
-
-            float blendA;
-            float blendB;
-            if (cosHalfAngle < 0.99f)
-            {
-                // do proper slerp for big angles
-                float halfAngle = (float)Math.Acos(cosHalfAngle);
-                float sinHalfAngle = (float)Math.Sin(halfAngle);
-                float oneOverSinHalfAngle = 1.0f / sinHalfAngle;
-                blendA = (float)Math.Sin(halfAngle * (1.0f - blend)) * oneOverSinHalfAngle;
-                blendB = (float)Math.Sin(halfAngle * blend) * oneOverSinHalfAngle;
+                float coeff = sin / angle;
+                result.X = coeff * value.X;
+                result.Y = coeff * value.Y;
+                result.Z = coeff * value.Z;
             }
             else
             {
-                // do lerp if angle is really small.
-                blendA = 1.0f - blend;
-                blendB = blend;
+                result = value;
             }
 
-            Quaternion result = new Quaternion(blendA * q1.Xyz + blendB * q2.Xyz, blendA * q1.W + blendB * q2.W);
-            return (result.SquaredLength > 0.0f) ? Quaternion.Normalize(ref result) : Quaternion.Identity;
-        }
-
-        public static Vector4 ToAxisAngle(ref Quaternion q)
-        {
-            throw new NotImplementedException();
+            result.W = (float)Math.Cos(angle);
         }
 
         /// <summary>
-        /// Adds two instances.
+        /// Exponentiates a quaternion.
         /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>The result of the calculation.</returns>
+        /// <param name="value">The quaternion to exponentiate.</param>
+        /// <returns>The exponentiated quaternion.</returns>
+        public static Quaternion Exponential(Quaternion value)
+        {
+            Quaternion result;
+            Exponential(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Conjugates and renormalizes the quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to conjugate and renormalize.</param>
+        /// <param name="result">When the method completes, contains the conjugated and renormalized quaternion.</param>
+        public static void Invert(ref Quaternion value, out Quaternion result)
+        {
+            result = value;
+            result.Invert();
+        }
+
+        /// <summary>
+        /// Conjugates and renormalizes the quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to conjugate and renormalize.</param>
+        /// <returns>The conjugated and renormalized quaternion.</returns>
+        public static Quaternion Invert(Quaternion value)
+        {
+            Quaternion result;
+            Invert(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Performs a linear interpolation between two quaternions.
+        /// </summary>
+        /// <param name="start">Start quaternion.</param>
+        /// <param name="end">End quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <param name="result">When the method completes, contains the linear interpolation of the two quaternions.</param>
+        /// <remarks>
+        /// This method performs the linear interpolation based on the following formula.
+        /// <code>start + (end - start) * amount</code>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// </remarks>
+        public static void Lerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
+        {
+            float inverse = 1.0f - amount;
+
+            if (Dot(start, end) >= 0.0f)
+            {
+                result.X = (inverse * start.X) + (amount * end.X);
+                result.Y = (inverse * start.Y) + (amount * end.Y);
+                result.Z = (inverse * start.Z) + (amount * end.Z);
+                result.W = (inverse * start.W) + (amount * end.W);
+            }
+            else
+            {
+                result.X = (inverse * start.X) - (amount * end.X);
+                result.Y = (inverse * start.Y) - (amount * end.Y);
+                result.Z = (inverse * start.Z) - (amount * end.Z);
+                result.W = (inverse * start.W) - (amount * end.W);
+            }
+
+            result.Normalize();
+        }
+
+        /// <summary>
+        /// Performs a linear interpolation between two quaternion.
+        /// </summary>
+        /// <param name="start">Start quaternion.</param>
+        /// <param name="end">End quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <returns>The linear interpolation of the two quaternions.</returns>
+        /// <remarks>
+        /// This method performs the linear interpolation based on the following formula.
+        /// <code>start + (end - start) * amount</code>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// </remarks>
+        public static Quaternion Lerp(Quaternion start, Quaternion end, float amount)
+        {
+            Quaternion result;
+            Lerp(ref start, ref end, amount, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Calculates the natural logarithm of the specified quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion whose logarithm will be calculated.</param>
+        /// <param name="result">When the method completes, contains the natural logarithm of the quaternion.</param>
+        public static void Logarithm(ref Quaternion value, out Quaternion result)
+        {
+            if (Math.Abs(value.W) < 1.0)
+            {
+                float angle = (float)Math.Acos(value.W);
+                float sin = (float)Math.Sin(angle);
+
+                if (!MathUtil.IsZero(sin))
+                {
+                    float coeff = angle / sin;
+                    result.X = value.X * coeff;
+                    result.Y = value.Y * coeff;
+                    result.Z = value.Z * coeff;
+                }
+                else
+                {
+                    result = value;
+                }
+            }
+            else
+            {
+                result = value;
+            }
+
+            result.W = 0.0f;
+        }
+
+        /// <summary>
+        /// Calculates the natural logarithm of the specified quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion whose logarithm will be calculated.</param>
+        /// <returns>The natural logarithm of the quaternion.</returns>
+        public static Quaternion Logarithm(Quaternion value)
+        {
+            Quaternion result;
+            Logarithm(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Converts the quaternion into a unit quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to normalize.</param>
+        /// <param name="result">When the method completes, contains the normalized quaternion.</param>
+        public static void Normalize(ref Quaternion value, out Quaternion result)
+        {
+            Quaternion temp = value;
+            result = temp;
+            result.Normalize();
+        }
+
+        /// <summary>
+        /// Converts the quaternion into a unit quaternion.
+        /// </summary>
+        /// <param name="value">The quaternion to normalize.</param>
+        /// <returns>The normalized quaternion.</returns>
+        public static Quaternion Normalize(Quaternion value)
+        {
+            value.Normalize();
+            return value;
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a rotation and an axis.
+        /// </summary>
+        /// <param name="axis">The axis of rotation.</param>
+        /// <param name="angle">The angle of rotation.</param>
+        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+        public static void RotationAxis(ref Vector3 axis, float angle, out Quaternion result)
+        {
+            Vector3 normalized;
+            Vector3.Normalize(ref axis, out normalized);
+
+            float half = angle * 0.5f;
+            float sin = (float)Math.Sin(half);
+            float cos = (float)Math.Cos(half);
+
+            result.X = normalized.X * sin;
+            result.Y = normalized.Y * sin;
+            result.Z = normalized.Z * sin;
+            result.W = cos;
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a rotation and an axis.
+        /// </summary>
+        /// <param name="axis">The axis of rotation.</param>
+        /// <param name="angle">The angle of rotation.</param>
+        /// <returns>The newly created quaternion.</returns>
+        public static Quaternion RotationAxis(Vector3 axis, float angle)
+        {
+            Quaternion result;
+            RotationAxis(ref axis, angle, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a rotation matrix.
+        /// </summary>
+        /// <param name="matrix">The rotation matrix.</param>
+        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+        public static void RotationMatrix(ref Matrix matrix, out Quaternion result)
+        {
+            float sqrt;
+            float half;
+            float scale = matrix.M11 + matrix.M22 + matrix.M33;
+
+            if (scale > 0.0f)
+            {
+                sqrt = (float)Math.Sqrt(scale + 1.0f);
+                result.W = sqrt * 0.5f;
+                sqrt = 0.5f / sqrt;
+
+                result.X = (matrix.M23 - matrix.M32) * sqrt;
+                result.Y = (matrix.M31 - matrix.M13) * sqrt;
+                result.Z = (matrix.M12 - matrix.M21) * sqrt;
+            }
+            else if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+                half = 0.5f / sqrt;
+
+                result.X = 0.5f * sqrt;
+                result.Y = (matrix.M12 + matrix.M21) * half;
+                result.Z = (matrix.M13 + matrix.M31) * half;
+                result.W = (matrix.M23 - matrix.M32) * half;
+            }
+            else if (matrix.M22 > matrix.M33)
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+                half = 0.5f / sqrt;
+
+                result.X = (matrix.M21 + matrix.M12) * half;
+                result.Y = 0.5f * sqrt;
+                result.Z = (matrix.M32 + matrix.M23) * half;
+                result.W = (matrix.M31 - matrix.M13) * half;
+            }
+            else
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+                half = 0.5f / sqrt;
+
+                result.X = (matrix.M31 + matrix.M13) * half;
+                result.Y = (matrix.M32 + matrix.M23) * half;
+                result.Z = 0.5f * sqrt;
+                result.W = (matrix.M12 - matrix.M21) * half;
+            }
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a rotation matrix.
+        /// </summary>
+        /// <param name="matrix">The rotation matrix.</param>
+        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+        public static void RotationMatrix(ref Matrix3x3 matrix, out Quaternion result)
+        {
+            float sqrt;
+            float half;
+            float scale = matrix.M11 + matrix.M22 + matrix.M33;
+
+            if (scale > 0.0f)
+            {
+                sqrt = (float)Math.Sqrt(scale + 1.0f);
+                result.W = sqrt * 0.5f;
+                sqrt = 0.5f / sqrt;
+
+                result.X = (matrix.M23 - matrix.M32) * sqrt;
+                result.Y = (matrix.M31 - matrix.M13) * sqrt;
+                result.Z = (matrix.M12 - matrix.M21) * sqrt;
+            }
+            else if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+                half = 0.5f / sqrt;
+
+                result.X = 0.5f * sqrt;
+                result.Y = (matrix.M12 + matrix.M21) * half;
+                result.Z = (matrix.M13 + matrix.M31) * half;
+                result.W = (matrix.M23 - matrix.M32) * half;
+            }
+            else if (matrix.M22 > matrix.M33)
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+                half = 0.5f / sqrt;
+
+                result.X = (matrix.M21 + matrix.M12) * half;
+                result.Y = 0.5f * sqrt;
+                result.Z = (matrix.M32 + matrix.M23) * half;
+                result.W = (matrix.M31 - matrix.M13) * half;
+            }
+            else
+            {
+                sqrt = (float)Math.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+                half = 0.5f / sqrt;
+
+                result.X = (matrix.M31 + matrix.M13) * half;
+                result.Y = (matrix.M32 + matrix.M23) * half;
+                result.Z = 0.5f * sqrt;
+                result.W = (matrix.M12 - matrix.M21) * half;
+            }
+        }
+
+        /// <summary>
+        /// Creates a left-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="eye">The position of the viewer's eye.</param>
+        /// <param name="target">The camera look-at target.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <param name="result">When the method completes, contains the created look-at quaternion.</param>
+        public static void LookAtLH(ref Vector3 eye, ref Vector3 target, ref Vector3 up, out Quaternion result)
+        {
+            Matrix3x3 matrix;
+            Matrix3x3.LookAtLH(ref eye, ref target, ref up, out matrix);
+            RotationMatrix(ref matrix, out result);
+        }
+
+        /// <summary>
+        /// Creates a left-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="eye">The position of the viewer's eye.</param>
+        /// <param name="target">The camera look-at target.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <returns>The created look-at quaternion.</returns>
+        public static Quaternion LookAtLH(Vector3 eye, Vector3 target, Vector3 up)
+        {
+            Quaternion result;
+            LookAtLH(ref eye, ref target, ref up, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a left-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="forward">The camera's forward direction.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <param name="result">When the method completes, contains the created look-at quaternion.</param>
+        public static void RotationLookAtLH(ref Vector3 forward, ref Vector3 up, out Quaternion result)
+        {
+            Vector3 eye = Vector3.Zero;
+            Quaternion.LookAtLH(ref eye, ref forward, ref up, out result);
+        }
+
+        /// <summary>
+        /// Creates a left-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="forward">The camera's forward direction.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <returns>The created look-at quaternion.</returns>
+        public static Quaternion RotationLookAtLH(Vector3 forward, Vector3 up)
+        {
+            Quaternion result;
+            RotationLookAtLH(ref forward, ref up, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a right-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="eye">The position of the viewer's eye.</param>
+        /// <param name="target">The camera look-at target.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <param name="result">When the method completes, contains the created look-at quaternion.</param>
+        public static void LookAtRH(ref Vector3 eye, ref Vector3 target, ref Vector3 up, out Quaternion result)
+        {
+            Matrix3x3 matrix;
+            Matrix3x3.LookAtRH(ref eye, ref target, ref up, out matrix);
+            RotationMatrix(ref matrix, out result);
+        }
+
+        /// <summary>
+        /// Creates a right-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="eye">The position of the viewer's eye.</param>
+        /// <param name="target">The camera look-at target.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <returns>The created look-at quaternion.</returns>
+        public static Quaternion LookAtRH(Vector3 eye, Vector3 target, Vector3 up)
+        {
+            Quaternion result;
+            LookAtRH(ref eye, ref target, ref up, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a right-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="forward">The camera's forward direction.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <param name="result">When the method completes, contains the created look-at quaternion.</param>
+        public static void RotationLookAtRH(ref Vector3 forward, ref Vector3 up, out Quaternion result)
+        {
+            Vector3 eye = Vector3.Zero;
+            Quaternion.LookAtRH(ref eye, ref forward, ref up, out result);
+        }
+
+        /// <summary>
+        /// Creates a right-handed, look-at quaternion.
+        /// </summary>
+        /// <param name="forward">The camera's forward direction.</param>
+        /// <param name="up">The camera's up vector.</param>
+        /// <returns>The created look-at quaternion.</returns>
+        public static Quaternion RotationLookAtRH(Vector3 forward, Vector3 up)
+        {
+            Quaternion result;
+            RotationLookAtRH(ref forward, ref up, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a left-handed spherical billboard that rotates around a specified object position.
+        /// </summary>
+        /// <param name="objectPosition">The position of the object around which the billboard will rotate.</param>
+        /// <param name="cameraPosition">The position of the camera.</param>
+        /// <param name="cameraUpVector">The up vector of the camera.</param>
+        /// <param name="cameraForwardVector">The forward vector of the camera.</param>
+        /// <param name="result">When the method completes, contains the created billboard quaternion.</param>
+        public static void BillboardLH(ref Vector3 objectPosition, ref Vector3 cameraPosition, ref Vector3 cameraUpVector, ref Vector3 cameraForwardVector, out Quaternion result)
+        {
+            Matrix3x3 matrix;
+            Matrix3x3.BillboardLH(ref objectPosition, ref cameraPosition, ref cameraUpVector, ref cameraForwardVector, out matrix);
+            RotationMatrix(ref matrix, out result);
+        }
+
+        /// <summary>
+        /// Creates a left-handed spherical billboard that rotates around a specified object position.
+        /// </summary>
+        /// <param name="objectPosition">The position of the object around which the billboard will rotate.</param>
+        /// <param name="cameraPosition">The position of the camera.</param>
+        /// <param name="cameraUpVector">The up vector of the camera.</param>
+        /// <param name="cameraForwardVector">The forward vector of the camera.</param>
+        /// <returns>The created billboard quaternion.</returns>
+        public static Quaternion BillboardLH(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector)
+        {
+            Quaternion result;
+            BillboardLH(ref objectPosition, ref cameraPosition, ref cameraUpVector, ref cameraForwardVector, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a right-handed spherical billboard that rotates around a specified object position.
+        /// </summary>
+        /// <param name="objectPosition">The position of the object around which the billboard will rotate.</param>
+        /// <param name="cameraPosition">The position of the camera.</param>
+        /// <param name="cameraUpVector">The up vector of the camera.</param>
+        /// <param name="cameraForwardVector">The forward vector of the camera.</param>
+        /// <param name="result">When the method completes, contains the created billboard quaternion.</param>
+        public static void BillboardRH(ref Vector3 objectPosition, ref Vector3 cameraPosition, ref Vector3 cameraUpVector, ref Vector3 cameraForwardVector, out Quaternion result)
+        {
+            Matrix3x3 matrix;
+            Matrix3x3.BillboardRH(ref objectPosition, ref cameraPosition, ref cameraUpVector, ref cameraForwardVector, out matrix);
+            RotationMatrix(ref matrix, out result);
+        }
+
+        /// <summary>
+        /// Creates a right-handed spherical billboard that rotates around a specified object position.
+        /// </summary>
+        /// <param name="objectPosition">The position of the object around which the billboard will rotate.</param>
+        /// <param name="cameraPosition">The position of the camera.</param>
+        /// <param name="cameraUpVector">The up vector of the camera.</param>
+        /// <param name="cameraForwardVector">The forward vector of the camera.</param>
+        /// <returns>The created billboard quaternion.</returns>
+        public static Quaternion BillboardRH(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector)
+        {
+            Quaternion result;
+            BillboardRH(ref objectPosition, ref cameraPosition, ref cameraUpVector, ref cameraForwardVector, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a rotation matrix.
+        /// </summary>
+        /// <param name="matrix">The rotation matrix.</param>
+        /// <returns>The newly created quaternion.</returns>
+        public static Quaternion RotationMatrix(Matrix matrix)
+        {
+            Quaternion result;
+            RotationMatrix(ref matrix, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a yaw, pitch, and roll value.
+        /// </summary>
+        /// <param name="yaw">The yaw of rotation.</param>
+        /// <param name="pitch">The pitch of rotation.</param>
+        /// <param name="roll">The roll of rotation.</param>
+        /// <param name="result">When the method completes, contains the newly created quaternion.</param>
+        public static void RotationYawPitchRoll(float yaw, float pitch, float roll, out Quaternion result)
+        {
+            float halfRoll = roll * 0.5f;
+            float halfPitch = pitch * 0.5f;
+            float halfYaw = yaw * 0.5f;
+
+            float sinRoll = (float)Math.Sin(halfRoll);
+            float cosRoll = (float)Math.Cos(halfRoll);
+            float sinPitch = (float)Math.Sin(halfPitch);
+            float cosPitch = (float)Math.Cos(halfPitch);
+            float sinYaw = (float)Math.Sin(halfYaw);
+            float cosYaw = (float)Math.Cos(halfYaw);
+
+            result.X = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+            result.Y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+            result.Z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+            result.W = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+        }
+
+        /// <summary>
+        /// Creates a quaternion given a yaw, pitch, and roll value.
+        /// </summary>
+        /// <param name="yaw">The yaw of rotation.</param>
+        /// <param name="pitch">The pitch of rotation.</param>
+        /// <param name="roll">The roll of rotation.</param>
+        /// <returns>The newly created quaternion.</returns>
+        public static Quaternion RotationYawPitchRoll(float yaw, float pitch, float roll)
+        {
+            Quaternion result;
+            RotationYawPitchRoll(yaw, pitch, roll, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Interpolates between two quaternions, using spherical linear interpolation.
+        /// </summary>
+        /// <param name="start">Start quaternion.</param>
+        /// <param name="end">End quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <param name="result">When the method completes, contains the spherical linear interpolation of the two quaternions.</param>
+        public static void Slerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
+        {
+            float opposite;
+            float inverse;
+            float dot = Dot(start, end);
+
+            if (Math.Abs(dot) > 1.0f - MathUtil.ZeroTolerance)
+            {
+                inverse = 1.0f - amount;
+                opposite = amount * Math.Sign(dot);
+            }
+            else
+            {
+                float acos = (float)Math.Acos(Math.Abs(dot));
+                float invSin = (float)(1.0 / Math.Sin(acos));
+
+                inverse = (float)Math.Sin((1.0f - amount) * acos) * invSin;
+                opposite = (float)Math.Sin(amount * acos) * invSin * Math.Sign(dot);
+            }
+
+            result.X = (inverse * start.X) + (opposite * end.X);
+            result.Y = (inverse * start.Y) + (opposite * end.Y);
+            result.Z = (inverse * start.Z) + (opposite * end.Z);
+            result.W = (inverse * start.W) + (opposite * end.W);
+        }
+
+        /// <summary>
+        /// Interpolates between two quaternions, using spherical linear interpolation.
+        /// </summary>
+        /// <param name="start">Start quaternion.</param>
+        /// <param name="end">End quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
+        /// <returns>The spherical linear interpolation of the two quaternions.</returns>
+        public static Quaternion Slerp(Quaternion start, Quaternion end, float amount)
+        {
+            Quaternion result;
+            Slerp(ref start, ref end, amount, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Interpolates between quaternions, using spherical quadrangle interpolation.
+        /// </summary>
+        /// <param name="value1">First source quaternion.</param>
+        /// <param name="value2">Second source quaternion.</param>
+        /// <param name="value3">Third source quaternion.</param>
+        /// <param name="value4">Fourth source quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of interpolation.</param>
+        /// <param name="result">When the method completes, contains the spherical quadrangle interpolation of the quaternions.</param>
+        public static void Squad(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, ref Quaternion value4, float amount, out Quaternion result)
+        {
+            Quaternion start, end;
+            Slerp(ref value1, ref value4, amount, out start);
+            Slerp(ref value2, ref value3, amount, out end);
+            Slerp(ref start, ref end, 2.0f * amount * (1.0f - amount), out result);
+        }
+
+        /// <summary>
+        /// Interpolates between quaternions, using spherical quadrangle interpolation.
+        /// </summary>
+        /// <param name="value1">First source quaternion.</param>
+        /// <param name="value2">Second source quaternion.</param>
+        /// <param name="value3">Third source quaternion.</param>
+        /// <param name="value4">Fourth source quaternion.</param>
+        /// <param name="amount">Value between 0 and 1 indicating the weight of interpolation.</param>
+        /// <returns>The spherical quadrangle interpolation of the quaternions.</returns>
+        public static Quaternion Squad(Quaternion value1, Quaternion value2, Quaternion value3, Quaternion value4, float amount)
+        {
+            Quaternion result;
+            Squad(ref value1, ref value2, ref value3, ref value4, amount, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Sets up control points for spherical quadrangle interpolation.
+        /// </summary>
+        /// <param name="value1">First source quaternion.</param>
+        /// <param name="value2">Second source quaternion.</param>
+        /// <param name="value3">Third source quaternion.</param>
+        /// <param name="value4">Fourth source quaternion.</param>
+        /// <returns>An array of three quaternions that represent control points for spherical quadrangle interpolation.</returns>
+        public static Quaternion[] SquadSetup(Quaternion value1, Quaternion value2, Quaternion value3, Quaternion value4)
+        {
+            Quaternion q0 = (value1 + value2).SquaredLength < (value1 - value2).SquaredLength ? -value1 : value1;
+            Quaternion q2 = (value2 + value3).SquaredLength < (value2 - value3).SquaredLength ? -value3 : value3;
+            Quaternion q3 = (value3 + value4).SquaredLength < (value3 - value4).SquaredLength ? -value4 : value4;
+            Quaternion q1 = value2;
+
+            Quaternion q1Exp, q2Exp;
+            Exponential(ref q1, out q1Exp);
+            Exponential(ref q2, out q2Exp);
+
+            Quaternion[] results = new Quaternion[3];
+            results[0] = q1 * Exponential(-0.25f * (Logarithm(q1Exp * q2) + Logarithm(q1Exp * q0)));
+            results[1] = q2 * Exponential(-0.25f * (Logarithm(q2Exp * q3) + Logarithm(q2Exp * q1)));
+            results[2] = q2;
+
+            return results;
+        }
+
+        /// <summary>
+        /// Adds two quaternions.
+        /// </summary>
+        /// <param name="left">The first quaternion to add.</param>
+        /// <param name="right">The second quaternion to add.</param>
+        /// <returns>The sum of the two quaternions.</returns>
         public static Quaternion operator +(Quaternion left, Quaternion right)
         {
-            left.Xyz += right.Xyz;
-            left.W += right.W;
-            return left;
+            Quaternion result;
+            Add(ref left, ref right, out result);
+            return result;
         }
 
         /// <summary>
-        /// Subtracts two instances.
+        /// Subtracts two quaternions.
         /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>The result of the calculation.</returns>
+        /// <param name="left">The first quaternion to subtract.</param>
+        /// <param name="right">The second quaternion to subtract.</param>
+        /// <returns>The difference of the two quaternions.</returns>
         public static Quaternion operator -(Quaternion left, Quaternion right)
         {
-            left.Xyz -= right.Xyz;
-            left.W -= right.W;
-            return left;
+            Quaternion result;
+            Subtract(ref left, ref right, out result);
+            return result;
         }
 
         /// <summary>
-        /// Multiplies two instances.
+        /// Reverses the direction of a given quaternion.
         /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>The result of the calculation.</returns>
+        /// <param name="value">The quaternion to negate.</param>
+        /// <returns>A quaternion facing in the opposite direction.</returns>
+        public static Quaternion operator -(Quaternion value)
+        {
+            Quaternion result;
+            Negate(ref value, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Scales a quaternion by the given value.
+        /// </summary>
+        /// <param name="value">The quaternion to scale.</param>
+        /// <param name="scale">The amount by which to scale the quaternion.</param>
+        /// <returns>The scaled quaternion.</returns>
+        public static Quaternion operator *(float scale, Quaternion value)
+        {
+            Quaternion result;
+            Multiply(ref value, scale, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Scales a quaternion by the given value.
+        /// </summary>
+        /// <param name="value">The quaternion to scale.</param>
+        /// <param name="scale">The amount by which to scale the quaternion.</param>
+        /// <returns>The scaled quaternion.</returns>
+        public static Quaternion operator *(Quaternion value, float scale)
+        {
+            Quaternion result;
+            Multiply(ref value, scale, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies a quaternion by another.
+        /// </summary>
+        /// <param name="left">The first quaternion to multiply.</param>
+        /// <param name="right">The second quaternion to multiply.</param>
+        /// <returns>The multiplied quaternion.</returns>
         public static Quaternion operator *(Quaternion left, Quaternion right)
         {
-            return Multiply(ref left, ref right);
+            Quaternion result;
+            Multiply(ref left, ref right, out result);
+            return result;
         }
 
         /// <summary>
-        /// Multiplies an instance by a scalar.
+        /// Tests for equality between two objects.
         /// </summary>
-        /// <param name="quaternion">The instance.</param>
-        /// <param name="scale">The scalar.</param>
-        /// <returns>A new instance containing the result of the calculation.</returns>
-        public static Quaternion operator *(Quaternion quaternion, float scale)
-        {
-            return scale * quaternion;
-        }
-
-        /// <summary>
-        /// Multiplies an instance by a scalar.
-        /// </summary>
-        /// <param name="quaternion">The instance.</param>
-        /// <param name="scale">The scalar.</param>
-        /// <returns>A new instance containing the result of the calculation.</returns>
-        public static Quaternion operator *(float scale, Quaternion quaternion)
-        {
-            return new Quaternion(quaternion.X * scale, quaternion.Y * scale, quaternion.Z * scale, quaternion.W * scale);
-        }
-
-        /// <summary>
-        /// Compares two instances for equality.
-        /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>True, if left equals right; false otherwise.</returns>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator ==(Quaternion left, Quaternion right)
         {
             return left.Equals(right);
         }
 
         /// <summary>
-        /// Compares two instances for inequality.
+        /// Tests for inequality between two objects.
         /// </summary>
-        /// <param name="left">The first instance.</param>
-        /// <param name="right">The second instance.</param>
-        /// <returns>True, if left does not equal right; false otherwise.</returns>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator !=(Quaternion left, Quaternion right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
     }
 }
