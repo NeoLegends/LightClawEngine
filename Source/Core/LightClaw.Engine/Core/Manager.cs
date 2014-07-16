@@ -154,14 +154,14 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             lock (this.stateLock)
             {
                 if (this.IsEnabled)
                 {
                     this.Raise(this.Updating);
-                    this.OnUpdate();
+                    this.OnUpdate(gameTime);
                     this.Raise(this.Updated);
                 }
             }
@@ -192,7 +192,7 @@ namespace LightClaw.Engine.Core
 
         protected abstract void OnReset();
 
-        protected abstract void OnUpdate();
+        protected abstract void OnUpdate(GameTime gameTime);
 
         private void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
         {

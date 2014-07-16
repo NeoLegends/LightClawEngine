@@ -22,70 +22,163 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector3));
 
+        #region Predefined Vectors
+
         /// <summary>
         /// A <see cref="Vector3"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Vector3 Zero = new Vector3();
+        public static Vector3 Zero
+        {
+            get
+            {
+                return new Vector3();
+            }
+        }
 
         /// <summary>
         /// The X unit <see cref="Vector3"/> (1, 0, 0).
         /// </summary>
-        public static readonly Vector3 UnitX = new Vector3(1.0f, 0.0f, 0.0f);
+        public static Vector3 UnitX
+        {
+            get
+            {
+                return new Vector3(1.0f, 0.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The Y unit <see cref="Vector3"/> (0, 1, 0).
         /// </summary>
-        public static readonly Vector3 UnitY = new Vector3(0.0f, 1.0f, 0.0f);
+        public static Vector3 UnitY
+        {
+            get
+            {
+                return new Vector3(0.0f, 1.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The Z unit <see cref="Vector3"/> (0, 0, 1).
         /// </summary>
-        public static readonly Vector3 UnitZ = new Vector3(0.0f, 0.0f, 1.0f);
+        public static Vector3 UnitZ
+        {
+            get
+            {
+                return new Vector3(0.0f, 0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A <see cref="Vector3"/> with all of its components set to one.
         /// </summary>
-        public static readonly Vector3 One = new Vector3(1.0f, 1.0f, 1.0f);
+        public static Vector3 One
+        {
+            get
+            {
+                return new Vector3(1.0f, 1.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating up (0, 1, 0).
         /// </summary>
-        public static readonly Vector3 Up = new Vector3(0.0f, 1.0f, 0.0f);
+        public static Vector3 Up
+        {
+            get
+            {
+                return new Vector3(0.0f, 1.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating down (0, -1, 0).
         /// </summary>
-        public static readonly Vector3 Down = new Vector3(0.0f, -1.0f, 0.0f);
+        public static Vector3 Down
+        {
+            get
+            {
+                return new Vector3(0.0f, -1.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating left (-1, 0, 0).
         /// </summary>
-        public static readonly Vector3 Left = new Vector3(-1.0f, 0.0f, 0.0f);
+        public static Vector3 Left
+        {
+            get
+            {
+                return new Vector3(-1.0f, 0.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating right (1, 0, 0).
         /// </summary>
-        public static readonly Vector3 Right = new Vector3(1.0f, 0.0f, 0.0f);
+        public static Vector3 Right
+        {
+            get
+            {
+                return new Vector3(1.0f, 0.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating forward in a right-handed coordinate system (0, 0, -1).
         /// </summary>
-        public static readonly Vector3 ForwardRH = new Vector3(0.0f, 0.0f, -1.0f);
+        public static Vector3 ForwardRH
+        {
+            get
+            {
+                return new Vector3(0.0f, 0.0f, -1.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating forward in a left-handed coordinate system (0, 0, 1).
         /// </summary>
-        public static readonly Vector3 ForwardLH = new Vector3(0.0f, 0.0f, 1.0f);
+        public static Vector3 ForwardLH
+        {
+            get
+            {
+                return new Vector3(0.0f, 0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating backward in a right-handed coordinate system (0, 0, 1).
         /// </summary>
-        public static readonly Vector3 BackwardRH = new Vector3(0.0f, 0.0f, 1.0f);
+        public static Vector3 BackwardRH
+        {
+            get
+            {
+                return new Vector3(0.0f, 0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A unit <see cref="Vector3"/> designating backward in a left-handed coordinate system (0, 0, -1).
         /// </summary>
-        public static readonly Vector3 BackwardLH = new Vector3(0.0f, 0.0f, -1.0f);
+        public static Vector3 BackwardLH
+        {
+            get
+            {
+                return new Vector3(0.0f, 0.0f, -1.0f);
+            }
+        }
+
+        /// <summary>
+        /// Returns a random <see cref="Vector3"/>.
+        /// </summary>
+        public static Vector3 Random
+        {
+            get
+            {
+                return new Vector3(RandomF.GetSingles(3));
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// The X component of the vector.

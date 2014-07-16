@@ -56,6 +56,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets a <see cref="Quaternion"/> with random components.
+        /// </summary>
+        public static Quaternion Random
+        {
+            get
+            {
+                return new Quaternion(RandomF.GetSingles(4));
+            }
+        }
+
+        /// <summary>
         /// The X component of the quaternion.
         /// </summary>
         [DataMember, ProtoMember(1)]
@@ -109,6 +120,19 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
+        /// <param name="values">The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
+        public Quaternion(float[] values)
+            : this(values[0], values[1], values[2], values[3])
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 4);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
         /// <param name="x">Initial value for the X component of the quaternion.</param>
         /// <param name="y">Initial value for the Y component of the quaternion.</param>
         /// <param name="z">Initial value for the Z component of the quaternion.</param>
@@ -119,19 +143,6 @@ namespace LightClaw.Engine.Core
             Y = y;
             Z = z;
             W = w;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
-        /// </summary>
-        /// <param name="values">The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
-        public Quaternion(float[] values)
-            : this(values[0], values[1], values[2], values[3])
-        {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 4);
         }
 
         /// <summary>

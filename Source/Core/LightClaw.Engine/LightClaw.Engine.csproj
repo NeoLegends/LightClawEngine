@@ -169,6 +169,7 @@
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
     <Compile Include="Core\Manager.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\PropertyChangedBase.cs" />
     <Compile Include="Core\Math\Rectangle.cs" />
+    <Compile Include="Core\RandomF.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ParameterEventArgs.cs" />
     <Compile Include="Core\Math\Size.cs" />
@@ -216,6 +218,7 @@
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
+    <Compile Include="Input\InputInterface.cs" />
     <Compile Include="IO\ContentManager.cs" />
     <Compile Include="IO\ContentManagerExtensions.cs" />
     <Compile Include="IO\DiskContentResolver.cs" />

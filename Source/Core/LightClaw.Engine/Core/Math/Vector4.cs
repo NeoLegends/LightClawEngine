@@ -22,35 +22,86 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector4));
 
+        #region Predefined Vectors
+
         /// <summary>
         /// A <see cref="Vector4"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Vector4 Zero = new Vector4();
+        public static Vector4 Zero
+        {
+            get
+            {
+                return new Vector4();
+            }
+        }
 
         /// <summary>
         /// The X unit <see cref="Vector4"/> (1, 0, 0, 0).
         /// </summary>
-        public static readonly Vector4 UnitX = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+        public static Vector4 UnitX
+        {
+            get
+            {
+                return new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The Y unit <see cref="Vector4"/> (0, 1, 0, 0).
         /// </summary>
-        public static readonly Vector4 UnitY = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+        public static Vector4 UnitY
+        {
+            get
+            {
+                return new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The Z unit <see cref="Vector4"/> (0, 0, 1, 0).
         /// </summary>
-        public static readonly Vector4 UnitZ = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+        public static Vector4 UnitZ
+        {
+            get
+            {
+                return new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The W unit <see cref="Vector4"/> (0, 0, 0, 1).
         /// </summary>
-        public static readonly Vector4 UnitW = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+        public static Vector4 UnitW
+        {
+            get
+            {
+                return new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A <see cref="Vector4"/> with all of its components set to one.
         /// </summary>
-        public static readonly Vector4 One = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+        public static Vector4 One
+        {
+            get
+            {
+                return new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
+
+        /// <summary>
+        /// Returns a random <see cref="Vector4"/>.
+        /// </summary>
+        public static Vector4 Random
+        {
+            get
+            {
+                return new Vector4(RandomF.GetSingles(4));
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// The X component of the vector.

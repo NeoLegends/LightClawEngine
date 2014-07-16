@@ -45,6 +45,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets a matrix with random components.
+        /// </summary>
+        public static Matrix5x4 Random
+        {
+            get
+            {
+                return new Matrix5x4(RandomF.GetSingles(20));
+            }
+        }
+
+        /// <summary>
         /// Value at row 1 column 1 of the Matrix5x4.
         /// </summary>
         [DataMember, ProtoMember(1)]

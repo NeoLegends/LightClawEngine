@@ -38,7 +38,7 @@ namespace LightClaw.Engine.Core
             this.gameWindow.UpdateFrame += (s, e) => this.OnUpdate();
             this.gameWindow.RenderFrame += (s, e) => this.OnDraw();
 
-            this.gameWindow.Run(60d);
+            this.gameWindow.Run(60.0);
         }
 
         public void Dispose()

@@ -16,6 +16,30 @@ namespace LightClaw.Engine.Core
                               , IEquatable<System.Drawing.RectangleF>
 #endif
     {
+        public static Rectangle One
+        {
+            get
+            {
+                return new Rectangle(0.0f, 0.0f, 1.0f, 1.0f);
+            }
+        }
+
+        public static Rectangle Zero
+        {
+            get
+            {
+                return new Rectangle();
+            }
+        }
+
+        public static Rectangle Random
+        {
+            get
+            {
+                return new Rectangle(RandomF.GetSingles(4));
+            }
+        }
+
         [DataMember, ProtoMember(1)]
         public Vector2 Position { get; private set; }
 
@@ -83,6 +107,16 @@ namespace LightClaw.Engine.Core
         public Rectangle(System.Drawing.RectangleF rect) : this(rect.Location, rect.Size) { }
 
 #endif
+
+        public Rectangle(float[] values)
+            : this(values[0], values[1], values[2], values[3])
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 4);
+
+            Contract.Requires<ArgumentOutOfRangeException>(values[2] >= 0.0f);
+            Contract.Requires<ArgumentOutOfRangeException>(values[3] >= 0.0f);
+        }
 
         public Rectangle(float posX, float posY, float sizeW, float sizeH)
             : this(new Vector2(posX, posY), new Size(sizeW, sizeH))

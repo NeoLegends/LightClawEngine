@@ -16,6 +16,30 @@ namespace LightClaw.Engine.Core
                          , IEquatable<System.Drawing.SizeF>, IComparable<System.Drawing.SizeF>
 #endif
     {
+        public static Size One
+        {
+            get
+            {
+                return new Size(1.0f, 1.0f);
+            }
+        }
+
+        public static Size Zero
+        {
+            get
+            {
+                return new Size(0.0f, 0.0f);
+            }
+        }
+
+        public static Size Random
+        {
+            get
+            {
+                return new Size(RandomF.GetSingles(2));
+            }
+        }
+
         [DataMember, ProtoMember(1)]
         public float Width { get; private set; }
 
@@ -26,7 +50,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.Width * this.Height) == 0.0f;
+                return ((this.Width * this.Height) == 0.0f);
             }
         }
 
@@ -40,6 +64,15 @@ namespace LightClaw.Engine.Core
         }
 
 #endif
+
+        public Size(float[] values)
+            : this(values[0], values[1])
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 2);
+            Contract.Requires<ArgumentOutOfRangeException>(values[0] >= 0.0f);
+            Contract.Requires<ArgumentOutOfRangeException>(values[1] >= 0.0f);
+        }
 
         public Size(Vector2 vector)
             : this(vector.X, vector.Y) 

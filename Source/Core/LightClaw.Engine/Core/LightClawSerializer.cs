@@ -39,7 +39,7 @@ namespace LightClaw.Engine.Core
             return Task.Run(() => Serializer.DeserializeWithLengthPrefix<T>(source, PrefixStyle.Fixed32));
         }
 
-        public Task<T> DeserializeWithLengthPrefiAsync<T>(byte[] source)
+        public Task<T> DeserializeWithLengthPrefixAsync<T>(byte[] source)
         {
             Contract.Requires<ArgumentNullException>(source != null);
 

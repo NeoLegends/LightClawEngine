@@ -44,6 +44,6 @@ namespace LightClaw.Engine.Core
 
         protected override void OnReset() { }
 
-        protected override void OnUpdate() { }
+        protected override void OnUpdate(GameTime gameTime) { }
     }
 }

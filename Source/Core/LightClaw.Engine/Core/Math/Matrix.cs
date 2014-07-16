@@ -45,6 +45,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets a matrix with random components.
+        /// </summary>
+        public static Matrix Random
+        {
+            get
+            {
+                return new Matrix(RandomF.GetSingles(16));
+            }
+        }
+
+        /// <summary>
         /// Value at row 1 column 1 of the matrix.
         /// </summary>
         [DataMember, ProtoMember(1)]
@@ -1093,8 +1104,7 @@ namespace LightClaw.Engine.Core
             //Source: http://rosettacode.org
             //Reference: http://rosettacode.org/wiki/Matrix-exponentiation_operator
 
-            if (exponent < 0)
-                throw new ArgumentOutOfRangeException("exponent", "The exponent can not be negative.");
+            Contract.Requires<ArgumentOutOfRangeException>(exponent >= 0);
 
             if (exponent == 0)
             {
@@ -1114,14 +1124,20 @@ namespace LightClaw.Engine.Core
             while (true)
             {
                 if ((exponent & 1) != 0)
+                {
                     identity = identity * temp;
+                }
 
                 exponent /= 2;
 
                 if (exponent > 0)
+                {
                     temp *= temp;
+                }
                 else
+                {
                     break;
+                }
             }
 
             result = identity;

@@ -45,6 +45,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets a matrix with random components.
+        /// </summary>
+        public static Matrix3x3 Random
+        {
+            get
+            {
+                return new Matrix3x3(RandomF.GetSingles(9));
+            }
+        }
+
+        /// <summary>
         /// Value at row 1 column 1 of the Matrix3x3.
         /// </summary>
         [DataMember, ProtoMember(1)]

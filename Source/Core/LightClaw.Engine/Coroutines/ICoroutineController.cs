@@ -42,7 +42,7 @@ namespace LightClaw.Engine.Coroutines
             Contract.Requires<ArgumentNullException>(coroutine != null);
         }
 
-        void IUpdateable.Update()
+        void IUpdateable.Update(GameTime gameTime)
         {
         }
     }

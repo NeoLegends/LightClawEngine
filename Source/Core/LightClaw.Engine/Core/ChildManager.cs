@@ -63,9 +63,9 @@ namespace LightClaw.Engine.Core
             this.PerformChildAction(item => item.Reset());
         }
 
-        protected override void OnUpdate()
+        protected override void OnUpdate(GameTime gameTime)
         {
-            this.PerformChildAction(item => item.Update());
+            this.PerformChildAction(item => item.Update(gameTime));
         }
 
         private void PerformChildAction(Action<IControllable> action)

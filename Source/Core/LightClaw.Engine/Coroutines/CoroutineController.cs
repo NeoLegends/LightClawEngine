@@ -49,7 +49,7 @@ namespace LightClaw.Engine.Coroutines
             this.Add(coroutine());
         }
 
-        protected override void OnUpdate()
+        protected override void OnUpdate(GameTime gameTime)
         {
             IEnumerable<ICoroutineContext> contexts = this.contexts;
             if (contexts != null)
@@ -63,11 +63,13 @@ namespace LightClaw.Engine.Coroutines
 
                 foreach (ICoroutineContext context in contexts)
                 {
-                    context.Step();
-                }
-                lock (this.contexts)
-                {
-                    this.contexts.RemoveAll(context => context.IsFinished);
+                    if (context.Step())
+                    {
+                        lock (this.contexts)
+                        {
+                            this.contexts.Remove(context);
+                        }
+                    }
                 }
             }
         }

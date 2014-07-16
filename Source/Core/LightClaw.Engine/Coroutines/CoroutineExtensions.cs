@@ -7,18 +7,34 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Coroutines
 {
+    /// <summary>
+    /// Contains extensions to <see cref="ICoroutineContext"/>s.
+    /// </summary>
     public static class CoroutineExtensions
     {
+        /// <summary>
+        /// Steps the <see cref="ICoroutineContext"/> once without returning the current object.
+        /// </summary>
+        /// <param name="context">The <see cref="ICoroutineContext"/> to step.</param>
+        /// <returns><c>true</c> if the context finished execution, otherwise <c>false</c>.</returns>
         public static bool Step(this ICoroutineContext context)
         {
             object current;
             return context.Step(out current);
         }
 
-        public static void StepUntil(this ICoroutineContext context, TimeSpan timeOut)
+        /// <summary>
+        /// Steps the <see cref="ICoroutineContext"/> until the specified <paramref name="timeOut"/>.
+        /// </summary>
+        /// <param name="context">The <see cref="ICoroutineContext"/> to step.</param>
+        /// <param name="timeOut">The time to step.</param>
+        /// <returns><c>true</c> if the <see cref="ICoroutineContext"/> finished execution during the specified time, otherwise <c>false</c>.</returns>
+        public static bool StepUntil(this ICoroutineContext context, TimeSpan timeOut)
         {
             Stopwatch st = Stopwatch.StartNew();
-            while (st.Elapsed < timeOut && context.Step()) { }
+            bool isFinished = false;
+            while (!isFinished && (st.Elapsed < timeOut) && (isFinished = context.Step())) { }
+            return isFinished;
         }
     }
 }

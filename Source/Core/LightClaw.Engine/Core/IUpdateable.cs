@@ -12,6 +12,6 @@ namespace LightClaw.Engine.Core
 
         event EventHandler<ParameterEventArgs> Updated;
 
-        void Update();
+        void Update(GameTime gameTime);
     }
 }

@@ -22,25 +22,64 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vector2));
 
+        #region Predefined Vectors
+
         /// <summary>
         /// A <see cref="Vector2"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Vector2 Zero = new Vector2();
+        public static Vector2 Zero
+        {
+            get
+            {
+                return new Vector2();
+            }
+        }
 
         /// <summary>
         /// The X unit <see cref="Vector2"/> (1, 0).
         /// </summary>
-        public static readonly Vector2 UnitX = new Vector2(1.0f, 0.0f);
+        public static Vector2 UnitX
+        {
+            get
+            {
+                return new Vector2(1.0f, 0.0f);
+            }
+        }
 
         /// <summary>
         /// The Y unit <see cref="Vector2"/> (0, 1).
         /// </summary>
-        public static readonly Vector2 UnitY = new Vector2(0.0f, 1.0f);
+        public static Vector2 UnitY
+        {
+            get
+            {
+                return new Vector2(0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// A <see cref="Vector2"/> with all of its components set to one.
         /// </summary>
-        public static readonly Vector2 One = new Vector2(1.0f, 1.0f);
+        public static Vector2 One
+        {
+            get
+            {
+                return new Vector2(1.0f, 1.0f);
+            }
+        }
+
+        /// <summary>
+        /// Returns a random <see cref="Vector2"/>.
+        /// </summary>
+        public static Vector2 Random
+        {
+            get
+            {
+                return new Vector2(RandomF.GetSingles(2));
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// The X component of the vector.
