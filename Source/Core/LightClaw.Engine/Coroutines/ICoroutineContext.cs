@@ -11,6 +11,8 @@ namespace LightClaw.Engine.Coroutines
 {
     public interface ICoroutineContext
     {
+        bool IsBlocked { get; }
+
         bool IsEnabled { get; set; }
 
         bool IsFinished { get; }

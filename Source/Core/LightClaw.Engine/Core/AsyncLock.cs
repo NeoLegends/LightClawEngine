@@ -16,6 +16,8 @@ namespace LightClaw.Engine.Core
 
         public AsyncLock(int initialCount)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(initialCount > 0);
+
             this.semaphore = new SemaphoreSlim(initialCount);
         }
 

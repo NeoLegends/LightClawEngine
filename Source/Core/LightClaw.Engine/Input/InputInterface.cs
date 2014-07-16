@@ -10,14 +10,12 @@ using ProtoBuf;
 namespace LightClaw.Engine.Input
 {
     [ProtoContract]
-    [Solitary(typeof(InputInterface), "More than one InputInterface induces unecessary overhead.")]
+    [Solitary(typeof(InputInterface), "More than one InputInterface induces unnecessary overhead.")]
     public class InputInterface : Component
     {
         public InputInterface()
         {
-
+            throw new NotImplementedException();
         }
-
-
     }
 }

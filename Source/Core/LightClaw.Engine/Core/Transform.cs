@@ -23,9 +23,9 @@ namespace LightClaw.Engine.Core
 
         public event EventHandler<ValueChangedEventArgs<Vector3>> ScalingChanged;
 
-        private readonly ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
-
         [ProtoMember(1)]
+        private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
+
         public ObservableCollection<Transform> Childs
         {
             get
@@ -171,6 +171,14 @@ namespace LightClaw.Engine.Core
             {
                 handler(this, new ValueChangedEventArgs<Vector3>(newScaling, oldScaling));
             }
+        }
+
+        [Tag("Congrats, you are a true C# zen master and found this hidden method. Might allow polan into space.")]
+        private void Randomize()
+        {
+            this.Position = Vector3.Random;
+            this.Rotation = Quaternion.Random;
+            this.Scale = Vector3.Random;
         }
     }
 }

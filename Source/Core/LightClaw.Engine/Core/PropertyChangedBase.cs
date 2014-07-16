@@ -9,7 +9,7 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
+    [ProtoContract]
     public abstract class PropertyChangedBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

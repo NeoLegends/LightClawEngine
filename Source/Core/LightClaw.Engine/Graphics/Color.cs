@@ -734,23 +734,13 @@ namespace LightClaw.Engine.Graphics
         public static readonly Color YellowGreen = Color.FromBgra(0xFF9ACD32);
 
         /// <summary>
-        /// The <see cref="Random"/> instance used to obtain the random color.
-        /// </summary>
-        private static readonly Random random = new Random();
-
-        /// <summary>
         /// Returns a random color.
         /// </summary>
         public static Color Random
         {
             get
             {
-                return new Color(
-                    (byte)random.Next(0, 256),
-                    (byte)random.Next(0, 256),
-                    (byte)random.Next(0, 256),
-                    (byte)random.Next(0, 256)
-                );
+                return new Color(RandomF.GetByte(), RandomF.GetByte(), RandomF.GetByte(), RandomF.GetByte());
             }
         }
 

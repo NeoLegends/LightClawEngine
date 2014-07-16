@@ -12,21 +12,49 @@ using ProtoBuf;
 namespace LightClaw.Engine.Coroutines
 {
     [ProtoContract]
-    [Solitary(typeof(CoroutineController), "More than one CoroutineController makes no sense and induces overhead.")]
-    public class CoroutineController : Component, ICoroutineController
+    [Solitary(typeof(CoroutineController), "More than one CoroutineController induces unnecessary overhead.")]
+    public class CoroutineController : Component
     {
         [ProtoIgnore]
         private List<ICoroutineContext> contexts = new List<ICoroutineContext>();
 
         public CoroutineController() { }
 
-        public CoroutineController(IEnumerable coroutine)
-            : this(coroutine.Yield())
+        public CoroutineController(Func<IEnumerable> coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);
+
+            this.Add(coroutine);
         }
 
-        public CoroutineController(IEnumerable<IEnumerable> coroutines)
+        public CoroutineController(IEnumerable coroutine)
+        {
+            Contract.Requires<ArgumentNullException>(coroutine != null);
+
+            this.Add(coroutine);
+        }
+
+        public void Add(IEnumerable coroutine)
+        {
+            Contract.Requires<ArgumentNullException>(coroutine != null);
+
+            lock (this.contexts)
+            {
+                this.contexts.Add(new CoroutineContext(coroutine));
+            }
+        }
+
+        public void Add(Func<IEnumerable> coroutine)
+        {
+            Contract.Requires<ArgumentNullException>(coroutine != null);
+
+            lock (this.contexts)
+            {
+                this.contexts.Add(new CoroutineContext(coroutine));
+            }
+        }
+
+        public void AddRange(IEnumerable<IEnumerable> coroutines)
         {
             Contract.Requires<ArgumentNullException>(coroutines != null);
 
@@ -36,17 +64,14 @@ namespace LightClaw.Engine.Coroutines
             }
         }
 
-        public void Add(IEnumerable coroutine)
+        public void AddRange(IEnumerable<Func<IEnumerable>> coroutines)
         {
-            lock (this.contexts)
-            {
-                this.contexts.Add(new CoroutineContext(coroutine));
-            }
-        }
+            Contract.Requires<ArgumentNullException>(coroutines != null);
 
-        public void Add(Func<IEnumerable> coroutine)
-        {
-            this.Add(coroutine());
+            foreach (Func<IEnumerable> coroutine in coroutines)
+            {
+                this.Add(coroutine);
+            }
         }
 
         protected override void OnUpdate(GameTime gameTime)
