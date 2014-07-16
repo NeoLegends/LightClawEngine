@@ -40,8 +40,6 @@ namespace LightClaw.Engine.Core
 
 #endif
 
-        public Size(Sized sizeD) : this((float)sizeD.Width, (float)sizeD.Height) { }
-
         public Size(Vector2 vector)
             : this(vector.X, vector.Y) 
         { 
@@ -120,11 +118,6 @@ namespace LightClaw.Engine.Core
         public static bool operator !=(Size left, Size right)
         {
             return !(left == right);
-        }
-
-        public static explicit operator Size(Sized sizeD)
-        {
-            return new Size(sizeD);
         }
 
         public static explicit operator Size(Vector2 vector)

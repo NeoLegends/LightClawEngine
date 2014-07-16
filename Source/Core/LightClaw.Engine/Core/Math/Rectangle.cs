@@ -83,8 +83,6 @@ namespace LightClaw.Engine.Core
 
 #endif
 
-        public Rectangle(Rectangled rect) : this((Vector2)rect.Position, (Size)rect.Size) { }
-
         public Rectangle(float posX, float posY, float sizeW, float sizeH)
             : this(new Vector2(posX, posY), new Size(sizeW, sizeH))
         {
@@ -174,11 +172,6 @@ namespace LightClaw.Engine.Core
                    ((right.Position.X < left.Position.X) || left.ContainsX(right.Position.X))) &&
                    ((right.Position.Y + right.Height > left.Position.Y) &&
                    ((right.Position.Y > left.Position.Y) || left.ContainsY(right.Position.Y)));
-        }
-
-        public static explicit operator Rectangle(Rectangled rect)
-        {
-            return new Rectangle(rect);
         }
 
 #if SYSTEMDRAWING_INTEROP

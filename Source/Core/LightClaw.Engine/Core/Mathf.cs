@@ -64,6 +64,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Checks whether two doubles are almost the same number.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c>.</returns>
+        public static bool AlmostEquals(double left, double right)
+        {
+            return IsAlmostZero(left - right);
+        }
+
+        /// <summary>
         /// Makes sure the value stays in the given area.
         /// </summary>
         /// <param name="value">The value to check.</param>
