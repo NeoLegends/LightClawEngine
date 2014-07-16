@@ -30,6 +30,19 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets the default zero threshold.
+        /// </summary>
+        public static double DefaultZeroThreshold
+        {
+            get
+            {
+                Contract.Assert(ZeroThresholds.Length > 10);
+
+                return ZeroThresholds[10];
+            }
+        }
+
+        /// <summary>
         /// Backing field.
         /// </summary>
         private static readonly string[] _HexTable = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
@@ -168,7 +181,7 @@ namespace LightClaw.Engine.Core
         /// <returns>Whether the input number is almost zero or not.</returns>
         public static bool IsAlmostZero(double value)
         {
-            return IsAlmostOne(value, 10);
+            return (-DefaultZeroThreshold < value) && (value < DefaultZeroThreshold);
         }
 
         /// <summary>
@@ -179,7 +192,7 @@ namespace LightClaw.Engine.Core
         /// <returns>Whether the input number is almost zero or not.</returns>
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < 16);
+            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < ZeroThresholds.Length);
 
             return (-ZeroThresholds[decimalPlaceCount] < value) && (value < ZeroThresholds[decimalPlaceCount]);
         }

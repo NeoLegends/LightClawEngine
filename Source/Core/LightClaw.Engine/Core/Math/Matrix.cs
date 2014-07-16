@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// Represents a 4x4 mathematical matrix.
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(16, 4, true)]
     public struct Matrix : IEquatable<Matrix>
     {
         /// <summary>
@@ -24,12 +25,24 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Matrix"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Matrix Zero = new Matrix();
+        public static Matrix Zero
+        {
+            get
+            {
+                return new Matrix();
+            }
+        }
 
         /// <summary>
         /// The identity <see cref="Matrix"/>.
         /// </summary>
-        public static readonly Matrix Identity = new Matrix() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f, M44 = 1.0f };
+        public static Matrix Identity
+        {
+            get
+            {
+                return new Matrix() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f, M44 = 1.0f };
+            }
+        }
 
         /// <summary>
         /// Value at row 1 column 1 of the matrix.
@@ -725,7 +738,7 @@ namespace LightClaw.Engine.Core
             var inv_scale = 1f / scale;
 
             //If any of the scaling factors are zero, then the rotation matrix can not exist.
-            if (Math.Abs(scale) < MathF.ZeroThresholds[7])
+            if (Math.Abs(scale) < MathF.DefaultZeroThreshold)
             {
                 rotation = Quaternion.Identity;
                 return false;
@@ -3149,22 +3162,26 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public bool Equals(ref Matrix other)
         {
-            return (MathF.AlmostEquals(other.M11, M11) &&
+            return 
+                MathF.AlmostEquals(other.M11, M11) &&
                 MathF.AlmostEquals(other.M12, M12) &&
                 MathF.AlmostEquals(other.M13, M13) &&
                 MathF.AlmostEquals(other.M14, M14) &&
+
                 MathF.AlmostEquals(other.M21, M21) &&
                 MathF.AlmostEquals(other.M22, M22) &&
                 MathF.AlmostEquals(other.M23, M23) &&
                 MathF.AlmostEquals(other.M24, M24) &&
+
                 MathF.AlmostEquals(other.M31, M31) &&
                 MathF.AlmostEquals(other.M32, M32) &&
                 MathF.AlmostEquals(other.M33, M33) &&
                 MathF.AlmostEquals(other.M34, M34) &&
+
                 MathF.AlmostEquals(other.M41, M41) &&
                 MathF.AlmostEquals(other.M42, M42) &&
                 MathF.AlmostEquals(other.M43, M43) &&
-                MathF.AlmostEquals(other.M44, M44));
+                MathF.AlmostEquals(other.M44, M44);
         }
 
         /// <summary>
@@ -3189,11 +3206,10 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override bool Equals(object value)
         {
-            if (!(value is Matrix))
+            if (ReferenceEquals(value, null))
                 return false;
 
-            var strongValue = (Matrix)value;
-            return Equals(ref strongValue);
+            return (value is Matrix) ? this.Equals((Matrix)value) : false;
         }
     }
 }

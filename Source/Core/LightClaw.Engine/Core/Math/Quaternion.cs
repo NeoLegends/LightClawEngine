@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// Represents a four dimensional mathematical quaternion.
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(4, 4, true)]
     public struct Quaternion : IEquatable<Quaternion>
     {
         /// <summary>
@@ -24,17 +25,35 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Quaternion"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Quaternion Zero = new Quaternion();
+        public static Quaternion Zero
+        {
+            get
+            {
+                return new Quaternion();
+            }
+        }
 
         /// <summary>
         /// A <see cref="Quaternion"/> with all of its components set to one.
         /// </summary>
-        public static readonly Quaternion One = new Quaternion(1.0f, 1.0f, 1.0f, 1.0f);
+        public static Quaternion One
+        {
+            get
+            {
+                return new Quaternion(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// The identity <see cref="Quaternion"/> (0, 0, 0, 1).
         /// </summary>
-        public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+        public static Quaternion Identity
+        {
+            get
+            {
+                return new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+            }
+        }
 
         /// <summary>
         /// The X component of the quaternion.
@@ -1062,7 +1081,7 @@ namespace LightClaw.Engine.Core
             float inverse;
             float dot = Dot(start, end);
 
-            if (Math.Abs(dot) > 1.0f - MathF.ZeroThresholds[7])
+            if (Math.Abs(dot) > 1.0f - MathF.DefaultZeroThreshold)
             {
                 inverse = 1.0f - amount;
                 opposite = amount * Math.Sign(dot);

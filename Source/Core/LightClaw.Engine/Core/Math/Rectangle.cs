@@ -10,6 +10,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [DataContract, ProtoContract]
+    [StructureInformation(2, 8, true)]
     public struct Rectangle : IEquatable<Rectangle>, IComparable<Rectangle>
 #if SYSTEMDRAWING_INTEROP
                               , IEquatable<System.Drawing.RectangleF>

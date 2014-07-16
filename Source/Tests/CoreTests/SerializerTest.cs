@@ -13,7 +13,7 @@ namespace CoreTests
         public async Task TestChildManagerSerialization()
         {
             Scene scene = new Scene();
-            GameObject gameObject = new GameObject(new Transform(Vector3.ForwardLH).Yield());
+            GameObject gameObject = new GameObject(new Transform(Vector3.ForwardLH, Quaternion.Zero, Vector3.One).Yield());
             scene.Add(gameObject);
 
             LightClawSerializer ser = new LightClawSerializer();

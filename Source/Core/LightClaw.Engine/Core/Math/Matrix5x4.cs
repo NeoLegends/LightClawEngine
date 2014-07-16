@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// Represents a 4x4 mathematical Matrix5x4.
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(20, 4, true)]
     public struct Matrix5x4 : IEquatable<Matrix5x4>
     {
         /// <summary>
@@ -24,12 +25,24 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Matrix5x4"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Matrix5x4 Zero = new Matrix5x4();
+        public static Matrix5x4 Zero
+        {
+            get
+            {
+                return new Matrix5x4();
+            }
+        }
 
         /// <summary>
         /// The identity <see cref="Matrix5x4"/>.
         /// </summary>
-        public static readonly Matrix5x4 Identity = new Matrix5x4() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f, M44 = 1.0f, M54 = 0.0f };
+        public static Matrix5x4 Identity
+        {
+            get
+            {
+                return new Matrix5x4() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f, M44 = 1.0f, M54 = 0.0f };
+            }
+        }
 
         /// <summary>
         /// Value at row 1 column 1 of the Matrix5x4.
@@ -988,26 +1001,31 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public bool Equals(Matrix5x4 other)
         {
-            return (MathF.AlmostEquals(other.M11, M11) &&
+            return 
+                MathF.AlmostEquals(other.M11, M11) &&
                 MathF.AlmostEquals(other.M12, M12) &&
                 MathF.AlmostEquals(other.M13, M13) &&
                 MathF.AlmostEquals(other.M14, M14) &&
+
                 MathF.AlmostEquals(other.M21, M21) &&
                 MathF.AlmostEquals(other.M22, M22) &&
                 MathF.AlmostEquals(other.M23, M23) &&
                 MathF.AlmostEquals(other.M24, M24) &&
+
                 MathF.AlmostEquals(other.M31, M31) &&
                 MathF.AlmostEquals(other.M32, M32) &&
                 MathF.AlmostEquals(other.M33, M33) &&
                 MathF.AlmostEquals(other.M34, M34) &&
+
                 MathF.AlmostEquals(other.M41, M41) &&
                 MathF.AlmostEquals(other.M42, M42) &&
                 MathF.AlmostEquals(other.M43, M43) &&
                 MathF.AlmostEquals(other.M44, M44) &&
+
                 MathF.AlmostEquals(other.M51, M51) &&
                 MathF.AlmostEquals(other.M52, M52) &&
                 MathF.AlmostEquals(other.M53, M53) &&
-                MathF.AlmostEquals(other.M54, M54));
+                MathF.AlmostEquals(other.M54, M54);
         }
 
         /// <summary>

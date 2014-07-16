@@ -10,6 +10,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [DataContract, ProtoContract]
+    [StructureInformation(2, 4, true)]
     public struct Size : IEquatable<Size>, IComparable<Size>
 #if SYSTEMDRAWING_INTEROP
                          , IEquatable<System.Drawing.SizeF>, IComparable<System.Drawing.SizeF>

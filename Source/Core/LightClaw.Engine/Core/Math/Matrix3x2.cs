@@ -14,13 +14,31 @@ namespace LightClaw.Engine.Core
     /// Direct2D Matrix3x2. Supports implicit cast from <see cref="Matrix"/>.
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(6, 4, true)]
     public struct Matrix3x2
     {
+        /// <summary>
+        /// A <see cref="Matrix3x2"/> with all components set to 0.
+        /// </summary>
+        public static Matrix3x2 Zero
+        {
+            get
+            {
+                return new Matrix3x2();
+            }
+        }
+
         /// <summary>
         /// Gets the identity matrix.
         /// </summary>
         /// <value>The identity matrix.</value>
-        public readonly static Matrix3x2 Identity = new Matrix3x2(1, 0, 0, 1, 0, 0);
+        public static Matrix3x2 Identity
+        {
+            get
+            {
+                return new Matrix3x2(1, 0, 0, 1, 0, 0);
+            }
+        }
 
         /// <summary>
         /// Element (1,1)
@@ -1046,12 +1064,15 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public bool Equals(Matrix3x2 other)
         {
-            return (MathF.AlmostEquals(other.M11, M11) &&
+            return 
+                MathF.AlmostEquals(other.M11, M11) &&
                 MathF.AlmostEquals(other.M12, M12) &&
+
                 MathF.AlmostEquals(other.M21, M21) &&
                 MathF.AlmostEquals(other.M22, M22) &&
+
                 MathF.AlmostEquals(other.M31, M31) &&
-                MathF.AlmostEquals(other.M32, M32));
+                MathF.AlmostEquals(other.M32, M32);
         }
 
         /// <summary>
@@ -1063,13 +1084,10 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override bool Equals(object value)
         {
-            if (value == null)
+            if (ReferenceEquals(value, null))
                 return false;
 
-            if (!ReferenceEquals(value.GetType(), typeof(Matrix3x2)))
-                return false;
-
-            return Equals((Matrix3x2)value);
+            return (value is Matrix3x2) ? this.Equals((Matrix3x2)value) : false;
         }
 
         /// <summary>
@@ -1090,5 +1108,4 @@ namespace LightClaw.Engine.Core
             };
         }
     }
-
 }

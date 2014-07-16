@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// Represents a 3x3 Matrix ( contains only Scale and Rotation ).
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(9, 4, true)]
     public struct Matrix3x3 : IEquatable<Matrix3x3>
     {
         /// <summary>
@@ -24,12 +25,24 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Matrix3x3"/> with all of its components set to zero.
         /// </summary>
-        public static readonly Matrix3x3 Zero = new Matrix3x3();
+        public static Matrix3x3 Zero
+        {
+            get
+            {
+                return new Matrix3x3();
+            }
+        }
 
         /// <summary>
         /// The identity <see cref="Matrix3x3"/>.
         /// </summary>
-        public static readonly Matrix3x3 Identity = new Matrix3x3() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f };
+        public static Matrix3x3 Identity
+        {
+            get
+            {
+                return new Matrix3x3() { M11 = 1.0f, M22 = 1.0f, M33 = 1.0f };
+            }
+        }
 
         /// <summary>
         /// Value at row 1 column 1 of the Matrix3x3.
@@ -467,7 +480,7 @@ namespace LightClaw.Engine.Core
             var inv_scale = 1f / scale;
 
             //If any of the scaling factors are zero, then the rotation matrix can not exist.
-            if (Math.Abs(scale) < MathF.ZeroThresholds[7])
+            if (Math.Abs(scale) < MathF.DefaultZeroThreshold)
             {
                 rotation = Quaternion.Identity;
                 return false;
@@ -2050,19 +2063,18 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public static bool Equals(ref Matrix3x3 a,ref Matrix3x3 b)
         {
-            return 
+            return
                 MathF.AlmostEquals(a.M11, b.M11) &&
                 MathF.AlmostEquals(a.M12, b.M12) &&
                 MathF.AlmostEquals(a.M13, b.M13) &&
-                                        
+
                 MathF.AlmostEquals(a.M21, b.M21) &&
                 MathF.AlmostEquals(a.M22, b.M22) &&
                 MathF.AlmostEquals(a.M23, b.M23) &&
-                                        
+
                 MathF.AlmostEquals(a.M31, b.M31) &&
                 MathF.AlmostEquals(a.M32, b.M32) &&
-                MathF.AlmostEquals(a.M33, b.M33)
-                ;
+                MathF.AlmostEquals(a.M33, b.M33);
         }
 
         /// <summary>
@@ -2074,11 +2086,10 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override bool Equals(object value)
         {
-            if (!(value is Matrix3x3))
+            if (ReferenceEquals(value, null))
                 return false;
 
-            var strongValue = (Matrix3x3)value;
-            return Equals(ref strongValue);
+            return (value is Matrix3x3) ? this.Equals((Matrix3x3)value) : false;
         }
     }
 }

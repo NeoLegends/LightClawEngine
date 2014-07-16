@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// Represents a four dimensional mathematical vector.
     /// </summary>
     [DataContract, ProtoContract]
+    [StructureInformation(4, 4, true)]
     public struct Vector4 : IEquatable<Vector4>
     {
         /// <summary>
@@ -982,12 +983,9 @@ namespace LightClaw.Engine.Core
             //q4 = m4 - ((q1 ⋅ m4) / (q1 ⋅ q1)) * q1 - ((q2 ⋅ m4) / (q2 ⋅ q2)) * q2 - ((q3 ⋅ m4) / (q3 ⋅ q3)) * q3
             //q5 = ...
 
-            if (source == null)
-                throw new ArgumentNullException("source");
-            if (destination == null)
-                throw new ArgumentNullException("destination");
-            if (destination.Length < source.Length)
-                throw new ArgumentOutOfRangeException("destination", "The destination array must be of same length or larger length than the source array.");
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(destination != null);
+            Contract.Requires<ArgumentOutOfRangeException>(destination.Length >= source.Length);
 
             for (int i = 0; i < source.Length; ++i)
             {
@@ -1029,12 +1027,9 @@ namespace LightClaw.Engine.Core
             //q4 = (m4 - (q1 ⋅ m4) * q1 - (q2 ⋅ m4) * q2 - (q3 ⋅ m4) * q3) / |m4 - (q1 ⋅ m4) * q1 - (q2 ⋅ m4) * q2 - (q3 ⋅ m4) * q3|
             //q5 = ...
 
-            if (source == null)
-                throw new ArgumentNullException("source");
-            if (destination == null)
-                throw new ArgumentNullException("destination");
-            if (destination.Length < source.Length)
-                throw new ArgumentOutOfRangeException("destination", "The destination array must be of same length or larger length than the source array.");
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(destination != null);
+            Contract.Requires<ArgumentOutOfRangeException>(destination.Length >= source.Length);
 
             for (int i = 0; i < source.Length; ++i)
             {
@@ -1102,12 +1097,9 @@ namespace LightClaw.Engine.Core
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
         public static void Transform(Vector4[] source, ref Quaternion rotation, Vector4[] destination)
         {
-            if (source == null)
-                throw new ArgumentNullException("source");
-            if (destination == null)
-                throw new ArgumentNullException("destination");
-            if (destination.Length < source.Length)
-                throw new ArgumentOutOfRangeException("destination", "The destination array must be of same length or larger length than the source array.");
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(destination != null);
+            Contract.Requires<ArgumentOutOfRangeException>(destination.Length >= source.Length);
 
             float x = rotation.X + rotation.X;
             float y = rotation.Y + rotation.Y;
@@ -1209,12 +1201,9 @@ namespace LightClaw.Engine.Core
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
         public static void Transform(Vector4[] source, ref Matrix transform, Vector4[] destination)
         {
-            if (source == null)
-                throw new ArgumentNullException("source");
-            if (destination == null)
-                throw new ArgumentNullException("destination");
-            if (destination.Length < source.Length)
-                throw new ArgumentOutOfRangeException("destination", "The destination array must be of same length or larger length than the source array.");
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(destination != null);
+            Contract.Requires<ArgumentOutOfRangeException>(destination.Length >= source.Length);
 
             for (int i = 0; i < source.Length; ++i)
             {

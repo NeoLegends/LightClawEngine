@@ -24,14 +24,6 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public int TotalSizeInBytes
-        {
-            get
-            {
-                return this.TotalSize / 8;
-            }
-        }
-
         public StructureInformationAttribute(int componentCount, int componentSize, bool isFloatingPoint)
         {
             Contract.Requires<ArgumentOutOfRangeException>(componentCount > 0);
