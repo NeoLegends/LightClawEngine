@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -88,61 +89,13 @@ namespace LightClaw.Engine.Core
         public float M32;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
-        /// </summary>
-        /// <param name="value">The value that will be assigned to all components.</param>
-        public Matrix3x2(float value)
-        {
-            M11 = M12 = 
-            M21 = M22 = 
-            M31 = M32 = value; 
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
-        /// </summary>
-        /// <param name="M11">The value to assign at row 1 column 1 of the matrix.</param>
-        /// <param name="M12">The value to assign at row 1 column 2 of the matrix.</param>
-        /// <param name="M21">The value to assign at row 2 column 1 of the matrix.</param>
-        /// <param name="M22">The value to assign at row 2 column 2 of the matrix.</param>
-        /// <param name="M31">The value to assign at row 3 column 1 of the matrix.</param>
-        /// <param name="M32">The value to assign at row 3 column 2 of the matrix.</param>
-        public Matrix3x2(float M11, float M12, float M21, float M22, float M31, float M32)
-        {
-            this.M11 = M11; this.M12 = M12;
-            this.M21 = M21; this.M22 = M22;
-            this.M31 = M31; this.M32 = M32;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
-        /// </summary>
-        /// <param name="values">The values to assign to the components of the matrix. This must be an array with six elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than six elements.</exception>
-        public Matrix3x2(float[] values)
-        {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 6);
-
-            M11 = values[0];
-            M12 = values[1];
-
-            M21 = values[2];
-            M22 = values[3];
-
-            M31 = values[4];
-            M32 = values[5];
-        }
-
-        /// <summary>
         /// Gets or sets the first row in the matrix; that is M11 and M12.
         /// </summary>
         [IgnoreDataMember, ProtoIgnore]
         public Vector2 Row1
         {
             get { return new Vector2(M11, M12); }
-            set { M11 = value.X; M12 = value.Y;  }
+            set { M11 = value.X; M12 = value.Y; }
         }
 
         /// <summary>
@@ -182,7 +135,7 @@ namespace LightClaw.Engine.Core
         public Vector3 Column2
         {
             get { return new Vector3(M12, M22, M32); }
-            set { M12 = value.X; M22 = value.Y; M32 = value.Z;}
+            set { M12 = value.X; M22 = value.Y; M32 = value.Z; }
         }
 
         /// <summary>
@@ -192,7 +145,7 @@ namespace LightClaw.Engine.Core
         public Vector2 TranslationVector
         {
             get { return new Vector2(M31, M32); }
-            set { M31 = value.X; M32 = value.Y;  }
+            set { M31 = value.X; M32 = value.Y; }
         }
 
         /// <summary>
@@ -232,17 +185,16 @@ namespace LightClaw.Engine.Core
 
                 switch (index)
                 {
-                    case 0:  return M11;
-                    case 1:  return M12;
-                    case 2:  return M21;
-                    case 3:  return M22;
-                    case 4:  return M31;
-                    case 5:  return M32;
+                    case 0: return M11;
+                    case 1: return M12;
+                    case 2: return M21;
+                    case 3: return M22;
+                    case 4: return M31;
+                    case 5: return M32;
                 }
 
                 throw new ArgumentOutOfRangeException("index", "Indices for Matrix3x2 run from 0 to 5, inclusive.");
             }
-
             set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < 6);
@@ -278,7 +230,6 @@ namespace LightClaw.Engine.Core
 
                 return this[(row * 2) + column];
             }
-
             set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(row >= 0 && row < 3);
@@ -289,12 +240,127 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
+        /// </summary>
+        /// <param name="value">The value that will be assigned to all components.</param>
+        public Matrix3x2(float value)
+        {
+            M11 = M12 = 
+            M21 = M22 = 
+            M31 = M32 = value; 
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
+        /// </summary>
+        /// <param name="M11">The value to assign at row 1 column 1 of the matrix.</param>
+        /// <param name="M12">The value to assign at row 1 column 2 of the matrix.</param>
+        /// <param name="M21">The value to assign at row 2 column 1 of the matrix.</param>
+        /// <param name="M22">The value to assign at row 2 column 2 of the matrix.</param>
+        /// <param name="M31">The value to assign at row 3 column 1 of the matrix.</param>
+        /// <param name="M32">The value to assign at row 3 column 2 of the matrix.</param>
+        public Matrix3x2(float M11, float M12, float M21, float M22, float M31, float M32)
+        {
+            this.M11 = M11; this.M12 = M12;
+            this.M21 = M21; this.M22 = M22;
+            this.M31 = M31; this.M32 = M32;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
+        /// </summary>
+        /// <param name="values">The values to assign to the components of the matrix. This must be an array with six elements.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than six elements.</exception>
+        public Matrix3x2(float[] values)
+            : this(
+                values[0], values[1],
+                values[2], values[3],
+                values[4], values[5]
+            )
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 6);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
+
+                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
+
+                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
+                return hash;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="Matrix3x2"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="Matrix3x2"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="Matrix3x2"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public bool Equals(Matrix3x2 other)
+        {
+            return
+                MathF.AlmostEquals(other.M11, M11) &&
+                MathF.AlmostEquals(other.M12, M12) &&
+
+                MathF.AlmostEquals(other.M21, M21) &&
+                MathF.AlmostEquals(other.M22, M22) &&
+
+                MathF.AlmostEquals(other.M31, M31) &&
+                MathF.AlmostEquals(other.M32, M32);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object value)
+        {
+            if (ReferenceEquals(value, null))
+                return false;
+
+            return (value is Matrix3x2) ? this.Equals((Matrix3x2)value) : false;
+        }
+
+        /// <summary>
         /// Creates an array containing the elements of the matrix.
         /// </summary>
         /// <returns>A sixteen-element array containing the components of the matrix.</returns>
         public float[] ToArray()
         {
             return new[] { M11, M12, M21, M22, M31, M32 };
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return 
+                ("[M11:{0} M12:{1}] " +
+                "[M21:{2} M22:{3}] " +
+                "[M31:{4} M32:{5}]").Format(M11, M12, M21, M22, M31, M32);
         }
 
         /// <summary>
@@ -1029,79 +1095,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return string.Format(
-                "[M11:{0} M12:{1}] " +
-                "[M21:{2} M22:{3}] " +
-                "[M31:{4} M32:{5}]",
-                M11, M12, M21, M22, M31, M32
-            );
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
-                return hash;
-            }
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="Matrix3x2"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Matrix3x2"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix3x2"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public bool Equals(Matrix3x2 other)
-        {
-            return 
-                MathF.AlmostEquals(other.M11, M11) &&
-                MathF.AlmostEquals(other.M12, M12) &&
-
-                MathF.AlmostEquals(other.M21, M21) &&
-                MathF.AlmostEquals(other.M22, M22) &&
-
-                MathF.AlmostEquals(other.M31, M31) &&
-                MathF.AlmostEquals(other.M32, M32);
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object value)
-        {
-            if (ReferenceEquals(value, null))
-                return false;
-
-            return (value is Matrix3x2) ? this.Equals((Matrix3x2)value) : false;
-        }
-
-        /// <summary>
         /// Performs an implicit conversion from <see cref="Matrix"/> to <see cref="Matrix3x2"/>.
         /// </summary>
         /// <param name="matrix">The matrix.</param>
@@ -1117,6 +1110,32 @@ namespace LightClaw.Engine.Core
                 M31 = matrix.M41,
                 M32 = matrix.M42
             };
+        }
+
+        /// <summary>
+        /// Implicitly converts between the matrix and an array of <see cref="Single"/>s.
+        /// </summary>
+        /// <param name="mat">The matrix to convert.</param>
+        /// <returns>All components of the matrix as <see cref="Single"/>-array.</returns>
+        public static implicit operator float[](Matrix3x2 mat)
+        {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 6);
+
+            return mat.ToArray();
+        }
+
+        /// <summary>
+        /// Implicitly converts between an array of floats and a matrix.
+        /// </summary>
+        /// <param name="floats">The array of floats to convert.</param>
+        /// <returns>The matrix.</returns>
+        public static implicit operator Matrix3x2(float[] floats)
+        {
+            Contract.Requires<ArgumentNullException>(floats != null);
+            Contract.Requires<ArgumentOutOfRangeException>(floats.Length == 6);
+
+            return new Matrix3x2(floats);
         }
     }
 }

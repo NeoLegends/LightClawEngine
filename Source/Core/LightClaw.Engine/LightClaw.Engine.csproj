@@ -170,6 +170,8 @@
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\GameTime.cs" />
+    <Compile Include="Core\IGame.cs" />
+    <Compile Include="Core\IGameCodeInterface.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
     <Compile Include="Core\Manager.cs" />
@@ -208,6 +210,7 @@
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
     <Compile Include="Graphics\BufferConfiguration.cs" />
+    <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\AttributeLocationBinding.cs" />
     <Compile Include="Graphics\Color.cs" />
@@ -235,6 +238,9 @@
     <Compile Include="Core\LightClawSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CommandLine">
+      <HintPath>..\..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="Munq.IocContainer">
       <HintPath>..\..\packages\Munq.IocContainer.3.1.6\Lib\Munq.IocContainer.dll</HintPath>
     </Reference>

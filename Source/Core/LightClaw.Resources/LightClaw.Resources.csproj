@@ -155,8 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-1280x720.png" />
-    <None Include="Shaders\Basic.frag" />
     <None Include="Shaders\Basic.vert" />
+    <None Include="Shaders\Basic.frag" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-160x90.png" />

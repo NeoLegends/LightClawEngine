@@ -11,7 +11,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract]
-    public class ShaderProgram : GLObject, INameable
+    public class ShaderProgram : GLObject, IBindable, INameable
     {
         [ProtoMember(1)]
         public string Name { get; set; }
@@ -41,6 +41,8 @@ namespace LightClaw.Engine.Graphics
             this.Name = name;
             this.AttributeBindings = attributeBindings.ToArray();
             this.Shaders = shaders.ToArray();
+
+            this.Initialize();
         }
 
         public void Bind()

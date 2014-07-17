@@ -10,15 +10,15 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class Buffer : GLObject
+    public abstract class Buffer : GLObject, IBindable
     {
         public BufferTarget Target { get; protected set; }
 
-        public Buffer() { }
+        protected Buffer() { }
 
-        public Buffer(BufferTarget target) : this(0, target) { }
+        protected Buffer(BufferTarget target) : this(0, target) { }
 
-        public Buffer(int id, BufferTarget target)
+        protected Buffer(int id, BufferTarget target)
             : base(id)
         {
             this.Target = target;

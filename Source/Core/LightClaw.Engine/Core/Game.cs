@@ -6,34 +6,51 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
+using Munq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Core
 {
-    public class Game
+    public class Game : IGame, INameable
     {
-        private GameWindow gameWindow;
+        private IGameCodeInterface gameCode;
 
-        public event EventHandler<ValueChangedEventArgs<Scene>> SceneLoading;
+        private GameWindow gameWindow = new GameWindow(
+            VideoSettings.Default.Resolution.Width,
+            VideoSettings.Default.Resolution.Height,
+            new GraphicsMode(),
+            GeneralSettings.Default.GameName
+        ) { VSync = VideoSettings.Default.VSync };
 
-        public event EventHandler<ValueChangedEventArgs<Scene>> SceneLoaded;
+        private string startScene;
 
-        public Scene Scene { get; private set; }
+        [CLSCompliant(false)]
+        public IocContainer IocC { get; private set; }
+
+        public string Name { get; set; }
+
+        public Scene MainScene { get; private set; }
+
+        public Scene TransitionScene { get; private set; }
+
+        public Scene NewScene { get; private set; }
+
+        private Game() 
+        {
+            this.IocC = LightClawEngine.DefaultIocContainer;
+        }
+
+        public Game(IGameCodeInterface gameCodeInterface, string startScene)
+            : this()
+        {
+            this.gameCode = gameCodeInterface;
+            this.startScene = startScene;
+        }
 
         public void Run()
         {
-            this.gameWindow = new GameWindow(
-                VideoSettings.Default.Resolution.Width,
-                VideoSettings.Default.Resolution.Height,
-                new GraphicsMode(),
-                GeneralSettings.Default.GameName
-            )
-            {
-                VSync = VideoSettings.Default.VSync
-            };
-
             this.gameWindow.Resize += (s, e) => GL.Viewport(0, 0, this.gameWindow.Width, this.gameWindow.Height);
             this.gameWindow.UpdateFrame += (s, e) => this.OnUpdate();
             this.gameWindow.RenderFrame += (s, e) => this.OnDraw();
@@ -59,24 +76,6 @@ namespace LightClaw.Engine.Core
         private void OnUpdate()
         {
 
-        }
-
-        private void RaiseSceneLoaded(Scene newScene, Scene oldScene)
-        {
-            EventHandler<ValueChangedEventArgs<Scene>> handler = this.SceneLoaded;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Scene>(newScene, oldScene));
-            }
-        }
-
-        private void RaiseSceneLoading(Scene newScene, Scene oldScene)
-        {
-            EventHandler<ValueChangedEventArgs<Scene>> handler = this.SceneLoading;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Scene>(newScene, oldScene));
-            }
         }
     }
 }

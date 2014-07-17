@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class VertexArrayObject : GLObject
+    public class VertexArrayObject : GLObject, IBindable
     {
         public BufferConfiguration[] Buffers { get; private set; }
 

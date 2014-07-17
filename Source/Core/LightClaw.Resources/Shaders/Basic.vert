@@ -1,10 +1,17 @@
 ﻿#version 400
 
-in vec3 passColor;
+uniform mat4 worldMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 
-out vec4 outColor;
+in vec3 inVertexPosition;
+in vec3 inVertexColor;
+
+out vec3 passVertexColor;
 
 void main(void)
 {
-	outColor = vec4(outColor, 1.0);
+	mat4 worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
+	gl_Position = vec4(inVertexPosition, 1.0) * worldViewProjectionMatrix;
+	passVertexColor = inVertexColor;
 }

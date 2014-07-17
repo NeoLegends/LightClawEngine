@@ -1,12 +1,10 @@
 ﻿#version 400
 
-in vec3 inColor;
-in vec3 inPosition;
+in vec3 passVertexColor;
 
-out vec3 passColor;
+out vec4 finalColor;
 
 void main(void)
 {
-	gl_Position = vec4(inPosition, 1.0);
-	passColor = inColor;
+	finalColor = vec4(passVertexColor, 1.0);
 }

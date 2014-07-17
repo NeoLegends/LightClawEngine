@@ -52,7 +52,7 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("LightClaw.GameCode")]
+        [global::System.Configuration.DefaultSettingValueAttribute("LightClaw.GameCode.dll")]
         public string EntryAssembly {
             get {
                 return ((string)(this["EntryAssembly"]));

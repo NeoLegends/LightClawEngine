@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -281,80 +282,6 @@ namespace LightClaw.Engine.Core
                 this.M33 = value.Z;
             }
         }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix"/> struct.
-        /// </summary>
-        /// <param name="value">The value that will be assigned to all components.</param>
-        public Matrix(float value)
-        {
-            M11 = M12 = M13 = M14 =
-            M21 = M22 = M23 = M24 =
-            M31 = M32 = M33 = M34 =
-            M41 = M42 = M43 = M44 = value;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix"/> struct.
-        /// </summary>
-        /// <param name="M11">The value to assign at row 1 column 1 of the matrix.</param>
-        /// <param name="M12">The value to assign at row 1 column 2 of the matrix.</param>
-        /// <param name="M13">The value to assign at row 1 column 3 of the matrix.</param>
-        /// <param name="M14">The value to assign at row 1 column 4 of the matrix.</param>
-        /// <param name="M21">The value to assign at row 2 column 1 of the matrix.</param>
-        /// <param name="M22">The value to assign at row 2 column 2 of the matrix.</param>
-        /// <param name="M23">The value to assign at row 2 column 3 of the matrix.</param>
-        /// <param name="M24">The value to assign at row 2 column 4 of the matrix.</param>
-        /// <param name="M31">The value to assign at row 3 column 1 of the matrix.</param>
-        /// <param name="M32">The value to assign at row 3 column 2 of the matrix.</param>
-        /// <param name="M33">The value to assign at row 3 column 3 of the matrix.</param>
-        /// <param name="M34">The value to assign at row 3 column 4 of the matrix.</param>
-        /// <param name="M41">The value to assign at row 4 column 1 of the matrix.</param>
-        /// <param name="M42">The value to assign at row 4 column 2 of the matrix.</param>
-        /// <param name="M43">The value to assign at row 4 column 3 of the matrix.</param>
-        /// <param name="M44">The value to assign at row 4 column 4 of the matrix.</param>
-        public Matrix(float M11, float M12, float M13, float M14,
-            float M21, float M22, float M23, float M24,
-            float M31, float M32, float M33, float M34,
-            float M41, float M42, float M43, float M44)
-        {
-            this.M11 = M11; this.M12 = M12; this.M13 = M13; this.M14 = M14;
-            this.M21 = M21; this.M22 = M22; this.M23 = M23; this.M24 = M24;
-            this.M31 = M31; this.M32 = M32; this.M33 = M33; this.M34 = M34;
-            this.M41 = M41; this.M42 = M42; this.M43 = M43; this.M44 = M44;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix"/> struct.
-        /// </summary>
-        /// <param name="values">The values to assign to the components of the matrix. This must be an array with sixteen elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than sixteen elements.</exception>
-        public Matrix(float[] values)
-        {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 16);
-
-            M11 = values[0];
-            M12 = values[1];
-            M13 = values[2];
-            M14 = values[3];
-
-            M21 = values[4];
-            M22 = values[5];
-            M23 = values[6];
-            M24 = values[7];
-
-            M31 = values[8];
-            M32 = values[9];
-            M33 = values[10];
-            M34 = values[11];
-
-            M41 = values[12];
-            M42 = values[13];
-            M43 = values[14];
-            M44 = values[15];
-        }
 
         /// <summary>
         /// Gets or sets the first row in the matrix; that is M11, M12, M13, and M14.
@@ -472,16 +399,16 @@ namespace LightClaw.Engine.Core
 
                 switch (index)
                 {
-                    case 0:  return M11;
-                    case 1:  return M12;
-                    case 2:  return M13;
-                    case 3:  return M14;
-                    case 4:  return M21;
-                    case 5:  return M22;
-                    case 6:  return M23;
-                    case 7:  return M24;
-                    case 8:  return M31;
-                    case 9:  return M32;
+                    case 0: return M11;
+                    case 1: return M12;
+                    case 2: return M13;
+                    case 3: return M14;
+                    case 4: return M21;
+                    case 5: return M22;
+                    case 6: return M23;
+                    case 7: return M24;
+                    case 8: return M31;
+                    case 9: return M32;
                     case 10: return M33;
                     case 11: return M34;
                     case 12: return M41;
@@ -492,7 +419,6 @@ namespace LightClaw.Engine.Core
 
                 throw new ArgumentOutOfRangeException("index", "Indices for Matrix run from 0 to 15, inclusive.");
             }
-
             set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < 16);
@@ -537,7 +463,6 @@ namespace LightClaw.Engine.Core
 
                 return this[(row * 4) + column];
             }
-
             set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(row >= 0 && row < 4);
@@ -545,6 +470,159 @@ namespace LightClaw.Engine.Core
 
                 this[(row * 4) + column] = value;
             }
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix"/> struct.
+        /// </summary>
+        /// <param name="value">The value that will be assigned to all components.</param>
+        public Matrix(float value)
+        {
+            M11 = M12 = M13 = M14 =
+            M21 = M22 = M23 = M24 =
+            M31 = M32 = M33 = M34 =
+            M41 = M42 = M43 = M44 = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix"/> struct.
+        /// </summary>
+        /// <param name="M11">The value to assign at row 1 column 1 of the matrix.</param>
+        /// <param name="M12">The value to assign at row 1 column 2 of the matrix.</param>
+        /// <param name="M13">The value to assign at row 1 column 3 of the matrix.</param>
+        /// <param name="M14">The value to assign at row 1 column 4 of the matrix.</param>
+        /// <param name="M21">The value to assign at row 2 column 1 of the matrix.</param>
+        /// <param name="M22">The value to assign at row 2 column 2 of the matrix.</param>
+        /// <param name="M23">The value to assign at row 2 column 3 of the matrix.</param>
+        /// <param name="M24">The value to assign at row 2 column 4 of the matrix.</param>
+        /// <param name="M31">The value to assign at row 3 column 1 of the matrix.</param>
+        /// <param name="M32">The value to assign at row 3 column 2 of the matrix.</param>
+        /// <param name="M33">The value to assign at row 3 column 3 of the matrix.</param>
+        /// <param name="M34">The value to assign at row 3 column 4 of the matrix.</param>
+        /// <param name="M41">The value to assign at row 4 column 1 of the matrix.</param>
+        /// <param name="M42">The value to assign at row 4 column 2 of the matrix.</param>
+        /// <param name="M43">The value to assign at row 4 column 3 of the matrix.</param>
+        /// <param name="M44">The value to assign at row 4 column 4 of the matrix.</param>
+        public Matrix(
+            float M11, float M12, float M13, float M14,
+            float M21, float M22, float M23, float M24,
+            float M31, float M32, float M33, float M34,
+            float M41, float M42, float M43, float M44)
+        {
+            this.M11 = M11; this.M12 = M12; this.M13 = M13; this.M14 = M14;
+            this.M21 = M21; this.M22 = M22; this.M23 = M23; this.M24 = M24;
+            this.M31 = M31; this.M32 = M32; this.M33 = M33; this.M34 = M34;
+            this.M41 = M41; this.M42 = M42; this.M43 = M43; this.M44 = M44;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix"/> struct.
+        /// </summary>
+        /// <param name="values">The values to assign to the components of the matrix. This must be an array with sixteen elements.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than sixteen elements.</exception>
+        public Matrix(float[] values)
+            : this(
+                values[0],  values[1],  values[2],  values[3],
+                values[4],  values[5],  values[6],  values[7],
+                values[8],  values[9],  values[10], values[11],
+                values[12], values[13], values[14], values[15]
+            )
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentOutOfRangeException>(values.Length == 16);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M13.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M14.GetHashCode();
+
+                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M23.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M24.GetHashCode();
+
+                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M33.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M34.GetHashCode();
+
+                hash = hash * Constants.HashFactor + this.M41.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M42.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M43.GetHashCode();
+                hash = hash * Constants.HashFactor + this.M44.GetHashCode();
+                return hash;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="Matrix"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public bool Equals(ref Matrix other)
+        {
+            return
+                MathF.AlmostEquals(other.M11, M11) &&
+                MathF.AlmostEquals(other.M12, M12) &&
+                MathF.AlmostEquals(other.M13, M13) &&
+                MathF.AlmostEquals(other.M14, M14) &&
+
+                MathF.AlmostEquals(other.M21, M21) &&
+                MathF.AlmostEquals(other.M22, M22) &&
+                MathF.AlmostEquals(other.M23, M23) &&
+                MathF.AlmostEquals(other.M24, M24) &&
+
+                MathF.AlmostEquals(other.M31, M31) &&
+                MathF.AlmostEquals(other.M32, M32) &&
+                MathF.AlmostEquals(other.M33, M33) &&
+                MathF.AlmostEquals(other.M34, M34) &&
+
+                MathF.AlmostEquals(other.M41, M41) &&
+                MathF.AlmostEquals(other.M42, M42) &&
+                MathF.AlmostEquals(other.M43, M43) &&
+                MathF.AlmostEquals(other.M44, M44);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="Matrix"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        [CLSCompliant(false)]
+        public bool Equals(Matrix other)
+        {
+            return Equals(ref other);
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object value)
+        {
+            if (ReferenceEquals(value, null))
+                return false;
+
+            return (value is Matrix) ? this.Equals((Matrix)value) : false;
         }
 
         /// <summary>
@@ -782,14 +860,10 @@ namespace LightClaw.Engine.Core
         /// <param name="secondRow">The second row to exchange. This is an index of the row starting at zero.</param>
         public void ExchangeRows(int firstRow, int secondRow)
         {
-            if (firstRow < 0)
-                throw new ArgumentOutOfRangeException("firstRow", "The parameter firstRow must be greater than or equal to zero.");
-            if (firstRow > 3)
-                throw new ArgumentOutOfRangeException("firstRow", "The parameter firstRow must be less than or equal to three.");
-            if (secondRow < 0)
-                throw new ArgumentOutOfRangeException("secondRow", "The parameter secondRow must be greater than or equal to zero.");
-            if (secondRow > 3)
-                throw new ArgumentOutOfRangeException("secondRow", "The parameter secondRow must be less than or equal to three.");
+            Contract.Requires<ArgumentOutOfRangeException>(firstRow >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(firstRow < 4);
+            Contract.Requires<ArgumentOutOfRangeException>(secondRow >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(secondRow < 4);
 
             if (firstRow == secondRow)
                 return;
@@ -817,14 +891,10 @@ namespace LightClaw.Engine.Core
         /// <param name="secondColumn">The second column to exchange. This is an index of the column starting at zero.</param>
         public void ExchangeColumns(int firstColumn, int secondColumn)
         {
-            if (firstColumn < 0)
-                throw new ArgumentOutOfRangeException("firstColumn", "The parameter firstColumn must be greater than or equal to zero.");
-            if (firstColumn > 3)
-                throw new ArgumentOutOfRangeException("firstColumn", "The parameter firstColumn must be less than or equal to three.");
-            if (secondColumn < 0)
-                throw new ArgumentOutOfRangeException("secondColumn", "The parameter secondColumn must be greater than or equal to zero.");
-            if (secondColumn > 3)
-                throw new ArgumentOutOfRangeException("secondColumn", "The parameter secondColumn must be less than or equal to three.");
+            Contract.Requires<ArgumentOutOfRangeException>(firstColumn >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(firstColumn < 4);
+            Contract.Requires<ArgumentOutOfRangeException>(secondColumn >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(secondColumn < 4);
 
             if (firstColumn == secondColumn)
                 return;
@@ -852,6 +922,21 @@ namespace LightClaw.Engine.Core
         public float[] ToArray()
         {
             return new[] { M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44 };
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return
+                ("[M11:{0} M12:{1} M13:{2} M14:{3}] " +
+                "[M21:{4} M22:{5} M23:{6} M24:{7}] " +
+                "[M31:{8} M32:{9} M33:{10} M34:{11}] " +
+                "[M41:{12} M42:{13} M43:{14} M44:{15}]").Format(M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
         }
 
         /// <summary>
@@ -1152,6 +1237,8 @@ namespace LightClaw.Engine.Core
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="exponent"/> is negative.</exception>
         public static Matrix Exponent(Matrix value, int exponent)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(exponent >= 0);
+
             Matrix result;
             Exponent(ref value, exponent, out result);
             return result;
@@ -3120,112 +3207,29 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Implicitly converts between the matrix and an array of <see cref="Single"/>s.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
+        /// <param name="mat">The matrix to convert.</param>
+        /// <returns>All components of the matrix as <see cref="Single"/>-array.</returns>
+        public static implicit operator float[](Matrix mat)
         {
-            return string.Format(
-                "[M11:{0} M12:{1} M13:{2} M14:{3}] " + 
-                "[M21:{4} M22:{5} M23:{6} M24:{7}] " + 
-                "[M31:{8} M32:{9} M33:{10} M34:{11}] " +
-                "[M41:{12} M42:{13} M43:{14} M44:{15}]",
-                M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44
-            );
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 16);
+
+            return mat.ToArray();
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        /// Implicitly converts between an array of floats and a matrix.
         /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
+        /// <param name="floats">The array of floats to convert.</param>
+        /// <returns>The matrix.</returns>
+        public static implicit operator Matrix(float[] floats)
         {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M13.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M14.GetHashCode();
+            Contract.Requires<ArgumentNullException>(floats != null);
+            Contract.Requires<ArgumentOutOfRangeException>(floats.Length == 16);
 
-                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M23.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M24.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M33.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M34.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M41.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M42.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M43.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M44.GetHashCode();
-                return hash;
-            }
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="Matrix"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public bool Equals(ref Matrix other)
-        {
-            return 
-                MathF.AlmostEquals(other.M11, M11) &&
-                MathF.AlmostEquals(other.M12, M12) &&
-                MathF.AlmostEquals(other.M13, M13) &&
-                MathF.AlmostEquals(other.M14, M14) &&
-
-                MathF.AlmostEquals(other.M21, M21) &&
-                MathF.AlmostEquals(other.M22, M22) &&
-                MathF.AlmostEquals(other.M23, M23) &&
-                MathF.AlmostEquals(other.M24, M24) &&
-
-                MathF.AlmostEquals(other.M31, M31) &&
-                MathF.AlmostEquals(other.M32, M32) &&
-                MathF.AlmostEquals(other.M33, M33) &&
-                MathF.AlmostEquals(other.M34, M34) &&
-
-                MathF.AlmostEquals(other.M41, M41) &&
-                MathF.AlmostEquals(other.M42, M42) &&
-                MathF.AlmostEquals(other.M43, M43) &&
-                MathF.AlmostEquals(other.M44, M44);
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="Matrix"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        [CLSCompliant(false)]
-        public bool Equals(Matrix other)
-        {
-            return Equals(ref other);
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object value)
-        {
-            if (ReferenceEquals(value, null))
-                return false;
-
-            return (value is Matrix) ? this.Equals((Matrix)value) : false;
+            return new Matrix(floats);
         }
     }
 }

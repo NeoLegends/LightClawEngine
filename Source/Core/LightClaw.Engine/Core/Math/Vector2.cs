@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -321,7 +322,7 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override string ToString()
         {
-            return string.Format("({0}|{1})", X, Y);
+            return "({0}|{1})".Format(X, Y);
         }
 
         /// <summary>
