@@ -25,7 +25,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
 
-            foreach (IContentReader resolver in resolvers)
+            foreach (IContentResolver resolver in resolvers)
             {
                 manager.Register(resolver);
             }

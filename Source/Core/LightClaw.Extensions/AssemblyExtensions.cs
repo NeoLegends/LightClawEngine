@@ -19,6 +19,9 @@ namespace LightClaw.Extensions
 
         public static IEnumerable<Type> GetTypesByBase(this Assembly assembly, Type baseType, bool includeNonPublic)
         {
+            Contract.Requires<ArgumentNullException>(assembly != null);
+            Contract.Requires<ArgumentNullException>(baseType != null);
+
             return from searchResult in (includeNonPublic ? assembly.GetTypes() : assembly.GetExportedTypes())
                    where (searchResult.IsClass &&
                                (baseType.IsClass && (baseType.IsAssignableFrom(searchResult))) ||

@@ -20,5 +20,16 @@ namespace LightClaw.Engine.Graphics
         public int Stride { get; private set; }
 
         public VertexAttribPointerType Type { get; private set; }
+
+        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool isNormalized, int stride, int offset)
+            : this()
+        {
+            this.Index = index;
+            this.IsNormalized = isNormalized;
+            this.Offset = offset;
+            this.Size = size;
+            this.Stride = stride;
+            this.Type = type;
+        }
     }
 }

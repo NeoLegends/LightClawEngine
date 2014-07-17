@@ -12,6 +12,7 @@ namespace LightClaw.Extensions
         public static string Format(this string formattableString, params object[] args)
         {
             Contract.Requires<ArgumentNullException>(formattableString != null);
+            Contract.Requires<ArgumentNullException>(args != null);
 
             return string.Format(formattableString, args);
         }
