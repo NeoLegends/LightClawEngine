@@ -38,7 +38,7 @@ namespace CoreTests
         [TestMethod]
         public void TestLeastCommonMultiple()
         {
-            Assert.IsTrue(MathF.LeastCommonMultiple(new[] { 6, 12, 24 }) == 24);
+            Assert.AreEqual(24, MathF.LeastCommonMultiple(new[] { 6, 12, 24 }));
 
             Assert.IsFalse(MathF.LeastCommonMultiple(new[] { 6, 18, 36 }) < 36);
             Assert.IsFalse(MathF.LeastCommonMultiple(new[] { 6, 18, 36 }) > 36);
@@ -47,9 +47,9 @@ namespace CoreTests
         [TestMethod]
         public void TestNextPowerOfTwo()
         {
-            Assert.IsTrue(MathF.NextPowerOfTwo(513) == 1024);
+            Assert.AreEqual(1024, (int)MathF.NextPowerOfTwo(513));
 
-            Assert.IsFalse(MathF.NextPowerOfTwo(512) == 1024);
+            Assert.AreNotEqual(1024, (int)MathF.NextPowerOfTwo(512));
         }
     }
 }

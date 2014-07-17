@@ -38,6 +38,12 @@ namespace LightClaw.Engine.Core
 
         public GameObject() : this(new Component[] { }) { }
 
+        public GameObject(Component component)
+            : this(component.Yield())
+        {
+            Contract.Requires<ArgumentNullException>(component != null);
+        }
+
         public GameObject(IEnumerable<Component> components)
         {
             Contract.Requires<ArgumentNullException>(components != null);
@@ -61,7 +67,11 @@ namespace LightClaw.Engine.Core
 
         public override void Clear()
         {
-            foreach (Component comp in this.Items)
+            foreach (Component comp in this)
+            {
+                this.EnsureRemovability(comp);
+            }
+            foreach (Component comp in this)
             {
                 this.Remove(comp);
             }
@@ -75,15 +85,20 @@ namespace LightClaw.Engine.Core
 
         public override void Insert(int index, Component item)
         {
-            if (item.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this)))
-            {
-                item.GameObject = this;
-                base.Insert(index, item);
-            }
+            this.EnsureAttachability(item);
+
+            item.GameObject = this;
+            base.Insert(index, item);
         }
 
         public override void InsertRange(int index, IEnumerable<Component> items)
         {
+            items = items.Where(item => item != null);
+            foreach (Component item in items)
+            {
+                this.EnsureAttachability(item);
+            }
+
             List<Component> alreadyAttachedComponents = new List<Component>(8);
             foreach (Component comp in items)
             {
@@ -105,10 +120,12 @@ namespace LightClaw.Engine.Core
 
         public override bool Remove(Component item)
         {
-            if (item.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)) && base.Remove(item))
+            if (this.Contains(item))
             {
+                this.EnsureRemovability(item);
+
                 item.GameObject = null;
-                return true;
+                return base.Remove(item);
             }
             else
             {
@@ -118,10 +135,43 @@ namespace LightClaw.Engine.Core
 
         public override void RemoveAt(int index)
         {
-            if (this[index].GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)))
+            if (this[index] != null)
             {
+                this.EnsureRemovability(this[index]);
+
                 this[index].GameObject = null;
-                base.RemoveAt(index);
+            }
+            base.RemoveAt(index);
+        }
+
+        private void EnsureAttachability(Component component)
+        {
+            Contract.Requires<ArgumentNullException>(component != null);
+
+            if (!component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this)))
+            {
+                throw new NotSupportedException("The component cannot be attached. One of the validators was not successful.");
+            }
+        }
+
+        private void EnsureAttachability(Component component, IEnumerable<Component> gameObjectsToAttach)
+        {
+            Contract.Requires<ArgumentNullException>(component != null);
+            Contract.Requires<ArgumentNullException>(gameObjectsToAttach != null);
+
+            if (!component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this, gameObjectsToAttach)))
+            {
+                throw new NotSupportedException("The component cannot be attached. One of the validators was not successful.");
+            }
+        }
+
+        private void EnsureRemovability(Component component)
+        {
+            Contract.Requires<ArgumentNullException>(component != null);
+
+            if (!component.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)))
+            {
+                throw new NotSupportedException("The component cannot be removed. One of the validators was not successful.");
             }
         }
 
