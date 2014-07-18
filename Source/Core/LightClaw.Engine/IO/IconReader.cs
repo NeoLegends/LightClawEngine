@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace LightClaw.Engine.IO
             return assetType == typeof(Icon);
         }
 
-        public Task<object> ReadAsync(string resourceString, System.IO.Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
         {
             if (assetType == typeof(Icon))
             {

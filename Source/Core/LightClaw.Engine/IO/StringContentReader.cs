@@ -14,18 +14,18 @@ namespace LightClaw.Engine.IO
             return assetType == typeof(string);
         }
 
-        public async Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
         {
             if (assetType == typeof(string))
             {
                 using (StreamReader sr = new StreamReader(assetStream))
                 {
-                    return await sr.ReadToEndAsync();
+                    return sr.ReadToEndAsync().ContinueWith(s => (object)s, TaskContinuationOptions.ExecuteSynchronously);
                 }
             }
             else
             {
-                return await Task.FromResult<string>(null);
+                return Task.FromResult((object)null);
             }
         }
     }

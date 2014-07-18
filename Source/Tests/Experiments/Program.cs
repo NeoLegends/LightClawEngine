@@ -23,13 +23,14 @@ namespace Experiments
 #version 400
 
 in vec3 inVertexPosition;
+in vec3 inVertexColor;
 
 out vec3 passVertexColor;
 
 void main(void)
 {
 	gl_Position = vec4(inVertexPosition, 1.0);
-	passVertexColor = vec3(1.0, 0.0, 0.0);
+	passVertexColor = inVertexColor;
 }";
 
         private const string fShaderSource = @"
@@ -52,6 +53,8 @@ void main(void)
 
         private int vertexVboHandle;
 
+        private int colorVboHandle;
+
         private int indexVboHandle;
 
         private int vaoHandle;
@@ -63,12 +66,16 @@ void main(void)
 
         private Vector3[] vertexVboData = new[]
         {
-            new Vector3(-1.0f, -1.0f, 0.0f), 
-            new Vector3(0.0f, 1.0f, 0.0f), 
-            new Vector3(1.0f, -1.0f, 0.0f)
+            new Vector3(-1.0f, -1.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, -1.0f, 0.0f),
+        };
+
+        private Vector3[] colorVboData = new[]
+        {
+            Vector3.Random, Vector3.Random, Vector3.Random
         };
 
         public Program()
+            : base(1280, 720, new GraphicsMode(), "Lülülü OpenTK Window")
         {
             this.Run(30);
         }
@@ -90,6 +97,10 @@ void main(void)
             this.VSync = OpenTK.VSyncMode.On;
             GL.ClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
+            this.CreateShaders();
+            this.CreateVBOs();
+            this.CreateVAOs();
+
             base.OnLoad(e);
         }
 
@@ -99,6 +110,7 @@ void main(void)
             GL.BindVertexArray(this.vaoHandle);
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, this.indexVboData.Length);
+            //GL.DrawElements(BeginMode.TriangleStrip, this.indexVboData.Length, DrawElementsType.UnsignedInt, 0);
 
             this.SwapBuffers();
         }
@@ -122,15 +134,34 @@ void main(void)
             GL.ShaderSource(this.vertShaderHandle, vShaderSource);
             GL.CompileShader(this.vertShaderHandle);
 
+            int compileStatus;
+            GL.GetShader(this.vertShaderHandle, ShaderParameter.CompileStatus, out compileStatus);
+            if (compileStatus == 0)
+            {
+                throw new InvalidOperationException("Compiling vertex shader failed.");
+            }
+
             this.fragShaderHandle = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(this.fragShaderHandle, fShaderSource);
             GL.CompileShader(this.fragShaderHandle);
 
+            GL.GetShader(this.fragShaderHandle, ShaderParameter.CompileStatus, out compileStatus);
+            if (compileStatus == 0)
+            {
+                throw new InvalidOperationException("Compiling fragment shader failed.");
+            }
+
             this.shaderProgramHandle = GL.CreateProgram();
             GL.AttachShader(this.shaderProgramHandle, this.vertShaderHandle);
             GL.AttachShader(this.shaderProgramHandle, this.fragShaderHandle);
-            GL.BindAttribLocation(this.shaderProgramHandle, 0, "inVertexPosition");
             GL.LinkProgram(this.shaderProgramHandle);
+
+            int linkStatus;
+            GL.GetProgram(this.shaderProgramHandle, GetProgramParameterName.LinkStatus, out linkStatus);
+            if (linkStatus == 0)
+            {
+                throw new InvalidOperationException("Linking failed.");
+            }
 
             GL.UseProgram(this.shaderProgramHandle);
         }
@@ -143,6 +174,16 @@ void main(void)
                 BufferTarget.ArrayBuffer, 
                 (IntPtr)(Marshal.SizeOf(typeof(Vector3)) * this.vertexVboData.Length), 
                 this.vertexVboData, 
+                BufferUsageHint.StaticDraw
+            );
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            this.colorVboHandle = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, this.colorVboHandle);
+            GL.BufferData(
+                BufferTarget.ArrayBuffer,
+                (IntPtr)(Marshal.SizeOf(typeof(Vector3)) * this.colorVboData.Length),
+                this.colorVboData,
                 BufferUsageHint.StaticDraw
             );
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -163,13 +204,18 @@ void main(void)
             this.vaoHandle = GL.GenVertexArray();
             GL.BindVertexArray(this.vaoHandle);
 
-            GL.EnableVertexAttribArray(0);
+            int vertexPositionAttribLocation = GL.GetAttribLocation(this.shaderProgramHandle, "inVertexPosition");
+            int vertexColorAttribLocation = GL.GetAttribLocation(this.shaderProgramHandle, "inVertexColor");
+
             GL.BindBuffer(BufferTarget.ArrayBuffer, this.vertexVboHandle);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+            GL.EnableVertexAttribArray(vertexPositionAttribLocation);
+            GL.VertexAttribPointer(vertexPositionAttribLocation, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, this.colorVboHandle);
+            GL.EnableVertexAttribArray(vertexColorAttribLocation);
+            GL.VertexAttribPointer(vertexColorAttribLocation, 3, VertexAttribPointerType.Float, false, 0, 0);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, this.indexVboHandle);
-
-            Console.WriteLine();
 
             GL.BindVertexArray(0);
         }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.IO
 {
@@ -20,16 +21,14 @@ namespace LightClaw.Engine.IO
 
         private readonly ConcurrentBag<IContentResolver> resolvers = new ConcurrentBag<IContentResolver>();
 
-        public ContentManager()
-            : this(
-                new[] { new StringContentReader() },
-                new[] { new FileSystemContentResolver(AppDomain.CurrentDomain.BaseDirectory) }
-            ) { }
+        public ContentManager() : this(new StringContentReader().Yield(), new FileSystemContentResolver(AppDomain.CurrentDomain.BaseDirectory).Yield()) { }
 
         public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {
             Contract.Requires<ArgumentNullException>(readers != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
+            Contract.Requires<ArgumentException>(readers.All(reader => reader != null));
+            Contract.Requires<ArgumentException>(resolvers.All(resolver => resolver != null));
 
             this.Register(readers);
             this.Register(resolvers);
@@ -39,7 +38,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                foreach (Task<bool> task in this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)))
+                foreach (Task<bool> task in this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).ToArray())
                 {
                     if (await task)
                     {
@@ -60,7 +59,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                foreach (Task<Stream> task in this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)))
+                foreach (Task<Stream> task in this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).ToArray())
                 {
                     Stream result = await task;
                     if (result != null)
@@ -90,12 +89,19 @@ namespace LightClaw.Engine.IO
                             throw new FileNotFoundException("The asset could not be found.");
                         }
 
-                        IContentReader reader;
-                        if ((reader = this.readers.FirstOrDefault(contentReader => contentReader.CanRead(typeof(T), parameter))) == null)
+                        IEnumerable<IContentReader> contentReaders = this.readers.Where(reader => reader.CanRead(typeof(T), parameter));
+                        if (!contentReaders.Any())
                         {
-                            throw new InvalidOperationException("There was no suitable IContentReader to read the asset from the stream.");
+                            throw new InvalidOperationException("There was no suitable IContentReader to read the asset found.");
                         }
-                        asset = await reader.ReadAsync(resourceString, assetStream, typeof(T), parameter);
+                        foreach (IContentReader reader in contentReaders)
+                        {
+                            asset = await reader.ReadAsync(resourceString, assetStream, typeof(T), parameter);
+                            if (asset != null)
+                            {
+                                break;
+                            }
+                        }
                         if (asset == null)
                         {
                             throw new InvalidOperationException("The asset could not be deserialized from the stream.");
@@ -118,6 +124,13 @@ namespace LightClaw.Engine.IO
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.readers.All(reader => readers != null));
+            Contract.Invariant(this.resolvers.All(resolver => readers != null));
         }
     }
 }
