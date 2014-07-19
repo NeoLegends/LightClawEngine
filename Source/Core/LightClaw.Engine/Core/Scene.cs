@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ionic.Zip;
+using Ionic.Zlib;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.IO;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
         public event EventHandler Saving;
@@ -88,6 +91,41 @@ namespace LightClaw.Engine.Core
             base.RemoveAt(index);
         }
 
+        public Task Save(string resourceString)
+        {
+            Contract.Requires<ArgumentNullException>(resourceString != null);
+
+            using (FileStream fs = File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourceString)))
+            {
+                return this.Save(fs);
+            }
+        }
+
+        public Task Save(Stream s)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+
+            return Task.Run(() =>
+            {
+                using (ZipFile zip = new ZipFile() { CompressionLevel = CompressionLevel.BestCompression })
+                {
+                    zip.AddEntry("Name", Encoding.UTF8.GetBytes(this.Name));
+                    int count = 0;
+                    foreach (GameObject gameObject in this)
+                    {
+                        using (MemoryStream ms = new MemoryStream(1024))
+                        {
+                            Serializer.Serialize(ms, gameObject);
+                            ms.Position = 0;
+                            zip.AddEntry("GameObjects/" + count++ + ".pbuf", ms.ToArray());
+                        }
+                    }
+
+                    zip.Save(s);
+                }
+            });
+        }
+
         protected override void OnEnable()
         {
             Parallel.ForEach(this.Items, item => item.Enable());
@@ -135,6 +173,13 @@ namespace LightClaw.Engine.Core
             {
                 handler(this, EventArgs.Empty);
             }
+        }
+
+        public static Task<Scene> LoadFrom(string resourceString)
+        {
+            Contract.Requires<ArgumentNullException>(resourceString != null);
+
+            return LightClawEngine.DefaultIocContainer.Resolve<IContentManager>().LoadAsync<Scene>(resourceString);
         }
     }
 }

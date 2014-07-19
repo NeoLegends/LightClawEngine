@@ -13,6 +13,16 @@ namespace LightClaw.Engine.IO
 {
     public class ContentManager : IContentManager
     {
+        private static readonly IContentReader[] defaultReaders = new IContentReader[]
+        {
+            new StringContentReader(), new SceneReader()
+        };
+
+        private static readonly IContentResolver[] defaultResolvers = new IContentResolver[]
+        {
+            new DiskContentResolver(AppDomain.CurrentDomain.BaseDirectory)
+        };
+
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
         private readonly ConcurrentDictionary<string, WeakReference> cachedAssets = new ConcurrentDictionary<string, WeakReference>();
@@ -21,7 +31,7 @@ namespace LightClaw.Engine.IO
 
         private readonly ConcurrentBag<IContentResolver> resolvers = new ConcurrentBag<IContentResolver>();
 
-        public ContentManager() : this(new StringContentReader().Yield(), new FileSystemContentResolver(AppDomain.CurrentDomain.BaseDirectory).Yield()) { }
+        public ContentManager() : this(defaultReaders, defaultResolvers) { }
 
         public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {

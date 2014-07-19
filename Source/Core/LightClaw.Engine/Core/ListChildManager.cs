@@ -9,6 +9,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(IgnoreListHandling = true)]
+    [ProtoInclude(100, typeof(GameObject))]
     public class ListChildManager<T> : ChildManager<T>, IList<T>
         where T : IControllable
     {

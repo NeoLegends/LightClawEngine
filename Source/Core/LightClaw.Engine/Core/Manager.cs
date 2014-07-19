@@ -13,6 +13,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
+    [ProtoInclude(100, typeof(ChildManager<Component>)), ProtoInclude(101, typeof(Component))]
     public abstract class Manager : PropertyChangedBase, IControllable, INameable
     {
         private object stateLock = new object();
@@ -69,7 +70,7 @@ namespace LightClaw.Engine.Core
 
         private bool _IsLoaded = false;
 
-        [ProtoMember(3, IsRequired = true)]
+        [ProtoIgnore]
         public bool IsLoaded
         {
             get

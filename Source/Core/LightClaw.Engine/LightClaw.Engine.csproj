@@ -210,6 +210,7 @@
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
     <Compile Include="Graphics\BufferConfiguration.cs" />
+    <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\AttributeLocationBinding.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
+    <Compile Include="IO\SceneReader.cs" />
     <Compile Include="IO\StringContentReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\LightClawSerializer.cs" />
@@ -239,12 +241,11 @@
     <Reference Include="CommandLine">
       <HintPath>..\..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Munq.IocContainer">
       <HintPath>..\..\packages\Munq.IocContainer.3.1.6\Lib\Munq.IocContainer.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Coroutines;
 using LightClaw.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
@@ -11,6 +12,27 @@ namespace CoreTests
     [TestClass]
     public class SerializerTest
     {
+        [TestMethod]
+        public void TestGameObjectSerialization()
+        {
+            GameObject gameObject = new GameObject();
+            gameObject.Add(new CoroutineController());
+
+            gameObject.Load();
+
+            using (Stream ms = new MemoryStream(256))
+            {
+                Serializer.Serialize(ms, gameObject);
+
+                Assert.IsTrue(ms.Length > 0);
+                ms.Position = 0;
+                Console.WriteLine(ms.Length);
+
+                //GameObject deserializedObject = Serializer.Deserialize<GameObject>(ms);
+                //Assert.IsTrue(deserializedObject.Count > 1);
+            }
+        }
+
         [TestMethod]
         public void TestMatrixSerialization()
         {

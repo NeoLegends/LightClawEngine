@@ -67,6 +67,12 @@ namespace LightClaw.Engine.Core
         {
 
         }
+        
+        private void OnLoad()
+        {
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Less);
+        }
 
         private void OnResize()
         {

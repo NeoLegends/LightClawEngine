@@ -11,6 +11,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(IgnoreListHandling = true)]
+    [ProtoInclude(100, typeof(ListChildManager<Component>))]
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
