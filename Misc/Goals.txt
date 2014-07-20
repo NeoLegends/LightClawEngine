@@ -1,0 +1,45 @@
+REQUIREMENTS:
+    General
+        - As simple and intuitive as possible
+        - Put the user into perspective, focus on responsibility
+        - Complete usage of local resources while still using efficient code (Threading, etc.)
+        - Use lambda expressions where ever possible to increase readability
+		- USE THE USING STATEMENT!
+        - Fail hard, fail fast
+            - Let your code fail fast and hard (instead of swallowing errors) to make sure we can fix the error quickly.
+              There's nothing worse than having to peek for the error source because of a swallowed error.
+				- Use Contracts for parameter validation instead of if-then-throw / guard clauses.
+		- Separation of concerns
+			- Each class serves exactly ONE purpose. 
+			- Complete your task by creating additional classes for different purposes.
+				- Do not hesitate using subclasses or substructs, if necessary.
+        
+    LightClaw.Engine
+        - (Multiplatform-capabilities (Windows, Mac OS X, Linux, Android, iOS, Xbox 360 / One, Ps Vita, WP8))
+        - GameObject / Decorator-System
+        - Scripting with all .NET languages
+        - Engine Components shall never depend on class Game, instead take a IServiceRegistry as constructor parameter.
+		
+    LightClaw.Editor
+        - Multiplatform-capabilities (Windows, Mac OS X, Linux)
+        - Quick "turn-around" times
+        - Real-time editing
+        - Remote Editing (preview on target device)
+        - Flexibility in extendability and configuration
+        - Integrated scripting editor
+        - Visual scripting
+            - Producing C# (/ IL)
+            - Programmable through AssetPipeline
+        - Visual shader editor
+            - For asset designers
+            - Producing HLSL / GLSL
+        - Connection to LightClaw.TeamServer
+            - Live-editing with multiple developers on the same map / level
+        
+    LightClaw.TeamServer
+        - Cloud based asset synchronization
+        - Version control system
+            - git?
+        - Purchasable abonnement for regular users, hosted on dev.lightclaw.com
+            - Locally installable TeamServer-copy for enterprise customers
+        - Probably running on ASP.NET ('coz we know .NET the best :D)

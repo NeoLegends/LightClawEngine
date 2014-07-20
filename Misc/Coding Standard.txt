@@ -1,0 +1,122 @@
+CODING STANDARD:
+	General:
+		- Always use this.XXX to access instance-scoped variables and methods
+		- All structs should be immutable, except if they are used as parameter-structs (Exceptions if absolutely required possible)
+        - Separate everything by one newline
+
+    Types:
+        - One type per file (except for delegates, enums and subclasses)
+        - <modifiers> <type> PascalCase 
+          {
+          
+          }
+        - <modifiers> interface IPascalCase
+          {
+          
+          }
+
+    Fields:
+        - private <type> someFloat;
+        - protected <type> SomeFloat;
+        - internal <type> SomeFloat;
+        - public <type> SomeFloat;
+		- Do not use var-keyword, except for exceptionally long and awful variable names! (by that I mean I used it 3 and only 3 times in LightClaw!)
+		- Avoid creating public static readonly fields, create properties instead
+        
+    Properties:
+        - private <type> _MyProperty = <value>; (Backing fields start with Underscore to distinguish from "actual" fields)
+          
+          public <type> MyProperty (Multiline for manually implemented accessors)
+          {
+              get
+              {
+                  return _MyProperty;
+              }
+              set
+              {
+                  _MyProperty = value;
+              }
+          }
+        - public <type> MyProperty2 { get; set; } (Single line if automatically implemented accessors)
+		- Use backing field to access value only if absolutely required, use property instead.
+
+    Methods:
+        - <modifiers> SomeFunction(<parameters>);
+	    - <modifiers> SomeFunction<TParamName>(<parameters>);
+
+    Parameters:
+        - <method>(..., float someFloat, float someFloat2 = 1.0f)
+
+    If-statements:
+        - Always use brackets! (except for short if-then-throw statements / guard clauses)
+        - if (...)
+          {
+              // ...
+          }
+    
+    Loops:
+        - Always use brackets!
+        - foreach (...)
+          {
+              // ...
+          }
+        - for (int i = 0; i < ...; i++)
+          {
+              // ...
+          }
+      
+    Using-statements:
+		- Always use brackets
+        - using (...)
+          using (...)
+          {
+			  // ...
+          }
+        - Don't use brackets to nest using statements (see example above; VS will allow that)
+		
+	Lambda-Expressions:
+		- Omit parameter brackets for single-parameter lambdas
+		- Multiline-lambdas shall be written like this:
+		  Parallel.ForEach(myCollection, item => 
+		  {
+		      // ...
+		  });
+		- Body brackets shall not be indented
+
+    Write abbreviations like this:
+		- ID -> Id
+        - XNA -> Xna
+        - XML -> Xml
+        
+	Attributes:
+		- Combine serializing attributes into one line, as long as it stays "short" (additional attributes may have their own line)
+		  [Serializable, DataContract, ProtoContract]
+		- Sort by length of attribute statement
+		  [SolitaryComponent]
+		  [Tag("Hello, World!")]
+		  [Serializable, DataContract, ProtoContract]
+		
+    Member order:
+		1. Static parameters (same order as non-static parameters in respect to accessibility / visibility)
+        2. Fields
+        3. Events
+        4. Properties WITH backing fields
+        5. Constructors
+        6. Public Methods
+            - Sort by alphabet, if it makes sense, oder by purpose->alphabet.
+            - Overloads calling one base method shall go above the aforementioned base method
+        7. Internal methods
+        8. Protected methods
+        9. Private methods
+        10. Static methods (same order like non-static methods in respect to the accessibility)
+        11. Overloaded operators
+		
+	Contracts:
+		- Combine contract clauses that serve the same purpose (e.g. null-checking) with &&
+			- Contract.Requires(param1 != null && param2 != null);
+		- Invariant Contract declaration methods shall be named "ObjectInvariant"
+			- private void ObjectInvariant() { /* Contract definitions */ }
+		- Interface Contract definitions shall be made in the same file with an internal abstract class named <InterfaceName>Contracts
+			- internal abstract class IUpdateableContracts : IUpdateable { /* Class code */ }
+	
+    XML-COMMENT EVERYTHING (IN ENGLISH), INCLUDING PRIVATE MEMBERS !!! (Backing fields shall be commented with "Backing field.")

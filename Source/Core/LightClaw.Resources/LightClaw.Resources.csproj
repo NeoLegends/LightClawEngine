@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D4A92D30-B7DB-4BD9-A2CB-F31BF9DAD522}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LightClaw.Resources</RootNamespace>
+    <AssemblyName>LightClaw.Resources</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\LightClaw.Resources.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\LightClaw.Resources.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DevPortalLogo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DevPortalLogo.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FileExtensions.Designer.cs">
+      <DependentUpon>FileExtensions.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="LightClawIcon.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LightClawIcon.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LightClawLogo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LightClawLogo.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShaderModel5.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ShaderModel5.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-1280x720.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-160x90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-1920x1080.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-3840x2160.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-640x360.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\DevPortal\LightClawLogo.DevPortal-853x480.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1049x604.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1876x1080.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1920x1106.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-625x360.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-640x369.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-834x480.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-1280x720.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-160x90.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-1920x1080.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-3840x2160.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-640x360.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\LightClawLogo\Regular\LightClawLogo.Regular-853x480.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DevPortalLogo.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DevPortalLogo.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileExtensions.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileExtensions.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LightClawIcon.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LightClawIcon.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LightClawLogo.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LightClawLogo.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShaderModel5.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ShaderModel5.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BasicShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ColoredShader.hlsl" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
