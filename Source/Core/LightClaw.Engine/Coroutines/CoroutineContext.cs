@@ -167,7 +167,7 @@ namespace LightClaw.Engine.Coroutines
                         this.IsBlocked = true;
                     }
                     this.RaiseStepped(current, result);
-                    return result;
+                    return this.IsFinished;
                 }
                 else
                 {
@@ -222,7 +222,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// A structure used to avoid immediate execution <see cref="Func{IEnumerable}"/>s on registration in the <see cref="CoroutineContext"/>.
         /// </summary>
-        private struct DeferredFuncEnumerator : IEnumerable, IEnumerator
+        private class DeferredFuncEnumerator : IEnumerable, IEnumerator
         {
             /// <summary>
             /// The function returning the coroutine.
@@ -244,7 +244,6 @@ namespace LightClaw.Engine.Coroutines
             /// </summary>
             /// <param name="coroutineFactory">The function returning the coroutine.</param>
             public DeferredFuncEnumerator(Func<IEnumerable> coroutineFactory)
-                : this()
             {
                 Contract.Requires<ArgumentNullException>(coroutineFactory != null);
 

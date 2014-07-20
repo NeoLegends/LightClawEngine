@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public interface IGame
+    public interface IGame : IDisposable, INameable
     {
+        IEnumerable<Scene> Scenes { get; }
+
+        void Run();
     }
 }

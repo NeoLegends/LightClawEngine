@@ -4,10 +4,11 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
-    public interface IControllable : IDisposable, IUpdateable
+    public interface IControllable : IDisposable, IDrawable, IUpdateable
     {
         event EventHandler<ParameterEventArgs> Enabling;
 

@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Munq;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
-    public abstract class PropertyChangedBase : INotifyPropertyChanged
+    public abstract class Entity : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        [CLSCompliant(false)]
+        [IgnoreDataMember, ProtoIgnore]
+        public IocContainer IocC { get; protected set; }
+
+        protected Entity()
+        {
+            this.IocC = LightClawEngine.DefaultIocContainer;
+        }
 
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {

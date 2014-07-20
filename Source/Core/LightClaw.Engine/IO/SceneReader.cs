@@ -21,13 +21,13 @@ namespace LightClaw.Engine.IO
         {
             return Task.Run(() =>
             {
-                if (!ZipFile.IsZipFile(assetStream, true))
+                if (assetType != typeof(Scene) || !assetStream.CanSeek || !ZipFile.IsZipFile(assetStream, true))
                     return null;
-                assetStream.Seek(0, SeekOrigin.Begin);
 
+                assetStream.Seek(0, SeekOrigin.Begin);
                 using (ZipFile sceneZip = ZipFile.Read(assetStream))
                 {
-                    List<GameObject> gameObjects = new List<GameObject>(8192);
+                    List<GameObject> gameObjects = new List<GameObject>(4096);
 
                     foreach (ZipEntry gameObject in sceneZip.Where(entry => entry.FileName.Contains("GameObjects")))
                     {
@@ -50,10 +50,10 @@ namespace LightClaw.Engine.IO
                     {
                         sceneZip["Name"].Extract(ms);
                         ms.Position = 0;
-                        return new Scene(gameObjects) { Name = Encoding.UTF8.GetString(ms.ToArray()) };
+                        return (object)new Scene(gameObjects) { Name = Encoding.UTF8.GetString(ms.ToArray()) };
                     }
                 }
-            }).ContinueWith(t => (object)t.Result, TaskContinuationOptions.ExecuteSynchronously);
+            });
         }
     }
 }

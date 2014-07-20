@@ -11,19 +11,12 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract]
-    public abstract class GLObject : IDisposable
+    public abstract class GLObject : Entity, IDisposable
     {
         [IgnoreDataMember, ProtoIgnore]
         public int Id { get; protected set; }
 
-        [CLSCompliant(false)]
-        [IgnoreDataMember, ProtoIgnore]
-        public IocContainer Ioc { get; protected set; }
-
-        protected GLObject() 
-        {
-            this.Ioc = LightClawEngine.DefaultIocContainer;
-        }
+        protected GLObject() { }
 
         protected GLObject(int id)
             : this()

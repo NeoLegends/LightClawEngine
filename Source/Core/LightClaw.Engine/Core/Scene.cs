@@ -15,13 +15,23 @@ namespace LightClaw.Engine.Core
 {
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
+        private readonly LightClawSerializer serializer;
+
+        public event EventHandler<ParameterEventArgs> Drawing;
+
+        public event EventHandler<ParameterEventArgs> Drawn;
+
         public event EventHandler Saving;
 
         public event EventHandler Saved;
 
-        public Scene() { }
+        public Scene()
+        {
+            this.serializer = new LightClawSerializer(this.IocC.Resolve<IGameCodeInterface>());
+        }
 
         public Scene(IEnumerable<GameObject> gameObjects)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
 
@@ -30,7 +40,9 @@ namespace LightClaw.Engine.Core
 
         public void Draw()
         {
+            this.RaiseDrawing();
             throw new NotImplementedException();
+            this.RaiseDrawn();
         }
 
         public override void Add(GameObject item)
@@ -101,29 +113,26 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public Task Save(Stream s)
+        public async Task Save(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
 
-            return Task.Run(() =>
+            this.RaiseSaving();
+            using (ZipFile zip = new ZipFile() { CompressionLevel = CompressionLevel.BestCompression })
             {
-                using (ZipFile zip = new ZipFile() { CompressionLevel = CompressionLevel.BestCompression })
+                zip.AddEntry("Name", Encoding.UTF8.GetBytes(this.Name));
+                int count = 0;
+                foreach (GameObject gameObject in this)
                 {
-                    zip.AddEntry("Name", Encoding.UTF8.GetBytes(this.Name));
-                    int count = 0;
-                    foreach (GameObject gameObject in this)
-                    {
-                        using (MemoryStream ms = new MemoryStream(1024))
-                        {
-                            Serializer.Serialize(ms, gameObject);
-                            ms.Position = 0;
-                            zip.AddEntry("GameObjects/" + count++ + ".pbuf", ms.ToArray());
-                        }
-                    }
-
-                    zip.Save(s);
+                    zip.AddEntry(
+                        "GameObjects/" + count++ + ".pbuf", 
+                        await this.serializer.SerializeAsync(gameObject)
+                    );
                 }
-            });
+
+                zip.Save(s);
+            }
+            this.RaiseSaved();
         }
 
         protected override void OnEnable()
@@ -155,7 +164,24 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        [ProtoAfterSerialization]
+        private void RaiseDrawing()
+        {
+            EventHandler<ParameterEventArgs> handler = this.Drawing;
+            if (handler != null)
+            {
+                handler(this, new ParameterEventArgs());
+            }
+        }
+
+        private void RaiseDrawn()
+        {
+            EventHandler<ParameterEventArgs> handler = this.Drawn;
+            if (handler != null)
+            {
+                handler(this, new ParameterEventArgs());
+            }
+        }
+
         private void RaiseSaved()
         {
             EventHandler handler = this.Saved;
@@ -165,7 +191,6 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        [ProtoBeforeSerialization]
         private void RaiseSaving()
         {
             EventHandler handler = this.Saving;
@@ -180,6 +205,14 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(resourceString != null);
 
             return LightClawEngine.DefaultIocContainer.Resolve<IContentManager>().LoadAsync<Scene>(resourceString);
+        }
+
+        public static async Task<Scene> LoadFrom(Stream s)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanRead);
+
+            return (Scene)await new SceneReader().ReadAsync("Scene", s, typeof(Scene), null);
         }
     }
 }

@@ -13,12 +13,25 @@ namespace LightClaw.Engine.Core
 {
     public class LightClawSerializer
     {
+        private RuntimeTypeModel runtimeTypeModel = RuntimeTypeModel.Create();
+
+        public LightClawSerializer()
+        {
+            this.runtimeTypeModel.AutoAddMissingTypes = true;
+            this.runtimeTypeModel.AutoCompile = true;
+        }
+
+        public LightClawSerializer(IGameCodeInterface gameCodeInterface)
+        {
+            Contract.Requires<ArgumentNullException>(gameCodeInterface != null);
+        }
+
         public Task<T> DeserializeAsync<T>(Stream source)
         {
             Contract.Requires<ArgumentNullException>(source != null);
             Contract.Requires<NotSupportedException>(source.CanRead);
 
-            return Task.Run(() => Serializer.Deserialize<T>(source));
+            return Task.Run(() => (T)this.runtimeTypeModel.Deserialize(source, null, typeof(T)));
         }
 
         public Task<T> DeserializeAsync<T>(byte[] source)
@@ -36,7 +49,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(source != null);
             Contract.Requires<NotSupportedException>(source.CanRead);
 
-            return Task.Run(() => Serializer.DeserializeWithLengthPrefix<T>(source, PrefixStyle.Fixed32));
+            return Task.Run(() => (T)this.runtimeTypeModel.DeserializeWithLengthPrefix(source, null, typeof(T), PrefixStyle.Fixed32, 0));
         }
 
         public Task<T> DeserializeWithLengthPrefixAsync<T>(byte[] source)
@@ -55,7 +68,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(instance != null);
             Contract.Requires<NotSupportedException>(destination.CanWrite);
 
-            return Task.Run(() => Serializer.Serialize<T>(destination, instance));
+            return Task.Run(() => this.runtimeTypeModel.Serialize(destination, instance));
         }
 
         public Task<byte[]> SerializeAsync<T>(T instance)
@@ -74,7 +87,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(instance != null);
             Contract.Requires<NotSupportedException>(destination.CanWrite);
 
-            return Task.Run(() => Serializer.SerializeWithLengthPrefix<T>(destination, instance, PrefixStyle.Fixed32));
+            return Task.Run(() => this.runtimeTypeModel.SerializeWithLengthPrefix(destination, instance, typeof(T), PrefixStyle.Fixed32, 0));
         }
 
         public Task<byte[]> SerializeWithLengthPrefixAsync<T>(T instance)

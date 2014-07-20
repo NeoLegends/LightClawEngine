@@ -38,10 +38,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
-            foreach (T item in items)
-            {
-                this.Items.Add(item);
-            }
+            this.Items.AddRange(items);
         }
 
         protected override void OnEnable()
@@ -52,6 +49,11 @@ namespace LightClaw.Engine.Core
         protected override void OnDisable()
         {
             this.PerformChildAction(item => item.Disable());
+        }
+
+        protected override void OnDraw()
+        {
+            this.PerformChildAction(item => item.Draw());
         }
 
         protected override void OnLoad()

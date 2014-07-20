@@ -58,5 +58,14 @@ namespace LightClaw.Engine.Configuration {
                 this["Resolution"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool BackfaceCulling {
+            get {
+                return ((bool)(this["BackfaceCulling"]));
+            }
+        }
     }
 }

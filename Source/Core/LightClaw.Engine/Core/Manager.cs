@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 using Munq;
 using ProtoBuf;
 
@@ -14,7 +15,7 @@ namespace LightClaw.Engine.Core
 {
     [ProtoContract]
     [ProtoInclude(100, typeof(ChildManager<Component>)), ProtoInclude(101, typeof(Component))]
-    public abstract class Manager : PropertyChangedBase, IControllable, INameable
+    public abstract class Manager : Entity, IDrawable, IControllable, INameable
     {
         private object stateLock = new object();
 
@@ -25,6 +26,10 @@ namespace LightClaw.Engine.Core
         public event EventHandler<ParameterEventArgs> Disabling;
 
         public event EventHandler<ParameterEventArgs> Disabled;
+
+        public event EventHandler<ParameterEventArgs> Drawing;
+
+        public event EventHandler<ParameterEventArgs> Drawn;
 
         public event EventHandler<ParameterEventArgs> Loading;
 
@@ -60,7 +65,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return this.IsLoaded && _IsEnabled;
+                return _IsEnabled;
             }
             private set
             {
@@ -83,9 +88,6 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        [CLSCompliant(false)]
-        public IocContainer IocC { get; protected set; }
-
         protected Manager()
         {
             this.IocC = LightClawEngine.DefaultIocContainer;
@@ -106,7 +108,7 @@ namespace LightClaw.Engine.Core
         {
             lock (this.stateLock)
             {
-                if (!this.IsEnabled)
+                if (this.IsLoaded && !this.IsEnabled)
                 {
                     this.Raise(this.Enabling);
                     this.OnEnable();
@@ -120,12 +122,25 @@ namespace LightClaw.Engine.Core
         {
             lock (this.stateLock)
             {
-                if (this.IsEnabled)
+                if (this.IsLoaded && this.IsEnabled)
                 {
                     this.Raise(this.Disabling);
                     this.OnDisable();
                     this.IsEnabled = false;
                     this.Raise(this.Disabled);
+                }
+            }
+        }
+
+        public void Draw()
+        {
+            lock (this.stateLock)
+            {
+                if (this.IsLoaded && this.IsEnabled)
+                {
+                    this.Raise(this.Drawing);
+                    this.OnDraw();
+                    this.Raise(this.Drawn);
                 }
             }
         }
@@ -187,6 +202,8 @@ namespace LightClaw.Engine.Core
         protected abstract void OnEnable();
 
         protected abstract void OnDisable();
+
+        protected abstract void OnDraw();
 
         protected abstract void OnLoad();
 

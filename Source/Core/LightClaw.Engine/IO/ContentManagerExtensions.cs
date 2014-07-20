@@ -14,6 +14,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(readers != null);
+            Contract.Requires<ArgumentException>(readers.All(reader => reader != null));
 
             foreach (IContentReader reader in readers)
             {
@@ -25,6 +26,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
+            Contract.Requires<ArgumentException>(resolvers.All(resolver => resolver != null));
 
             foreach (IContentResolver resolver in resolvers)
             {

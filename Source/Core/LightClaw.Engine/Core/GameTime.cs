@@ -13,6 +13,14 @@ namespace LightClaw.Engine.Core
     [StructureInformation(2, 8, true)]
     public struct GameTime
     {
+        public static GameTime Null
+        {
+            get
+            {
+                return new GameTime();
+            }
+        }
+
         [DataMember, ProtoMember(1)]
         public double ElapsedSinceLastUpdate { get; private set; }
 

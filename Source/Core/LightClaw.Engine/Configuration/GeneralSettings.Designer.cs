@@ -67,5 +67,14 @@ namespace LightClaw.Engine.Configuration {
                 return ((string)(this["Icon"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LightClaw Game")]
+        public string WindowTitle {
+            get {
+                return ((string)(this["WindowTitle"]));
+            }
+        }
     }
 }

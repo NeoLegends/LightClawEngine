@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using CommandLine;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using Munq;
 using ProtoBuf;
@@ -31,6 +31,8 @@ namespace LightClaw.Engine.Core
         {
             try
             {
+                DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+
                 Assembly gameCodeAssembly = Assembly.LoadFrom(GeneralSettings.Default.EntryAssembly);
                 Type gameCodeType = gameCodeAssembly.GetType(GeneralSettings.Default.EntryClass, false, true);
                 if (gameCodeType == null || !typeof(IGameCodeInterface).IsAssignableFrom(gameCodeType))
@@ -42,10 +44,15 @@ namespace LightClaw.Engine.Core
                     throw new NotSupportedException("The game code assembly was loaded, but it was not possible to find a game code class.");
                 }
 
-                Game game = new Game((IGameCodeInterface)Activator.CreateInstance(gameCodeType), GeneralSettings.Default.StartScene);
-                game.Name = GeneralSettings.Default.GameName;
+                using (Game game = new Game((IGameCodeInterface)Activator.CreateInstance(gameCodeType), GeneralSettings.Default.StartScene)
+                {
+                    Name = GeneralSettings.Default.GameName
+                })
+                {
+                    DefaultIocContainer.Register<IGame>(d => game);
 
-                game.Run();
+                    game.Run();
+                }
             }
             catch (Exception ex)
             {

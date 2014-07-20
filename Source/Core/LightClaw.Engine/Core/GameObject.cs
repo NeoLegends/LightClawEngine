@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
 using ProtoBuf;
 

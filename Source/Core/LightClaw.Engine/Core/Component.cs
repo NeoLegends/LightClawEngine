@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -41,6 +42,8 @@ namespace LightClaw.Engine.Core
         protected override void OnEnable() { }
 
         protected override void OnDisable() { }
+
+        protected override void OnDraw() { }
 
         protected override void OnLoad() { }
 

@@ -11,7 +11,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract(IgnoreListHandling = true)]
-    public class Mesh<TVertex> : Component, IDrawable, IEnumerable<MeshPart<TVertex>>
+    public class Mesh<TVertex> : Component, IEnumerable<MeshPart<TVertex>>
         where TVertex : struct
     {
         [ProtoMember(1)]
@@ -34,11 +34,6 @@ namespace LightClaw.Engine.Graphics
             this.ResourceString = resourceString;
         }
 
-        public void Draw()
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerator<MeshPart<TVertex>> GetEnumerator()
         {
             return this.Parts.GetEnumerator();
@@ -49,12 +44,17 @@ namespace LightClaw.Engine.Graphics
             return this.GetEnumerator();
         }
 
+        protected override void OnDraw()
+        {
+            base.OnDraw();
+        }
+
         protected override async void OnLoad()
         {
             try
             {
                 this.Parts = await this.IocC.Resolve<IContentManager>()
-                                           .LoadAsync<IEnumerable<MeshPart<TVertex>>>(this.ResourceString, this.MeshFormat);
+                                            .LoadAsync<IEnumerable<MeshPart<TVertex>>>(this.ResourceString, this.MeshFormat);
             }
             catch (Exception)
             {
