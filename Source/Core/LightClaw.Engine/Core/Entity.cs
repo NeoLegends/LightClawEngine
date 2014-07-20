@@ -12,6 +12,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract]
+    [ProtoInclude(1, typeof(Manager))]
     public abstract class Entity : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

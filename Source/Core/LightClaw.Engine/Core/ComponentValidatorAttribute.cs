@@ -30,6 +30,8 @@ namespace LightClaw.Engine.Core
 
         public bool Validate(GameObject gameObjectToAttachTo)
         {
+            Contract.Requires<ArgumentNullException>(gameObjectToAttachTo != null);
+
             return this.Validate(gameObjectToAttachTo, Enumerable.Empty<Component>());
         }
 

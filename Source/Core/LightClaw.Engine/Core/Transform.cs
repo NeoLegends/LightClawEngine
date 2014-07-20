@@ -10,14 +10,22 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(AsReferenceDefault = true)]
-    [NonRemovable, Solitary(typeof(Transform), "An object logically cannot have more than one transform defined.")]
-    public class Transform : Component
+    [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
+    public class Transform : Component, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
 
-        public event EventHandler<ValueChangedEventArgs<Transform>> ParentChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        public event EventHandler<ValueChangedEventArgs<Vector3>> LocalPositionChanged;
+
+        public event EventHandler<ValueChangedEventArgs<Quaternion>> LocalRotationChanged;
+
+        public event EventHandler<ValueChangedEventArgs<Vector3>> LocalScalingChanged;
 
         public event EventHandler<ValueChangedEventArgs<Vector3>> PositionChanged;
+
+        public event EventHandler<ValueChangedEventArgs<Transform>> ParentChanged;
 
         public event EventHandler<ValueChangedEventArgs<Quaternion>> RotationChanged;
 
@@ -47,64 +55,118 @@ namespace LightClaw.Engine.Core
             {
                 Transform previous = this.Parent;
                 this.SetProperty(ref _Parent, value);
-                this.RaiseParentChanged(value, previous);
+                this.Raise(this.ParentChanged, value, previous);
+            }
+        }
+
+        private Vector3 _LocalPosition;
+
+        [ProtoMember(3)]
+        public Vector3 LocalPosition
+        {
+            get
+            {
+                return _LocalPosition;
+            }
+            set
+            {
+                this.SetProperty(ref _LocalPosition, value);
             }
         }
 
         private Vector3 _Position = Vector3.Zero;
 
-        [ProtoMember(3)]
         public Vector3 Position
         {
             get
             {
-                return _Position;
+                throw new NotImplementedException();
             }
             set
             {
                 Vector3 previous = this.Position;
                 this.SetProperty(ref _Position, value);
-                this.RaisePositionChanged(value, previous);
+                this.Raise(this.PositionChanged, value, previous);
+            }
+        }
+
+        private Quaternion _LocalRotation;
+
+        [ProtoMember(4)]
+        public Quaternion LocalRotation
+        {
+            get
+            {
+                return _LocalRotation;
+            }
+            set
+            {
+                this.SetProperty(ref _LocalRotation, value);
             }
         }
 
         private Quaternion _Rotation = Quaternion.Zero;
 
-        [ProtoMember(4)]
         public Quaternion Rotation
         {
             get
             {
-                return _Rotation;
+                throw new NotImplementedException();
             }
             set
             {
                 Quaternion previous = this.Rotation;
                 this.SetProperty(ref _Rotation, value);
-                this.RaiseRotationChanged(value, previous);
+                this.Raise(this.RotationChanged, value, previous);
+            }
+        }
+
+        private Vector3 _LocalScale;
+
+        [ProtoMember(5)]
+        public Vector3 LocalScale
+        {
+            get
+            {
+                return _LocalScale;
+            }
+            set
+            {
+                this.SetProperty(ref _LocalScale, value);
             }
         }
 
         private Vector3 _Scale = Vector3.Zero;
 
-        [ProtoMember(5)]
         public Vector3 Scale
         {
             get
             {
-                return _Scale;
+                throw new NotImplementedException();
             }
             set
             {
                 Vector3 previous = this.Scale;
                 this.SetProperty(ref _Scale, value);
-                this.RaiseScalingChanged(value, previous);
+                this.Raise(this.ScalingChanged, value, previous);
             }
         }
 
         public Transform() 
         {
-            this.Childs.CollectionChanged += (s, e) => this.RaiseChildrenChanged(s, e);
+            this.Childs.CollectionChanged += (s, e) =>
+            {
+                NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;
+                if (handler != null)
+                {
+                    handler(s, e);
+                }
+                handler = this.CollectionChanged;
+                if (handler != null)
+                {
+                    handler(s, e);
+                }
+            };
         }
 
         public Transform(Vector3 position, Quaternion rotation, Vector3 scale)
@@ -128,48 +190,11 @@ namespace LightClaw.Engine.Core
             this.Scale = Vector3.One;
         }
 
-        private void RaiseChildrenChanged(object sender, NotifyCollectionChangedEventArgs args)
+        private void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
         {
-            NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;
             if (handler != null)
             {
-                handler(sender, args);
-            }
-        }
-
-        private void RaiseParentChanged(Transform newParent, Transform oldParent)
-        {
-            EventHandler<ValueChangedEventArgs<Transform>> handler = this.ParentChanged;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Transform>(newParent, oldParent));
-            }
-        }
-
-        private void RaisePositionChanged(Vector3 newPosition, Vector3 oldPosition)
-        {
-            EventHandler<ValueChangedEventArgs<Vector3>> handler = this.PositionChanged;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Vector3>(newPosition, oldPosition));
-            }
-        }
-
-        private void RaiseRotationChanged(Quaternion newRotation, Quaternion oldRotation)
-        {
-            EventHandler<ValueChangedEventArgs<Quaternion>> handler = this.RotationChanged;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Quaternion>(newRotation, oldRotation));
-            }
-        }
-
-        private void RaiseScalingChanged(Vector3 newScaling, Vector3 oldScaling)
-        {
-            EventHandler<ValueChangedEventArgs<Vector3>> handler = this.ScalingChanged;
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<Vector3>(newScaling, oldScaling));
+                handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
             }
         }
 

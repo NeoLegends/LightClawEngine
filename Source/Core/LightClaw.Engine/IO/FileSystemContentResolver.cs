@@ -12,6 +12,8 @@ namespace LightClaw.Engine.IO
     {
         public string RootPath { get; private set; }
 
+        public FileSystemContentResolver() : this(AppDomain.CurrentDomain.BaseDirectory) { }
+
         public FileSystemContentResolver(string rootPath)
         {
             Contract.Requires<ArgumentNullException>(rootPath != null);
@@ -31,8 +33,9 @@ namespace LightClaw.Engine.IO
             {
                 result = File.OpenRead(Path.Combine(this.RootPath, resourceString));
             }
-            catch
+            catch (Exception ex)
             {
+                Console.Error.WriteLine(ex.ToString());
                 result = null;
             }
             return Task.FromResult(result);

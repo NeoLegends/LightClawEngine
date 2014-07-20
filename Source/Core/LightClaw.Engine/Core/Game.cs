@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
-using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using Munq;
 using OpenTK;
@@ -51,13 +47,11 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Game() { }
-
         public Game(IGameCodeInterface gameCodeInterface, string startScene)
             : base(
-                VideoSettings.Default.Resolution.Width, 
-                VideoSettings.Default.Resolution.Height, 
-                new GraphicsMode(), 
+                VideoSettings.Default.Resolution.Width,
+                VideoSettings.Default.Resolution.Height,
+                new GraphicsMode(),
                 GeneralSettings.Default.WindowTitle
             )
         {
@@ -83,15 +77,13 @@ namespace LightClaw.Engine.Core
             base.Run(60.0);
         }
 
-        public async Task LoadScene(string resourceString, int position)
+        public async Task LoadScene(int index, string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
-            Contract.Requires<ArgumentOutOfRangeException>(position >= 0);
-
             Scene s = await Scene.LoadFrom(resourceString);
+            s.Load();
             lock (this.scenes)
             {
-                this.scenes.Insert(position, s);
+                this.scenes.Insert(index, s);
             }
         }
 
@@ -100,9 +92,7 @@ namespace LightClaw.Engine.Core
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            GL.Enable(EnableCap.DepthTest);
-
-            this.LoadScene(this.startScene, 0).Wait();
+            this.LoadScene(0, this.startScene).Wait();
 
             base.OnLoad(e);
         }
@@ -110,6 +100,11 @@ namespace LightClaw.Engine.Core
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
+            foreach (Scene s in this.scenes)
+            {
+                s.Draw();
+            }
 
             base.OnRenderFrame(e);
         }

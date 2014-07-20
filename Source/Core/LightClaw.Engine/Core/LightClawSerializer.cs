@@ -18,10 +18,12 @@ namespace LightClaw.Engine.Core
         public LightClawSerializer()
         {
             this.runtimeTypeModel.AutoAddMissingTypes = true;
-            this.runtimeTypeModel.AutoCompile = true;
+            this.runtimeTypeModel.AllowParseableTypes = true;
+            //this.runtimeTypeModel.AutoCompile = true;
         }
 
         public LightClawSerializer(IGameCodeInterface gameCodeInterface)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(gameCodeInterface != null);
         }
@@ -71,13 +73,14 @@ namespace LightClaw.Engine.Core
             return Task.Run(() => this.runtimeTypeModel.Serialize(destination, instance));
         }
 
-        public Task<byte[]> SerializeAsync<T>(T instance)
+        public async Task<byte[]> SerializeAsync<T>(T instance)
         {
             Contract.Requires<ArgumentNullException>(instance != null);
 
-            using (MemoryStream ms = new MemoryStream(32768))
+            using (MemoryStream ms = new MemoryStream(16384))
             {
-                return this.SerializeAsync(ms, instance).ContinueWith(t => ms.ToArray());
+                await this.SerializeAsync(ms, instance);
+                return ms.ToArray();
             }
         }
 
@@ -90,13 +93,14 @@ namespace LightClaw.Engine.Core
             return Task.Run(() => this.runtimeTypeModel.SerializeWithLengthPrefix(destination, instance, typeof(T), PrefixStyle.Fixed32, 0));
         }
 
-        public Task<byte[]> SerializeWithLengthPrefixAsync<T>(T instance)
+        public async Task<byte[]> SerializeWithLengthPrefixAsync<T>(T instance)
         {
             Contract.Requires<ArgumentNullException>(instance != null);
 
             using (MemoryStream ms = new MemoryStream(32768))
             {
-                return this.SerializeWithLengthPrefixAsync(ms, instance).ContinueWith(t => ms.ToArray());
+                await this.SerializeWithLengthPrefixAsync(ms, instance);
+                return ms.ToArray();
             }
         }
     }

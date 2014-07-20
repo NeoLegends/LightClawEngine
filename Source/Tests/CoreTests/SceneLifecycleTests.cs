@@ -22,6 +22,18 @@ namespace CoreTests
                 await s.Save(ms);
                 Assert.IsTrue(ms.Length > 0);
             }
+
+            try
+            {
+                using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Scene.lcs")))
+                {
+                    await s.Save(fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.ToString());
+            }
         }
 
         [TestMethod]

@@ -9,6 +9,9 @@ namespace LightClaw.Engine.Core
 {
     public static class RandomF
     {
+        private static readonly char[] characters = (from i in Enumerable.Range(33, 126 - 33)
+                                                     select (char)i).ToArray();
+
         private static readonly Random random = new Random();
 
         public static int GetInt32()
@@ -108,6 +111,24 @@ namespace LightClaw.Engine.Core
             {
                 return Enumerable.Range(0, count).Select(i => random.NextDouble()).ToArray();
             }
+        }
+
+        public static T[] GetRandomElements<T>(T[] array, int count)
+        {
+            Contract.Requires<ArgumentNullException>(array != null);
+            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
+
+            lock (random)
+            {
+                return Enumerable.Range(0, count).Select(i => array[random.Next(0, array.Length)]).ToArray();
+            }
+        }
+
+        public static string GetString(int length)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(length >= 0);
+
+            return new string(GetRandomElements(characters, length));
         }
     }
 }

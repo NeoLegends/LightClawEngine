@@ -9,40 +9,24 @@ using Ionic.Zip;
 using Ionic.Zlib;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
+using LightClaw.Extensions;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
-        private readonly LightClawSerializer serializer;
-
-        public event EventHandler<ParameterEventArgs> Drawing;
-
-        public event EventHandler<ParameterEventArgs> Drawn;
-
         public event EventHandler Saving;
 
         public event EventHandler Saved;
 
-        public Scene()
-        {
-            this.serializer = new LightClawSerializer(this.IocC.Resolve<IGameCodeInterface>());
-        }
+        public Scene() { }
 
         public Scene(IEnumerable<GameObject> gameObjects)
-            : this()
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
 
             this.AddRange(gameObjects);
-        }
-
-        public void Draw()
-        {
-            this.RaiseDrawing();
-            throw new NotImplementedException();
-            this.RaiseDrawn();
         }
 
         public override void Add(GameObject item)
@@ -121,13 +105,12 @@ namespace LightClaw.Engine.Core
             using (ZipFile zip = new ZipFile() { CompressionLevel = CompressionLevel.BestCompression })
             {
                 zip.AddEntry("Name", Encoding.UTF8.GetBytes(this.Name));
-                int count = 0;
-                foreach (GameObject gameObject in this)
+
+                LightClawSerializer serializer = this.IocC.Resolve<LightClawSerializer>();
+                byte[][] serializedData = await Task.WhenAll(this.Select(gameObject => serializer.SerializeAsync(gameObject)));
+                for (int i = 0; i < serializedData.Length; i++)
                 {
-                    zip.AddEntry(
-                        "GameObjects/" + count++ + ".pbuf", 
-                        await this.serializer.SerializeAsync(gameObject)
-                    );
+                    zip.AddEntry("GameObjects/{0}.pbuf".Format(i), serializedData[i]);
                 }
 
                 zip.Save(s);
@@ -161,24 +144,6 @@ namespace LightClaw.Engine.Core
             foreach (GameObject gameObject in this)
             {
                 gameObject.Scene = this;
-            }
-        }
-
-        private void RaiseDrawing()
-        {
-            EventHandler<ParameterEventArgs> handler = this.Drawing;
-            if (handler != null)
-            {
-                handler(this, new ParameterEventArgs());
-            }
-        }
-
-        private void RaiseDrawn()
-        {
-            EventHandler<ParameterEventArgs> handler = this.Drawn;
-            if (handler != null)
-            {
-                handler(this, new ParameterEventArgs());
             }
         }
 
