@@ -35,18 +35,6 @@ namespace LightClaw.Engine.Configuration {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsFullscreen {
-            get {
-                return ((bool)(this["IsFullscreen"]));
-            }
-            set {
-                this["IsFullscreen"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -77,6 +65,18 @@ namespace LightClaw.Engine.Configuration {
             }
             set {
                 this["Height"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::OpenTK.WindowState WindowState {
+            get {
+                return ((global::OpenTK.WindowState)(this["WindowState"]));
+            }
+            set {
+                this["WindowState"] = value;
             }
         }
     }

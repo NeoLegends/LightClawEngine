@@ -9,6 +9,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     [ProtoContract]
+    [GameComponent]
     public class Camera : Component
     {
         private double _FoV;

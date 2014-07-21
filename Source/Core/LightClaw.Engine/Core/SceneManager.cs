@@ -28,6 +28,8 @@ namespace LightClaw.Engine.Core
         public SceneManager(string startScene)
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
+
+            this.StartScene = startScene;
         }
 
         public async Task LoadScene(int index, string resourceString)

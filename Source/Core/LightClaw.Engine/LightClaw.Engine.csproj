@@ -169,11 +169,11 @@
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
     <Compile Include="Core\Constants.cs" />
-    <Compile Include="Core\GameCodeInterface.cs" />
     <Compile Include="Core\GameComponentAttribute.cs" />
     <Compile Include="Core\GameTime.cs" />
+    <Compile Include="Core\RenderManager.cs" />
     <Compile Include="Core\IGame.cs" />
-    <Compile Include="Core\IGameCodeInterface.cs" />
+    <Compile Include="Core\IRenderManager.cs" />
     <Compile Include="Core\ISceneManager.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
@@ -236,9 +236,11 @@
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
     <Compile Include="IO\SceneReader.cs" />
-    <Compile Include="IO\StringContentReader.cs" />
+    <Compile Include="IO\StringReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\LightClawSerializer.cs" />
+    <Compile Include="ResizeEventArgs.cs" />
+    <Compile Include="WindowStateChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zip">

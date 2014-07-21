@@ -11,7 +11,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(AsReferenceDefault = true)]
-    [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
+    [GameComponent, NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
     public class Transform : Component, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler ChildrenChanged;

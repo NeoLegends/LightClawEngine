@@ -10,6 +10,7 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
+    [GameComponent]
     [ProtoContract(IgnoreListHandling = true)]
     public class Mesh<TVertex> : Component, IEnumerable<MeshPart<TVertex>>
         where TVertex : struct

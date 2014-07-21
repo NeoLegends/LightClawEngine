@@ -43,19 +43,10 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("LightClaw.GameCode.MainClass")]
-        public string EntryClass {
-            get {
-                return ((string)(this["EntryClass"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("LightClaw.GameCode.dll")]
-        public string EntryAssembly {
+        public string GameCodeAssmbly {
             get {
-                return ((string)(this["EntryAssembly"]));
+                return ((string)(this["GameCodeAssmbly"]));
             }
         }
         

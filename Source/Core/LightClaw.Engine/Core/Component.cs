@@ -9,8 +9,6 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [ProtoContract(IgnoreListHandling = true)]
-    [ProtoInclude(100, typeof(Transform)), ProtoInclude(101, typeof(Coroutines.CoroutineController))]
-    [ProtoInclude(102, typeof(Graphics.Camera))]
     public abstract class Component : Manager
     {
         public event EventHandler<ValueChangedEventArgs<GameObject>> GameObjectChanged;

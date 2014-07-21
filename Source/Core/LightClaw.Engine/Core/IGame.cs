@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 using OpenTK.Input;
 
 namespace LightClaw.Engine.Core
 {
     public interface IGame : IDisposable, INameable
     {
-        GameTime CurrentGameTime { get; }
+        Assembly GameCodeAssembly { get; }
 
-        int Height { get; set; }
+        IRenderManager RenderManager { get; }
 
         ISceneManager SceneManager { get; }
-
-        bool SuppressDraw { get; set; }
-
-        int Width { get; set; }
 
         void Run();
     }

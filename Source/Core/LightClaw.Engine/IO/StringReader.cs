@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.IO
 {
-    public class StringContentReader : IContentReader
+    public class StringReader : IContentReader
     {
         public bool CanRead(Type assetType, object parameter)
         {

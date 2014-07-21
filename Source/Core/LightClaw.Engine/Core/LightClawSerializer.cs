@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using ProtoBuf;
 using ProtoBuf.Meta;
 
@@ -20,13 +21,13 @@ namespace LightClaw.Engine.Core
         {
             this.runtimeTypeModel.AutoAddMissingTypes = true;
             this.runtimeTypeModel.AllowParseableTypes = true;
-            //this.runtimeTypeModel.AutoCompile = true;
-        }
 
-        public LightClawSerializer(IGameCodeInterface gameCodeInterface)
-            : this()
-        {
-            Contract.Requires<ArgumentNullException>(gameCodeInterface != null);
+            MetaType componentMetaType = this.runtimeTypeModel.Add(typeof(Component), true);
+            int fieldNumber = 100;
+            foreach (Type componentSubtype in AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypesByAttribute<GameComponentAttribute>()))
+            {
+                componentMetaType.AddSubType(fieldNumber, componentSubtype);
+            }
         }
 
         public Task<T> DeserializeAsync<T>(Stream source)

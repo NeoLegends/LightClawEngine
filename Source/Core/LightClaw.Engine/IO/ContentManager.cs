@@ -15,7 +15,7 @@ namespace LightClaw.Engine.IO
     {
         private static readonly IContentReader[] defaultReaders = new IContentReader[]
         {
-            new IconReader(), new SceneReader(), new StringContentReader()
+            new IconReader(), new SceneReader(), new StringReader()
         };
 
         private static readonly IContentResolver[] defaultResolvers = new IContentResolver[]

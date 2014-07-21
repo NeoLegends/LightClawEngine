@@ -8,10 +8,7 @@
     <Setting Name="StartScene" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Game/Start.lcs</Value>
     </Setting>
-    <Setting Name="EntryClass" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">LightClaw.GameCode.MainClass</Value>
-    </Setting>
-    <Setting Name="EntryAssembly" Type="System.String" Scope="Application">
+    <Setting Name="GameCodeAssmbly" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw.GameCode.dll</Value>
     </Setting>
     <Setting Name="Icon" Type="System.String" Scope="Application">

@@ -16,32 +16,18 @@ namespace LightClaw.Engine.Core
 {
     public class LightClawEngine
     {
-        private static readonly IocContainer _DefaultIocContainer = new IocContainer();
-
-        public static IocContainer DefaultIocContainer
-        {
-            get
-            {
-                return _DefaultIocContainer;
-            }
-        }
-
-        static LightClawEngine()
-        {
-            DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
-        }
+        public static IocContainer DefaultIocContainer { get; private set; }
 
         static void Main(string[] args)
         {
             try
             {
-                IGameCodeInterface gameCodeInterface = new GameCodeInterface(Assembly.LoadFrom(GeneralSettings.Default.EntryAssembly));
+                DefaultIocContainer = new IocContainer();
 
-                DefaultIocContainer.Register<IGameCodeInterface>(d => gameCodeInterface);
-                DefaultIocContainer.Register<LightClawSerializer>(d => new LightClawSerializer(gameCodeInterface));
-
-                using (IGame game = new Game(gameCodeInterface, GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
+                using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssmbly), GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
+                    DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+                    DefaultIocContainer.Register<LightClawSerializer>(d => new LightClawSerializer());
                     DefaultIocContainer.Register<IGame>(d => game);
 
                     game.Run();
