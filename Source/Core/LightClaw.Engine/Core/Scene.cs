@@ -133,6 +133,11 @@ namespace LightClaw.Engine.Core
             Parallel.ForEach(this.Items, item => item.Load());
         }
 
+        protected override void OnReset()
+        {
+            Parallel.ForEach(this.Items, item => item.Reset());
+        }
+
         protected override void OnUpdate(GameTime gameTime)
         {
             Parallel.ForEach(this.Items, item => item.Update(gameTime));

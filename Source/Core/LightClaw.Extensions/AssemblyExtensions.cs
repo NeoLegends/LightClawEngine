@@ -30,5 +30,22 @@ namespace LightClaw.Extensions
                                (baseType.IsInterface && searchResult.GetInterfaces().Contains(baseType)))
                    select searchResult;
         }
+
+        public static IEnumerable<Type> GetTypesByAttribute<T>(this Assembly assembly)
+            where T : Attribute
+        {
+            return GetTypesByAttribute(assembly, typeof(T));
+        }
+
+        public static IEnumerable<Type> GetTypesByAttribute(this Assembly assembly, Type attributeType)
+        {
+            Contract.Requires<ArgumentNullException>(assembly != null);
+            Contract.Requires<ArgumentNullException>(attributeType != null);
+            Contract.Requires<ArgumentException>(typeof(Attribute).IsAssignableFrom(attributeType));
+
+            return from searchResult in assembly.GetTypes()
+                   where searchResult.GetCustomAttributes().Any(attribute => attributeType.IsAssignableFrom(attribute.GetType()))
+                   select searchResult;
+        }
     }
 }

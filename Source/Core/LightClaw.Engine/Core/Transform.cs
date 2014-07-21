@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using ProtoBuf;
@@ -74,19 +75,28 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3 _Position = Vector3.Zero;
-
+        [IgnoreDataMember, ProtoIgnore]
         public Vector3 Position
         {
             get
             {
-                throw new NotImplementedException();
+                Transform parent = this.Parent;
+                return (parent != null) ? parent.Position + this.LocalPosition : this.LocalPosition;
             }
             set
             {
                 Vector3 previous = this.Position;
-                this.SetProperty(ref _Position, value);
+                //throw new NotImplementedException();
+                //this.SetProperty(ref _Position, value);
                 this.Raise(this.PositionChanged, value, previous);
+            }
+        }
+
+        public Matrix PositionMatrix
+        {
+            get
+            {
+                return Matrix.Translation(this.Position);
             }
         }
 
@@ -105,19 +115,28 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Quaternion _Rotation = Quaternion.Zero;
-
+        [IgnoreDataMember, ProtoIgnore]
         public Quaternion Rotation
         {
             get
             {
-                throw new NotImplementedException();
+                Transform parent = this.Parent;
+                return (parent != null) ? parent.Rotation * this.LocalRotation : this.LocalRotation;
             }
             set
             {
                 Quaternion previous = this.Rotation;
-                this.SetProperty(ref _Rotation, value);
+                //throw new NotImplementedException();
+                //this.SetProperty(ref _Rotation, value);
                 this.Raise(this.RotationChanged, value, previous);
+            }
+        }
+
+        public Matrix RotationMatrix
+        {
+            get
+            {
+                return Matrix.RotationQuaternion(this.Rotation);
             }
         }
 
@@ -136,19 +155,36 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3 _Scale = Vector3.Zero;
-
+        [IgnoreDataMember, ProtoIgnore]
         public Vector3 Scale
         {
             get
             {
-                throw new NotImplementedException();
+                Transform parent = this.Parent;
+                return (parent != null) ? parent.Scale * this.LocalScale : this.LocalScale;
             }
             set
             {
                 Vector3 previous = this.Scale;
-                this.SetProperty(ref _Scale, value);
+                //throw new NotImplementedException();
+                //this.SetProperty(ref _Scale, value);
                 this.Raise(this.ScalingChanged, value, previous);
+            }
+        }
+
+        public Matrix ScaleMatrix
+        {
+            get
+            {
+                return Matrix.Scaling(this.Scale);
+            }
+        }
+
+        public Matrix ModelMatrix
+        {
+            get
+            {
+                return this.PositionMatrix * this.RotationMatrix * this.ScaleMatrix;
             }
         }
 

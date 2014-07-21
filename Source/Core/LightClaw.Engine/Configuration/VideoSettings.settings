@@ -8,11 +8,14 @@
     <Setting Name="IsFullscreen" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Resolution" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">1280, 720</Value>
+    <Setting Name="SuppressDraw" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="BackfaceCulling" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="Width" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1280</Value>
+    </Setting>
+    <Setting Name="Height" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">720</Value>
     </Setting>
   </Settings>
 </SettingsFile>

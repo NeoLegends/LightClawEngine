@@ -18,7 +18,6 @@ namespace LightClaw.Engine.Core
     {
         private static readonly IocContainer _DefaultIocContainer = new IocContainer();
 
-        [CLSCompliant(false)]
         public static IocContainer DefaultIocContainer
         {
             get
@@ -27,15 +26,20 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        static LightClawEngine()
+        {
+            DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+        }
+
         static void Main(string[] args)
         {
             try
             {
-                IGameCodeInterface gameCodeInterface = GetGameCodeInterface();
+                IGameCodeInterface gameCodeInterface = new GameCodeInterface(Assembly.LoadFrom(GeneralSettings.Default.EntryAssembly));
 
                 DefaultIocContainer.Register<IGameCodeInterface>(d => gameCodeInterface);
                 DefaultIocContainer.Register<LightClawSerializer>(d => new LightClawSerializer(gameCodeInterface));
-                DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+
                 using (IGame game = new Game(gameCodeInterface, GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
                     DefaultIocContainer.Register<IGame>(d => game);
@@ -48,17 +52,6 @@ namespace LightClaw.Engine.Core
                 Console.Error.WriteLine(ex.ToString());
                 throw;
             }
-        }
-
-        static IGameCodeInterface GetGameCodeInterface()
-        {
-            Assembly gameCodeAssembly = Assembly.LoadFrom(GeneralSettings.Default.EntryAssembly);
-            Type gameCodeType = gameCodeAssembly.GetType(GeneralSettings.Default.EntryClass, false, true);
-            if (gameCodeType == null)
-            {
-                throw new NotSupportedException("The game code assembly was loaded, but it was not possible to find a game code class.");
-            }
-            return (IGameCodeInterface)Activator.CreateInstance(gameCodeType);
         }
     }
 }

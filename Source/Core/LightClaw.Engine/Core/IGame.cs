@@ -8,94 +8,18 @@ using OpenTK.Input;
 
 namespace LightClaw.Engine.Core
 {
-    [ContractClass(typeof(IGameContracts))]
     public interface IGame : IDisposable, INameable
     {
-        IList<JoystickDevice> Joysticks { get; }
+        GameTime CurrentGameTime { get; }
 
-        KeyboardDevice Keyboard { get; }
+        int Height { get; set; }
 
-        MouseDevice Mouse { get; }
+        ISceneManager SceneManager { get; }
 
-        double TimeSinceLastUpdate { get;  }
+        bool SuppressDraw { get; set; }
 
-        double TotalGameTime { get; }
-
-        IEnumerable<Scene> Scenes { get; }
-
-        Task LoadScene(int index, string resourceString);
+        int Width { get; set; }
 
         void Run();
-    }
-
-    [ContractClassFor(typeof(IGame))]
-    abstract class IGameContracts : IGame
-    {
-        IList<JoystickDevice> IGame.Joysticks
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        KeyboardDevice IGame.Keyboard
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        MouseDevice IGame.Mouse
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        string INameable.Name { get; set; }
-
-        double IGame.TimeSinceLastUpdate
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        double IGame.TotalGameTime
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        IEnumerable<Scene> IGame.Scenes
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        Task IGame.LoadScene(int index, string resourceString)
-        {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-            Contract.Ensures(Contract.Result<Task>() != null);
-
-            return null;
-        }
-
-        void IGame.Run()
-        {
-        }
-
-        void IDisposable.Dispose()
-        {
-        }
     }
 }

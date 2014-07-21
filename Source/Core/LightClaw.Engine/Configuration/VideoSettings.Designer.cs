@@ -47,24 +47,36 @@ namespace LightClaw.Engine.Configuration {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1280, 720")]
-        public global::System.Drawing.Size Resolution {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SuppressDraw {
             get {
-                return ((global::System.Drawing.Size)(this["Resolution"]));
-            }
-            set {
-                this["Resolution"] = value;
+                return ((bool)(this["SuppressDraw"]));
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool BackfaceCulling {
+        [global::System.Configuration.DefaultSettingValueAttribute("1280")]
+        public int Width {
             get {
-                return ((bool)(this["BackfaceCulling"]));
+                return ((int)(this["Width"]));
+            }
+            set {
+                this["Width"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("720")]
+        public int Height {
+            get {
+                return ((int)(this["Height"]));
+            }
+            set {
+                this["Height"] = value;
             }
         }
     }

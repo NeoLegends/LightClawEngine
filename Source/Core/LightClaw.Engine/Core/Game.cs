@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
@@ -11,134 +12,207 @@ using Munq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Input;
 
 namespace LightClaw.Engine.Core
 {
-    public class Game : GameWindow, IGame
+    internal class Game : Entity, IGame
     {
-        private IGameCodeInterface gameCode;
+        private readonly GameWindow gameWindow = new GameWindow(
+            VideoSettings.Default.Width,
+            VideoSettings.Default.Height,
+            new GraphicsMode(),
+            GeneralSettings.Default.WindowTitle
+        ) { VSync = VideoSettings.Default.VSync };
 
-        private readonly List<Scene> scenes = new List<Scene>();
+        private GameTime _CurrentGameTime;
 
-        private string startScene;
-
-        [CLSCompliant(false)]
-        public IocContainer IocC { get; private set; }
-
-        public string Name { get; set; }
-
-        public double TimeSinceLastUpdate { get; private set; }
-
-        public double TotalGameTime { get; private set; }
-
-        public ReadOnlyCollection<Scene> Scenes
+        public GameTime CurrentGameTime
         {
             get
             {
-                return this.scenes.AsReadOnly();
+                return _CurrentGameTime;
+            }
+            set
+            {
+                this.SetProperty(ref _CurrentGameTime, value);
             }
         }
 
-        IEnumerable<Scene> IGame.Scenes
+        private IGameCodeInterface _GameCode;
+
+        public IGameCodeInterface GameCode
         {
             get
             {
-                return this.Scenes;
+                return _GameCode;
+            }
+            set
+            {
+                this.SetProperty(ref _GameCode, value);
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return this.gameWindow.Height;
+            }
+            set
+            {
+                this.gameWindow.Height = value;
+                VideoSettings.Default.Height = value;
+                VideoSettings.Default.Save();
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private string _Name;
+
+        public string Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                this.SetProperty(ref _Name, value);
+            }
+        }
+
+        private ISceneManager _SceneManager;
+
+        public ISceneManager SceneManager
+        {
+            get
+            {
+                return _SceneManager;
+            }
+            set
+            {
+                this.SetProperty(ref _SceneManager, value);
+            }
+        }
+
+        private bool _SuppressDraw;
+
+        public bool SuppressDraw
+        {
+            get
+            {
+                return _SuppressDraw;
+            }
+            set
+            {
+                this.SetProperty(ref _SuppressDraw, value);
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return this.gameWindow.Width;
+            }
+            set
+            {
+                this.gameWindow.Width = value;
+                VideoSettings.Default.Width = value;
+                VideoSettings.Default.Save();
+                this.RaisePropertyChanged();
             }
         }
 
         public Game(IGameCodeInterface gameCodeInterface, string startScene)
-            : base(
-                VideoSettings.Default.Resolution.Width,
-                VideoSettings.Default.Resolution.Height,
-                new GraphicsMode(),
-                GeneralSettings.Default.WindowTitle
-            )
         {
             Contract.Requires<ArgumentNullException>(gameCodeInterface != null);
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            this.gameCode = gameCodeInterface;
-            this.startScene = startScene;
+            this.GameCode = gameCodeInterface;
 
-            this.IocC.Resolve<IContentManager>().LoadAsync<Icon>(GeneralSettings.Default.Icon).ContinueWith(t => this.Icon = t.Result);
-            this.IocC = LightClawEngine.DefaultIocContainer;
             this.Name = GeneralSettings.Default.GameName;
-            this.VSync = VideoSettings.Default.VSync;
+            this.SceneManager = new SceneManager(startScene);
+
+            this.gameWindow.Closed += (s, e) => this.OnClosed();
+            this.gameWindow.Load += (s, e) => this.OnLoad();
+            this.gameWindow.RenderFrame += (s, e) => this.OnRenderFrame();
+            this.gameWindow.Resize += (s, e) => this.OnResize();
+            this.gameWindow.UpdateFrame += (s, e) => this.OnUpdateFrame(e.Time);
+            this.gameWindow.WindowStateChanged += (s, e) => this.OnWindowStateChanged(this.gameWindow.WindowState);
+
+            this.IocC.Register<ISceneManager>(d => this.SceneManager);
+            this.IocC.Resolve<IContentManager>()
+                     .LoadAsync<Icon>(GeneralSettings.Default.Icon)
+                     .ContinueWith(t => this.gameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
-        public new void Run()
+        ~Game()
         {
-            base.Run(60.0);
+            this.Dispose(false);
         }
 
-        void IGame.Run()
+        public void Run()
         {
-            base.Run(60.0);
+            this.gameWindow.Run(60.0);
         }
 
-        public async Task LoadScene(int index, string resourceString)
+        public void Dispose()
         {
-            Scene s = await Scene.LoadFrom(resourceString);
-            s.Load();
-            lock (this.scenes)
-            {
-                this.scenes.Insert(index, s);
-            }
+            this.Dispose(true);
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected virtual void Dispose(bool disposing)
+        {
+            this.gameWindow.Dispose();
+            this.SceneManager.Dispose();
+        }
+
+        protected virtual void OnClosed()
+        {
+            this.Dispose();
+        }
+
+        protected virtual void OnLoad()
         {
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            this.LoadScene(0, this.startScene).Wait();
-
-            base.OnLoad(e);
+            this.SceneManager.Load();
         }
 
-        protected override void OnRenderFrame(FrameEventArgs e)
+        protected virtual void OnRenderFrame()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            foreach (Scene s in this.scenes)
+            if (!this.SuppressDraw)
             {
-                s.Draw();
+                this.SceneManager.Draw();
             }
-
-            base.OnRenderFrame(e);
         }
 
-        protected override void OnResize(EventArgs e)
+        protected virtual void OnResize()
         {
             GL.Viewport(0, 0, this.Width, this.Height);
-
-            base.OnResize(e);
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs e)
+        protected virtual void OnUpdateFrame(double elapsedSinceLastUpdate)
         {
-            this.TimeSinceLastUpdate = e.Time;
-            this.TotalGameTime += e.Time;
+            this.CurrentGameTime = new GameTime(
+                this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
+                this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate
+            );
 
-            Scene[] scenes = null;
-            lock (this.scenes)
-            {
-                scenes = this.scenes.ToArray();
-            }
-            foreach (Scene s in scenes)
-            {
-                s.Update(new GameTime(this.TimeSinceLastUpdate, this.TotalGameTime));
-            }
-
-            base.OnUpdateFrame(e);
+            this.SceneManager.Update(this.CurrentGameTime);
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected virtual void OnWindowStateChanged(WindowState windowState)
         {
-            this.Dispose();
-
-            base.OnClosed(e);
+            if (windowState == WindowState.Minimized)
+            {
+                this.SuppressDraw = true;
+            }
         }
     }
 }

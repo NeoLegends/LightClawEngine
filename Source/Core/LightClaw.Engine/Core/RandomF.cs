@@ -9,8 +9,7 @@ namespace LightClaw.Engine.Core
 {
     public static class RandomF
     {
-        private static readonly char[] characters = (from i in Enumerable.Range(33, 126 - 33)
-                                                     select (char)i).ToArray();
+        private static readonly char[] characters = Enumerable.Range(33, 93).Select(i => (char)i).ToArray();
 
         private static readonly Random random = new Random();
 

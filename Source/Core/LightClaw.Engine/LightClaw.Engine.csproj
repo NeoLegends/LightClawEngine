@@ -169,9 +169,12 @@
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\GameCodeInterface.cs" />
+    <Compile Include="Core\GameComponentAttribute.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\IGameCodeInterface.cs" />
+    <Compile Include="Core\ISceneManager.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
     <Compile Include="Core\Manager.cs" />
@@ -191,11 +194,11 @@
     <Compile Include="Core\Math\Vector4.cs" />
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\Entity.cs" />
-    <Compile Include="Core\Math\Rectangle.cs" />
     <Compile Include="Core\RandomF.cs" />
+    <Compile Include="Core\RequiresAttribute.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ParameterEventArgs.cs" />
-    <Compile Include="Core\Math\Size.cs" />
+    <Compile Include="Core\SceneManager.cs" />
     <Compile Include="Core\SolitaryAttribute.cs" />
     <Compile Include="Core\Tag.cs" />
     <Compile Include="Core\Transform.cs" />

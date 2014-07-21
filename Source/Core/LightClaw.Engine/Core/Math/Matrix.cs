@@ -604,7 +604,6 @@ namespace LightClaw.Engine.Core
         /// <returns>
         /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        [CLSCompliant(false)]
         public bool Equals(Matrix other)
         {
             return Equals(ref other);

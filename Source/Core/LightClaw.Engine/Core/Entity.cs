@@ -17,7 +17,6 @@ namespace LightClaw.Engine.Core
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [CLSCompliant(false)]
         [IgnoreDataMember, ProtoIgnore]
         public IocContainer IocC { get; protected set; }
 
