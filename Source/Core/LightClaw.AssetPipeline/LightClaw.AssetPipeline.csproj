@@ -54,8 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetProcessing\AssetProcessor.cs" />
-    <Compile Include="AssetProcessing\IAssetProcessable.cs" />
+    <Compile Include="Preprocessing\IPreprocessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
-    [ProtoContract]
-    [GameComponent]
+    [DataContract]
     public class Camera : Component
     {
         private double _FoV;
 
-        [ProtoMember(1)]
+        [DataMember]
         public double FoV
         {
             get
@@ -29,7 +28,7 @@ namespace LightClaw.Engine.Graphics
 
         private double _Zoom;
 
-        [ProtoMember(2)]
+        [DataMember]
         public double Zoom
         {
             get
@@ -44,7 +43,7 @@ namespace LightClaw.Engine.Graphics
 
         private int _Iso;
 
-        [ProtoMember(3)]
+        [DataMember]
         public int Iso
         {
             get

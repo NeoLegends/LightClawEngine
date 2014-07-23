@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -12,19 +12,19 @@ namespace LightClaw.Engine.Graphics
     /// Represents the binding of a shader variable index to its name.
     /// </summary>
     /// <remarks>Used together with <see cref="ShaderProgram"/>s.</remarks>
-    [ProtoContract]
+    [DataContract]
     public struct AttributeLocationBinding
     {
         /// <summary>
         /// The index of the shader variable.
         /// </summary>
-        [ProtoMember(1)]
+        
         public int Index { get; private set; }
 
         /// <summary>
         /// The name of the shader variable.
         /// </summary>
-        [ProtoMember(2)]
+        
         public string Name { get; private set; }
 
         /// <summary>

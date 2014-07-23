@@ -20,7 +20,7 @@ namespace LightClaw.Engine.IO
 
         private static readonly IContentResolver[] defaultResolvers = new IContentResolver[]
         {
-            new DiskContentResolver(AppDomain.CurrentDomain.BaseDirectory)
+            new FileSystemContentResolver()
         };
 
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();

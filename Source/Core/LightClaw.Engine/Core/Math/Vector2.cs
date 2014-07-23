@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a two dimensional mathematical vector.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(2, 4, true)]
     public struct Vector2 : IEquatable<Vector2>
     {
@@ -85,19 +84,19 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float X;
 
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float Y;
 
         /// <summary>
         /// All components as array.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float[] Array
         {
             get
@@ -178,7 +177,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index of the component to access. Use 0 for the X component and 1 for the Y component.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 1].</exception>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float this[int index]
         {
             get
@@ -321,7 +320,7 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override string ToString()
         {
-            return "({0}|{1})".Format(X, Y);
+            return "({0}|{1})".FormatWith(X, Y);
         }
 
         /// <summary>
@@ -1313,7 +1312,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Multiplies a vector with another by performing component-wise multiplication equivalent to <see cref="Multiply(ref SharpDX.Vector2,ref SharpDX.Vector2,out SharpDX.Vector2)"/>.
+        /// Multiplies a vector with another by performing component-wise multiplication equivalent to <see cref="Multiply(ref Vector2,ref Vector2,out Vector2)"/>.
         /// </summary>
         /// <param name="left">The first vector to multiply.</param>
         /// <param name="right">The second vector to multiply.</param>

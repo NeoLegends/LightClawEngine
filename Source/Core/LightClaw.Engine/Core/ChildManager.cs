@@ -4,20 +4,19 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
-    [ProtoInclude(100, typeof(ListChildManager<Component>))]
+    [DataContract]
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
         private List<T> _Items = new List<T>();
 
-        [ProtoMember(1, DynamicType = true, IsRequired = true)]
+        [DataMember]
         protected virtual List<T> Items
         {
             get

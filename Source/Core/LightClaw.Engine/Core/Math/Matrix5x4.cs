@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 4x4 mathematical Matrix5x4.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(20, 4, true)]
     public struct Matrix5x4 : IEquatable<Matrix5x4>
     {
@@ -59,127 +58,127 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M13;
 
         /// <summary>
         /// Value at row 1 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M14;
 
         /// <summary>
         /// Value at row 2 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public float M23;
 
         /// <summary>
         /// Value at row 2 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public float M24;
 
         /// <summary>
         /// Value at row 3 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(9)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(10)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(11)]
+        [DataMember]
         public float M33;
 
         /// <summary>
         /// Value at row 3 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(12)]
+        [DataMember]
         public float M34;
 
         /// <summary>
         /// Value at row 4 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(13)]
+        [DataMember]
         public float M41;
 
         /// <summary>
         /// Value at row 4 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(14)]
+        [DataMember]
         public float M42;
 
         /// <summary>
         /// Value at row 4 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(15)]
+        [DataMember]
         public float M43;
 
         /// <summary>
         /// Value at row 4 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(16)]
+        [DataMember]
         public float M44;
 
         /// <summary>
         /// Value at row 5 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(17)]
+        [DataMember]
         public float M51;
 
         /// <summary>
         /// Value at row 5 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(18)]
+        [DataMember]
         public float M52;
 
         /// <summary>
         /// Value at row 5 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(19)]
+        [DataMember]
         public float M53;
 
         /// <summary>
         /// Value at row 5 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(20)]
+        [DataMember]
         public float M54;
 
         /// <summary>
         /// Gets or sets the first row in the Matrix5x4; that is M11, M12, M13, and M14.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 Row1
         {
             get { return new Vector4(M11, M12, M13, M14); }
@@ -189,7 +188,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the second row in the Matrix5x4; that is M21, M22, M23, and M24.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 Row2
         {
             get { return new Vector4(M21, M22, M23, M24); }
@@ -199,7 +198,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the third row in the Matrix5x4; that is M31, M32, M33, and M34.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 Row3
         {
             get { return new Vector4(M31, M32, M33, M34); }
@@ -209,7 +208,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the fourth row in the Matrix5x4; that is M41, M42, M43, and M44.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 Row4
         {
             get { return new Vector4(M41, M42, M43, M44); }
@@ -219,7 +218,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the fifth row in the Matrix5x4; that is M51, M52, M53, and M54.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 Row5
         {
             get { return new Vector4(M51, M52, M53, M54); }
@@ -229,7 +228,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the translation of the Matrix5x4; that is M41, M42, and M43.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 TranslationVector
         {
             get { return new Vector4(M51, M52, M53, M54); }
@@ -239,7 +238,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the scale of the Matrix5x4; that is M11, M22, and M33.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector4 ScaleVector
         {
             get { return new Vector4(M11, M22, M33, M44); }
@@ -540,7 +539,7 @@ namespace LightClaw.Engine.Core
                 "[M21:{4} M22:{5} M23:{6} M24:{7}] " +
                 "[M31:{8} M32:{9} M33:{10} M34:{11}] " +
                 "[M41:{12} M42:{13} M43:{14} M44:{15}] " +
-                "[M51:{16} M52:{17} M53:{18} M54:{19}]").Format(M11, M12, M13, M14, 
+                "[M51:{16} M52:{17} M53:{18} M54:{19}]").FormatWith(M11, M12, M13, M14, 
                                                                 M21, M22, M23, M24, 
                                                                 M31, M32, M33, M34, 
                                                                 M41, M42, M43, M44, 

@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 4x4 mathematical matrix.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(16, 4, true)]
     public struct Matrix : IEquatable<Matrix>
     {
@@ -59,103 +58,103 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M13;
 
         /// <summary>
         /// Value at row 1 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M14;
 
         /// <summary>
         /// Value at row 2 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public float M23;
 
         /// <summary>
         /// Value at row 2 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public float M24;
 
         /// <summary>
         /// Value at row 3 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(9)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(10)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(11)]
+        [DataMember]
         public float M33;
 
         /// <summary>
         /// Value at row 3 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(12)]
+        [DataMember]
         public float M34;
 
         /// <summary>
         /// Value at row 4 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(13)]
+        [DataMember]
         public float M41;
 
         /// <summary>
         /// Value at row 4 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(14)]
+        [DataMember]
         public float M42;
 
         /// <summary>
         /// Value at row 4 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(15)]
+        [DataMember]
         public float M43;
 
         /// <summary>
         /// Value at row 4 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(16)]
+        [DataMember]
         public float M44;
      
         /// <summary>
         /// Gets or sets the up <see cref="Vector3"/> of the matrix; that is M21, M22, and M23.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Up
         {
             get
@@ -177,7 +176,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the down <see cref="Vector3"/> of the matrix; that is -M21, -M22, and -M23.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Down
         {
             get
@@ -199,7 +198,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the right <see cref="Vector3"/> of the matrix; that is M11, M12, and M13.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Right
         {
             get
@@ -221,7 +220,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the left <see cref="Vector3"/> of the matrix; that is -M11, -M12, and -M13.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Left
         {
             get
@@ -264,7 +263,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the backward <see cref="Vector3"/> of the matrix; that is M31, M32, and M33.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Backward
         {
             get
@@ -935,7 +934,7 @@ namespace LightClaw.Engine.Core
                 ("[M11:{0} M12:{1} M13:{2} M14:{3}] " +
                 "[M21:{4} M22:{5} M23:{6} M24:{7}] " +
                 "[M31:{8} M32:{9} M33:{10} M34:{11}] " +
-                "[M41:{12} M42:{13} M43:{14} M44:{15}]").Format(M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
+                "[M41:{12} M42:{13} M43:{14} M44:{15}]").FormatWith(M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
         }
 
         /// <summary>

@@ -17,14 +17,9 @@ namespace LightClaw.Engine.IO
 
         public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
         {
-            if (assetType == typeof(Icon))
-            {
-                return Task.FromResult<object>(new Icon(assetStream));
-            }
-            else
-            {
-                return Task.FromResult<object>(null);
-            }
+            return (assetType == typeof(Icon)) ?
+                Task.FromResult<object>(new Icon(assetStream)) :
+                Task.FromResult<object>(null);
         }
     }
 }

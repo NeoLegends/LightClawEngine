@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Ionic.Zip;
-using Ionic.Zlib;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
+    [DataContract]
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
         public event EventHandler Saving;
@@ -97,25 +96,16 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public async Task Save(Stream s)
+        public Task Save(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
 
-            this.RaiseSaving();
-            using (ZipFile zip = new ZipFile() { CompressionLevel = CompressionLevel.BestCompression })
+            return Task.Run(() =>
             {
-                zip.AddEntry("Name", Encoding.UTF8.GetBytes(this.Name));
-
-                LightClawSerializer serializer = this.IocC.Resolve<LightClawSerializer>();
-                byte[][] serializedData = await Task.WhenAll(this.Select(gameObject => serializer.SerializeAsync(gameObject)));
-                for (int i = 0; i < serializedData.Length; i++)
-                {
-                    zip.AddEntry("GameObjects/{0}.pbuf".Format(i), serializedData[i]);
-                }
-
-                zip.Save(s);
-            }
-            this.RaiseSaved();
+                this.RaiseSaving();
+                new NetDataContractSerializer().WriteObject(s, this);
+                this.RaiseSaved();
+            });
         }
 
         protected override void OnEnable()
@@ -143,7 +133,7 @@ namespace LightClaw.Engine.Core
             Parallel.ForEach(this.Items, item => item.Update(gameTime));
         }
 
-        [ProtoAfterDeserialization]
+        [OnDeserialized]
         private void InitializeGameObjects()
         {
             foreach (GameObject gameObject in this)

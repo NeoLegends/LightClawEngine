@@ -6,14 +6,13 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a three dimensional mathematical vector.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(3, 4, true)]
     public struct Vector3 : IEquatable<Vector3>
     {
@@ -183,25 +182,25 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float X;
 
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float Y;
 
         /// <summary>
         /// The Z component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float Z;
 
         /// <summary>
         /// All components as array.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float[] Array
         {
             get
@@ -283,7 +282,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, and 2 for the Z component.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 2].</exception>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float this[int index]
         {
             get
@@ -1362,7 +1361,6 @@ namespace LightClaw.Engine.Core
                     ((source[i].X * num7) + (source[i].Y * num8)) + (source[i].Z * num9));
             }
         }
-
 
         /// <summary>
         /// Transforms a 3D vector by the given <see cref="Matrix3x3"/>.

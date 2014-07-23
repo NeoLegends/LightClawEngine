@@ -6,14 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using Munq;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
-    [ProtoContract]
+    [DataContract]
     public abstract class GLObject : Entity, IDisposable
     {
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public int Id { get; protected set; }
 
         protected GLObject() { }

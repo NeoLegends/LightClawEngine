@@ -149,10 +149,6 @@
     <value>lcs</value>
     <comment>The file extension used for serialized scenes.</comment>
   </data>
-  <data name="ShaderDefinition" xml:space="preserve">
-    <value>sdf</value>
-    <comment>The file extension for a file holding information about a shader to be loaded.</comment>
-  </data>
   <data name="VBNet" xml:space="preserve">
     <value>vb</value>
   </data>

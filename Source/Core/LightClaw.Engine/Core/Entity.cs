@@ -7,17 +7,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Munq;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract]
-    [ProtoInclude(1, typeof(Manager))]
+    [DataContract]
+    
     public abstract class Entity : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public IocContainer IocC { get; protected set; }
 
         protected Entity()

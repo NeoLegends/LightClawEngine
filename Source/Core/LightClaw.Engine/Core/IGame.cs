@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Input;
+using OpenTK.Platform;
 
 namespace LightClaw.Engine.Core
 {
@@ -14,7 +15,7 @@ namespace LightClaw.Engine.Core
     {
         Assembly GameCodeAssembly { get; }
 
-        IRenderManager RenderManager { get; }
+        IGameWindow GameWindow { get; }
 
         ISceneManager SceneManager { get; }
 

@@ -12,6 +12,11 @@ namespace CoreTests
     [TestClass]
     public class SceneLifecycleTests
     {
+        static SceneLifecycleTests()
+        {
+
+        }
+
         [TestMethod]
         public async Task TestSceneSaving()
         {

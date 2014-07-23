@@ -5,12 +5,28 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
+using LightClaw.Engine.IO;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Platform;
 
 namespace LightClaw.Engine.Core
 {
     internal class Game : Entity, IGame
     {
+        private GameTime _CurrentGameTime;
+
+        public GameTime CurrentGameTime
+        {
+            get
+            {
+                return _CurrentGameTime;
+            }
+            private set
+            {
+                this.SetProperty(ref _CurrentGameTime, value);
+            }
+        }
+
         private Assembly _GameCodeAssembly;
 
         public Assembly GameCodeAssembly
@@ -25,17 +41,26 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private IRenderManager _RenderManager;
+        private IGameWindow _GameWindow = new OpenTK.GameWindow(
+            VideoSettings.Default.Width,
+            VideoSettings.Default.Height,
+            new OpenTK.Graphics.GraphicsMode(),
+            GeneralSettings.Default.WindowTitle
+        )
+        {
+            WindowState = VideoSettings.Default.WindowState,
+            VSync = VideoSettings.Default.VSync
+        };
 
-        public IRenderManager RenderManager
+        public IGameWindow GameWindow
         {
             get
             {
-                return _RenderManager;
+                return _GameWindow;
             }
             private set
             {
-                this.SetProperty(ref _RenderManager, value);
+                this.SetProperty(ref _GameWindow, value);
             }
         }
 
@@ -67,6 +92,20 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        private bool _SuppressDraw;
+
+        public bool SuppressDraw
+        {
+            get
+            {
+                return _SuppressDraw;
+            }
+            set
+            {
+                this.SetProperty(ref _SuppressDraw, value);
+            }
+        }
+
         public Game(Assembly gameCodeAssembly, string startScene)
         {
             Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
@@ -75,14 +114,18 @@ namespace LightClaw.Engine.Core
             this.GameCodeAssembly = gameCodeAssembly;
 
             this.Name = GeneralSettings.Default.GameName;
-            this.RenderManager = new RenderManager();
             this.SceneManager = new SceneManager(startScene);
 
-            this.IocC.Register<IRenderManager>(d => this.RenderManager);
+            this.GameWindow.Closed += (s, e) => this.OnClosed();
+            this.GameWindow.Load += (s, e) => this.OnLoad();
+            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
+            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
+            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
+            
             this.IocC.Register<ISceneManager>(d => this.SceneManager);
-            //this.IocC.Resolve<IContentManager>()
-            //         .LoadAsync<Icon>(GeneralSettings.Default.Icon)
-            //         .ContinueWith(t => this.gameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+            this.IocC.Resolve<IContentManager>()
+                     .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.Icon)
+                     .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
         ~Game()
@@ -92,7 +135,7 @@ namespace LightClaw.Engine.Core
 
         public void Run()
         {
-            this.RenderManager.Run(60.0);
+            this.GameWindow.Run(60.0);
         }
 
         public void Dispose()
@@ -102,7 +145,7 @@ namespace LightClaw.Engine.Core
 
         protected virtual void Dispose(bool disposing)
         {
-            this.RenderManager.Dispose();
+            this.GameWindow.Dispose();
             this.SceneManager.Dispose();
         }
 
@@ -119,11 +162,11 @@ namespace LightClaw.Engine.Core
             this.SceneManager.Load();
         }
 
-        protected virtual void OnRenderFrame()
+        protected virtual void OnRender()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            if (!this.RenderManager.SuppressDraw)
+            if (!this.SuppressDraw)
             {
                 this.SceneManager.Draw();
             }
@@ -134,14 +177,14 @@ namespace LightClaw.Engine.Core
             GL.Viewport(0, 0, width, height);
         }
 
-        protected virtual void OnUpdateFrame(double elapsedSinceLastUpdate)
+        protected virtual void OnUpdate(double elapsedSinceLastUpdate)
         {
-            //this.CurrentGameTime = new GameTime(
-            //    this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
-            //    this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate
-            //);
+            this.CurrentGameTime = new GameTime(
+                this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
+                this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate
+            );
 
-            //this.SceneManager.Update(this.CurrentGameTime);
+            this.SceneManager.Update(this.CurrentGameTime);
         }
     }
 }

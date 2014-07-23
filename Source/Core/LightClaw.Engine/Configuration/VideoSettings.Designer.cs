@@ -9,8 +9,6 @@
 //------------------------------------------------------------------------------
 
 namespace LightClaw.Engine.Configuration {
-    
-    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
     public sealed partial class VideoSettings : global::System.Configuration.ApplicationSettingsBase {

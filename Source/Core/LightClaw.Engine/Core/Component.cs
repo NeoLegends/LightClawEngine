@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
+    [DataContract]
     public abstract class Component : Manager
     {
         public event EventHandler<ValueChangedEventArgs<GameObject>> GameObjectChanged;
 
-        [ProtoMember(1)]
-        public int UpdatePriority { get; protected set; }
-
         private GameObject _GameObject;
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public GameObject GameObject
         {
             get
@@ -27,13 +24,9 @@ namespace LightClaw.Engine.Core
             }
             internal set
             {
-                GameObject previousValue = this.GameObject;
+                GameObject previous = this.GameObject;
                 this.SetProperty(ref _GameObject, value);
-                EventHandler<ValueChangedEventArgs<GameObject>> handler = this.GameObjectChanged;
-                if (handler != null)
-                {
-                    handler(this, new ValueChangedEventArgs<GameObject>(value, previousValue));
-                }
+                this.Raise(this.GameObjectChanged, value, previous);
             }
         }
 
@@ -48,5 +41,13 @@ namespace LightClaw.Engine.Core
         protected override void OnReset() { }
 
         protected override void OnUpdate(GameTime gameTime) { }
+
+        private void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T previousValue)
+        {
+            if (handler != null)
+            {
+                handler(this, new ValueChangedEventArgs<T>(newValue, previousValue));
+            }
+        }
     }
 }

@@ -9,12 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using Munq;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract]
-    [ProtoInclude(100, typeof(ChildManager<Component>)), ProtoInclude(101, typeof(Component))]
+    [DataContract]
+    
     public abstract class Manager : Entity, IDrawable, IControllable, INameable
     {
         private object stateLock = new object();
@@ -45,7 +44,6 @@ namespace LightClaw.Engine.Core
 
         private string _Name;
 
-        [ProtoMember(1)]
         public string Name
         {
             get
@@ -60,7 +58,6 @@ namespace LightClaw.Engine.Core
 
         private bool _IsEnabled = false;
 
-        [ProtoMember(2, IsRequired = true)]
         public bool IsEnabled
         {
             get
@@ -75,7 +72,7 @@ namespace LightClaw.Engine.Core
 
         private bool _IsLoaded = false;
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public bool IsLoaded
         {
             get

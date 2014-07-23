@@ -6,12 +6,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(AsReferenceDefault = true)]
-    [GameComponent, NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
+    [DataContract]
+    [Description("Contains an object's position, rotation and scaling relativ to it's parent and in world space.")]
+    [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
     public class Transform : Component, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
@@ -32,7 +32,6 @@ namespace LightClaw.Engine.Core
 
         public event EventHandler<ValueChangedEventArgs<Vector3>> ScalingChanged;
 
-        [ProtoMember(1)]
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
 
         public ObservableCollection<Transform> Childs
@@ -41,11 +40,15 @@ namespace LightClaw.Engine.Core
             {
                 return _Childs;
             }
+            private set
+            {
+                this.SetProperty(ref _Childs, value);
+            }
         }
 
         private Transform _Parent;
 
-        [ProtoMember(2)]
+        [DataMember]
         public Transform Parent
         {
             get
@@ -60,9 +63,9 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3 _LocalPosition;
+        private Vector3 _LocalPosition = Vector3.Zero;
 
-        [ProtoMember(3)]
+        [DataMember]
         public Vector3 LocalPosition
         {
             get
@@ -71,11 +74,13 @@ namespace LightClaw.Engine.Core
             }
             set
             {
+                Vector3 previous = this.LocalPosition;
                 this.SetProperty(ref _LocalPosition, value);
+                this.Raise(this.LocalPositionChanged, value, previous);
             }
         }
 
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Position
         {
             get
@@ -100,9 +105,9 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Quaternion _LocalRotation;
+        private Quaternion _LocalRotation = Quaternion.Identity;
 
-        [ProtoMember(4)]
+        [DataMember]
         public Quaternion LocalRotation
         {
             get
@@ -111,11 +116,13 @@ namespace LightClaw.Engine.Core
             }
             set
             {
+                Quaternion previous = this.LocalRotation;
                 this.SetProperty(ref _LocalRotation, value);
+                this.Raise(this.LocalRotationChanged, value, previous);
             }
         }
 
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Quaternion Rotation
         {
             get
@@ -140,9 +147,9 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3 _LocalScale;
+        private Vector3 _LocalScale = Vector3.One;
 
-        [ProtoMember(5)]
+        [DataMember]
         public Vector3 LocalScale
         {
             get
@@ -151,11 +158,13 @@ namespace LightClaw.Engine.Core
             }
             set
             {
+                Vector3 previous = this.LocalScale;
                 this.SetProperty(ref _LocalScale, value);
+                this.Raise(this.LocalScalingChanged, previous, previous);
             }
         }
 
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Scale
         {
             get
@@ -188,7 +197,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public Transform() 
+        public Transform()
         {
             this.Childs.CollectionChanged += (s, e) =>
             {
@@ -205,25 +214,22 @@ namespace LightClaw.Engine.Core
             };
         }
 
-        public Transform(Vector3 position, Quaternion rotation, Vector3 scale)
+        public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale) : this(null, localPosition, localRotation, localScale) { }
+
+        public Transform(Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
             : this()
         {
-            this.Position = position;
-            this.Rotation = rotation;
-            this.Scale = scale;
-        }
-
-        public Transform(Transform parent, Vector3 position, Quaternion rotation, Vector3 scale)
-            : this(position, rotation, scale)
-        {
+            this.LocalPosition = localPosition;
+            this.LocalRotation = localRotation;
+            this.LocalScale = localScale;
             this.Parent = parent;
         }
 
         protected override void OnReset()
         {
-            this.Position = Vector3.Zero;
-            this.Rotation = Quaternion.Zero;
-            this.Scale = Vector3.One;
+            this.LocalPosition = Vector3.Zero;
+            this.LocalRotation = Quaternion.Zero;
+            this.LocalScale = Vector3.One;
         }
 
         private void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
@@ -232,14 +238,6 @@ namespace LightClaw.Engine.Core
             {
                 handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
             }
-        }
-
-        [Tag("Congrats, you are a true C# zen master and found this hidden method. Might allow polan into space.")]
-        private void Randomize()
-        {
-            this.Position = Vector3.Random;
-            this.Rotation = Quaternion.Random;
-            this.Scale = Vector3.Random;
         }
     }
 }

@@ -5,11 +5,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(2, 8, true)]
     public struct GameTime
     {
@@ -21,10 +20,10 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public double ElapsedSinceLastUpdate { get; private set; }
 
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public double TotalGameTime { get; private set; }
 
         public GameTime(double elapsedSinceUpdate, double totalTime)

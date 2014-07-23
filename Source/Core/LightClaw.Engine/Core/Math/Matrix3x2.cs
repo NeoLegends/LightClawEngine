@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Direct2D Matrix3x2. Supports implicit cast from <see cref="Matrix"/>.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(6, 4, true)]
     public struct Matrix3x2
     {
@@ -55,43 +54,43 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Element (1,1)
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Element (1,2)
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Element (2,1)
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Element (2,2)
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Element (3,1)
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Element (3,2)
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Gets or sets the first row in the matrix; that is M11 and M12.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector2 Row1
         {
             get { return new Vector2(M11, M12); }
@@ -101,7 +100,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the second row in the matrix; that is M21 and M22.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector2 Row2
         {
             get { return new Vector2(M21, M22); }
@@ -111,7 +110,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the third row in the matrix; that is M31 and M32.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector2 Row3
         {
             get { return new Vector2(M31, M32); }
@@ -121,7 +120,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the first column in the matrix; that is M11, M21, and M31.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Column1
         {
             get { return new Vector3(M11, M21, M31); }
@@ -131,7 +130,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the second column in the matrix; that is M12, M22, and M32.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Column2
         {
             get { return new Vector3(M12, M22, M32); }
@@ -141,7 +140,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the translation of the matrix; that is M31 and M32.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector2 TranslationVector
         {
             get { return new Vector2(M31, M32); }
@@ -151,7 +150,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the scale of the matrix; that is M11 and M22.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector2 ScaleVector
         {
             get { return new Vector2(M11, M22); }
@@ -176,7 +175,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The zero-based index of the component to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 5].</exception>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float this[int index]
         {
             get
@@ -220,7 +219,7 @@ namespace LightClaw.Engine.Core
         /// <param name="column">The column of the matrix to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="row"/> or <paramref name="column"/>is out of the range [0, 3].</exception>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float this[int row, int column]
         {
             get
@@ -360,7 +359,7 @@ namespace LightClaw.Engine.Core
             return 
                 ("[M11:{0} M12:{1}] " +
                 "[M21:{2} M22:{3}] " +
-                "[M31:{4} M32:{5}]").Format(M11, M12, M21, M22, M31, M32);
+                "[M31:{4} M32:{5}]").FormatWith(M11, M12, M21, M22, M31, M32);
         }
 
         /// <summary>

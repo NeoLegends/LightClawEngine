@@ -133,15 +133,6 @@ namespace LightClaw.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die sdf ähnelt.
-        /// </summary>
-        public static string ShaderDefinition {
-            get {
-                return ResourceManager.GetString("ShaderDefinition", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die vb ähnelt.
         /// </summary>
         public static string VBNet {

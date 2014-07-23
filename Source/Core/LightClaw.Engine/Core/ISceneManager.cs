@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
-    public interface ISceneManager : IControllable
+    public interface ISceneManager : IControllable, IEnumerable<Scene>
     {
-        Task LoadScene(int index, string resourceString);
+        Task<bool> Load(int index, string resourceString);
 
-        void LoadScene(int index, Scene s);
+        bool Load(int index, Scene s);
 
-        void UnloadScene(int index);
+        bool Unload(int index);
     }
 }

@@ -3,19 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
 {
-    [ProtoContract]
+    [DataContract]
     [Solitary(typeof(CoroutineController), "More than one CoroutineController induces unnecessary overhead.")]
     public class CoroutineController : Component
     {
-        [ProtoIgnore]
+        [IgnoreDataMember]
         private List<ICoroutineContext> contexts = new List<ICoroutineContext>();
 
         public CoroutineController() { }

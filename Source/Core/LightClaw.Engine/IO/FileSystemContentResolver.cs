@@ -40,5 +40,11 @@ namespace LightClaw.Engine.IO
             }
             return Task.FromResult(result);
         }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.RootPath != null);
+        }
     }
 }

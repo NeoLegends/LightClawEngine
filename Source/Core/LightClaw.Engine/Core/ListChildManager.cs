@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
-    [ProtoInclude(100, typeof(GameObject))]
+    [DataContract]
     public class ListChildManager<T> : ChildManager<T>, IList<T>
         where T : IControllable
     {
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public virtual T this[int index]
         {
             get

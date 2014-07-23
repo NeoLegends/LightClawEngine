@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.IO;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
-    [GameComponent]
-    [ProtoContract(IgnoreListHandling = true)]
-    public class Mesh<TVertex> : Component, IEnumerable<MeshPart<TVertex>>
-        where TVertex : struct
+    [DataContract]
+    public class Mesh : Component, IEnumerable<MeshPart>
     {
-        [ProtoMember(1)]
+        private bool isLoaded = false;
+
+        [DataMember]
         public string MeshFormat { get; private set; }
 
-        [ProtoIgnore]
-        public IEnumerable<MeshPart<TVertex>> Parts { get; private set; }
+        [IgnoreDataMember]
+        public MeshPartCollection Parts { get; private set; }
 
-        [ProtoMember(2)]
+        [DataMember]
         public string ResourceString { get; private set; }
 
         private Mesh() { }
@@ -35,7 +35,7 @@ namespace LightClaw.Engine.Graphics
             this.ResourceString = resourceString;
         }
 
-        public IEnumerator<MeshPart<TVertex>> GetEnumerator()
+        public IEnumerator<MeshPart> GetEnumerator()
         {
             return this.Parts.GetEnumerator();
         }
@@ -47,20 +47,21 @@ namespace LightClaw.Engine.Graphics
 
         protected override void OnDraw()
         {
-            base.OnDraw();
+            if (this.isLoaded)
+            {
+                this.Parts.Draw();
+            }
         }
 
-        protected override async void OnLoad()
+        protected override void OnLoad()
         {
-            try
-            {
-                this.Parts = await this.IocC.Resolve<IContentManager>()
-                                            .LoadAsync<IEnumerable<MeshPart<TVertex>>>(this.ResourceString, this.MeshFormat);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            this.IocC.Resolve<IContentManager>()
+                     .LoadAsync<MeshPartCollection>(this.ResourceString, this.MeshFormat)
+                     .ContinueWith(t => 
+                     {
+                         this.Parts = t.Result;
+                         this.isLoaded = true;
+                     }, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
     }
 }

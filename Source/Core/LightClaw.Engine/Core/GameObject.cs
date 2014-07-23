@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [ProtoContract(IgnoreListHandling = true)]
+    [DataContract]
     public sealed class GameObject : ListChildManager<Component>
     {
         public event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;
 
         private Scene _Scene;
 
-        [ProtoIgnore]
+        [IgnoreDataMember]
         public Scene Scene
         {
             get
@@ -39,13 +39,7 @@ namespace LightClaw.Engine.Core
 
         public GameObject() : this(new Component[] { }) { }
 
-        public GameObject(Component component)
-            : this(component.Yield())
-        {
-            Contract.Requires<ArgumentNullException>(component != null);
-        }
-
-        public GameObject(IEnumerable<Component> components)
+        public GameObject(params Component[] components)
         {
             Contract.Requires<ArgumentNullException>(components != null);
 
@@ -176,7 +170,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        [ProtoAfterDeserialization]
+        [OnDeserialized]
         private void InitializeComponents()
         {
             foreach (Component component in this)

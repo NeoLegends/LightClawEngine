@@ -6,14 +6,13 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 3x3 Matrix ( contains only Scale and Rotation ).
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(9, 4, true)]
     public struct Matrix3x3 : IEquatable<Matrix3x3>
     {
@@ -58,61 +57,61 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M13;
 
         /// <summary>
         /// Value at row 2 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M23;
 
         /// <summary>
         /// Value at row 3 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember, ProtoMember(9)]
+        [DataMember]
         public float M33;
 
         /// <summary>
         /// Gets or sets the first row in the Matrix3x3; that is M11, M12, M13
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Row1
         {
             get { return new Vector3(M11, M12, M13); }
@@ -122,7 +121,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the second row in the Matrix3x3; that is M21, M22, M23
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Row2
         {
             get { return new Vector3(M21, M22, M23); }
@@ -132,7 +131,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the third row in the Matrix3x3; that is M31, M32, M33
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Row3
         {
             get { return new Vector3(M31, M32, M33); }
@@ -142,7 +141,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the first column in the Matrix3x3; that is M11, M21, M31
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Column1
         {
             get { return new Vector3(M11, M21, M31); }
@@ -152,7 +151,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the second column in the Matrix3x3; that is M12, M22, M32
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Column2
         {
             get { return new Vector3(M12, M22, M32); }
@@ -162,7 +161,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the third column in the Matrix3x3; that is M13, M23, M33
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 Column3
         {
             get { return new Vector3(M13, M23, M33); }
@@ -172,7 +171,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets or sets the scale of the Matrix3x3; that is M11, M22, and M33.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public Vector3 ScaleVector
         {
             get { return new Vector3(M11, M22, M33); }

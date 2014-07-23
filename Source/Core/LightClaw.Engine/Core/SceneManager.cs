@@ -11,6 +11,8 @@ namespace LightClaw.Engine.Core
     {
         private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>();
 
+        private readonly List<Scene> workingCopy = new List<Scene>();
+
         private string _StartScene;
 
         public string StartScene
@@ -32,79 +34,136 @@ namespace LightClaw.Engine.Core
             this.StartScene = startScene;
         }
 
-        public async Task LoadScene(int index, string resourceString)
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        public IEnumerator<Scene> GetEnumerator()
+        {
+            Scene[] scenes;
+            lock (this.scenes)
+            {
+                scenes = this.scenes.Values.ToArray();
+            }
+            return (IEnumerator<Scene>)scenes.GetEnumerator();
+        }
+
+        public async Task<bool> Load(int index, string resourceString)
         {
             Scene s = await Scene.LoadFrom(resourceString);
             s.Load();
-            this.LoadScene(index, s);
+            return this.Load(index, s);
         }
 
-        public void LoadScene(int index, Scene s)
+        public bool Load(int index, Scene s)
         {
             lock (this.scenes)
             {
-                this.scenes.Add(index, s);
+                try
+                {
+                    this.scenes.Add(index, s);
+                    return true;
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
             }
         }
 
-        public void UnloadScene(int index)
+        public bool Unload(int index)
         {
-            Scene s;
+            Scene s = null;
+            bool result;
             lock (this.scenes)
             {
-                s = this.scenes[index];
-                this.scenes.Remove(index);
+                result = this.scenes.TryGetValue(index, out s) ? this.scenes.Remove(index) : false;
             }
-            s.Dispose();
+            if (s != null)
+            {
+                s.Dispose();
+            }
+            return result;
         }
 
         protected override void OnEnable() 
         {
-            foreach (Scene s in this.scenes.Values)
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Enable();
             }
+            this.workingCopy.Clear();
         }
 
         protected override void OnDisable()
         {
-            foreach (Scene s in this.scenes.Values)
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Disable();
             }
+            this.workingCopy.Clear();
         }
 
         protected override void OnDraw()
         {
-            foreach (Scene s in this.scenes.Values)
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Draw();
             }
+            this.workingCopy.Clear();
         }
 
         protected override void OnLoad()
         {
-            this.LoadScene(0, this.StartScene).Wait();
-            foreach (Scene s in this.scenes.Values)
+            this.Load(0, this.StartScene).Wait();
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Load();
             }
+            this.workingCopy.Clear();
         }
 
         protected override void OnReset()
         {
-            foreach (Scene s in this.scenes.Values)
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Reset();
             }
+            this.workingCopy.Clear();
         }
 
         protected override void OnUpdate(GameTime gameTime)
         {
-            foreach (Scene s in this.scenes.Values)
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
             {
                 s.Update(gameTime);
             }
+            this.workingCopy.Clear();
         }
     }
 }

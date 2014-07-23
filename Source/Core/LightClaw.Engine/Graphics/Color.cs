@@ -6,15 +6,14 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
     /// Class that represents a color with RGBA data.
     /// </summary>
-    [StructureInformation(4, 8, false)]
-    [Serializable, DataContract, ProtoContract]
+    [Serializable, DataContract]
+    [StructureInformation(4, 1, false)]
     public partial struct Color : ICloneable,
 #if SYSTEMDRAWING_INTEROP
                                   IEquatable<System.Drawing.Color>,
@@ -749,25 +748,25 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The red <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public byte R { get; private set; }
 
         /// <summary>
         /// The green <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public byte G { get; private set; }
 
         /// <summary>
         /// The blue <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public byte B { get; private set; }
 
         /// <summary>
         /// Represents the alpha value of the color.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public byte A { get; private set; }
 
         #region Calculated Properties
@@ -982,6 +981,8 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="vec">The <see cref="Vector4"/> to create the <see cref="Color"/> from.</param>
         public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
+
+        public Color(ColorF color) : this(color.R, color.G, color.B, color.A) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given packed RGBA <see cref="Int32"/>.
@@ -1357,6 +1358,11 @@ namespace LightClaw.Engine.Graphics
         public static explicit operator Color(Vector4 vector)
         {
             return new Color(vector);
+        }
+
+        public static implicit operator Color(ColorF colorF)
+        {
+            return new Color(colorF);
         }
 
 #if SYSTEMDRAWING_INTEROP

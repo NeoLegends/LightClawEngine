@@ -9,7 +9,7 @@ namespace LightClaw.Extensions
 {
     public static class StringExtensions
     {
-        public static string Format(this string formattableString, params object[] args)
+        public static string FormatWith(this string formattableString, params object[] args)
         {
             Contract.Requires<ArgumentNullException>(formattableString != null);
             Contract.Requires<ArgumentNullException>(args != null);

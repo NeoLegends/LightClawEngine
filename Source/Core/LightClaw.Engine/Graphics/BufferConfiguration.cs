@@ -21,7 +21,6 @@ namespace LightClaw.Engine.Graphics
                 IEnumerable<VertexAttributePointer> vertexAttributePointers
             )
         {
-            Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentNullException>(vertexBuffer != null);
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
 

@@ -10,7 +10,7 @@ namespace LightClaw.Engine.Core
 {
     public class AsyncLock
     {
-        private SemaphoreSlim semaphore;
+        private readonly SemaphoreSlim semaphore;
 
         public AsyncLock() : this(1) { }
 

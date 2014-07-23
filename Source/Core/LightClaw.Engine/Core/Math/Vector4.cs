@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a four dimensional mathematical vector.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructureInformation(4, 4, true)]
     public struct Vector4 : IEquatable<Vector4>
     {
@@ -107,31 +106,31 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float X;
 
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float Y;
 
         /// <summary>
         /// The Z component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float Z;
 
         /// <summary>
         /// The W component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float W;
 
         /// <summary>
         /// All components as array.
         /// </summary>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float[] Array
         {
             get
@@ -214,7 +213,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, 2 for the Z component, and 3 for the W component.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
-        [IgnoreDataMember, ProtoIgnore]
+        [IgnoreDataMember]
         public float this[int index]
         {
             get
@@ -390,7 +389,7 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override string ToString()
         {
-            return "({0}|{1}|{2}|{3})".Format(X, Y, Z, W);
+            return "({0}|{1}|{2}|{3})".FormatWith(X, Y, Z, W);
         }
 
         /// <summary>
