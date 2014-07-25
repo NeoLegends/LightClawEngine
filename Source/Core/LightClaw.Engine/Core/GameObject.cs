@@ -171,6 +171,11 @@ namespace LightClaw.Engine.Core
         }
 
         [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            this.InitializeComponents();
+        }
+
         private void InitializeComponents()
         {
             foreach (Component component in this)

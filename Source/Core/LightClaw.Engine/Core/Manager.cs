@@ -8,12 +8,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
+using log4net;
 using Munq;
 
 namespace LightClaw.Engine.Core
 {
     [DataContract]
-    
     public abstract class Manager : Entity, IDrawable, IControllable, INameable
     {
         private object stateLock = new object();
@@ -44,6 +44,7 @@ namespace LightClaw.Engine.Core
 
         private string _Name;
 
+        [DataMember]
         public string Name
         {
             get
@@ -58,6 +59,7 @@ namespace LightClaw.Engine.Core
 
         private bool _IsEnabled = false;
 
+        [DataMember]
         public bool IsEnabled
         {
             get

@@ -10,33 +10,47 @@ namespace LightClaw.Engine.Graphics
 {
     public class VertexArrayObject : GLObject, IBindable
     {
-        public BufferConfiguration[] Buffers { get; private set; }
+        public Buffer IndexBuffer { get; private set; }
 
-        public VertexArrayObject(IEnumerable<BufferConfiguration> buffers)
+        public int IndexCount
+        {
+            get
+            {
+                return this.IndexBuffer.Count;
+            }
+        }
+
+        public BufferConfiguration[] VertexBuffers { get; private set; }
+
+        public VertexArrayObject(IEnumerable<BufferConfiguration> buffers, Buffer indexBuffer)
             : base(GL.GenVertexArray())
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
+            Contract.Requires<ArgumentNullException>(indexBuffer != null);
 
-            this.Buffers = buffers.ToArray();
+            this.IndexBuffer = indexBuffer;
+            this.VertexBuffers = buffers.ToArray();
+
             this.Bind();
-            foreach (BufferConfiguration bufferConfig in this.Buffers)
+            foreach (BufferConfiguration bufferConfig in this.VertexBuffers)
             {
-                int attributePointerCount = 0;
-                bufferConfig.VertexBuffer.Bind();
-                foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                using (BindableClause releaser = new BindableClause(bufferConfig.VertexBuffer))
                 {
-                    GL.EnableVertexAttribArray(attributePointerCount++);
-                    GL.VertexAttribPointer(
-                        vertexPointer.Index, 
-                        vertexPointer.Size, 
-                        vertexPointer.Type, 
-                        vertexPointer.IsNormalized, 
-                        vertexPointer.Stride, 
-                        vertexPointer.Offset
-                    );
+                    foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                    {
+                        GL.EnableVertexAttribArray(vertexPointer.Index);
+                        GL.VertexAttribPointer(
+                            vertexPointer.Index,
+                            vertexPointer.Size,
+                            vertexPointer.Type,
+                            vertexPointer.IsNormalized,
+                            vertexPointer.Stride,
+                            vertexPointer.Offset
+                        );
+                    }
                 }
-                bufferConfig.IndexBuffer.Bind();
             }
+            this.IndexBuffer.Bind();
             this.Unbind();
         }
 
@@ -61,6 +75,13 @@ namespace LightClaw.Engine.Graphics
                 throw; // Log and swallow in the future
             }
             base.Dispose(disposing);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.IndexBuffer != null);
+            Contract.Invariant(this.VertexBuffers != null);
         }
     }
 }

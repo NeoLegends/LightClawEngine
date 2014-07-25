@@ -209,19 +209,21 @@
     <Compile Include="Coroutines\ICoroutineContext.cs" />
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
+    <Compile Include="Graphics\BindableClause.cs" />
     <Compile Include="Graphics\BufferConfiguration.cs" />
     <Compile Include="Graphics\Camera.cs" />
-    <Compile Include="Graphics\ColorF.cs" />
     <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\MeshPartCollection.cs" />
+    <Compile Include="Graphics\Shader.cs" />
+    <Compile Include="Graphics\ShaderProgram.cs" />
+    <Compile Include="Graphics\UniformLocation.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
-    <Compile Include="Graphics\AttributeLocationBinding.cs" />
     <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
     <Compile Include="Graphics\MeshPart.cs" />
-    <Compile Include="Graphics\P3N3T2C4Vertex.cs" />
+    <Compile Include="Graphics\P3N3T2Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
@@ -247,7 +249,9 @@
       <HintPath>..\..\packages\Munq.IocContainer.3.1.6\Lib\Munq.IocContainer.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
-    <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />

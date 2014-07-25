@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
@@ -28,19 +29,31 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        private static long drawCalls = long.MinValue;
+
+        public static long DrawCalls
+        {
+            get
+            {
+                return drawCalls;
+            }
+        }
+
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => LogManager.Shutdown();
         }
 
         static void Main(string[] args)
         {
+            logger.Info("Starting engine...");
+
             try
             {
                 using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssembly), GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
                     DefaultIocContainer.Register<IGame>(d => game);
-
                     game.Run();
                 }
             }
@@ -50,6 +63,11 @@ namespace LightClaw.Engine.Core
                 logger.Error("An error of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
                 throw;
             }
+        }
+
+        public static void OnDrawCall()
+        {
+            Interlocked.Increment(ref drawCalls);
         }
     }
 }

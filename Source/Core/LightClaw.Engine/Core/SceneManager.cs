@@ -4,11 +4,14 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace LightClaw.Engine.Core
 {
     internal class SceneManager : Manager, ISceneManager
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(SceneManager));
+
         private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>();
 
         private readonly List<Scene> workingCopy = new List<Scene>();
@@ -31,6 +34,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
+            logger.Info("Initializing scene manager.");
             this.StartScene = startScene;
         }
 
@@ -47,6 +51,19 @@ namespace LightClaw.Engine.Core
                 scenes = this.scenes.Values.ToArray();
             }
             return (IEnumerator<Scene>)scenes.GetEnumerator();
+        }
+
+        public void Move(int index, int newIndex)
+        {
+            lock (this.scenes)
+            {
+                Scene scene;
+                if (this.scenes.TryGetValue(index, out scene))
+                {
+                    this.scenes.Remove(index);
+                    this.scenes.Add(newIndex, scene);
+                }
+            }
         }
 
         public async Task<bool> Load(int index, string resourceString)
@@ -128,6 +145,8 @@ namespace LightClaw.Engine.Core
 
         protected override void OnLoad()
         {
+            logger.Info("Loading scene manager.");
+
             this.Load(0, this.StartScene).Wait();
             lock (this.scenes)
             {
@@ -138,6 +157,8 @@ namespace LightClaw.Engine.Core
                 s.Load();
             }
             this.workingCopy.Clear();
+
+            logger.Info("Scene manager loaded.");
         }
 
         protected override void OnReset()

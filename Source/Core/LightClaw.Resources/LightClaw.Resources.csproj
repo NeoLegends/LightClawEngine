@@ -177,12 +177,6 @@
     <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1049x604.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1876x1080.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-1920x1106.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Bitmaps\LightClawLogo\Icon\LightClawLogo.Icon-625x360.png" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +215,7 @@
     <EmbeddedResource Include="LightClawIcon.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LightClawIcon.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LightClawLogo.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -40,6 +40,12 @@ namespace LightClaw.Engine.Core
             this.Items.AddRange(items);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            this.PerformChildAction(item => item.Dispose());
+            base.Dispose(disposing);
+        }
+
         protected override void OnEnable()
         {
             this.PerformChildAction(item => item.Enable());

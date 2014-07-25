@@ -982,8 +982,6 @@ namespace LightClaw.Engine.Graphics
         /// <param name="vec">The <see cref="Vector4"/> to create the <see cref="Color"/> from.</param>
         public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
 
-        public Color(ColorF color) : this(color.R, color.G, color.B, color.A) { }
-
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given packed RGBA <see cref="Int32"/>.
         /// </summary>
@@ -1358,11 +1356,6 @@ namespace LightClaw.Engine.Graphics
         public static explicit operator Color(Vector4 vector)
         {
             return new Color(vector);
-        }
-
-        public static implicit operator Color(ColorF colorF)
-        {
-            return new Color(colorF);
         }
 
 #if SYSTEMDRAWING_INTEROP

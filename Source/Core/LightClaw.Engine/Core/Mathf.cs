@@ -209,6 +209,34 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Checks whether the specified number is a prime number.
+        /// </summary>
+        /// <param name="number">The number to test.</param>
+        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
+        public static bool IsPrime(int number)
+        {
+            if (number == 1)
+            {
+                return false;
+            }
+            if (number == 2)
+            {
+                return true;
+            }
+
+            int boundary = (int)Math.Floor(Math.Sqrt(number));
+            for (int i = 2; i <= boundary; ++i)
+            {
+                if (number % i == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Checks whether a number is a divisor of another number.
         /// </summary>
         /// <param name="n">The number to be divided.</param>

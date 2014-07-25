@@ -73,26 +73,6 @@ namespace LightClaw.Resources {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap px1876x1080 {
-            get {
-                object obj = ResourceManager.GetObject("px1876x1080", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap px1920x1106 {
-            get {
-                object obj = ResourceManager.GetObject("px1920x1106", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap px625x360 {
             get {
                 object obj = ResourceManager.GetObject("px625x360", resourceCulture);

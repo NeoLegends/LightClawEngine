@@ -9,17 +9,19 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class Buffer : GLObject, IBindable
+    public class Buffer : GLObject, IBindable
     {
-        public BufferTarget Target { get; protected set; }
+        public int Count { get; private set; }
 
-        protected Buffer() { }
+        public BufferUsageHint Hint { get; private set; }
 
-        protected Buffer(BufferTarget target) : this(0, target) { }
+        public BufferTarget Target { get; private set; }
 
-        protected Buffer(int id, BufferTarget target)
+        private Buffer(int id, int count, BufferTarget target, BufferUsageHint hint)
             : base(id)
         {
+            this.Count = count;
+            this.Hint = hint;
             this.Target = target;
         }
 
@@ -31,6 +33,29 @@ namespace LightClaw.Engine.Graphics
         public void Unbind()
         {
             GL.BindBuffer(this.Target, 0);
+        }
+
+        public void Update<T>(T[] data)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+
+            using (BindableClause releaser = new BindableClause(this))
+            {
+                GL.BufferData(this.Target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, this.Hint);
+            }
+        }
+
+        public void UpdateRange<T>(T[] data, int offsetInBytes)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentOutOfRangeException>(offsetInBytes >= 0);
+
+            using (BindableClause releaser = new BindableClause(this))
+            {
+                GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -45,47 +70,34 @@ namespace LightClaw.Engine.Graphics
             }
             base.Dispose(disposing);
         }
-    }
 
-    public class Buffer<T> : Buffer
-        where T : struct
-    {
-        private int _Count = 0;
-
-        public int Count
-        {
-            get
-            {
-                return _Count;
-            }
-            private set
-            {
-                _Count = value;
-            }
-        }
-        
-        public Buffer(T[] data)
-            : this(data, BufferTarget.ArrayBuffer)
+        public static Buffer Create<T>(T[] data)
+            where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Ensures(Contract.Result<Buffer>() != null);
+
+            return Create(data, BufferTarget.ArrayBuffer);
         }
 
-        public Buffer(T[] data, BufferTarget target)
-            : this(data, target, BufferUsageHint.StaticDraw)
+        public static Buffer Create<T>(T[] data, BufferTarget target)
+            where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Ensures(Contract.Result<Buffer>() != null);
+
+            return Create(data, target, BufferUsageHint.StaticDraw);
         }
 
-        public Buffer(T[] data, BufferTarget target, BufferUsageHint hint)
-            : base(GL.GenBuffer(), target)
+        public static Buffer Create<T>(T[] data, BufferTarget target, BufferUsageHint hint)
+            where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Ensures(Contract.Result<Buffer>() != null);
 
-            this.Count = data.Length;
-
-            GL.BindBuffer(target, this);
-            GL.BufferData(target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, hint);
-            GL.BindBuffer(target, 0);
+            Buffer b = new Buffer(GL.GenBuffer(), data.Length, target, hint);
+            b.Update(data);
+            return b;
         }
     }
 }

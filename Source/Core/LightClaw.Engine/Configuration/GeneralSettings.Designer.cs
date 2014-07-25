@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------
 
 namespace LightClaw.Engine.Configuration {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
     public sealed partial class GeneralSettings : global::System.Configuration.ApplicationSettingsBase {
@@ -32,7 +34,7 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Game/Start.lcs")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Start.lcs")]
         public string StartScene {
             get {
                 return ((string)(this["StartScene"]));

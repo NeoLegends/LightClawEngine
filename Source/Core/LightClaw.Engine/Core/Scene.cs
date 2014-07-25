@@ -134,6 +134,11 @@ namespace LightClaw.Engine.Core
         }
 
         [OnDeserialized]
+        private void AfterDeserialization(StreamingContext context)
+        {
+            this.InitializeGameObjects();
+        }
+
         private void InitializeGameObjects()
         {
             foreach (GameObject gameObject in this)

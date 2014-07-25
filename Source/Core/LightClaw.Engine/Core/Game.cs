@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.IO;
+using LightClaw.Extensions;
+using log4net;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
 
@@ -13,6 +15,8 @@ namespace LightClaw.Engine.Core
 {
     internal class Game : Entity, IGame
     {
+        private static ILog logger = LogManager.GetLogger(typeof(Game));
+
         private GameTime _CurrentGameTime;
 
         public GameTime CurrentGameTime
@@ -111,6 +115,8 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
             Contract.Requires<ArgumentNullException>(startScene != null);
 
+            logger.Info("Initializing a new game instance.");
+
             this.GameCodeAssembly = gameCodeAssembly;
 
             this.Name = GeneralSettings.Default.GameName;
@@ -126,6 +132,8 @@ namespace LightClaw.Engine.Core
             this.IocC.Resolve<IContentManager>()
                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.Icon)
                      .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+            logger.Info("Game successfully created.");
         }
 
         ~Game()
@@ -135,6 +143,8 @@ namespace LightClaw.Engine.Core
 
         public void Run()
         {
+            logger.Info("Entering game loop.");
+
             this.GameWindow.Run(60.0);
         }
 
@@ -151,13 +161,19 @@ namespace LightClaw.Engine.Core
 
         protected virtual void OnClosed()
         {
+            logger.Info("Closing game window.");
+
             this.Dispose();
         }
 
         protected virtual void OnLoad()
         {
+            logger.Info("OnLoad callback called. Loading SceneManager and enabling depth testing.");
+
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
+
+            logger.Info("Depth testing enabled.");
 
             this.SceneManager.Load();
         }
@@ -174,6 +190,8 @@ namespace LightClaw.Engine.Core
 
         protected virtual void OnResize(int width, int height)
         {
+            logger.Info("Resizing window to {0}x{1}.".FormatWith(width, height));
+
             GL.Viewport(0, 0, width, height);
         }
 
