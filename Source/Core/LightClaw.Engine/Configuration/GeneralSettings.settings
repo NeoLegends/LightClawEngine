@@ -5,17 +5,17 @@
     <Setting Name="GameName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw Game</Value>
     </Setting>
-    <Setting Name="StartScene" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Start.lcs</Value>
-    </Setting>
     <Setting Name="GameCodeAssembly" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw.GameCode.dll</Value>
     </Setting>
     <Setting Name="Icon" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Game/Icon.ico</Value>
+      <Value Profile="(Default)">../Game/Icon.ico</Value>
     </Setting>
     <Setting Name="WindowTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw Game</Value>
+    </Setting>
+    <Setting Name="StartScene" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">../Game/Start.lcs</Value>
     </Setting>
   </Settings>
 </SettingsFile>

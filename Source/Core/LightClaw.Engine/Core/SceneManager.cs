@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using log4net;
 
 namespace LightClaw.Engine.Core
@@ -145,7 +146,7 @@ namespace LightClaw.Engine.Core
 
         protected override void OnLoad()
         {
-            logger.Info("Loading scene manager.");
+            logger.Info("Loading scene manager and start scene '{0}'.".FormatWith(this.StartScene));
 
             this.Load(0, this.StartScene).Wait();
             lock (this.scenes)

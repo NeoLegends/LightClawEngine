@@ -60,7 +60,7 @@ namespace LightClaw.Engine.Core
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
-                logger.Error("An error of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
+                logger.Fatal("An error of type '{0}' with message '{1}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
                 throw;
             }
         }

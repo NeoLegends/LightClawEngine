@@ -28,6 +28,9 @@ namespace LightClaw.Engine.Graphics
 
             this.UniformLocations = uniformLocations.ToImmutableList();
             this.Shaders = shaders.ToImmutableList();
+            this.Count = this.Shaders.Count;
+
+            logger.Debug("Initializing a new ShaderProgram with {0} shaders and {1} uniform variables.".FormatWith(this.Shaders.Count, this.UniformLocations.Count));
 
             foreach (Shader shader in this.Shaders)
             {
@@ -38,10 +41,12 @@ namespace LightClaw.Engine.Graphics
             int result;
             if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
             {
-                string message = "Linking the the shader program failed. Error Code: ".FormatWith(result);
+                string message = "Linking the shader program failed. Error Code: ".FormatWith(result);
                 logger.Error(message);
                 throw new InvalidOperationException(message);
             }
+
+            logger.Debug("ShaderProgram initialized.");
         }
 
         public void Bind()
@@ -77,7 +82,7 @@ namespace LightClaw.Engine.Graphics
                 int result;
                 if (!this.CheckStatus(GetProgramParameterName.DeleteStatus, out result))
                 {
-                    logger.Warn("Deleting the shader program failed. Error Code: {0}".FormatWith(result));
+                    logger.Warn("Deleting the shader program failed. Error Code: {0}. Swallowing...".FormatWith(result));
                 }
             }
             catch (Exception ex)
@@ -100,6 +105,13 @@ namespace LightClaw.Engine.Graphics
         {
             GL.GetProgram(this, parameter, out result);
             return (result == 1);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Shaders != null);
+            Contract.Invariant(this.UniformLocations != null);
         }
     }
 }

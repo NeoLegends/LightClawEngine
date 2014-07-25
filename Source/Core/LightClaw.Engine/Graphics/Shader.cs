@@ -16,16 +16,14 @@ namespace LightClaw.Engine.Graphics
 
         public ShaderType Type { get; private set; }
 
-        private Shader(ShaderType type)
+        public Shader(string source, ShaderType type)
             : base(GL.CreateShader(type))
         {
-            this.Type = type;
-        }
-
-        public Shader(string source, ShaderType type)
-            : this(type)
-        {
             Contract.Requires<ArgumentNullException>(source != null);
+
+            logger.Debug("Initializing a new shader of type '{0}'.".FormatWith(type));
+
+            this.Type = type;
 
             GL.ShaderSource(this, source);
             GL.CompileShader(this);
@@ -33,10 +31,12 @@ namespace LightClaw.Engine.Graphics
             int result = 0;
             if (!this.CheckStatus(ShaderParameter.CompileStatus, out result))
             {
-                string message = "Compiling shader (Error Code: {0}) from source ({1}) failed.".FormatWith(result, source);
+                string message = "Compiling the shader (Error Code: {0}) from source ({1}) failed.".FormatWith(result, source);
                 logger.Error(message);
                 throw new InvalidOperationException(message);
             }
+
+            logger.Debug("Shader initialized.");
         }
 
         protected override void Dispose(bool disposing)
@@ -47,7 +47,7 @@ namespace LightClaw.Engine.Graphics
                 int result = 0;
                 if (!this.CheckStatus(ShaderParameter.DeleteStatus, out result))
                 {
-                    logger.Warn("Deleting the shader failed. Error Code: {0}".FormatWith(result));
+                    logger.Warn("Deleting the shader failed. Error Code: {0}. Swallowing...".FormatWith(result));
                 }
             }
             catch (Exception ex)

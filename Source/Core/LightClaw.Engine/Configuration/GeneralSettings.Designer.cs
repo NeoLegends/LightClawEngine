@@ -34,15 +34,6 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Start.lcs")]
-        public string StartScene {
-            get {
-                return ((string)(this["StartScene"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("LightClaw.GameCode.dll")]
         public string GameCodeAssembly {
             get {
@@ -52,7 +43,7 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Game/Icon.ico")]
+        [global::System.Configuration.DefaultSettingValueAttribute("../Game/Icon.ico")]
         public string Icon {
             get {
                 return ((string)(this["Icon"]));
@@ -65,6 +56,15 @@ namespace LightClaw.Engine.Configuration {
         public string WindowTitle {
             get {
                 return ((string)(this["WindowTitle"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("../Game/Start.lcs")]
+        public string StartScene {
+            get {
+                return ((string)(this["StartScene"]));
             }
         }
     }

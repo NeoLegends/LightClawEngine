@@ -18,8 +18,8 @@ namespace LightClaw.Engine.IO
 
         public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
         {
-            return (assetType == typeof(Scene)) ? 
-                Task.Run(() => new NetDataContractSerializer().ReadObject(assetStream)) : 
+            return (assetType == typeof(Scene)) ?
+                Task.Run(() => new NetDataContractSerializer().ReadObject(assetStream)) :
                 Task.FromResult((object)null);
         }
     }

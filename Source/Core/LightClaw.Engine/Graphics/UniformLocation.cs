@@ -11,20 +11,18 @@ namespace LightClaw.Engine.Graphics
 {
     public abstract class UniformLocation
     {
-        public int Index { get; private set; }
+        public int Location { get; private set; }
 
         public string Name { get; private set; }
 
         public ShaderProgram Program { get; private set; }
-
-        protected UniformLocation() { }
 
         protected UniformLocation(ShaderProgram program, string name)
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
 
-            this.Index = GL.GetUniformLocation(program, name);
+            this.Location = GL.GetUniformLocation(program, name);
             this.Name = name;
             this.Program = program;
         }
@@ -37,12 +35,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 int result = 0;
-                GL.GetUniform(this.Program, this.Index, out result);
+                GL.GetUniform(this.Program, this.Location, out result);
                 return result;
             }
             set
             {
-                GL.ProgramUniform1(this.Program, this.Index, value);
+                GL.ProgramUniform1(this.Program, this.Location, value);
             }
         }
 
@@ -51,6 +49,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Int32UniformLocation(ShaderProgram program, string name, int value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -61,12 +68,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float result = 0.0f;
-                GL.GetUniform(this.Program, this.Index, out result);
+                GL.GetUniform(this.Program, this.Location, out result);
                 return result;
             }
             set
             {
-                GL.ProgramUniform1(this.Program, this.Index, value);
+                GL.ProgramUniform1(this.Program, this.Location, value);
             }
         }
 
@@ -75,6 +82,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public SingleUniformLocation(ShaderProgram program, string name, float value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -85,12 +101,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 double result = 0.0;
-                GL.GetUniform(this.Program, this.Index, out result);
+                GL.GetUniform(this.Program, this.Location, out result);
                 return result;
             }
             set
             {
-                GL.ProgramUniform1(this.Program, this.Index, value);
+                GL.ProgramUniform1(this.Program, this.Location, value);
             }
         }
 
@@ -99,6 +115,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public DoubleUniformLocation(ShaderProgram program, string name, double value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -109,12 +134,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[2];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Vector2(result);
             }
             set
             {
-                GL.ProgramUniform2(this.Program, this.Index, value.X, value.Y);
+                GL.ProgramUniform2(this.Program, this.Location, value.X, value.Y);
             }
         }
 
@@ -123,6 +148,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Vector2UniformLocation(ShaderProgram program, string name, Vector2 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -133,12 +167,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[3];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Vector3(result);
             }
             set
             {
-                GL.ProgramUniform3(this.Program, this.Index, value.X, value.Y, value.Z);
+                GL.ProgramUniform3(this.Program, this.Location, value.X, value.Y, value.Z);
             }
         }
 
@@ -147,6 +181,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Vector3UniformLocation(ShaderProgram program, string name, Vector3 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -157,12 +200,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[4];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Vector4(result);
             }
             set
             {
-                GL.ProgramUniform4(this.Program, this.Index, value.X, value.Y, value.Z, value.W);
+                GL.ProgramUniform4(this.Program, this.Location, value.X, value.Y, value.Z, value.W);
             }
         }
 
@@ -171,6 +214,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Vector4UniformLocation(ShaderProgram program, string name, Vector4 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -181,12 +233,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[16];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Matrix(result);
             }
             set
             {
-                GL.ProgramUniformMatrix4(this.Program, this.Index, 1, false, value.ToArray());
+                GL.ProgramUniformMatrix4(this.Program, this.Location, 1, false, value.ToArray());
             }
         }
 
@@ -195,6 +247,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public MatrixUniformLocation(ShaderProgram program, string name, Matrix value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -205,12 +266,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[6];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Matrix3x2(result);
             }
             set
             {
-                GL.ProgramUniformMatrix4(this.Program, this.Index, 1, false, value.ToArray());
+                GL.ProgramUniformMatrix4(this.Program, this.Location, 1, false, value.ToArray());
             }
         }
 
@@ -219,6 +280,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Matrix3x2UniformLocation(ShaderProgram program, string name, Matrix3x2 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 
@@ -229,12 +299,12 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 float[] result = new float[9];
-                GL.GetUniform(this.Program, this.Index, result);
+                GL.GetUniform(this.Program, this.Location, result);
                 return new Matrix3x3(result);
             }
             set
             {
-                GL.ProgramUniformMatrix4(this.Program, this.Index, 1, false, value.ToArray());
+                GL.ProgramUniformMatrix4(this.Program, this.Location, 1, false, value.ToArray());
             }
         }
 
@@ -244,21 +314,30 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
         }
+
+        public Matrix3x3UniformLocation(ShaderProgram program, string name, Matrix3x3 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
+        }
     }
 
     public class Matrix5x4UniformLocation : UniformLocation
     {
-        public Matrix3x3 Value
+        public Matrix5x4 Value
         {
             get
             {
                 float[] result = new float[20];
-                GL.GetUniform(this.Program, this.Index, result);
-                return new Matrix3x3(result);
+                GL.GetUniform(this.Program, this.Location, result);
+                return new Matrix5x4(result);
             }
             set
             {
-                GL.ProgramUniformMatrix4(this.Program, this.Index, 1, false, value.ToArray());
+                GL.ProgramUniformMatrix4(this.Program, this.Location, 1, false, value.ToArray());
             }
         }
 
@@ -267,6 +346,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(name != null);
+        }
+
+        public Matrix5x4UniformLocation(ShaderProgram program, string name, Matrix5x4 value)
+            : this(program, name)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(name != null);
+
+            this.Value = value;
         }
     }
 }

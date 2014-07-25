@@ -287,6 +287,12 @@
       <LastGenOutput>VideoSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Shaders\Basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -301,14 +307,7 @@
       <Project>{fd0e2831-4a34-44d8-be62-10a0cf38fcb3}</Project>
       <Name>LightClaw.Extensions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LightClaw.Resources\LightClaw.Resources.csproj">
-      <Project>{d4a92d30-b7db-4bd9-a2cb-f31bf9dad522}</Project>
-      <Name>LightClaw.Resources</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripting\" />
-    <Folder Include="UI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

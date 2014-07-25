@@ -5,12 +5,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
+using log4net;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
     public class Buffer : GLObject, IBindable
     {
+        private static ILog logger = LogManager.GetLogger(typeof(Buffer));
+
         public int Count { get; private set; }
 
         public BufferUsageHint Hint { get; private set; }
@@ -20,6 +24,8 @@ namespace LightClaw.Engine.Graphics
         private Buffer(int id, int count, BufferTarget target, BufferUsageHint hint)
             : base(id)
         {
+            logger.Debug("Initializing a new {0} for tar containing {1} elements. Hint: {2}".FormatWith(target, count, hint));
+
             this.Count = count;
             this.Hint = hint;
             this.Target = target;
