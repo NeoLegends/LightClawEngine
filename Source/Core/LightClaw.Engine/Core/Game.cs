@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Core
 {
     internal class Game : Entity, IGame
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Game));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(Game));
 
         private GameTime _CurrentGameTime;
 
@@ -64,6 +64,8 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _GameWindow, value);
             }
         }
@@ -110,28 +112,45 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public Game(Assembly gameCodeAssembly, string startScene)
+        private Game(Assembly gameCodeAssembly)
         {
             Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
-            Contract.Requires<ArgumentNullException>(startScene != null);
 
             logger.Info("Initializing a new game instance.");
 
             this.GameCodeAssembly = gameCodeAssembly;
-
             this.Name = GeneralSettings.Default.GameName;
-            this.SceneManager = new SceneManager(startScene);
 
             this.GameWindow.Closed += (s, e) => this.OnClosed();
             this.GameWindow.Load += (s, e) => this.OnLoad();
             this.GameWindow.RenderFrame += (s, e) => this.OnRender();
             this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
             this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
-            
-            this.IocC.Register<ISceneManager>(d => this.SceneManager);
+
             this.IocC.Resolve<IContentManager>()
-                     .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.Icon)
+                     .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath)
                      .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
+
+        public Game(Assembly gameCodeAssembly, string startScene)
+            : this(gameCodeAssembly)
+        {
+            Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
+            Contract.Requires<ArgumentNullException>(startScene != null);
+
+            this.SceneManager = new SceneManager(startScene);
+            this.IocC.Register<ISceneManager>(d => this.SceneManager);
+
+            logger.Info("Game successfully created.");
+        }
+
+        public Game(Assembly gameCodeAssembly, Scene startScene)
+            : this(gameCodeAssembly)
+        {
+            Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
+
+            this.SceneManager = new SceneManager(startScene);
+            this.IocC.Register<ISceneManager>(d => this.SceneManager);
 
             logger.Info("Game successfully created.");
         }
@@ -203,6 +222,13 @@ namespace LightClaw.Engine.Core
             );
 
             this.SceneManager.Update(this.CurrentGameTime);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.GameWindow != null);
+            Contract.Invariant(this.SceneManager != null);
         }
     }
 }

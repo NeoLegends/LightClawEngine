@@ -13,8 +13,7 @@ namespace LightClaw.Engine.Graphics
 
         public IEnumerable<VertexAttributePointer> VertexAttributePointers { get; private set; }
 
-        public BufferConfiguration(Buffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers
-            )
+        public BufferConfiguration(Buffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers)
         {
             Contract.Requires<ArgumentNullException>(vertexBuffer != null);
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);

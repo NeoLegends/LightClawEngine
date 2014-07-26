@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class Buffer : GLObject, IBindable
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Buffer));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(Buffer));
 
         public int Count { get; private set; }
 
@@ -21,12 +21,11 @@ namespace LightClaw.Engine.Graphics
 
         public BufferTarget Target { get; private set; }
 
-        private Buffer(int id, int count, BufferTarget target, BufferUsageHint hint)
-            : base(id)
+        public Buffer(BufferTarget target, BufferUsageHint hint)
+            : base(GL.GenBuffer())
         {
-            logger.Debug("Initializing a new {0} for tar containing {1} elements. Hint: {2}".FormatWith(target, count, hint));
+            logger.Debug("Initializing a new {0} for {2}".FormatWith(target, hint));
 
-            this.Count = count;
             this.Hint = hint;
             this.Target = target;
         }
@@ -46,10 +45,15 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(data != null);
 
-            using (BindableClause releaser = new BindableClause(this))
+            logger.Debug("Replacing the buffer's data with new data with length {0}.".FormatWith(data.Length));
+
+            this.Count = data.Length;
+            using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, this.Hint);
             }
+
+            logger.Debug("Data replaced.");
         }
 
         public void UpdateRange<T>(T[] data, int offsetInBytes)
@@ -58,10 +62,15 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(offsetInBytes >= 0);
 
-            using (BindableClause releaser = new BindableClause(this))
+            logger.Debug("Replacing a subset ({0} elements, starting at {1}) of a buffer's data.".FormatWith(data.Length, offsetInBytes));
+
+            this.Count = offsetInBytes + data.Length;
+            using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data);
             }
+
+            logger.Debug("Subset of data replaced.");
         }
 
         protected override void Dispose(bool disposing)
@@ -101,7 +110,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Ensures(Contract.Result<Buffer>() != null);
 
-            Buffer b = new Buffer(GL.GenBuffer(), data.Length, target, hint);
+            Buffer b = new Buffer(target, hint);
             b.Update(data);
             return b;
         }

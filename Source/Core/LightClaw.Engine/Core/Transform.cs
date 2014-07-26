@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace LightClaw.Engine.Core
 {
@@ -14,6 +15,8 @@ namespace LightClaw.Engine.Core
     [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
     public class Transform : Component, INotifyCollectionChanged
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(Transform));
+
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -199,6 +202,8 @@ namespace LightClaw.Engine.Core
 
         public Transform()
         {
+            logger.Debug("Initializing a new transform.");
+
             this.Childs.CollectionChanged += (s, e) =>
             {
                 NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;
@@ -228,16 +233,8 @@ namespace LightClaw.Engine.Core
         protected override void OnReset()
         {
             this.LocalPosition = Vector3.Zero;
-            this.LocalRotation = Quaternion.Zero;
+            this.LocalRotation = Quaternion.Identity;
             this.LocalScale = Vector3.One;
-        }
-
-        private void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
-        {
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
-            }
         }
     }
 }

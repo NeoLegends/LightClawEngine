@@ -209,13 +209,5 @@ namespace LightClaw.Engine.Core
         protected abstract void OnReset();
 
         protected abstract void OnUpdate(GameTime gameTime);
-
-        private void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
-        {
-            if (handler != null)
-            {
-                handler(this, args ?? new ParameterEventArgs());
-            }
-        }
     }
 }

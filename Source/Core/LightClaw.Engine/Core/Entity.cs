@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -11,18 +12,28 @@ using Munq;
 namespace LightClaw.Engine.Core
 {
     [DataContract]
-    
     public abstract class Entity : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [IgnoreDataMember]
-        public IocContainer IocC { get; protected set; }
+        private IocContainer _IocC = LightClawEngine.DefaultIocContainer;
 
-        protected Entity()
+        [IgnoreDataMember]
+        public IocContainer IocC
         {
-            this.IocC = LightClawEngine.DefaultIocContainer;
+            get
+            {
+                return _IocC;
+            }
+            protected set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                _IocC = value;
+            }
         }
+
+        protected Entity() { }
 
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
@@ -37,6 +48,20 @@ namespace LightClaw.Engine.Core
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        protected void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
+        {
+            if (handler != null)
+            {
+                handler(this, args ?? ParameterEventArgs.Default);
+            }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.IocC != null);
         }
     }
 }

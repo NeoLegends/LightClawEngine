@@ -69,15 +69,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                foreach (Task<Stream> task in this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).ToArray())
-                {
-                    Stream result = await task;
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-                return null;
+                return await this.GetStreamInternal(resourceString);
             }
         }
 
@@ -92,21 +84,16 @@ namespace LightClaw.Engine.IO
                     (asset = cachedAsset.Target) == null ||
                     !(asset is T)) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
                 {
-                    using (Stream assetStream = await this.GetStreamAsync(resourceString))
+                    using (Stream assetStream = await this.GetStreamInternal(resourceString))
                     {
                         if (assetStream == null)
                         {
-                            throw new FileNotFoundException("The asset could not be found.");
+                            throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
                         }
 
-                        IEnumerable<IContentReader> contentReaders = this.readers.Where(reader => reader.CanRead(typeof(T), parameter));
-                        if (!contentReaders.Any())
+                        foreach (IContentReader reader in this.readers)
                         {
-                            throw new InvalidOperationException("There was no suitable IContentReader to read the asset found.");
-                        }
-                        foreach (IContentReader reader in contentReaders)
-                        {
-                            asset = await reader.ReadAsync(resourceString, assetStream, typeof(T), parameter);
+                            asset = await reader.ReadAsync(this, resourceString, assetStream, typeof(T), parameter);
                             if (asset != null)
                             {
                                 break;
@@ -114,7 +101,7 @@ namespace LightClaw.Engine.IO
                         }
                         if (asset == null)
                         {
-                            throw new InvalidOperationException("The asset could not be deserialized from the stream.");
+                            throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
                         }
 
                         cachedAsset = new WeakReference(asset);
@@ -134,6 +121,19 @@ namespace LightClaw.Engine.IO
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
+        }
+
+        private async Task<Stream> GetStreamInternal(string resourceString)
+        {
+            foreach (Task<Stream> task in this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).ToArray())
+            {
+                Stream result = await task;
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
 
         [ContractInvariantMethod]

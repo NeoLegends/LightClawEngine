@@ -61,6 +61,7 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
+            this.Unbind();
             try
             {
                 foreach (Shader shader in this.Shaders)

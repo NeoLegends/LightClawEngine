@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,16 +30,6 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private static long drawCalls = long.MinValue;
-
-        public static long DrawCalls
-        {
-            get
-            {
-                return drawCalls;
-            }
-        }
-
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
@@ -51,23 +42,28 @@ namespace LightClaw.Engine.Core
 
             try
             {
+                Contract.Assume(GeneralSettings.Default.StartScene != null);
+                Contract.Assume(GeneralSettings.Default.GameCodeAssembly != null);
                 using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssembly), GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
                     DefaultIocContainer.Register<IGame>(d => game);
                     game.Run();
                 }
             }
+            catch (AggregateException aggregateEx)
+            {
+                logger.Fatal("Multiple errors occured. Writing them sequentially into the log...");
+                foreach (Exception ex in aggregateEx.InnerExceptions)
+                {
+                    logger.Fatal("An error of type '{0}' with message '{1}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
+                }
+                throw;
+            }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.ToString());
                 logger.Fatal("An error of type '{0}' with message '{1}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
                 throw;
             }
-        }
-
-        public static void OnDrawCall()
-        {
-            Interlocked.Increment(ref drawCalls);
         }
     }
 }

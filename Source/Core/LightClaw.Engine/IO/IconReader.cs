@@ -10,12 +10,7 @@ namespace LightClaw.Engine.IO
 {
     public class IconReader : IContentReader
     {
-        public bool CanRead(Type assetType, object parameter)
-        {
-            return assetType == typeof(Icon);
-        }
-
-        public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
             return (assetType == typeof(Icon)) ?
                 Task.FromResult<object>(new Icon(assetStream)) :

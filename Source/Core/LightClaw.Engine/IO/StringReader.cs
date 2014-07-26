@@ -9,12 +9,7 @@ namespace LightClaw.Engine.IO
 {
     public class StringReader : IContentReader
     {
-        public bool CanRead(Type assetType, object parameter)
-        {
-            return assetType == typeof(string);
-        }
-
-        public Task<object> ReadAsync(string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
             if (assetType == typeof(string))
             {

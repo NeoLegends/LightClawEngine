@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
 
@@ -13,21 +14,18 @@ namespace LightClaw.Engine.Core
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(SceneManager));
 
-        private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>();
+        private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>(new ReverseComparer<int>());
 
         private readonly List<Scene> workingCopy = new List<Scene>();
 
-        private string _StartScene;
-
-        public string StartScene
+        public Scene this[int index]
         {
             get
             {
-                return _StartScene;
-            }
-            private set
-            {
-                this.SetProperty(ref _StartScene, value);
+                lock (this.scenes)
+                {
+                    return this.scenes[index];
+                }
             }
         }
 
@@ -35,8 +33,16 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            logger.Info("Initializing scene manager.");
-            this.StartScene = startScene;
+            logger.Info("Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
+            this.Load(0, startScene).Wait();
+        }
+
+        public SceneManager(Scene startScene)
+        {
+            Contract.Requires<ArgumentNullException>(startScene != null);
+
+            logger.Info("Initiailzing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
+            this.Load(0, startScene);
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -56,6 +62,8 @@ namespace LightClaw.Engine.Core
 
         public void Move(int index, int newIndex)
         {
+            logger.Debug("Moving a scene from {0} to position {1}.".FormatWith(index, newIndex));
+
             lock (this.scenes)
             {
                 Scene scene;
@@ -69,29 +77,43 @@ namespace LightClaw.Engine.Core
 
         public async Task<bool> Load(int index, string resourceString)
         {
-            Scene s = await Scene.LoadFrom(resourceString);
-            s.Load();
-            return this.Load(index, s);
+            return this.Load(index, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString));
         }
 
         public bool Load(int index, Scene s)
         {
+            logger.Info("Loading a new scene into position {0}.".FormatWith(index));
+
+            if (this.IsLoaded && !s.IsLoaded)
+            {
+                s.Load();
+            }
             lock (this.scenes)
             {
-                try
+                for (int i = index; i < int.MaxValue; i++)
                 {
-                    this.scenes.Add(index, s);
-                    return true;
+                    try
+                    {
+                        logger.Debug("Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/a", i));
+                        this.scenes.Add(i, s);
+                        logger.Debug("Scene inserted into position {0} successfully.".FormatWith(i));
+                        return true;
+                    }
+                    catch (ArgumentException)
+                    {
+                        logger.Info("Position taken, incrementing...");
+                    }
                 }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
+
+                logger.Warn("Scene insertion failed, all slots were taken."); // Shouldn't happen irl
+                return false;
             }
         }
 
         public bool Unload(int index)
         {
+            logger.Debug("Unloading scene from position {0}.".FormatWith(index));
+
             Scene s = null;
             bool result;
             lock (this.scenes)
@@ -100,8 +122,11 @@ namespace LightClaw.Engine.Core
             }
             if (s != null)
             {
+                logger.Debug("Disposing scene...");
                 s.Dispose();
             }
+
+            logger.Debug(result ? "Scene unloaded from position {0}.".FormatWith(index) : "Scene could not be removed.");
             return result;
         }
 
@@ -146,9 +171,8 @@ namespace LightClaw.Engine.Core
 
         protected override void OnLoad()
         {
-            logger.Info("Loading scene manager and start scene '{0}'.".FormatWith(this.StartScene));
+            logger.Info("Loading scene manager.");
 
-            this.Load(0, this.StartScene).Wait();
             lock (this.scenes)
             {
                 this.workingCopy.AddRange(this.scenes.Values);

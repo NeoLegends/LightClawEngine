@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public struct BindableClause : IDisposable
+    public struct GLBinding : IDisposable
     {
         private readonly IBindable bindable;
 
-        public BindableClause(IBindable bindable)
+        public GLBinding(IBindable bindable)
             : this()
         {
             Contract.Requires<ArgumentNullException>(bindable != null);

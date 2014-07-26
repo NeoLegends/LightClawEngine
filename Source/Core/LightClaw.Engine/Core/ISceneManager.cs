@@ -10,6 +10,8 @@ namespace LightClaw.Engine.Core
     [ContractClass(typeof(ISceneManagerContracts))]
     public interface ISceneManager : IControllable, IEnumerable<Scene>
     {
+        Scene this[int index] { get; }
+
         Task<bool> Load(int index, string resourceString);
 
         bool Load(int index, Scene s);
@@ -45,6 +47,16 @@ namespace LightClaw.Engine.Core
         event EventHandler<ParameterEventArgs> IUpdateable.Updating { add { } remove { } }
 
         event EventHandler<ParameterEventArgs> IUpdateable.Updated { add { } remove { } }
+
+        Scene ISceneManager.this[int index]
+        {
+            get
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+                return null;
+            }
+        }
 
         bool IControllable.IsEnabled
         {

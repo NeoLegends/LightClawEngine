@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Coroutines;
@@ -45,7 +46,7 @@ namespace CoreTests
                 await s.Save(ms);
                 ms.Position = 0;
 
-                Scene deser = (Scene)await new SceneReader().ReadAsync("Test", ms, typeof(Scene), null);
+                Scene deser = await Task.Run(() => (Scene)new NetDataContractSerializer().ReadObject(ms));
                 Assert.AreEqual(s.Count, deser.Count);
             }
         }

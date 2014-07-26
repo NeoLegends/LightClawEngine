@@ -43,15 +43,6 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("../Game/Icon.ico")]
-        public string Icon {
-            get {
-                return ((string)(this["Icon"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("LightClaw Game")]
         public string WindowTitle {
             get {
@@ -61,7 +52,16 @@ namespace LightClaw.Engine.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("../Game/Start.lcs")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Game/Icon.ico")]
+        public string IconPath {
+            get {
+                return ((string)(this["IconPath"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Game/Start.lcs")]
         public string StartScene {
             get {
                 return ((string)(this["StartScene"]));

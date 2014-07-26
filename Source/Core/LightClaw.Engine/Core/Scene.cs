@@ -9,19 +9,26 @@ using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
+using log4net;
 
 namespace LightClaw.Engine.Core
 {
     [DataContract]
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
-        public event EventHandler Saving;
+        private static readonly ILog logger = LogManager.GetLogger(typeof(Scene));
 
-        public event EventHandler Saved;
+        public event EventHandler<ParameterEventArgs> Saving;
 
-        public Scene() { }
+        public event EventHandler<ParameterEventArgs> Saved;
+
+        public Scene() 
+        {
+            logger.Info("Initializing a new scene.");
+        }
 
         public Scene(IEnumerable<GameObject> gameObjects)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
 
@@ -102,9 +109,13 @@ namespace LightClaw.Engine.Core
 
             return Task.Run(() =>
             {
-                this.RaiseSaving();
+                logger.Info("Saving scene to a stream.");
+
+                this.Raise(this.Saving);
                 new NetDataContractSerializer().WriteObject(s, this);
-                this.RaiseSaved();
+                this.Raise(this.Saved);
+
+                logger.Info("Scene saved.");
             });
         }
 
@@ -145,39 +156,6 @@ namespace LightClaw.Engine.Core
             {
                 gameObject.Scene = this;
             }
-        }
-
-        private void RaiseSaved()
-        {
-            EventHandler handler = this.Saved;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        private void RaiseSaving()
-        {
-            EventHandler handler = this.Saving;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        public static Task<Scene> LoadFrom(string resourceString)
-        {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
-
-            return LightClawEngine.DefaultIocContainer.Resolve<IContentManager>().LoadAsync<Scene>(resourceString);
-        }
-
-        public static async Task<Scene> LoadFrom(Stream s)
-        {
-            Contract.Requires<ArgumentNullException>(s != null);
-            Contract.Requires<ArgumentException>(s.CanRead);
-
-            return (Scene)await new SceneReader().ReadAsync("Scene", s, typeof(Scene), null);
         }
     }
 }

@@ -194,6 +194,7 @@
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\RandomF.cs" />
     <Compile Include="Core\DependsOnAttribute.cs" />
+    <Compile Include="Core\ReverseComparer.cs" />
     <Compile Include="Core\Scene.cs" />
     <Compile Include="Core\ParameterEventArgs.cs" />
     <Compile Include="Core\SceneManager.cs" />
@@ -209,7 +210,7 @@
     <Compile Include="Coroutines\ICoroutineContext.cs" />
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
-    <Compile Include="Graphics\BindableClause.cs" />
+    <Compile Include="Graphics\GLBinding.cs" />
     <Compile Include="Graphics\BufferConfiguration.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
@@ -225,7 +226,7 @@
     <Compile Include="Graphics\MeshPart.cs" />
     <Compile Include="Graphics\P3N3T2Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
-    <Compile Include="Graphics\Texture2D.cs" />
+    <Compile Include="Graphics\Texture.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
     <Compile Include="Input\InputInterface.cs" />
     <Compile Include="IO\ContentManager.cs" />
@@ -238,8 +239,6 @@
     <Compile Include="IO\SceneReader.cs" />
     <Compile Include="IO\StringReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\ResizeEventArgs.cs" />
-    <Compile Include="Core\WindowStateChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net">

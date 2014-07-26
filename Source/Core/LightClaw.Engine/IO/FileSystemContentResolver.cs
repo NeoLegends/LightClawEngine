@@ -5,11 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
+using log4net;
 
 namespace LightClaw.Engine.IO
 {
     public class FileSystemContentResolver : IContentResolver
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(FileSystemContentResolver));
+
         public string RootPath { get; private set; }
 
         public FileSystemContentResolver() : this(AppDomain.CurrentDomain.BaseDirectory) { }
@@ -35,7 +39,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.ToString());
+                logger.Warn("An error of type '{0}' occured while obtaining the stream to an asset.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
                 result = null;
             }
             return Task.FromResult(result);

@@ -42,7 +42,7 @@ namespace LightClaw.Engine.Graphics
         {
             if (handler != null)
             {
-                handler(this, args ?? new ParameterEventArgs());
+                handler(this, args ?? ParameterEventArgs.Default);
             }
         }
     }

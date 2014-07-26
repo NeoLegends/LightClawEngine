@@ -186,7 +186,7 @@ namespace LightClaw.Engine.Coroutines
             EventHandler<ParameterEventArgs> handler = this._Updating;
             if (handler != null)
             {
-                handler(this, new ParameterEventArgs());
+                handler(this, ParameterEventArgs.Default);
             }
             bool result = this.Step();
             handler = this._Updated;

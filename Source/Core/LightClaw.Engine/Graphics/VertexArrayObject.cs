@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class VertexArrayObject : GLObject, IBindable
     {
-        private ILog logger = LogManager.GetLogger(typeof(VertexArrayObject));
+        private readonly ILog logger = LogManager.GetLogger(typeof(VertexArrayObject));
 
         public Buffer IndexBuffer { get; private set; }
 
@@ -38,27 +38,28 @@ namespace LightClaw.Engine.Graphics
 
             logger.Debug("Initializing a new VertexArrayObject with {0} vertex buffers and {1} indices.".FormatWith(this.VertexBuffers.Count, indexBuffer.Count));
 
-            this.Bind();
-            foreach (BufferConfiguration bufferConfig in this.VertexBuffers)
+            using (GLBinding vaoBinding = new GLBinding(this))
             {
-                using (BindableClause releaser = new BindableClause(bufferConfig.VertexBuffer))
+                foreach (BufferConfiguration bufferConfig in this.VertexBuffers)
                 {
-                    foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                    using (GLBinding vboBinding = new GLBinding(bufferConfig.VertexBuffer))
                     {
-                        GL.EnableVertexAttribArray(vertexPointer.Index);
-                        GL.VertexAttribPointer(
-                            vertexPointer.Index,
-                            vertexPointer.Size,
-                            vertexPointer.Type,
-                            vertexPointer.IsNormalized,
-                            vertexPointer.Stride,
-                            vertexPointer.Offset
-                        );
+                        foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                        {
+                            GL.EnableVertexAttribArray(vertexPointer.Index);
+                            GL.VertexAttribPointer(
+                                vertexPointer.Index,
+                                vertexPointer.Size,
+                                vertexPointer.Type,
+                                vertexPointer.IsNormalized,
+                                vertexPointer.Stride,
+                                vertexPointer.Offset
+                            );
+                        }
                     }
                 }
+                this.IndexBuffer.Bind();
             }
-            this.IndexBuffer.Bind();
-            this.Unbind();
 
             logger.Debug("VertexArrayObject initialized.");
         }
@@ -77,6 +78,7 @@ namespace LightClaw.Engine.Graphics
         {
             try
             {
+                this.Unbind();
                 GL.DeleteVertexArray(this);
             }
             catch (AccessViolationException)
