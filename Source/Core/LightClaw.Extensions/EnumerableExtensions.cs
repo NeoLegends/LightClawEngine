@@ -16,6 +16,11 @@ namespace LightClaw.Extensions
             return collection.GroupBy(s => s).SelectMany(g => g.Key.Equals(valueToRemove) ? g.Skip(1) : g);
         }
 
+        public static IEnumerable<T> FilterNull<T>(this IEnumerable<T> collection)
+        {
+            return collection.Where(item => item != null);
+        }
+
         public static IEnumerable<T> Yield<T>(this T item)
         {
             yield return item;

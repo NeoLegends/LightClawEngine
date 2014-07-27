@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
@@ -13,15 +14,27 @@ namespace LightClaw.Engine.IO
 {
     public class ContentManager : IContentManager
     {
-        private static readonly IContentReader[] defaultReaders = new IContentReader[]
-        {
-            new IconReader(), new SceneReader(), new StringReader()
-        };
+        private static readonly IContentReader[] defaultReaders = Assembly.GetExecutingAssembly()
+                                                                          .GetTypesByBase<IContentReader>(true)
+                                                                          .Select(t =>
+                                                                          {
+                                                                              try
+                                                                              {
+                                                                                  return (IContentReader)Activator.CreateInstance(t);
+                                                                              }
+                                                                              catch { return null; }
+                                                                          }).FilterNull().ToArray();
 
-        private static readonly IContentResolver[] defaultResolvers = new IContentResolver[]
-        {
-            new FileSystemContentResolver()
-        };
+        private static readonly IContentResolver[] defaultResolvers = Assembly.GetExecutingAssembly()
+                                                                              .GetTypesByBase<IContentResolver>(true)
+                                                                              .Select(t =>
+                                                                              {
+                                                                                  try
+                                                                                  {
+                                                                                      return (IContentResolver)Activator.CreateInstance(t);
+                                                                                  }
+                                                                                  catch { return null; }
+                                                                              }).FilterNull().ToArray();
 
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
@@ -48,14 +61,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                foreach (Task<bool> task in this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).ToArray())
-                {
-                    if (await task)
-                    {
-                        return true;
-                    }
-                }
-                return false;
+                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).WhenFirst(t => t.Result);
             }
         }
 
@@ -123,17 +129,9 @@ namespace LightClaw.Engine.IO
             this.resolvers.Add(resolver);
         }
 
-        private async Task<Stream> GetStreamInternal(string resourceString)
+        private Task<Stream> GetStreamInternal(string resourceString) // Version w/o locking to avoid deadlocks when LoadAsync calls GetStream
         {
-            foreach (Task<Stream> task in this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).ToArray())
-            {
-                Stream result = await task;
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-            return null;
+            return this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).WhenFirst(t => t.Result != null);
         }
 
         [ContractInvariantMethod]

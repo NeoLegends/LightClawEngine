@@ -33,7 +33,7 @@ namespace LightClaw.Engine.Core
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
-            AppDomain.CurrentDomain.ProcessExit += (s, e) => LogManager.Shutdown();
+            //AppDomain.CurrentDomain.ProcessExit += (s, e) => LogManager.Shutdown();
         }
 
         static void Main(string[] args)
@@ -50,19 +50,14 @@ namespace LightClaw.Engine.Core
                     game.Run();
                 }
             }
-            catch (AggregateException aggregateEx)
-            {
-                logger.Fatal("Multiple errors occured. Writing them sequentially into the log...");
-                foreach (Exception ex in aggregateEx.InnerExceptions)
-                {
-                    logger.Fatal("An error of type '{0}' with message '{1}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
-                }
-                throw;
-            }
             catch (Exception ex)
             {
                 logger.Fatal("An error of type '{0}' with message '{1}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
                 throw;
+            }
+            finally
+            {
+                LogManager.Shutdown();
             }
         }
     }

@@ -82,6 +82,7 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c>.</returns>
+        [Pure]
         public static bool AlmostEquals(double left, double right)
         {
             return IsAlmostZero(left - right);
@@ -94,6 +95,7 @@ namespace LightClaw.Engine.Core
         /// <param name="min">The minimum value the value may have.</param>
         /// <param name="max">The maximum value the value may have.</param>
         /// <returns>The value cut off at the boundaries.</returns>
+        [Pure]
         public static int Clamp(int value, int min, int max)
         {
             return (value > max) ? max : (value < min) ? min : value;
@@ -106,6 +108,7 @@ namespace LightClaw.Engine.Core
         /// <param name="min">The minimum value the value may have.</param>
         /// <param name="max">The maximum value the value may have.</param>
         /// <returns>The value cut off at the boundaries.</returns>
+        [Pure]
         public static float Clamp(float value, float min, float max)
         {
             return (value > max) ? max : (value < min) ? min : value;
@@ -118,6 +121,7 @@ namespace LightClaw.Engine.Core
         /// <param name="min">The minimum value the value may have.</param>
         /// <param name="max">The maximum value the value may have.</param>
         /// <returns>The value cut off at the boundaries.</returns>
+        [Pure]
         public static double Clamp(double value, double min, double max)
         {
             return (value > max) ? max : (value < min) ? min : value;
@@ -129,6 +133,7 @@ namespace LightClaw.Engine.Core
         /// <param name="a">The first number.</param>
         /// <param name="b">The second number.</param>
         /// <returns>The greatest common divisor of the two numbers.</returns>
+        [Pure]
         public static int GreatestCommonDivisor(int a, int b)
         {
             while (b > 0)
@@ -146,6 +151,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="values">The numbers.</param>
         /// <returns>The greatest common divisor of the two numbers.</returns>
+        [Pure]
         public static int GreatestCommonDivisor(IEnumerable<int> values)
         {
             return values.Aggregate((gcd, arg) => GreatestCommonDivisor(gcd, arg));
@@ -156,6 +162,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        [Pure]
         public static bool IsAlmostOne(double value)
         {
             return IsAlmostZero(value - 1);
@@ -167,6 +174,7 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check for whether it is one.</param>
         /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        [Pure]
         public static bool IsAlmostOne(double value, int decimalPlaceCount)
         {
             Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < 16);
@@ -179,6 +187,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
+        [Pure]
         public static bool IsAlmostZero(double value)
         {
             return (-DefaultZeroThreshold < value) && (value < DefaultZeroThreshold);
@@ -190,6 +199,7 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check.</param>
         /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
+        [Pure]
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
             Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < ZeroThresholds.Length);
@@ -203,6 +213,7 @@ namespace LightClaw.Engine.Core
         /// <param name="n">The number to be divided.</param>
         /// <param name="divisor">The numbers divisor.</param>
         /// <returns>Whether n is dividable by the divisor.</returns>
+        [Pure]
         public static bool IsDivisorOf(int n, int divisor)
         {
             return (n % divisor == 0);
@@ -213,6 +224,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="number">The number to test.</param>
         /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
+        [Pure]
         public static bool IsPrime(int number)
         {
             if (number == 1)
@@ -242,9 +254,32 @@ namespace LightClaw.Engine.Core
         /// <param name="n">The number to be divided.</param>
         /// <param name="divisor">The numbers divisor.</param>
         /// <returns>Whether n is dividable by the divisor.</returns>
+        [Pure]
         public static bool IsDivisorOf(double n, double divisor)
         {
             return IsAlmostZero(n % divisor, 15);
+        }
+
+        /// <summary>
+        /// Checks whether the specified number is a power of two.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
+        [Pure]
+        public static bool IsPowerOfTwo(uint value)
+        {
+            return (value != 0U) && (value & (value - 1)) == 0;
+        }
+
+        /// <summary>
+        /// Checks whether the specified number is a power of two.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
+        [Pure]
+        public static bool IsPowerOfTwo(ulong value)
+        {
+            return (value != 0UL) && (value & (value - 1)) == 0;
         }
 
         /// <summary>
@@ -253,6 +288,7 @@ namespace LightClaw.Engine.Core
         /// <param name="a">The first number.</param>
         /// <param name="b">The second number.</param>
         /// <returns>The least common multiple of the two numbers.</returns>
+        [Pure]
         public static int LeastCommonMultiple(int a, int b)
         {
             return (a * b) / GreatestCommonDivisor(a, b);
@@ -263,6 +299,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="values">The numbers.</param>
         /// <returns>The least common multiple of all the numbers.</returns>
+        [Pure]
         public static int LeastCommonMultiple(IEnumerable<int> values)
         {
             return values.Aggregate((lcm, arg) => LeastCommonMultiple(lcm, arg));
@@ -279,6 +316,7 @@ namespace LightClaw.Engine.Core
         /// <param name="to">Value to interpolate to.</param>
         /// <param name="amount">Interpolation amount.</param>
         /// <returns>The result of linear interpolation of values based on the amount.</returns>
+        [Pure]
         public static float Lerp(float from, float to, float amount)
         {
             return (1 - amount) * from + amount * to;
@@ -295,6 +333,7 @@ namespace LightClaw.Engine.Core
         /// <param name="to">Value to interpolate to.</param>
         /// <param name="amount">Interpolation amount.</param>
         /// <returns>The result of linear interpolation of values based on the amount.</returns>
+        [Pure]
         public static double Lerp(double from, double to, double amount)
         {
             return (1 - amount) * from + amount * to;
@@ -311,6 +350,7 @@ namespace LightClaw.Engine.Core
         /// <param name="to">Value to interpolate to.</param>
         /// <param name="amount">Interpolation amount.</param>
         /// <returns>The result of linear interpolation of values based on the amount.</returns>
+        [Pure]
         public static byte Lerp(byte from, byte to, float amount)
         {
             return (byte)Lerp((float)from, (float)to, amount);
@@ -321,6 +361,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="x">The value to round up.</param>
         /// <returns>The value's next power of two.</returns>
+        [Pure]
         public static uint NextPowerOfTwo(uint x)
         {
             // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
@@ -341,6 +382,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="x">The value to round up.</param>
         /// <returns>The value's next power of two.</returns>
+        [Pure]
         public static ulong NextPowerOfTwo(ulong x)
         {
             // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
@@ -362,6 +404,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="n">The exponent.</param>
         /// <returns>Two to the power of the exponent.</returns>
+        [Pure]
         public static double PowerOfTwo(double n)
         {
             return Math.Pow(2, n);
@@ -374,6 +417,7 @@ namespace LightClaw.Engine.Core
         /// See https://en.wikipedia.org/wiki/Smoothstep
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
+        [Pure]
         public static float SmoothStep(float amount)
         {
             return (amount <= 0) ?
@@ -390,6 +434,7 @@ namespace LightClaw.Engine.Core
         /// See https://en.wikipedia.org/wiki/Smoothstep
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
+        [Pure]
         public static double SmoothStep(double amount)
         {
             return (amount <= 0) ?
@@ -406,6 +451,7 @@ namespace LightClaw.Engine.Core
         /// See https://en.wikipedia.org/wiki/Smoothstep
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
+        [Pure]
         public static float SmootherStep(float amount)
         {
             return (amount <= 0) ?
@@ -422,6 +468,7 @@ namespace LightClaw.Engine.Core
         /// See https://en.wikipedia.org/wiki/Smoothstep
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
+        [Pure]
         public static double SmootherStep(double amount)
         {
             return (amount <= 0) ?
