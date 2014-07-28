@@ -13,7 +13,7 @@ using log4net;
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
-    public class Mesh : Component, IEnumerable<MeshPart>
+    public class Mesh : Component
     {
         private static ILog logger = LogManager.GetLogger(typeof(Mesh));
 
@@ -48,22 +48,13 @@ namespace LightClaw.Engine.Graphics
             this.Parts = parts;
         }
 
-        public IEnumerator<MeshPart> GetEnumerator()
-        {
-            return this.Parts.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-
         protected override void Dispose(bool disposing)
         {
             MeshPartCollection meshParts = this.Parts;
             if (meshParts != null)
             {
                 meshParts.Dispose();
+                this.Parts = null; // Prevent drawing after disposal
             }
             base.Dispose(disposing);
         }

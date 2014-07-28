@@ -14,6 +14,8 @@ namespace LightClaw.Engine.Graphics
     {
         private static ILog logger = LogManager.GetLogger(typeof(Shader));
 
+        public string Source { get; private set; }
+
         public ShaderType Type { get; private set; }
 
         public Shader(string source, ShaderType type)
@@ -21,8 +23,9 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(source != null);
 
-            logger.Debug("Initializing a new shader of type '{0}'.".FormatWith(type));
+            logger.Info("Initializing a new shader of type '{0}'.".FormatWith(type));
 
+            this.Source = source;
             this.Type = type;
 
             GL.ShaderSource(this, source);
@@ -44,11 +47,6 @@ namespace LightClaw.Engine.Graphics
             try
             {
                 GL.DeleteShader(this);
-                int result = 0;
-                if (!this.CheckStatus(ShaderParameter.DeleteStatus, out result))
-                {
-                    logger.Warn("Deleting the shader failed. Error Code: {0}. Swallowing...".FormatWith(result));
-                }
             }
             catch (Exception ex)
             {

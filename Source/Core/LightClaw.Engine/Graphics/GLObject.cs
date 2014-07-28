@@ -13,14 +13,14 @@ namespace LightClaw.Engine.Graphics
     public abstract class GLObject : Entity, IDisposable
     {
         [IgnoreDataMember]
-        public int Id { get; protected set; }
+        public int Handle { get; protected set; }
 
         protected GLObject() { }
 
         protected GLObject(int id)
             : this()
         {
-            this.Id = id;
+            this.Handle = id;
         }
 
         ~GLObject()
@@ -35,13 +35,13 @@ namespace LightClaw.Engine.Graphics
 
         protected virtual void Dispose(bool disposing)
         {
-            this.Id = 0;
+            this.Handle = 0;
             GC.SuppressFinalize(this);
         }
 
         public static implicit operator int(GLObject glObject)
         {
-            return (glObject != null) ? glObject.Id : 0;
+            return (glObject != null) ? glObject.Handle : 0;
         }
     }
 }

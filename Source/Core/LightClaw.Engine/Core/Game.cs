@@ -13,7 +13,7 @@ using OpenTK.Platform;
 
 namespace LightClaw.Engine.Core
 {
-    internal class Game : Entity, IGame
+    public class Game : Entity, IGame
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(Game));
 
@@ -148,6 +148,7 @@ namespace LightClaw.Engine.Core
             : this(gameCodeAssembly)
         {
             Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
+            Contract.Requires<ArgumentNullException>(startScene != null);
 
             this.SceneManager = new SceneManager(startScene);
             this.IocC.Register<ISceneManager>(d => this.SceneManager);

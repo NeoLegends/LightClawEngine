@@ -60,6 +60,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 this.IndexBuffer.Bind();
             }
+            this.IndexBuffer.Unbind();
 
             logger.Debug("VertexArrayObject initialized.");
         }

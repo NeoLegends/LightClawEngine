@@ -22,7 +22,10 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind()
         {
-            this.bindable.Unbind();
+            if (this.bindable != null)
+            {
+                this.bindable.Unbind();
+            }
         }
 
         void IDisposable.Dispose()

@@ -1,7 +1,6 @@
 ﻿#version 400
 
 uniform mat4 modelViewProjectionMatrix;
-uniform sampler2D texture;
 
 in vec3 inVertexPosition;
 in vec2 inTextureCoordinates;

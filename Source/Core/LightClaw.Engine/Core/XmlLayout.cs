@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -12,55 +15,126 @@ namespace LightClaw.Engine.Core
 {
     public class XmlLayout : XmlLayoutBase
     {
+        private readonly DataContractSerializer serializer = new DataContractSerializer(typeof(LoggingEventInfo));
+
         protected override void FormatXml(XmlWriter writer, LoggingEvent loggingEvent)
         {
-            writer.WriteStartElement("Entry");
+            if (loggingEvent != null)
+            {
+                using (StringWriter sw = new StringWriter())
+                using (XmlTextWriter xmlTw = new XmlTextWriter(sw))
+                {
+                    this.serializer.WriteObject(xmlTw, new XmlLayout.LoggingEventInfo(loggingEvent));
 
-            // Attributes
-            writer.WriteElementString("Level", loggingEvent.Level.DisplayName);
-            writer.WriteElementString("Logger", loggingEvent.LoggerName);
-            writer.WriteElementString("Message", loggingEvent.RenderedMessage);
-            writer.WriteElementString("Thread", loggingEvent.ThreadName);
-            writer.WriteElementString("Timestamp", loggingEvent.TimeStamp.ToUniversalTime().ToString());
+                    writer.WriteRaw(sw.ToString());
+                }
+            }
+        }
+        
+        [DataContract]
+        public class LoggingEventInfo
+        {
+            [DataMember]
+            public ExceptionInfo Exception { get; set; }
 
-            // Location
-            writer.WriteStartElement("Location");
-            writer.WriteElementString("ClassName", loggingEvent.LocationInformation.ClassName);
-            writer.WriteElementString("File", loggingEvent.LocationInformation.FileName);
-            writer.WriteElementString("Line", loggingEvent.LocationInformation.LineNumber);
-            writer.WriteElementString("Method", loggingEvent.LocationInformation.MethodName);
-            writer.WriteEndElement();
+            [DataMember]
+            public string Level { get; set; }
 
-            // Exception
-            this.WriteException(loggingEvent.ExceptionObject, writer);
+            [DataMember]
+            public Location Location { get; set; }
 
-            writer.WriteEndElement();
+            [DataMember]
+            public string Logger { get; set; }
+
+            [DataMember]
+            public string Message { get; set; }
+
+            [DataMember]
+            public string Thread { get; set; }
+
+            [DataMember]
+            public string Timestamp { get; set; }
+
+            public LoggingEventInfo() { }
+
+            public LoggingEventInfo(LoggingEvent loggingEvent)
+            {
+                Contract.Requires<ArgumentNullException>(loggingEvent != null);
+
+                if (loggingEvent.ExceptionObject != null)
+                {
+                    this.Exception = new ExceptionInfo(loggingEvent.ExceptionObject);
+                }
+                this.Level = loggingEvent.Level.DisplayName;
+                if (loggingEvent.LocationInformation != null)
+                {
+                    this.Location = new Location(loggingEvent);
+                }
+                this.Logger = loggingEvent.LoggerName;
+                this.Message = loggingEvent.RenderedMessage;
+                this.Thread = loggingEvent.ThreadName;
+                this.Timestamp = loggingEvent.TimeStamp.ToUniversalTime().ToString();
+            }
         }
 
-        private void WriteException(Exception ex, XmlWriter writer)
+        [DataContract]
+        public struct Location
         {
-            if (ex != null)
+            [DataMember]
+            public string ClassName { get; set; }
+
+            [DataMember]
+            public string FileName { get; set; }
+
+            [DataMember]
+            public int LineNumber { get; set; }
+
+            [DataMember]
+            public string MethodName { get; set; }
+
+            public Location(LoggingEvent loggingEvent)
+                : this()
             {
-                writer.WriteStartElement("Exception");
-                writer.WriteElementString("Message", ex.Message);
+                Contract.Requires<ArgumentNullException>(loggingEvent != null);
+                Contract.Requires<ArgumentException>(loggingEvent.LocationInformation != null);
+
+                this.ClassName = loggingEvent.LocationInformation.ClassName;
+                this.FileName = loggingEvent.LocationInformation.FileName;
+                this.LineNumber = int.Parse(loggingEvent.LocationInformation.LineNumber);
+                this.MethodName = loggingEvent.LocationInformation.MethodName;
+            }
+        }
+
+        [DataContract]
+        public class ExceptionInfo
+        {
+            [DataMember]
+            public string Message { get; set; }
+
+            [DataMember]
+            public ExceptionInfo InnerException { get; set; }
+
+            [DataMember]
+            public ExceptionInfo[] InnerExceptions { get; set; }
+
+            [DataMember]
+            public string Type { get; set; }
+
+            public ExceptionInfo(System.Exception ex)
+            {
+                Contract.Requires<ArgumentNullException>(ex != null);
+
+                this.Message = ex.Message;
+                this.Type = ex.GetType().AssemblyQualifiedName;
                 AggregateException aggrEx = ex as AggregateException;
                 if (aggrEx != null)
                 {
-                    writer.WriteStartElement("InnerExceptions");
-                    foreach (Exception inner in aggrEx.InnerExceptions)
-                    {
-                        this.WriteException(inner, writer);
-                    }
-                    writer.WriteEndElement();
+                    this.InnerExceptions = aggrEx.InnerExceptions.Select(innerEx => new ExceptionInfo(innerEx)).ToArray();
                 }
                 if (aggrEx == null && ex.InnerException != null)
                 {
-                    writer.WriteStartElement("InnerException");
-                    this.WriteException(ex, writer);
-                    writer.WriteEndElement();
+                    this.InnerException = new ExceptionInfo(ex.InnerException);
                 }
-                writer.WriteElementString("Type", ex.GetType().AssemblyQualifiedName);
-                writer.WriteEndElement();
             }
         }
     }

@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class BufferConfiguration
+    public struct BufferConfiguration
     {
         public Buffer VertexBuffer { get; private set; }
 
         public IEnumerable<VertexAttributePointer> VertexAttributePointers { get; private set; }
 
         public BufferConfiguration(Buffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(vertexBuffer != null);
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);

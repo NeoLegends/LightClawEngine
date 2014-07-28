@@ -11,42 +11,39 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class ShaderProgram : GLObject, IBindable
+    [ContractClass(typeof(ShaderProgramContracts))]
+    public abstract class ShaderProgram : GLObject, IBindable
     {
         private static ILog logger = LogManager.GetLogger(typeof(ShaderProgram));
 
-        public int Count { get; private set; }
+        private readonly object initializationLock = new object();
 
-        public ImmutableList<UniformLocation> UniformLocations { get; private set; }
+        public abstract int SamplerCount { get; protected set; }
+
+        public int ShaderCount { get; private set; }
 
         public ImmutableList<Shader> Shaders { get; private set; }
 
-        public ShaderProgram(IEnumerable<Shader> shaders, IEnumerable<UniformLocation> uniformLocations)
+        public int TotalUniformLocationCount
+        {
+            get
+            {
+                return this.SamplerCount + this.UniformLocationCount;
+            }
+        }
+
+        public abstract int UniformLocationCount { get; protected set; }
+
+        public ShaderProgram() : base(GL.CreateProgram()) { }
+
+        public ShaderProgram(IEnumerable<Shader> shaders)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
-            Contract.Requires<ArgumentNullException>(uniformLocations != null);
+            Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
 
-            this.UniformLocations = uniformLocations.ToImmutableList();
-            this.Shaders = shaders.ToImmutableList();
-            this.Count = this.Shaders.Count;
-
-            logger.Debug("Initializing a new ShaderProgram with {0} shaders and {1} uniform variables.".FormatWith(this.Shaders.Count, this.UniformLocations.Count));
-
-            foreach (Shader shader in this.Shaders)
-            {
-                GL.AttachShader(this, shader);
-            }
-            GL.LinkProgram(this);
-
-            int result;
-            if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
-            {
-                string message = "Linking the shader program failed. Error Code: ".FormatWith(result);
-                logger.Error(message);
-                throw new InvalidOperationException(message);
-            }
-
-            logger.Debug("ShaderProgram initialized.");
+            Contract.Assume(!shaders.Duplicates(shader => shader.Type));
+            this.Initialize(shaders);
         }
 
         public void Bind()
@@ -59,32 +56,29 @@ namespace LightClaw.Engine.Graphics
             GL.UseProgram(0);
         }
 
+        public int GetUniformLocation(string uniformName)
+        {
+            Contract.Requires<ArgumentNullException>(uniformName != null);
+
+            return GL.GetUniformLocation(this, uniformName);
+        }
+
+        protected abstract IEnumerable<int> GetSamplerUniformLocations();
+
         protected override void Dispose(bool disposing)
         {
             this.Unbind();
-            try
+            foreach (Shader shader in this.Shaders)
             {
-                foreach (Shader shader in this.Shaders)
+                try
                 {
                     GL.DetachShader(this, shader);
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.Warn(
-                    "An exception of type '{0}' was thrown while detaching the shaders from the program. Swallowing...".FormatWith(ex.GetType().AssemblyQualifiedName),
-                    ex
-                );
+                catch { }
             }
             try
             {
                 GL.DeleteProgram(this);
-
-                int result;
-                if (!this.CheckStatus(GetProgramParameterName.DeleteStatus, out result))
-                {
-                    logger.Warn("Deleting the shader program failed. Error Code: {0}. Swallowing...".FormatWith(result));
-                }
             }
             catch (Exception ex)
             {
@@ -96,23 +90,91 @@ namespace LightClaw.Engine.Graphics
             base.Dispose(disposing);
         }
 
-        private bool CheckStatus(GetProgramParameterName parameter)
+        protected bool CheckStatus(GetProgramParameterName parameter)
         {
             int result = 0;
             return CheckStatus(parameter, out result);
         }
 
-        private bool CheckStatus(GetProgramParameterName parameter, out int result)
+        protected bool CheckStatus(GetProgramParameterName parameter, out int result)
         {
             GL.GetProgram(this, parameter, out result);
             return (result == 1);
         }
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
+        protected void Initialize(IEnumerable<Shader> shaders)
         {
-            Contract.Invariant(this.Shaders != null);
-            Contract.Invariant(this.UniformLocations != null);
+            Contract.Requires<ArgumentNullException>(shaders != null);
+            Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
+
+            lock (this.initializationLock)
+            {
+                this.Shaders = shaders.ToImmutableList();
+                this.ShaderCount = this.Shaders.Count;
+
+                logger.Info("Initializing a new ShaderProgram with {0} shaders.".FormatWith(this.Shaders.Count));
+
+                foreach (Shader shader in this.Shaders)
+                {
+                    GL.AttachShader(this, shader);
+                }
+                GL.LinkProgram(this);
+                this.CheckCompileStatus();
+
+                logger.Debug("ShaderProgram initialized.");
+            }
+        } 
+
+        private void CheckCompileStatus()
+        {
+            int result;
+            if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
+            {
+                string message = "Linking the shader program failed. Error Code: {0}".FormatWith(result);
+                logger.Error(message);
+                logger.Error(GL.GetShaderInfoLog(this));
+
+                throw new InvalidOperationException(message);
+            }
+        }
+    }
+
+    [ContractClassFor(typeof(ShaderProgram))]
+    abstract class ShaderProgramContracts : ShaderProgram
+    {
+        public override int SamplerCount
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
+                return 0;
+            }
+            protected set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
+            }
+        }
+
+        public override int UniformLocationCount
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
+                return 0;
+            }
+            protected set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
+            }
+        }
+
+        protected override IEnumerable<int> GetSamplerUniformLocations()
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<int>>().Count() == this.SamplerCount);
+
+            return null;
         }
     }
 }

@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Core
 {
-    internal static class Constants
+    public static class Constants
     {
         public const int HashFactor = 486187739;
 
         public const int HashStart = 397;
+
+        private static readonly int _MaxCombinedTextureImageUnits = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits);
+
+        public static int MaxCombinedTextureImageUnits
+        {
+            get
+            {
+                return _MaxCombinedTextureImageUnits;
+            }
+        }
     }
 }

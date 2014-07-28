@@ -10,6 +10,7 @@ namespace LightClaw.Extensions
 {
     public static class AssemblyExtensions
     {
+        [Pure]
         public static IEnumerable<Type> GetTypesByBase<T>(this Assembly assembly, bool includeNonPublic)
         {
             Contract.Requires<ArgumentNullException>(assembly != null);
@@ -18,6 +19,7 @@ namespace LightClaw.Extensions
             return GetTypesByBase(assembly, typeof(T), includeNonPublic);
         }
 
+        [Pure]
         public static IEnumerable<Type> GetTypesByBase(this Assembly assembly, Type baseType, bool includeNonPublic)
         {
             Contract.Requires<ArgumentNullException>(assembly != null);
@@ -33,6 +35,7 @@ namespace LightClaw.Extensions
                    select searchResult;
         }
 
+        [Pure]
         public static IEnumerable<Type> GetTypesByAttribute<T>(this Assembly assembly)
             where T : Attribute
         {
@@ -41,6 +44,7 @@ namespace LightClaw.Extensions
             return GetTypesByAttribute(assembly, typeof(T));
         }
 
+        [Pure]
         public static IEnumerable<Type> GetTypesByAttribute(this Assembly assembly, Type attributeType)
         {
             Contract.Requires<ArgumentNullException>(assembly != null);

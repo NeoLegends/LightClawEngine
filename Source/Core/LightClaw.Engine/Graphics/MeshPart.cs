@@ -9,36 +9,51 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class MeshPart : Entity, IDrawable
+    public class MeshPart : Entity, IDisposable, IDrawable
     {
         public event EventHandler<ParameterEventArgs> Drawing;
 
         public event EventHandler<ParameterEventArgs> Drawn;
 
-        public ShaderProgram Shader { get; private set; }
+        public Material Material { get; private set; }
 
         public VertexArrayObject Vao { get; private set; }
 
-        public MeshPart(ShaderProgram shader, VertexArrayObject vao)
+        public MeshPart(Material material, VertexArrayObject vao)
         {
-            Contract.Requires<ArgumentNullException>(shader != null);
+            Contract.Requires<ArgumentNullException>(material != null);
             Contract.Requires<ArgumentNullException>(vao != null);
 
-            this.Shader = shader;
+            this.Material = material;
             this.Vao = vao;
+        }
+
+        ~MeshPart()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
         }
 
         public void Draw()
         {
             this.Raise(this.Drawing);
 
-            using (GLBinding shaderBinding = new GLBinding(this.Shader))
+            using (GLBinding materialBinding = new GLBinding(this.Material))
             using (GLBinding vaoBinding = new GLBinding(this.Vao))
             {
                 GL.DrawElements(BeginMode.Triangles, this.Vao.IndexCount, DrawElementsType.UnsignedShort, 0);
             }
 
             this.Raise(this.Drawn);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+
         }
     }
 }

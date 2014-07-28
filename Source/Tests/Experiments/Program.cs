@@ -26,32 +26,54 @@ namespace Experiments
     {
         static void Main(string[] args)
         {
-            try
+            //try
+            //{
+            //    IocContainer container = LightClawEngine.DefaultIocContainer;
+
+            //    Shader vertexShader = new Shader("Shaders/Basic.vert", ShaderType.VertexShader);
+            //    Shader fragmentShader = new Shader("Shaders/Basic.frag", ShaderType.FragmentShader);
+            //    //ShaderProgram program = new ShaderProgram(new[] { vertexShader, fragmentShader });
+
+            //    MeshPartCollection partCollection = new MeshPartCollection();
+            //    Mesh cube = new Mesh(partCollection);
+
+            //    GameObject gameObject = new GameObject(
+            //        new Transform(new Vector3(0.0f, 0.0f, -2.0f), Quaternion.Identity, Vector3.One),
+            //        cube
+            //    );
+            //    Scene startScene = new Scene();
+            //    startScene.Add(gameObject);
+
+            //    using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssembly), startScene))
+            //    {
+            //        game.Run();
+            //    }
+            //}
+            //finally
+            //{
+            //    LogManager.Shutdown();
+            //}
+
+            XmlLayout.LoggingEventInfo entry = new XmlLayout.LoggingEventInfo()
             {
-                IocContainer container = LightClawEngine.DefaultIocContainer;
-
-                Shader vertexShader = new Shader("Shaders/Basic.vert", ShaderType.VertexShader);
-                Shader fragmentShader = new Shader("Shaders/Basic.frag", ShaderType.FragmentShader);
-                ShaderProgram program = new ShaderProgram(new[] { vertexShader, fragmentShader }, null);
-
-                MeshPartCollection partCollection = new MeshPartCollection();
-                Mesh cube = new Mesh(partCollection);
-
-                GameObject gameObject = new GameObject(
-                    new Transform(new Vector3(0.0f, 0.0f, -2.0f), Quaternion.Identity, Vector3.One),
-                    cube
-                );
-                Scene startScene = new Scene();
-                startScene.Add(gameObject);
-
-                using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssembly), startScene))
+                Exception = new XmlLayout.ExceptionInfo(new Exception("Hello, this is a test!")),
+                Level = "INFO",
+                Location = new XmlLayout.Location()
                 {
-                    game.Run();
-                }
-            }
-            finally
+                    ClassName = "Program",
+                    FileName = "Program.cs",
+                    LineNumber = 64,
+                    MethodName = "Main"
+                },
+                Logger = "Experiments.Program",
+                Message = "Something normal happened.",
+                Thread = "1",
+                Timestamp = DateTime.UtcNow.ToString()
+            };
+
+            using (FileStream fs = new FileStream("E:\\Users\\Moritz\\Desktop\\Test.xml", FileMode.Create, FileAccess.ReadWrite))
             {
-                LogManager.Shutdown();
+                new DataContractSerializer(typeof(XmlLayout.LoggingEventInfo)).WriteObject(fs, entry);
             }
         }
     }
