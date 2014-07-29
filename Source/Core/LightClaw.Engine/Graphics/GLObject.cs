@@ -6,12 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using Munq;
+using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
     public abstract class GLObject : Entity, IDisposable
     {
+        private static readonly int _MaxCombinedTextureImageUnits = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits);
+
+        public static int MaxCombinedTextureImageUnits
+        {
+            get
+            {
+                return _MaxCombinedTextureImageUnits;
+            }
+        }
+
         [IgnoreDataMember]
         public int Handle { get; protected set; }
 

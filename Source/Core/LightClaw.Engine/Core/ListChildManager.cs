@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,9 +10,11 @@ using System.Threading.Tasks;
 namespace LightClaw.Engine.Core
 {
     [DataContract]
-    public class ListChildManager<T> : ChildManager<T>, IList<T>
+    public class ListChildManager<T> : ChildManager<T>, IList<T>, INotifyCollectionChanged
         where T : IControllable
     {
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         [IgnoreDataMember]
         public virtual T this[int index]
         {
@@ -45,9 +48,20 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        public ListChildManager() { }
+        public ListChildManager() 
+        {
+            this.Items.CollectionChanged += (s, e) =>
+            {
+                NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
+                if (handler != null)
+                {
+                    handler(s, e);
+                }
+            };
+        }
 
         public ListChildManager(IEnumerable<T> items)
+            : this()
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
@@ -57,6 +71,12 @@ namespace LightClaw.Engine.Core
         public virtual void Add(T item)
         {
             this.Items.Add(item);
+
+            NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
+            if (handler != null)
+            {
+                handler(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+            }
         }
 
         public virtual void AddRange(IEnumerable<T> items)
@@ -72,6 +92,12 @@ namespace LightClaw.Engine.Core
         public virtual void Clear()
         {
             this.Items.Clear();
+
+            NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
+            if (handler != null)
+            {
+                handler(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
         }
 
         public virtual bool Contains(T item)

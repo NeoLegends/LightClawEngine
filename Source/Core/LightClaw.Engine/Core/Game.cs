@@ -223,6 +223,7 @@ namespace LightClaw.Engine.Core
             );
 
             this.SceneManager.Update(this.CurrentGameTime);
+            this.SceneManager.LateUpdate();
         }
 
         [ContractInvariantMethod]

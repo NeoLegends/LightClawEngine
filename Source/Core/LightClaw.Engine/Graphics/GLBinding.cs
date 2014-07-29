@@ -7,25 +7,29 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public struct GLBinding : IDisposable
+    public struct GLBinding : IDisposable, IBindable
     {
         private readonly IBindable bindable;
 
-        public GLBinding(IBindable bindable)
-            : this()
+        public GLBinding(IBindable bindable, bool bindImmediately = true)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);
 
             this.bindable = bindable;
+            if (bindImmediately)
+            {
+                this.Bind();
+            }
+        }
+
+        public void Bind()
+        {
             this.bindable.Bind();
         }
 
         public void Unbind()
         {
-            if (this.bindable != null)
-            {
-                this.bindable.Unbind();
-            }
+            this.bindable.Unbind();
         }
 
         void IDisposable.Dispose()

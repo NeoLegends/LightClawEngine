@@ -144,6 +144,11 @@ namespace LightClaw.Engine.Core
             Parallel.ForEach(this.Items, item => item.Update(gameTime));
         }
 
+        protected override void OnLateUpdate()
+        {
+            Parallel.ForEach(this.Items, item => item.LateUpdate());
+        }
+
         [OnDeserialized]
         private void AfterDeserialization(StreamingContext context)
         {

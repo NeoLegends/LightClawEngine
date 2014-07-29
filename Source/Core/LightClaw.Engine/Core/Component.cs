@@ -42,6 +42,8 @@ namespace LightClaw.Engine.Core
 
         protected override void OnUpdate(GameTime gameTime) { }
 
+        protected override void OnLateUpdate() { }
+
         protected void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T previousValue)
         {
             if (handler != null)

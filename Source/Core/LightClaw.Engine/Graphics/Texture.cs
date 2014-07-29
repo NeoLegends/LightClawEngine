@@ -11,43 +11,91 @@ namespace LightClaw.Engine.Graphics
 {
     public abstract class Texture : GLObject, IBindable
     {
-        public int MipLevels { get; protected set; }
+        private int _Levels = 1;
 
-        public PixelFormat PixelFormat { get; protected set; }
+        public int Levels
+        {
+            get
+            {
+                return _Levels;
+            }
+            protected set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
 
-        public PixelInternalFormat PixelInternalFormat { get; protected set; }
+                this.SetProperty(ref _Levels, value);
+            }
+        }
 
-        public PixelType PixelType { get; protected set; }
+        private SizedInternalFormat _SizedInternalFormat;
 
-        public TextureTarget Target { get; protected set; }
+        public SizedInternalFormat SizedInternalFormat
+        {
+            get
+            {
+                return _SizedInternalFormat;
+            }
+            protected set
+            {
+                this.SetProperty(ref _SizedInternalFormat, value);
+            }
+        }
 
-        public int Width { get; protected set; }
+        private TextureTarget _Target;
+
+        public TextureTarget Target
+        {
+            get
+            {
+                return _Target;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Target, value);
+            }
+        }
+
+        private int _Width = 1;
+
+        public int Width
+        {
+            get
+            {
+                return _Width;
+            }
+            protected set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
+
+                this.SetProperty(ref _Width, value);
+            }
+        }
+
+        static Texture()
+        {
+            GL.Enable(EnableCap.Texture1D);
+            GL.Enable(EnableCap.Texture2D);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture1D);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture1DArray);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture3D);
+            GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
+            GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMapArray);
+        }
 
         protected Texture() : base(GL.GenTexture()) { }
 
-        protected Texture(TextureTarget target)
+        protected Texture(TextureTarget target, SizedInternalFormat sizedInternalFormat, int width, int levels)
             : this()
         {
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
+
+            this.Levels = levels;
             this.Target = target;
-        }
-
-        protected Texture(
-                    TextureTarget target, 
-                    int mipLevels, 
-                    PixelFormat pixelFormat, 
-                    PixelInternalFormat pixelInternalFormat, 
-                    PixelType pixelType, 
-                    int width
-                )
-            : this(target)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(mipLevels >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
-
-            this.MipLevels = mipLevels;
-            this.PixelFormat = pixelFormat;
-            this.PixelInternalFormat = pixelInternalFormat;
-            this.PixelType = pixelType;
+            this.SizedInternalFormat = sizedInternalFormat;
             this.Width = width;
         }
 
@@ -59,6 +107,14 @@ namespace LightClaw.Engine.Graphics
         public void Unbind()
         {
             GL.BindTexture(this.Target, 0);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            this.Unbind();
+            GL.DeleteTexture(this);
+
+            base.Dispose(disposing);
         }
     }
 }

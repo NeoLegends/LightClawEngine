@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -9,51 +10,142 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class MeshPart : Entity, IDisposable, IDrawable
+    public abstract class MeshPart : Entity, IDrawable, ILateUpdateable, IUpdateable
     {
         public event EventHandler<ParameterEventArgs> Drawing;
 
         public event EventHandler<ParameterEventArgs> Drawn;
 
-        public Material Material { get; private set; }
+        public event EventHandler<ParameterEventArgs> Updating;
 
-        public VertexArrayObject Vao { get; private set; }
+        public event EventHandler<ParameterEventArgs> Updated;
 
-        public MeshPart(Material material, VertexArrayObject vao)
+        public event EventHandler<ParameterEventArgs> LateUpdating;
+
+        public event EventHandler<ParameterEventArgs> LateUpdated;
+
+        private Mesh _Component;
+
+        public Mesh Component
         {
-            Contract.Requires<ArgumentNullException>(material != null);
+            get
+            {
+                return _Component;
+            }
+            internal set
+            {
+                this.SetProperty(ref _Component, value);
+            }
+        }
+
+        private Shader _Shader;
+
+        public Shader Shader
+        {
+            get
+            {
+                return _Shader;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Shader, value);
+            }
+        }
+
+        private ImmutableList<Texture> _Textures;
+
+        public ImmutableList<Texture> Textures
+        {
+            get
+            {
+                return _Textures;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Textures, value);
+            }
+        }
+
+        private VertexArrayObject  _Vao;
+
+        public VertexArrayObject  Vao
+        {
+            get
+            {
+                return _Vao;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Vao, value);
+            }
+        }
+
+        public MeshPart(VertexArrayObject vao)
+        {
             Contract.Requires<ArgumentNullException>(vao != null);
 
-            this.Material = material;
             this.Vao = vao;
         }
 
-        ~MeshPart()
-        {
-            this.Dispose(false);
-        }
+        public abstract void Draw();
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
+        public abstract void Update(GameTime gameTime);
 
-        public void Draw()
-        {
-            this.Raise(this.Drawing);
+        public abstract void LateUpdate();
 
-            using (GLBinding materialBinding = new GLBinding(this.Material))
-            using (GLBinding vaoBinding = new GLBinding(this.Vao))
+        // Drawing Code
+        //this.Raise(this.Drawing);
+        //using (TextureGLBinding textureBinding = new TextureGLBinding(this.Textures))
+        //using (GLBinding shaderBinding = new GLBinding(this.Shader))
+        //using (GLBinding vaoBinding = new GLBinding(this.Vao))
+        //{
+        //    GL.DrawElements(BeginMode.Triangles, this.Vao.IndexCount, DrawElementsType.UnsignedShort, 0);
+        //}
+        //this.Raise(this.Drawn);
+
+        protected struct TextureGLBinding : IDisposable, IBindable
+        {
+            private readonly ImmutableList<Texture> textures;
+
+            public TextureGLBinding(ImmutableList<Texture> texturesToBind, bool bindImmediately = true)
             {
-                GL.DrawElements(BeginMode.Triangles, this.Vao.IndexCount, DrawElementsType.UnsignedShort, 0);
+                Contract.Requires<ArgumentNullException>(texturesToBind != null);
+
+                this.textures = texturesToBind;
+                if (bindImmediately)
+                {
+                    this.Bind();
+                }
             }
 
-            this.Raise(this.Drawn);
-        }
+            public void Bind()
+            {
+                if (this.textures != null)
+                {
+                    for (TextureUnit texUnit = TextureUnit.Texture0; (int)texUnit < this.textures.Count; texUnit++)
+                    {
+                        GL.ActiveTexture(texUnit);
+                        this.textures[texUnit - TextureUnit.Texture0].Bind();
+                    }
+                }
+            }
 
-        protected virtual void Dispose(bool disposing)
-        {
+            public void Unbind()
+            {
+                if (this.textures != null)
+                {
+                    for (TextureUnit texUnit = TextureUnit.Texture0; (int)texUnit < this.textures.Count; texUnit++)
+                    {
+                        GL.ActiveTexture(texUnit);
+                        this.textures[texUnit - TextureUnit.Texture0].Unbind();
+                    }
+                }
+            }
 
+            void IDisposable.Dispose()
+            {
+                this.Unbind();
+            }
         }
     }
 }

@@ -42,6 +42,10 @@ namespace LightClaw.Engine.Core
 
         public event EventHandler<ParameterEventArgs> Updated;
 
+        public event EventHandler<ParameterEventArgs> LateUpdating;
+
+        public event EventHandler<ParameterEventArgs> LateUpdated;
+
         private string _Name;
 
         [DataMember]
@@ -181,6 +185,19 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        public void LateUpdate()
+        {
+            lock (this.stateLock)
+            {
+                if (this.IsEnabled)
+                {
+                    this.Raise(this.LateUpdating);
+                    this.OnLateUpdate();
+                    this.Raise(this.LateUpdated);
+                }
+            }
+        }
+
         public void Dispose()
         {
             this.Dispose(true);
@@ -209,5 +226,7 @@ namespace LightClaw.Engine.Core
         protected abstract void OnReset();
 
         protected abstract void OnUpdate(GameTime gameTime);
+
+        protected abstract void OnLateUpdate();
     }
 }

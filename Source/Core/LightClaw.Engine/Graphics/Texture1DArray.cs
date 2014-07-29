@@ -9,10 +9,10 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Texture2D : Texture2DBase
+    public class Texture1DArray : Texture2DBase
     {
-        public Texture2D(SizedInternalFormat sizedInternalFormat, int width, int height)
-            : base(TextureTarget2d.Texture2D, sizedInternalFormat, width, height)
+        public Texture1DArray(SizedInternalFormat sizedInternalFormat, int width, int height)
+            : base(TextureTarget2d.Texture1DArray, sizedInternalFormat, width, height)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -20,8 +20,8 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
         }
 
-        public Texture2D(SizedInternalFormat sizedInternalFormat, int width, int height, int levels)
-            : base(TextureTarget2d.Texture2D, sizedInternalFormat, width, height, levels)
+        public Texture1DArray(SizedInternalFormat sizedInternalFormat, int width, int height, int levels)
+            : base(TextureTarget2d.Texture1DArray, sizedInternalFormat, width, height, levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -42,7 +42,7 @@ namespace LightClaw.Engine.Graphics
 
             using (GLBinding texture2dBinding = new GLBinding(this))
             {
-                GL.TexSubImage2D(this.Target, level, xOffset, yOffset, width, height, pixelFormat, pixelType, data);
+                GL.TexSubImage2D(this.Target, level, 0, 0, width, height, pixelFormat, pixelType, data);
             }
         }
     }

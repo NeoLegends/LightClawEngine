@@ -48,6 +48,10 @@ namespace LightClaw.Engine.Core
 
         event EventHandler<ParameterEventArgs> IUpdateable.Updated { add { } remove { } }
 
+        event EventHandler<ParameterEventArgs> ILateUpdateable.LateUpdating { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> ILateUpdateable.LateUpdated { add { } remove { } }
+
         Scene ISceneManager.this[int index]
         {
             get
@@ -130,17 +134,20 @@ namespace LightClaw.Engine.Core
         {
         }
 
+        void IUpdateable.Update(GameTime gameTime)
+        {
+        }
+
+        void ILateUpdateable.LateUpdate()
+        {
+        }
+
         void IDisposable.Dispose()
         {
         }
 
         void Graphics.IDrawable.Draw()
         {
-        }
-
-        void IUpdateable.Update(GameTime gameTime)
-        {
-
         }
     }
 }

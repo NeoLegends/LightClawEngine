@@ -9,40 +9,46 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Texture2D : Texture2DBase
+    public class Texture2DArray : Texture3DBase
     {
-        public Texture2D(SizedInternalFormat sizedInternalFormat, int width, int height)
-            : base(TextureTarget2d.Texture2D, sizedInternalFormat, width, height)
+        public Texture2DArray(SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
+            : base(TextureTarget3d.Texture2DArray, sizedInternalFormat, width, height, depth)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
+            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
         }
 
-        public Texture2D(SizedInternalFormat sizedInternalFormat, int width, int height, int levels)
-            : base(TextureTarget2d.Texture2D, sizedInternalFormat, width, height, levels)
+        public Texture2DArray(SizedInternalFormat sizedInternalFormat, int width, int height, int depth, int levels)
+            : base(TextureTarget3d.Texture2DArray, sizedInternalFormat, width, height, depth, levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
+            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
         }
 
-        public void Update<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
+        public void Update<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
             Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(yOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(zOffset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
 
             using (GLBinding texture2dBinding = new GLBinding(this))
             {
-                GL.TexSubImage2D(this.Target, level, xOffset, yOffset, width, height, pixelFormat, pixelType, data);
+                GL.TexSubImage3D(this.Target, level, xOffset, yOffset, zOffset, width, height, depth, pixelFormat, pixelType, data);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace LightClaw.Engine.Graphics
         public string MeshFormat { get; private set; }
 
         [IgnoreDataMember]
-        public MeshPartCollection Parts { get; private set; }
+        public MeshPart Part { get; private set; }
 
         [DataMember]
         public string ResourceString { get; private set; }
@@ -39,63 +39,77 @@ namespace LightClaw.Engine.Graphics
             this.ResourceString = resourceString;
         }
 
-        public Mesh(MeshPartCollection parts)
+        public Mesh(MeshPart part)
         {
-            Contract.Requires<ArgumentNullException>(parts != null);
+            Contract.Requires<ArgumentNullException>(part != null);
 
-            logger.Debug("Initilizing a new mesh from a part collection consisting of {0} MeshParts.".FormatWith(parts.Count));
+            logger.Debug("Initilizing a new mesh from a mesh part.");
 
-            this.Parts = parts;
+            this.Part = part;
         }
 
         protected override void Dispose(bool disposing)
         {
-            MeshPartCollection meshParts = this.Parts;
-            if (meshParts != null)
-            {
-                meshParts.Dispose();
-                this.Parts = null; // Prevent drawing after disposal
-            }
+            this.Part = null; // Prevent drawing after disposal
             base.Dispose(disposing);
         }
 
         protected override void OnDraw()
         {
-            MeshPartCollection parts = this.Parts;
-            if (parts != null)
+            MeshPart part = this.Part;
+            if (part != null)
             {
-                parts.Draw();
+                part.Draw();
             }
+            base.OnDraw();
         }
 
         protected override void OnLoad()
         {
-            if (this.ResourceString != null && this.MeshFormat != null && this.Parts == null)
+            if (this.ResourceString != null && this.MeshFormat != null && this.Part == null)
             {
                 logger.Info("Loading a mesh from '{0}' as '{1}'.".FormatWith(this.ResourceString, this.MeshFormat));
-                Task<MeshPartCollection> loaderTask = this.IocC.Resolve<IContentManager>()
-                                                               .LoadAsync<MeshPartCollection>(this.ResourceString, this.MeshFormat);
+                Task<MeshPart> loaderTask = this.IocC.Resolve<IContentManager>()
+                                                     .LoadAsync<MeshPart>(this.ResourceString, this.MeshFormat);
 
                 loaderTask.ContinueWith(
                     t =>
                     {
-                        this.Parts = t.Result;
+                        this.Part = t.Result;
+                        this.Part.Component = this;
                         logger.Info("Mesh '{0}' loaded successfully.");
                     },
                     TaskContinuationOptions.OnlyOnRanToCompletion
                 );
                 loaderTask.ContinueWith(
-                    t => 
-                    {
-                        logger.Warn("Loading mesh '{0}' as '{1}' failed. At least one exception was thrown. Writing them sequentially into the log.".FormatWith(this.ResourceString, this.MeshFormat));
-                        foreach (Exception ex in t.Exception.InnerExceptions)
-                        {
-                            logger.Warn("An exception of type '{0}' was thrown while loading mesh '{1}' as '{2}'.".FormatWith(ex.GetType().AssemblyQualifiedName, this.ResourceString, this.MeshFormat), ex);
-                        }
-                    }, 
+                    t => logger.Warn(
+                        "Loading mesh '{0}' as '{1}' failed. At least one exception was thrown.".FormatWith(this.ResourceString, this.MeshFormat), 
+                        t.Exception
+                    ),
                     TaskContinuationOptions.OnlyOnFaulted
                 );
             }
+            base.OnLoad();
+        }
+
+        protected override void OnUpdate(GameTime gameTime)
+        {
+            MeshPart part = this.Part;
+            if (part != null)
+            {
+                part.Update(gameTime);
+            }
+            base.OnUpdate(gameTime);
+        }
+
+        protected override void OnLateUpdate()
+        {
+            MeshPart part = this.Part;
+            if (part != null)
+            {
+                part.LateUpdate();
+            }
+            base.OnLateUpdate();
         }
     }
 }

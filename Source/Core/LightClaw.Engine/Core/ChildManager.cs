@@ -14,10 +14,10 @@ namespace LightClaw.Engine.Core
     public abstract class ChildManager<T> : Manager
         where T : IControllable
     {
-        private List<T> _Items = new List<T>();
+        private ObservableCollection<T> _Items = new ObservableCollection<T>();
 
         [DataMember]
-        protected virtual List<T> Items
+        protected virtual ObservableCollection<T> Items
         {
             get
             {
@@ -37,7 +37,10 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(items != null);
 
-            this.Items.AddRange(items);
+            foreach (T item in items)
+            {
+                this.Items.Add(item);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -74,6 +77,11 @@ namespace LightClaw.Engine.Core
         protected override void OnUpdate(GameTime gameTime)
         {
             this.PerformChildAction(item => item.Update(gameTime));
+        }
+
+        protected override void OnLateUpdate()
+        {
+            this.PerformChildAction(item => item.LateUpdate());
         }
 
         private void PerformChildAction(Action<IControllable> action)

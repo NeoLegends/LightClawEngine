@@ -211,5 +211,18 @@ namespace LightClaw.Engine.Core
             }
             this.workingCopy.Clear();
         }
+
+        protected override void OnLateUpdate()
+        {
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+            }
+            foreach (Scene s in this.workingCopy)
+            {
+                s.LateUpdate();
+            }
+            this.workingCopy.Clear();
+        }
     }
 }

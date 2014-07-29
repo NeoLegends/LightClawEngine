@@ -172,6 +172,7 @@
     <Compile Include="Core\DescriptionAttribute.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
+    <Compile Include="Core\ILateUpdateable.cs" />
     <Compile Include="Core\ISceneManager.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
@@ -215,11 +216,14 @@
     <Compile Include="Graphics\BufferConfiguration.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
-    <Compile Include="Graphics\Material.cs" />
-    <Compile Include="Graphics\MeshPartCollection.cs" />
+    <Compile Include="Graphics\ShaderStage.cs" />
     <Compile Include="Graphics\Shader.cs" />
-    <Compile Include="Graphics\ShaderProgram.cs" />
     <Compile Include="Graphics\Texture.cs" />
+    <Compile Include="Graphics\Texture1D.cs" />
+    <Compile Include="Graphics\Texture1DArray.cs" />
+    <Compile Include="Graphics\Texture2DArray.cs" />
+    <Compile Include="Graphics\Texture3D.cs" />
+    <Compile Include="Graphics\Texture3DBase.cs" />
     <Compile Include="Graphics\Texture2DBase.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\Color.cs" />
