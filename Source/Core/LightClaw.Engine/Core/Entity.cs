@@ -57,11 +57,5 @@ namespace LightClaw.Engine.Core
                 handler(this, args ?? ParameterEventArgs.Default);
             }
         }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.IocC != null);
-        }
     }
 }

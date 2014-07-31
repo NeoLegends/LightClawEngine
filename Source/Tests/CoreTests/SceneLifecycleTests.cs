@@ -45,8 +45,8 @@ namespace CoreTests
             {
                 await s.Save(ms);
                 ms.Position = 0;
+                Scene deser = await Scene.Load(ms);
 
-                Scene deser = await Task.Run(() => (Scene)new NetDataContractSerializer().ReadObject(ms));
                 Assert.AreEqual(s.Count, deser.Count);
             }
         }

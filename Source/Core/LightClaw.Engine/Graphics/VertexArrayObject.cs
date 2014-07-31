@@ -25,22 +25,37 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public ImmutableList<BufferConfiguration> VertexBuffers { get; private set; }
+        public ImmutableList<BufferDescription> VertexBuffers { get; private set; }
 
-        public VertexArrayObject(IEnumerable<BufferConfiguration> buffers, Buffer indexBuffer)
+        public VertexArrayObject(IEnumerable<BufferDescription> buffers, Buffer indexBuffer)
             : base(GL.GenVertexArray())
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
+            Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.VertexBuffer.Target == BufferTarget.ElementArrayBuffer));
+            Contract.Requires<ArgumentException>(indexBuffer.Type == typeof(uint));
+
+            logger.Debug("Initializing a new VertexArrayObject with {0} vertex buffers and {1} indices.".FormatWith(buffers.Count(), indexBuffer.Count));
 
             this.IndexBuffer = indexBuffer;
             this.VertexBuffers = buffers.ToImmutableList();
+        }
 
-            logger.Debug("Initializing a new VertexArrayObject with {0} vertex buffers and {1} indices.".FormatWith(this.VertexBuffers.Count, indexBuffer.Count));
+        public void Bind()
+        {
+            GL.BindVertexArray(this);
+        }
 
+        public void Unbind()
+        {
+            GL.BindVertexArray(0);
+        }
+
+        public void Initialize()
+        {
             using (GLBinding vaoBinding = new GLBinding(this))
             {
-                foreach (BufferConfiguration bufferConfig in this.VertexBuffers)
+                foreach (BufferDescription bufferConfig in this.VertexBuffers)
                 {
                     using (GLBinding vboBinding = new GLBinding(bufferConfig.VertexBuffer))
                     {
@@ -61,18 +76,6 @@ namespace LightClaw.Engine.Graphics
                 this.IndexBuffer.Bind();
             }
             this.IndexBuffer.Unbind();
-
-            logger.Debug("VertexArrayObject initialized.");
-        }
-
-        public void Bind()
-        {
-            GL.BindVertexArray(this);
-        }
-
-        public void Unbind()
-        {
-            GL.BindVertexArray(0);
         }
 
         protected override void Dispose(bool disposing)

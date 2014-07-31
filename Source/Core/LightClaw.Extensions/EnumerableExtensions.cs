@@ -31,6 +31,52 @@ namespace LightClaw.Extensions
             return (collection != null) ? collection.Where(item => item != null) : Enumerable.Empty<T>();
         }
 
+        public static async Task<T> FirstAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
+        {
+            Contract.Requires<ArgumentNullException>(collection != null);
+            Contract.Requires<ArgumentNullException>(predicate != null);
+
+            List<Task<T>> workingCopy = collection.ToList();
+
+            while (workingCopy.Count > 0)
+            {
+                Task<T> finishedTask = await Task.WhenAny(workingCopy);
+                if (predicate(finishedTask))
+                {
+                    return finishedTask.Result;
+                }
+                else
+                {
+                    workingCopy.Remove(finishedTask);
+                }
+            }
+
+            throw new InvalidOperationException("No task fulfilled the predicate.");
+        }
+
+        public static async Task<T> FirstOrDefaultAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
+        {
+            Contract.Requires<ArgumentNullException>(collection != null);
+            Contract.Requires<ArgumentNullException>(predicate != null);
+
+            List<Task<T>> workingCopy = collection.ToList();
+
+            while (workingCopy.Count > 0)
+            {
+                Task<T> finishedTask = await Task.WhenAny(workingCopy);
+                if (predicate(finishedTask))
+                {
+                    return finishedTask.Result;
+                }
+                else
+                {
+                    workingCopy.Remove(finishedTask);
+                }
+            }
+
+            return default(T);
+        }
+
         [Pure]
         public static IEnumerable<T> Yield<T>(this T item)
         {

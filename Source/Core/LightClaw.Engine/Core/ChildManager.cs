@@ -7,12 +7,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
     [DataContract]
     public abstract class ChildManager<T> : Manager
-        where T : IControllable
+        where T : IControllable, IDrawable
     {
         private ObservableCollection<T> _Items = new ObservableCollection<T>();
 
@@ -84,7 +85,7 @@ namespace LightClaw.Engine.Core
             this.PerformChildAction(item => item.LateUpdate());
         }
 
-        private void PerformChildAction(Action<IControllable> action)
+        private void PerformChildAction(Action<T> action)
         {
             Contract.Requires<ArgumentNullException>(action != null);
 

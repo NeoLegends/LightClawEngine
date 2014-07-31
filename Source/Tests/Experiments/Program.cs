@@ -54,27 +54,27 @@ namespace Experiments
             //    LogManager.Shutdown();
             //}
 
-            XmlLayout.LoggingEventInfo entry = new XmlLayout.LoggingEventInfo()
-            {
-                Exception = new XmlLayout.ExceptionInfo(new Exception("Hello, this is a test!")),
-                Level = "INFO",
-                Location = new XmlLayout.Location()
-                {
-                    ClassName = "Program",
-                    FileName = "Program.cs",
-                    LineNumber = 64,
-                    MethodName = "Main"
-                },
-                Logger = "Experiments.Program",
-                Message = "Something normal happened.",
-                Thread = "1",
-                Timestamp = DateTime.UtcNow.ToString()
-            };
+            Vector3 first = Vector3.Random;
+            Vector3 second = Vector3.Random;
+            Vector3 third = Vector3.Random;
 
-            using (FileStream fs = new FileStream("E:\\Users\\Moritz\\Desktop\\Test.xml", FileMode.Create, FileAccess.ReadWrite))
-            {
-                new DataContractSerializer(typeof(XmlLayout.LoggingEventInfo)).WriteObject(fs, entry);
-            }
+            Vector3[] data = new[] { first, second, third };
+
+            byte[] bufferBlockCopyResult = new byte[data.Length * Vector3.SizeInBytes];
+            System.Buffer.BlockCopy(data, 0, bufferBlockCopyResult, 0, data.Length * Vector3.SizeInBytes);
+
+            byte[] marshalResult = new byte[data.Length * Vector3.SizeInBytes];
+            IntPtr unmanagedPointer = Marshal.AllocHGlobal(data.Length * Vector3.SizeInBytes);
+            Marshal.StructureToPtr(data[0], unmanagedPointer, false);
+            Marshal.StructureToPtr(data[1], (IntPtr)(unmanagedPointer + Vector3.SizeInBytes), false);
+            Marshal.StructureToPtr(data[2], (IntPtr)(unmanagedPointer + 2 * Vector3.SizeInBytes), false);
+            Marshal.Copy(unmanagedPointer, marshalResult, 0, marshalResult.Length);
+            Marshal.FreeHGlobal(unmanagedPointer);
+
+            Console.WriteLine(bufferBlockCopyResult.SequenceEqual(marshalResult));
+
+            Console.WriteLine("Finished.");
+            Console.ReadLine();
         }
     }
 }

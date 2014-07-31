@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -112,7 +113,10 @@ namespace LightClaw.Engine.Core
                 logger.Info("Saving scene to a stream.");
 
                 this.Raise(this.Saving);
-                new NetDataContractSerializer().WriteObject(s, this);
+                using (DeflateStream deflateStream = new DeflateStream(s, CompressionLevel.Optimal, true))
+                {
+                    new NetDataContractSerializer().WriteObject(deflateStream, this);
+                }
                 this.Raise(this.Saved);
 
                 logger.Info("Scene saved.");
@@ -161,6 +165,17 @@ namespace LightClaw.Engine.Core
             {
                 gameObject.Scene = this;
             }
+        }
+
+        public static Task<Scene> Load(Stream s)
+        {
+            return Task.Run(() =>
+            {
+                using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
+                {
+                    return (Scene)new NetDataContractSerializer().ReadObject(deflateStream);
+                }
+            });
         }
     }
 }

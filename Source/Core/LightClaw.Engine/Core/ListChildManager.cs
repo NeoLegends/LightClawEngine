@@ -6,12 +6,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
     [DataContract]
     public class ListChildManager<T> : ChildManager<T>, IList<T>, INotifyCollectionChanged
-        where T : IControllable
+        where T : IControllable, IDrawable
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 

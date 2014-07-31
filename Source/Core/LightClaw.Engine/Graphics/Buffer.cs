@@ -21,6 +21,8 @@ namespace LightClaw.Engine.Graphics
 
         public BufferTarget Target { get; private set; }
 
+        public Type Type { get; private set; }
+
         public Buffer(BufferTarget target, BufferUsageHint hint)
             : base(GL.GenBuffer())
         {
@@ -48,6 +50,7 @@ namespace LightClaw.Engine.Graphics
             logger.Debug("Replacing the buffer's data with new data with length {0}.".FormatWith(data.Length));
 
             this.Count = data.Length;
+            this.Type = typeof(T);
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, this.Hint);
@@ -65,6 +68,7 @@ namespace LightClaw.Engine.Graphics
             logger.Debug("Replacing a subset ({0} elements, starting at {1}) of a buffer's data.".FormatWith(data.Length, offsetInBytes));
 
             this.Count = offsetInBytes + data.Length;
+            this.Type = typeof(T);
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data);

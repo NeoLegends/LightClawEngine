@@ -12,6 +12,7 @@ namespace LightClaw.Extensions
     {
         [Pure]
         public static IEnumerable<Type> GetTypesByBase<T>(this Assembly assembly, bool includeNonPublic)
+            where T : class
         {
             Contract.Requires<ArgumentNullException>(assembly != null);
             Contract.Ensures(Contract.Result<IEnumerable<Type>>().All(type => typeof(T).IsAssignableFrom(type)));

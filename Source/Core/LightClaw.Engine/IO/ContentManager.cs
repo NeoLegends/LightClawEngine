@@ -61,7 +61,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).WhenFirst(t => t.Result);
+                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).FirstOrDefaultAsync(t => t.Result);
             }
         }
 
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.IO
             }
         }
 
-        public async Task<T> LoadAsync<T>(string resourceString, object parameter = null)
+        public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null)
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
@@ -88,34 +88,36 @@ namespace LightClaw.Engine.IO
 
                 if (!this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || 
                     (asset = cachedAsset.Target) == null ||
-                    !(asset is T)) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
+                    !(assetType.IsAssignableFrom(asset.GetType()))) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
                 {
-                    using (Stream assetStream = await this.GetStreamInternal(resourceString))
+                    try
                     {
-                        if (assetStream == null)
+                        using (Stream assetStream = await this.GetStreamInternal(resourceString))
                         {
-                            throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
-                        }
-
-                        foreach (IContentReader reader in this.readers)
-                        {
-                            asset = await reader.ReadAsync(this, resourceString, assetStream, typeof(T), parameter);
-                            if (asset != null)
+                            if (assetStream == null)
                             {
-                                break;
+                                throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
                             }
-                        }
-                        if (asset == null)
-                        {
-                            throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
-                        }
 
-                        cachedAsset = new WeakReference(asset);
-                        this.cachedAssets.AddOrUpdate(resourceString, cachedAsset, (key, oldValue) => cachedAsset);
+                            asset = await this.readers
+                                              .Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
+                                              .FirstOrDefaultAsync(t => t.Result != null);
+                            if (asset == null)
+                            {
+                                throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
+                            }
+
+                            cachedAsset = new WeakReference(asset);
+                            this.cachedAssets.AddOrUpdate(resourceString, cachedAsset, (key, oldValue) => cachedAsset);
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Although it shouldn't, Stream might throw ODE when disposed two times -> catch that.
                     }
                 }
 
-                return (T)asset;
+                return asset;
             }
         }
 
@@ -131,7 +133,9 @@ namespace LightClaw.Engine.IO
 
         private Task<Stream> GetStreamInternal(string resourceString) // Version w/o locking to avoid deadlocks when LoadAsync calls GetStream
         {
-            return this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).WhenFirst(t => t.Result != null);
+            Contract.Requires<ArgumentNullException>(resourceString != null);
+
+            return this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).FirstOrDefaultAsync(t => t.Result != null);
         }
 
         [ContractInvariantMethod]

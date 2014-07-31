@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,6 +10,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
+using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -17,99 +19,178 @@ namespace LightClaw.Engine.Graphics
     {
         private static ILog logger = LogManager.GetLogger(typeof(Mesh));
 
-        [DataMember]
-        public string MeshFormat { get; private set; }
+        private MeshData meshData;
 
-        [IgnoreDataMember]
-        public MeshPart Part { get; private set; }
+        private string _ResourceString;
 
         [DataMember]
-        public string ResourceString { get; private set; }
+        public string ResourceString
+        {
+            get
+            {
+                return _ResourceString;
+            }
+            private set
+            {
+                this.SetProperty(ref _ResourceString, value);
+            }
+        }
+
+        private Shader _Shader;
+
+        public Shader Shader
+        {
+            get
+            {
+                return _Shader;
+            }
+            private set
+            {
+                this.SetProperty(ref _Shader, value);
+            }
+        }
+
+        private ImmutableList<Texture> _Textures;
+
+        public ImmutableList<Texture> Textures
+        {
+            get
+            {
+                return _Textures;
+            }
+            private set
+            {
+                this.SetProperty(ref _Textures, value);
+            }
+        }
+
+        private VertexArrayObject _Vao;
+
+        public VertexArrayObject Vao
+        {
+            get
+            {
+                return _Vao;
+            }
+            private set
+            {
+                this.SetProperty(ref _Vao, value);
+            }
+        }
 
         private Mesh() { }
 
-        public Mesh(string resourceString, string meshFormat)
+        public Mesh(string resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(meshFormat));
 
-            logger.Debug("Initializing a new mesh from resource string '{0}' and format '{1}'.".FormatWith(resourceString, meshFormat));
+            logger.Info("Initializing a new mesh from resource string '{0}'.".FormatWith(resourceString));
 
-            this.MeshFormat = meshFormat;
+            this.Name = resourceString;
             this.ResourceString = resourceString;
-        }
-
-        public Mesh(MeshPart part)
-        {
-            Contract.Requires<ArgumentNullException>(part != null);
-
-            logger.Debug("Initilizing a new mesh from a mesh part.");
-
-            this.Part = part;
         }
 
         protected override void Dispose(bool disposing)
         {
-            this.Part = null; // Prevent drawing after disposal
             base.Dispose(disposing);
         }
 
         protected override void OnDraw()
         {
-            MeshPart part = this.Part;
-            if (part != null)
+            Shader shader = this.Shader;
+            ImmutableList<Texture> textures = this.Textures;
+            VertexArrayObject vao = this.Vao;
+            if (shader != null && textures != null && vao != null)
             {
-                part.Draw();
+                using (GLBinding shaderBinding = new GLBinding(shader))
+                using (TextureGLBinding textureBinding = new TextureGLBinding(textures))
+                using (GLBinding vaoBinding = new GLBinding(vao))
+                {
+                    GL.DrawElements(BeginMode.Triangles, vao.IndexBuffer.Count, DrawElementsType.UnsignedShort, 0);
+                }
             }
+
             base.OnDraw();
         }
 
         protected override void OnLoad()
         {
-            if (this.ResourceString != null && this.MeshFormat != null && this.Part == null)
-            {
-                logger.Info("Loading a mesh from '{0}' as '{1}'.".FormatWith(this.ResourceString, this.MeshFormat));
-                Task<MeshPart> loaderTask = this.IocC.Resolve<IContentManager>()
-                                                     .LoadAsync<MeshPart>(this.ResourceString, this.MeshFormat);
+            logger.Debug("Loading mesh '{0}'.".FormatWith(this.Name ?? "N/A"));
+            Task<MeshData> meshDataTask = (this.meshData != null) ? Task.FromResult(this.meshData) : this.IocC.Resolve<IContentManager>()
+                                                                                                              .LoadAsync<MeshData>(this.ResourceString);
 
-                loaderTask.ContinueWith(
-                    t =>
-                    {
-                        this.Part = t.Result;
-                        this.Part.Component = this;
-                        logger.Info("Mesh '{0}' loaded successfully.");
-                    },
-                    TaskContinuationOptions.OnlyOnRanToCompletion
-                );
-                loaderTask.ContinueWith(
-                    t => logger.Warn(
-                        "Loading mesh '{0}' as '{1}' failed. At least one exception was thrown.".FormatWith(this.ResourceString, this.MeshFormat), 
-                        t.Exception
-                    ),
-                    TaskContinuationOptions.OnlyOnFaulted
-                );
-            }
-            base.OnLoad();
+            meshDataTask.ContinueWith(t =>
+            {
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            meshDataTask.ContinueWith(t =>
+            {
+                logger.Warn("Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? "N/A"), t.Exception);
+            }, TaskContinuationOptions.OnlyOnFaulted);
         }
 
         protected override void OnUpdate(GameTime gameTime)
         {
-            MeshPart part = this.Part;
-            if (part != null)
+            Shader s = this.Shader;
+            if (s != null)
             {
-                part.Update(gameTime);
+                s.Update(gameTime);
             }
             base.OnUpdate(gameTime);
         }
 
         protected override void OnLateUpdate()
         {
-            MeshPart part = this.Part;
-            if (part != null)
+            Shader s = this.Shader;
+            if (s != null)
             {
-                part.LateUpdate();
+                s.LateUpdate();
             }
             base.OnLateUpdate();
+        }
+
+        protected struct TextureGLBinding : IDisposable, IBindable
+        {
+            private readonly IList<Texture> textures;
+
+            public TextureGLBinding(IList<Texture> texturesToBind, bool bindImmediately = true)
+            {
+                Contract.Requires<ArgumentNullException>(texturesToBind != null);
+
+                this.textures = texturesToBind;
+                if (bindImmediately)
+                {
+                    this.Bind();
+                }
+            }
+
+            public void Bind()
+            {
+                if (this.textures != null)
+                {
+                    for (TextureUnit texUnit = TextureUnit.Texture0; (int)texUnit < this.textures.Count; texUnit++)
+                    {
+                        GL.ActiveTexture(texUnit);
+                        this.textures[texUnit - TextureUnit.Texture0].Bind();
+                    }
+                }
+            }
+
+            public void Unbind()
+            {
+                if (this.textures != null)
+                {
+                    for (TextureUnit texUnit = TextureUnit.Texture0; (int)texUnit < this.textures.Count; texUnit++)
+                    {
+                        GL.ActiveTexture(texUnit);
+                        this.textures[texUnit - TextureUnit.Texture0].Unbind();
+                    }
+                }
+            }
+
+            void IDisposable.Dispose()
+            {
+                this.Unbind();
+            }
         }
     }
 }

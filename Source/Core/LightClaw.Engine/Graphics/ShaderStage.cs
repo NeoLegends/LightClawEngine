@@ -23,23 +23,28 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(source != null);
 
-            logger.Info("Initializing a new shader of type '{0}'.".FormatWith(type));
+            logger.Info("Initializing a new shader stage of type '{0}'.".FormatWith(type));
 
             this.Source = source;
             this.Type = type;
+        }
 
-            GL.ShaderSource(this, source);
+        public void Compile()
+        {
+            logger.Debug("Compiling shader stage on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+
+            GL.ShaderSource(this, this.Source);
             GL.CompileShader(this);
 
             int result = 0;
             if (!this.CheckStatus(ShaderParameter.CompileStatus, out result))
             {
-                string message = "Compiling the shader (Error Code: {0}) from source ({1}) failed.".FormatWith(result, source);
+                string message = "Compiling the shader stage (Error Code: {0}) from source ({1}) failed.".FormatWith(result, this.Source);
                 logger.Error(message);
                 throw new InvalidOperationException(message);
             }
 
-            logger.Debug("Shader initialized.");
+            logger.Debug("Shader stage compiled.");
         }
 
         protected override void Dispose(bool disposing)

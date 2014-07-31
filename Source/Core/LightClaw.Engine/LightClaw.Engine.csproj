@@ -100,7 +100,7 @@
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -213,9 +213,10 @@
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
     <Compile Include="Graphics\GLBinding.cs" />
-    <Compile Include="Graphics\BufferConfiguration.cs" />
+    <Compile Include="Graphics\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
+    <Compile Include="Graphics\MeshData.cs" />
     <Compile Include="Graphics\ShaderStage.cs" />
     <Compile Include="Graphics\Shader.cs" />
     <Compile Include="Graphics\Texture.cs" />
@@ -230,7 +231,6 @@
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
-    <Compile Include="Graphics\MeshPart.cs" />
     <Compile Include="Graphics\P3N3T2Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
@@ -243,8 +243,9 @@
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
+    <Compile Include="IO\MeshReader.cs" />
     <Compile Include="IO\SceneReader.cs" />
-    <Compile Include="IO\StringReader.cs" />
+    <Compile Include="IO\ShaderStageReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

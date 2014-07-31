@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Graphics
         public bool IsNormalized { get; private set; }
 
         [DataMember]
-        public int Offset { get; private set; }
+        public IntPtr Offset { get; private set; }
 
         [DataMember]
         public int Size { get; private set; }
@@ -29,7 +29,7 @@ namespace LightClaw.Engine.Graphics
         [DataMember]
         public VertexAttribPointerType Type { get; private set; }
 
-        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool isNormalized, int stride, int offset)
+        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool isNormalized, int stride, IntPtr offset)
             : this()
         {
             this.Index = index;

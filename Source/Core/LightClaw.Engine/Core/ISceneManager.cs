@@ -4,11 +4,12 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
     [ContractClass(typeof(ISceneManagerContracts))]
-    public interface ISceneManager : IControllable, IEnumerable<Scene>
+    public interface ISceneManager : IControllable, IEnumerable<Scene>, IDrawable
     {
         Scene this[int index] { get; }
 

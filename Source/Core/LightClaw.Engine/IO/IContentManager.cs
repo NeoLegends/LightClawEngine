@@ -17,7 +17,7 @@ namespace LightClaw.Engine.IO
 
         Task<Stream> GetStreamAsync(string resourceString);
 
-        Task<T> LoadAsync<T>(string resourceString, object parameter = null);
+        Task<object> LoadAsync(string resourceString, Type resourceType, object parameter = null);
 
         void Register(IContentReader reader);
 
@@ -48,10 +48,11 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<T> IContentManager.LoadAsync<T>(string resourceString, object parameter)
+        Task<object> IContentManager.LoadAsync(string resourceString, Type assetType, object parameter)
         {
             Contract.Requires<ArgumentNullException>(resourceString != null);
-            Contract.Ensures(Contract.Result<Task<T>>() != null);
+            Contract.Requires<ArgumentNullException>(assetType != null);
+            Contract.Ensures(Contract.Result<Task<object>>() != null);
 
             return null;
         }

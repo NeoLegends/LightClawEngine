@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
@@ -12,15 +13,43 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics
 {
     [ContractClass(typeof(ShaderProgramContracts))]
-    public abstract class Shader : GLObject, IBindable
+    public abstract class Shader : GLObject, IBindable, ILateUpdateable, IUpdateable
     {
         private static ILog logger = LogManager.GetLogger(typeof(Shader));
+
+        private object updateLock = new object();
+
+        public event EventHandler<ParameterEventArgs> LateUpdating;
+
+        public event EventHandler<ParameterEventArgs> LateUpdated;
+
+        public event EventHandler<ParameterEventArgs> Updating;
+
+        public event EventHandler<ParameterEventArgs> Updated;
+
+        private Component _Component;
+
+        public Component Component
+        {
+            get
+            {
+                return _Component;
+            }
+            internal set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Component, value);
+            }
+        }
+
+        public bool IsLinked { get; private set; }
 
         public abstract int SamplerCount { get; protected set; }
 
         public int ShaderCount { get; private set; }
 
-        public ImmutableList<ShaderStage> Shaders { get; private set; }
+        public ImmutableList<ShaderStage> Stages { get; private set; }
 
         public int TotalUniformLocationCount
         {
@@ -34,32 +63,28 @@ namespace LightClaw.Engine.Graphics
 
         public abstract int UniformLocationCount { get; protected set; }
 
-        internal Shader() : base(GL.CreateProgram()) { }
+        private Shader() : base(GL.CreateProgram()) { }
 
-        public Shader(IEnumerable<ShaderStage> shaders)
+        public Shader(IEnumerable<ShaderStage> shaders, Component component)
             : this()
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
+            Contract.Requires<ArgumentNullException>(component != null);
             Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
 
-            this.Shaders = shaders.ToImmutableList();
-            this.ShaderCount = this.Shaders.Count;
+            logger.Info("Initializing a new shader with {0} stages.".FormatWith(shaders.Count()));
 
-            logger.Info("Initializing a new shader with {0} shaders.".FormatWith(this.Shaders.Count));
-
-            foreach (ShaderStage shader in this.Shaders)
-            {
-                GL.AttachShader(this, shader);
-            }
-            GL.LinkProgram(this);
-            this.CheckCompileStatus();
-
-            logger.Debug("ShaderProgram initialized.");
+            this.Component = component;
+            this.Stages = shaders.ToImmutableList();
+            this.ShaderCount = this.Stages.Count;
         }
 
         public void Bind()
         {
-            GL.UseProgram(this);
+            if (this.IsLinked)
+            {
+                GL.UseProgram(this);
+            }
         }
 
         public void Unbind()
@@ -74,12 +99,57 @@ namespace LightClaw.Engine.Graphics
             return GL.GetUniformLocation(this, uniformName);
         }
 
-        protected abstract IEnumerable<int> GetSamplerUniformLocations();
+        public void Link()
+        {
+            if (!this.IsLinked)
+            {
+                logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+
+                foreach (ShaderStage shader in this.Stages)
+                {
+                    GL.AttachShader(this, shader);
+                }
+                GL.LinkProgram(this);
+
+                int linkStatus;
+                if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out linkStatus))
+                {
+                    string message = "Linking the shader failed. Error Code: {0}".FormatWith(linkStatus);
+                    logger.Error(message);
+                    logger.Error(GL.GetShaderInfoLog(this));
+
+                    throw new InvalidOperationException(message);
+                }
+                this.IsLinked = true;
+
+                logger.Debug("Shader linked.");
+            }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            lock (this.updateLock)
+            {
+                this.Raise(this.Updating);
+                this.OnUpdate(gameTime);
+                this.Raise(this.Updated);
+            }
+        }
+
+        public void LateUpdate()
+        {
+            lock (this.updateLock)
+            {
+                this.Raise(this.LateUpdating);
+                this.OnLateUpdate();
+                this.Raise(this.LateUpdated);
+            }
+        }
 
         protected override void Dispose(bool disposing)
         {
             this.Unbind();
-            foreach (ShaderStage shader in this.Shaders)
+            foreach (ShaderStage shader in this.Stages)
             {
                 try
                 {
@@ -113,23 +183,20 @@ namespace LightClaw.Engine.Graphics
             return (result == 1);
         }
 
-        private void CheckCompileStatus()
-        {
-            int result;
-            if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
-            {
-                string message = "Linking the shader failed. Error Code: {0}".FormatWith(result);
-                logger.Error(message);
-                logger.Error(GL.GetShaderInfoLog(this));
+        protected abstract void OnUpdate(GameTime gameTime);
 
-                throw new InvalidOperationException(message);
-            }
-        }
+        protected abstract void OnLateUpdate();
     }
 
     [ContractClassFor(typeof(Shader))]
     abstract class ShaderProgramContracts : Shader
     {
+        public ShaderProgramContracts() 
+            : base(Enumerable.Empty<ShaderStage>(), null) 
+        {
+            Contract.Requires(false);
+        }
+
         public override int SamplerCount
         {
             get
@@ -156,13 +223,6 @@ namespace LightClaw.Engine.Graphics
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
             }
-        }
-
-        protected override IEnumerable<int> GetSamplerUniformLocations()
-        {
-            Contract.Ensures(Contract.Result<IEnumerable<int>>().Count() == this.SamplerCount);
-
-            return null;
         }
     }
 }
