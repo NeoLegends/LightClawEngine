@@ -94,13 +94,13 @@ namespace LightClaw.Engine.Core
             base.RemoveAt(index);
         }
 
-        public Task Save(string resourceString)
+        public async Task Save(string resourceString)
         {
             Contract.Requires<ArgumentNullException>(resourceString != null);
 
-            using (FileStream fs = File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourceString)))
+            using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
             {
-                return this.Save(fs);
+                await this.Save(s);
             }
         }
 

@@ -6,13 +6,14 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a four dimensional mathematical quaternion.
     /// </summary>
-    [DataContract]
+    [DataContract, ProtoContract]
     [StructureInformation(4, 4, true)]
     public struct Quaternion : IEquatable<Quaternion>
     {
@@ -68,25 +69,25 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the quaternion.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(1)]
         public float X;
 
         /// <summary>
         /// The Y component of the quaternion.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(2)]
         public float Y;
 
         /// <summary>
         /// The Z component of the quaternion.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(3)]
         public float Z;
 
         /// <summary>
         /// The W component of the quaternion.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(4)]
         public float W;
 
         /// <summary>

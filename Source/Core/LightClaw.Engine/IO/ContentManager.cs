@@ -75,7 +75,18 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                return await this.GetStreamInternal(resourceString);
+                try
+                {
+                    return await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
+                                               .FirstAsync(t => (t.Result != null) && t.Result.CanRead && t.Result.CanWrite);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw new FileNotFoundException(
+                        "No writable stream was found. If reading is required only, consider registering an IContentReader.",
+                        ex
+                    );
+                }
             }
         }
 
@@ -92,7 +103,8 @@ namespace LightClaw.Engine.IO
                 {
                     try
                     {
-                        using (Stream assetStream = await this.GetStreamInternal(resourceString))
+                        using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
+                                                                        .FirstOrDefaultAsync(t => (t.Result != null) && t.Result.CanRead))
                         {
                             if (assetStream == null)
                             {
@@ -129,13 +141,6 @@ namespace LightClaw.Engine.IO
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
-        }
-
-        private Task<Stream> GetStreamInternal(string resourceString) // Version w/o locking to avoid deadlocks when LoadAsync calls GetStream
-        {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
-
-            return this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString)).FirstOrDefaultAsync(t => t.Result != null);
         }
 
         [ContractInvariantMethod]

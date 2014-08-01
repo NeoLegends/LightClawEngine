@@ -6,13 +6,14 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 3x3 Matrix ( contains only Scale and Rotation ).
     /// </summary>
-    [DataContract]
+    [DataContract, ProtoContract]
     [StructureInformation(9, 4, true)]
     public struct Matrix3x3 : IEquatable<Matrix3x3>
     {
@@ -57,55 +58,55 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(1)]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(2)]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(3)]
         public float M13;
 
         /// <summary>
         /// Value at row 2 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(4)]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(5)]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(6)]
         public float M23;
 
         /// <summary>
         /// Value at row 3 column 1 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(7)]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(8)]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the Matrix3x3.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(9)]
         public float M33;
 
         /// <summary>

@@ -54,24 +54,50 @@ namespace Experiments
             //    LogManager.Shutdown();
             //}
 
-            Vector3 first = Vector3.Random;
-            Vector3 second = Vector3.Random;
-            Vector3 third = Vector3.Random;
+            Vector3[] normals = new Vector3[1000];
+            Vector2[] texCoords = new Vector2[1000];
+            Vector3[] vertices = new Vector3[1000];
 
-            Vector3[] data = new[] { first, second, third };
+            for (int i = 0; i < normals.Length; i++)
+            {
+                normals[i] = Vector3.Random;
+            }
+            for (int i = 0; i < texCoords.Length; i++)
+            {
+                texCoords[i] = Vector2.Random;
+            }
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = Vector3.Random;
+            }
 
-            byte[] bufferBlockCopyResult = new byte[data.Length * Vector3.SizeInBytes];
-            System.Buffer.BlockCopy(data, 0, bufferBlockCopyResult, 0, data.Length * Vector3.SizeInBytes);
+            MeshData meshData = new MeshData(vertices, normals, texCoords);
 
-            byte[] marshalResult = new byte[data.Length * Vector3.SizeInBytes];
-            IntPtr unmanagedPointer = Marshal.AllocHGlobal(data.Length * Vector3.SizeInBytes);
-            Marshal.StructureToPtr(data[0], unmanagedPointer, false);
-            Marshal.StructureToPtr(data[1], (IntPtr)(unmanagedPointer + Vector3.SizeInBytes), false);
-            Marshal.StructureToPtr(data[2], (IntPtr)(unmanagedPointer + 2 * Vector3.SizeInBytes), false);
-            Marshal.Copy(unmanagedPointer, marshalResult, 0, marshalResult.Length);
-            Marshal.FreeHGlobal(unmanagedPointer);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, meshData);
+                Console.WriteLine("Pbuf: " + ms.Length);
+            }
 
-            Console.WriteLine(bufferBlockCopyResult.SequenceEqual(marshalResult));
+            using (MemoryStream ms = new MemoryStream())
+            {
+                meshData.Save(ms).Wait();
+                Console.WriteLine("Custom: " + ms.Length);
+            }
+
+            Stopwatch st = Stopwatch.StartNew();
+            for (int i = 0; i < 250; i++)
+            {
+                meshData.Save(Stream.Null).Wait();
+            }
+            Console.WriteLine("Saving 250 times using custom serialization took {0}ms.".FormatWith(st.Elapsed));
+
+            st.Restart();
+            for (int i = 0; i < 250; i++)
+            {
+                Serializer.Serialize(Stream.Null, meshData);
+            }
+            Console.WriteLine("Saving 250 times using protbuf-net took {0}ms.".FormatWith(st.Elapsed));
 
             Console.WriteLine("Finished.");
             Console.ReadLine();

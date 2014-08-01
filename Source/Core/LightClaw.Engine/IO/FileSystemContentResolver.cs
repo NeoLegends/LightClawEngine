@@ -35,7 +35,7 @@ namespace LightClaw.Engine.IO
             Stream result;
             try
             {
-                result = File.OpenRead(Path.Combine(this.RootPath, resourceString));
+                result = File.Open(Path.Combine(this.RootPath, resourceString), FileMode.OpenOrCreate, FileAccess.ReadWrite);
             }
             catch (Exception ex)
             {

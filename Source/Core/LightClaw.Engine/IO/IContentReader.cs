@@ -20,7 +20,7 @@ namespace LightClaw.Engine.IO
         Task<object> IContentReader.ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetStream != null);
             Contract.Requires<ArgumentNullException>(assetType != null);
             Contract.Ensures(Contract.Result<Task<object>>() != null);

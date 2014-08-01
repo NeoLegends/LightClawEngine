@@ -75,6 +75,8 @@ namespace LightClaw.Engine.Graphics
         {
             GL.Enable(EnableCap.Texture1D);
             GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.TextureCubeMap);
+            GL.Enable(EnableCap.TextureCubeMapSeamless);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1D);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1DArray);

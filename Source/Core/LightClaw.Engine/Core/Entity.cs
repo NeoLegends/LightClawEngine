@@ -8,10 +8,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Munq;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     [DataContract]
+    [ProtoContract, ProtoInclude(1, typeof(LightClaw.Engine.Graphics.MeshData))]
     public abstract class Entity : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

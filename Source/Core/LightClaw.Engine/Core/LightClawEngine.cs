@@ -33,7 +33,6 @@ namespace LightClaw.Engine.Core
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
-            //AppDomain.CurrentDomain.ProcessExit += (s, e) => LogManager.Shutdown();
         }
 
         static void Main(string[] args)

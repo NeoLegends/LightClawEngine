@@ -21,7 +21,7 @@ namespace LightClaw.Engine.IO
     {
         Task<bool> IContentResolver.ExistsAsync(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
 
             return null;
@@ -29,7 +29,7 @@ namespace LightClaw.Engine.IO
 
         Task<Stream> IContentResolver.GetStreamAsync(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
 
             return null;

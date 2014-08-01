@@ -29,7 +29,7 @@ namespace LightClaw.Engine.IO
     {
         Task<bool> IContentManager.ExistsAsync(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
 
             return null;
@@ -37,20 +37,22 @@ namespace LightClaw.Engine.IO
 
         void IContentManager.ForceReload(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
         }
 
         Task<Stream> IContentManager.GetStreamAsync(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
+            Contract.Ensures(Contract.Result<Task<Stream>>().Result.CanWrite);
+            Contract.Ensures(Contract.Result<Task<Stream>>().Result.CanRead);
 
             return null;
         }
 
         Task<object> IContentManager.LoadAsync(string resourceString, Type assetType, object parameter)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);
             Contract.Ensures(Contract.Result<Task<object>>() != null);
 

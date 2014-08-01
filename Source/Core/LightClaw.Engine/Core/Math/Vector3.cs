@@ -6,13 +6,14 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a three dimensional mathematical vector.
     /// </summary>
-    [DataContract]
+    [DataContract, ProtoContract]
     [StructureInformation(3, 4, true)]
     public struct Vector3 : IEquatable<Vector3>
     {
@@ -182,19 +183,19 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(1)]
         public float X;
 
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(2)]
         public float Y;
 
         /// <summary>
         /// The Z component of the vector.
         /// </summary>
-        [DataMember]
+        [DataMember, ProtoMember(3)]
         public float Z;
 
         /// <summary>

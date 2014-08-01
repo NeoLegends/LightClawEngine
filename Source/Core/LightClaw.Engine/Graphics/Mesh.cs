@@ -115,17 +115,20 @@ namespace LightClaw.Engine.Graphics
 
         protected override void OnLoad()
         {
-            logger.Debug("Loading mesh '{0}'.".FormatWith(this.Name ?? "N/A"));
+            logger.Debug("Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
             Task<MeshData> meshDataTask = (this.meshData != null) ? Task.FromResult(this.meshData) : this.IocC.Resolve<IContentManager>()
                                                                                                               .LoadAsync<MeshData>(this.ResourceString);
 
             meshDataTask.ContinueWith(t =>
             {
+                logger.Debug("Mesh '{0}' loaded successfully.".FormatWith(this.Name ?? this.ResourceString));
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
             meshDataTask.ContinueWith(t =>
             {
-                logger.Warn("Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? "N/A"), t.Exception);
+                logger.Warn("Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception);
             }, TaskContinuationOptions.OnlyOnFaulted);
+
+            base.OnLoad();
         }
 
         protected override void OnUpdate(GameTime gameTime)
