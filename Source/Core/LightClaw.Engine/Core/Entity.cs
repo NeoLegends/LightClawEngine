@@ -13,10 +13,24 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     [DataContract]
-    [ProtoContract, ProtoInclude(1, typeof(LightClaw.Engine.Graphics.MeshData))]
-    public abstract class Entity : INotifyPropertyChanged
+    public abstract class Entity : INameable, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _Name;
+
+        [DataMember]
+        public virtual string Name
+        {
+            get
+            {
+                return _Name ?? (Name = this.GetType().FullName);
+            }
+            set
+            {
+                this.SetProperty(ref _Name, value);
+            }
+        }
 
         private IocContainer _IocC = LightClawEngine.DefaultIocContainer;
 

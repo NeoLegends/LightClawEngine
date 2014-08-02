@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Core
                 this.EnsureAttachability(item);
             }
 
-            List<Component> alreadyAttachedComponents = new List<Component>(8);
+            List<Component> alreadyAttachedComponents = new List<Component>(8); // 8 seems to be a good number, more components are unlikely to be attached at once
             foreach (Component comp in items)
             {
                 alreadyAttachedComponents.Add(comp);

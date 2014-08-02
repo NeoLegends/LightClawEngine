@@ -21,7 +21,7 @@ namespace LightClaw.Engine.Core
         {
             if (loggingEvent != null)
             {
-                using (StringWriter sw = new StringWriter())
+                using (StringWriter sw = new StringWriter(new StringBuilder(2048)))
                 using (XmlTextWriter xmlTw = new XmlTextWriter(sw))
                 {
                     this.serializer.WriteObject(xmlTw, new XmlLayout.LoggingEventInfo(loggingEvent));

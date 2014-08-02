@@ -152,7 +152,7 @@ namespace LightClaw.Engine.Core
 
         public virtual void RemoveAt(int index)
         {
-            Contract.Assert(index <= this.Count);
+            Contract.Assert(index < this.Count);
 
             this.Items.RemoveAt(index);
         }

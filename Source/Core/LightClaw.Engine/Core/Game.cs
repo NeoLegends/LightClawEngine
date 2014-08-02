@@ -70,20 +70,6 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private string _Name;
-
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-            set
-            {
-                this.SetProperty(ref _Name, value);
-            }
-        }
-
         private ISceneManager _SceneManager;
 
         public ISceneManager SceneManager
@@ -92,7 +78,7 @@ namespace LightClaw.Engine.Core
             {
                 return _SceneManager;
             }
-            set
+            private set
             {
                 this.SetProperty(ref _SceneManager, value);
             }

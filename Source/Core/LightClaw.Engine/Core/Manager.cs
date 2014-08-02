@@ -46,21 +46,6 @@ namespace LightClaw.Engine.Core
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
-        private string _Name;
-
-        [DataMember]
-        public string Name
-        {
-            get
-            {
-                return _Name ?? (Name = this.GetType().FullName);
-            }
-            set
-            {
-                this.SetProperty(ref _Name, value);
-            }
-        }
-
         private bool _IsEnabled = false;
 
         [DataMember]
@@ -113,10 +98,11 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsLoaded && !this.IsEnabled)
                 {
-                    this.Raise(this.Enabling);
-                    this.OnEnable();
-                    this.IsEnabled = true;
-                    this.Raise(this.Enabled);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Enabling, this.Enabled))
+                    {
+                        this.OnEnable();
+                        this.IsEnabled = true;
+                    }
                 }
             }
         }
@@ -127,10 +113,11 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsLoaded && this.IsEnabled)
                 {
-                    this.Raise(this.Disabling);
-                    this.OnDisable();
-                    this.IsEnabled = false;
-                    this.Raise(this.Disabled);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Disabling, this.Disabled))
+                    {
+                        this.OnDisable();
+                        this.IsEnabled = false;
+                    }
                 }
             }
         }
@@ -141,9 +128,10 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsLoaded && this.IsEnabled)
                 {
-                    this.Raise(this.Drawing);
-                    this.OnDraw();
-                    this.Raise(this.Drawn);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
+                    {
+                        this.OnDraw();
+                    }
                 }
             }
         }
@@ -154,10 +142,11 @@ namespace LightClaw.Engine.Core
             {
                 if (!this.IsLoaded)
                 {
-                    this.Raise(this.Loading);
-                    this.OnLoad();
-                    this.IsLoaded = true;
-                    this.Raise(this.Loaded);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Loading, this.Loaded))
+                    {
+                        this.OnLoad();
+                        this.IsLoaded = true;
+                    }
                 }
             }
         }
@@ -166,9 +155,10 @@ namespace LightClaw.Engine.Core
         {
             lock (this.stateLock)
             {
-                this.Raise(this.Resetting);
-                this.OnReset();
-                this.Raise(this.Resetted);
+                using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Resetting, this.Resetted))
+                {
+                    this.OnReset();
+                }
             }
         }
 
@@ -178,9 +168,10 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsEnabled)
                 {
-                    this.Raise(this.Updating);
-                    this.OnUpdate(gameTime);
-                    this.Raise(this.Updated);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+                    {
+                        this.OnUpdate(gameTime);
+                    }
                 }
             }
         }
@@ -191,9 +182,10 @@ namespace LightClaw.Engine.Core
             {
                 if (this.IsEnabled)
                 {
-                    this.Raise(this.LateUpdating);
-                    this.OnLateUpdate();
-                    this.Raise(this.LateUpdated);
+                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+                    {
+                        this.OnLateUpdate();
+                    }
                 }
             }
         }

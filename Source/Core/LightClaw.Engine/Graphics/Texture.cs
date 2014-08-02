@@ -27,7 +27,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private SizedInternalFormat _SizedInternalFormat;
+        private SizedInternalFormat _SizedInternalFormat = SizedInternalFormat.Rgba8i;
 
         public SizedInternalFormat SizedInternalFormat
         {
@@ -41,7 +41,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private TextureTarget _Target;
+        private TextureTarget _Target = TextureTarget.Texture2D;
 
         public TextureTarget Target
         {

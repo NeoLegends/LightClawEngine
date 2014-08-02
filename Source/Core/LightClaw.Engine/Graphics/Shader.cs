@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
@@ -12,12 +12,17 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
+    [DataContract]
     [ContractClass(typeof(ShaderProgramContracts))]
     public abstract class Shader : GLObject, IBindable, ILateUpdateable, IUpdateable
     {
         private static ILog logger = LogManager.GetLogger(typeof(Shader));
 
-        private object updateLock = new object();
+        private readonly object updateLock = new object();
+
+        private bool alreadyUpdatedThisFrame = false;
+
+        private bool alreadyLateUpdatedThisFrame = false;
 
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
@@ -27,29 +32,32 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> Updated;
 
-        private Component _Component;
+        private Material _Material;
 
-        public Component Component
+        [IgnoreDataMember]
+        public Material Material
         {
             get
             {
-                return _Component;
+                return _Material;
             }
-            internal set
+            protected set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _Component, value);
+                this.SetProperty(ref _Material, value);
             }
         }
 
+        [IgnoreDataMember]
         public bool IsLinked { get; private set; }
 
+        [IgnoreDataMember]
         public abstract int SamplerCount { get; protected set; }
 
+        [IgnoreDataMember]
         public int ShaderCount { get; private set; }
 
-        public ImmutableList<ShaderStage> Stages { get; private set; }
+        [IgnoreDataMember]
+        public ShaderStage[] Stages { get; private set; }
 
         public int TotalUniformLocationCount
         {
@@ -61,22 +69,23 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        [IgnoreDataMember]
         public abstract int UniformLocationCount { get; protected set; }
 
         private Shader() : base(GL.CreateProgram()) { }
 
-        public Shader(IEnumerable<ShaderStage> shaders, Component component)
+        public Shader(IEnumerable<ShaderStage> shaders, Material material)
             : this()
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
-            Contract.Requires<ArgumentNullException>(component != null);
+            Contract.Requires<ArgumentNullException>(material != null);
             Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
 
             logger.Info("Initializing a new shader with {0} stages.".FormatWith(shaders.Count()));
 
-            this.Component = component;
-            this.Stages = shaders.ToImmutableList();
-            this.ShaderCount = this.Stages.Count;
+            this.Material = material;
+            this.Stages = shaders.ToArray();
+            this.ShaderCount = this.Stages.Length;
         }
 
         public void Bind()
@@ -101,48 +110,69 @@ namespace LightClaw.Engine.Graphics
 
         public void Link()
         {
-            if (!this.IsLinked)
+            lock (this.updateLock)
             {
-                logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
-
-                foreach (ShaderStage shader in this.Stages)
+                if (!this.IsLinked)
                 {
-                    GL.AttachShader(this, shader);
+                    logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+
+                    foreach (ShaderStage shader in this.Stages)
+                    {
+                        GL.AttachShader(this, shader);
+                    }
+                    GL.LinkProgram(this);
+
+                    int linkStatus;
+                    if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out linkStatus))
+                    {
+                        string message = "Linking the shader failed. Error Code: {0}".FormatWith(linkStatus);
+                        logger.Error(message);
+                        logger.Error(GL.GetShaderInfoLog(this));
+
+                        throw new InvalidOperationException(message);
+                    }
+                    this.IsLinked = true;
+
+                    logger.Debug("Shader linked.");
                 }
-                GL.LinkProgram(this);
-
-                int linkStatus;
-                if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out linkStatus))
-                {
-                    string message = "Linking the shader failed. Error Code: {0}".FormatWith(linkStatus);
-                    logger.Error(message);
-                    logger.Error(GL.GetShaderInfoLog(this));
-
-                    throw new InvalidOperationException(message);
-                }
-                this.IsLinked = true;
-
-                logger.Debug("Shader linked.");
             }
         }
 
         public void Update(GameTime gameTime)
         {
-            lock (this.updateLock)
+            if (!alreadyUpdatedThisFrame)
             {
-                this.Raise(this.Updating);
-                this.OnUpdate(gameTime);
-                this.Raise(this.Updated);
+                lock (this.updateLock)
+                {
+                    if (!this.alreadyUpdatedThisFrame)
+                    {
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+                        {
+                            this.alreadyLateUpdatedThisFrame = false;
+                            this.OnUpdate(gameTime);
+                            this.alreadyUpdatedThisFrame = true;
+                        }
+                    }
+                }
             }
         }
 
         public void LateUpdate()
         {
-            lock (this.updateLock)
+            if (!this.alreadyLateUpdatedThisFrame)
             {
-                this.Raise(this.LateUpdating);
-                this.OnLateUpdate();
-                this.Raise(this.LateUpdated);
+                lock (this.updateLock)
+                {
+                    if (!this.alreadyLateUpdatedThisFrame)
+                    {
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+                        {
+                            this.alreadyUpdatedThisFrame = false;
+                            this.OnLateUpdate();
+                            this.alreadyLateUpdatedThisFrame = true;
+                        }
+                    }
+                }
             }
         }
 

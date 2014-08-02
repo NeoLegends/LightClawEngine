@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.IO
 {
@@ -24,7 +25,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(readers != null);
 
-            foreach (IContentReader reader in readers.Where(r => r != null))
+            foreach (IContentReader reader in readers.FilterNull())
             {
                 manager.Register(reader);
             }
@@ -35,7 +36,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
 
-            foreach (IContentResolver resolver in resolvers.Where(r => r != null))
+            foreach (IContentResolver resolver in resolvers.FilterNull())
             {
                 manager.Register(resolver);
             }

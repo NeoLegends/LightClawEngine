@@ -193,6 +193,7 @@
     <Compile Include="Core\Math\Vector4.cs" />
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\Entity.cs" />
+    <Compile Include="Core\ParameterEventArgsRaiser.cs" />
     <Compile Include="Core\RandomF.cs" />
     <Compile Include="Core\DependsOnAttribute.cs" />
     <Compile Include="Core\ReverseComparer.cs" />
@@ -216,7 +217,12 @@
     <Compile Include="Graphics\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
-    <Compile Include="Graphics\MeshData.cs" />
+    <Compile Include="Graphics\Material.cs" />
+    <Compile Include="Graphics\Model.cs" />
+    <Compile Include="Graphics\ModelMesh.cs" />
+    <Compile Include="Graphics\ModelMeshCollection.cs" />
+    <Compile Include="Graphics\ModelMeshPart.cs" />
+    <Compile Include="Graphics\ModelMeshPartCollection.cs" />
     <Compile Include="Graphics\ShaderStage.cs" />
     <Compile Include="Graphics\Shader.cs" />
     <Compile Include="Graphics\Texture.cs" />
@@ -226,12 +232,13 @@
     <Compile Include="Graphics\Texture3D.cs" />
     <Compile Include="Graphics\Texture3DBase.cs" />
     <Compile Include="Graphics\Texture2DBase.cs" />
+    <Compile Include="Graphics\TextureGLBinding.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
-    <Compile Include="Graphics\P3N3T2Vertex.cs" />
+    <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
@@ -258,9 +265,6 @@
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="protobuf-net">
       <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />

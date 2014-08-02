@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
@@ -42,21 +43,34 @@ namespace LightClaw.Engine.Graphics
             GL.BindBuffer(this.Target, 0);
         }
 
+        public void Update<T>(T data)
+            where T : struct
+        {
+            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
+
+            this.Update(data, 0);
+        }
+
+        public void Update<T>(T data, int offsetInBytes)
+            where T : struct
+        {
+            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
+
+            this.CalculateCount(1, Marshal.SizeOf(typeof(T)), offsetInBytes);
+            this.Type = typeof(T);
+            using (GLBinding bufferBinding = new GLBinding(this))
+            {
+                GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)Marshal.SizeOf(typeof(T)), ref data);
+            }
+        }
+
         public void Update<T>(T[] data)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
 
-            logger.Debug("Replacing the buffer's data with new data with length {0}.".FormatWith(data.Length));
-
-            this.Count = data.Length;
-            this.Type = typeof(T);
-            using (GLBinding bufferBinding = new GLBinding(this))
-            {
-                GL.BufferData(this.Target, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data, this.Hint);
-            }
-
-            logger.Debug("Data replaced.");
+            this.UpdateRange(data, 0);
         }
 
         public void UpdateRange<T>(T[] data, int offsetInBytes)
@@ -64,17 +78,14 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(offsetInBytes >= 0);
+            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
 
-            logger.Debug("Replacing a subset ({0} elements, starting at {1}) of a buffer's data.".FormatWith(data.Length, offsetInBytes));
-
-            this.Count = offsetInBytes + data.Length;
+            this.CalculateCount(data.Length, Marshal.SizeOf(typeof(T)), offsetInBytes);
             this.Type = typeof(T);
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data);
             }
-
-            logger.Debug("Subset of data replaced.");
         }
 
         protected override void Dispose(bool disposing)
@@ -88,6 +99,12 @@ namespace LightClaw.Engine.Graphics
                 throw; // Log and swallow in the future!
             }
             base.Dispose(disposing);
+        }
+
+        private void CalculateCount(int count, int sizeOfNewData, int offset)
+        {
+            int difference = (count * sizeOfNewData - (this.Count - offset));
+            this.Count = this.Count + ((difference >= 0) ? difference : 0);
         }
 
         public static Buffer Create<T>(T[] data)

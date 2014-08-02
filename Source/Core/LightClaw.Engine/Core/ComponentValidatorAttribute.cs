@@ -26,7 +26,7 @@ namespace LightClaw.Engine.Core
     {
         public AttachmentValidatorAttribute() { }
 
-        public AttachmentValidatorAttribute(Type compoentType) : base(compoentType) { }
+        public AttachmentValidatorAttribute(Type componentType) : base(componentType) { }
 
         public bool Validate(GameObject gameObjectToAttachTo)
         {

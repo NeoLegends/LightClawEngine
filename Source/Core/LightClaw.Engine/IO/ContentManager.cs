@@ -50,11 +50,9 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(readers != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
-            Contract.Requires<ArgumentException>(readers.All(reader => reader != null));
-            Contract.Requires<ArgumentException>(resolvers.All(resolver => resolver != null));
 
-            this.Register(readers);
-            this.Register(resolvers);
+            this.Register(readers.FilterNull());
+            this.Register(resolvers.FilterNull());
         }
 
         public async Task<bool> ExistsAsync(string resourceString)
@@ -111,9 +109,8 @@ namespace LightClaw.Engine.IO
                                 throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
                             }
 
-                            asset = await this.readers
-                                              .Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
-                                              .FirstOrDefaultAsync(t => t.Result != null);
+                            asset = await this.readers.Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
+                                                      .FirstOrDefaultAsync(t => t.Result != null);
                             if (asset == null)
                             {
                                 throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
@@ -146,8 +143,8 @@ namespace LightClaw.Engine.IO
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this.readers.All(reader => readers != null));
-            Contract.Invariant(this.resolvers.All(resolver => readers != null));
+            Contract.Invariant(Contract.ForAll(this.readers, reader => reader != null));
+            Contract.Invariant(Contract.ForAll(this.resolvers, resolver => resolver != null));
         }
     }
 }
