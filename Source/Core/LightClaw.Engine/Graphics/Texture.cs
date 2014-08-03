@@ -55,7 +55,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _Width = 1;
+        private int _Width;
 
         public int Width
         {
@@ -73,10 +73,10 @@ namespace LightClaw.Engine.Graphics
 
         static Texture()
         {
-            GL.Enable(EnableCap.Texture1D);
+            // Not sure whether bug still exists, but on http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states
+            // that ATI cards had problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card,
+            // I can't test that.
             GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.TextureCubeMap);
-            GL.Enable(EnableCap.TextureCubeMapSeamless);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1D);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1DArray);

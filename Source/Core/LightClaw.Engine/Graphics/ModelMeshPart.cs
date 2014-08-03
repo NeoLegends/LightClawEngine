@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,6 +65,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public ModelMeshPart() { }
+
+        public ModelMeshPart(Material material, VertexArrayObject vao)
+        {
+            Contract.Requires<ArgumentNullException>(material != null);
+            Contract.Requires<ArgumentNullException>(vao != null);
+
+            this.Material = material;
+            this.Vao = vao;
+        }
+
         public void Draw()
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
@@ -71,7 +83,7 @@ namespace LightClaw.Engine.Graphics
                 VertexArrayObject vao = this.Vao;
                 if (vao != null)
                 {
-                    // Material will be bound by ModelMesh to reduce shader switches, do not bind here!
+                    // Material will be bound by ModelMesh to reduce shader switches, do not bind here
                     using (GLBinding vaoBinding = new GLBinding(vao))
                     {
                         GL.DrawElements(BeginMode.TriangleStrip, vao.IndexCount, DrawElementsType.UnsignedShort, 0);

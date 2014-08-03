@@ -44,13 +44,7 @@ namespace LightClaw.Engine.Graphics
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.Position.GetHashCode();
-                hash = hash * Constants.HashFactor + this.Normal.GetHashCode();
-                hash = hash * Constants.HashFactor + this.TexCoord.GetHashCode();
-                return hash;
-            }
+            return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord);
         }
 
         public static bool operator ==(P3N3T2Vertex left, P3N3T2Vertex right)

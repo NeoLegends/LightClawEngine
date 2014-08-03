@@ -11,7 +11,7 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract]
+    [DataContract(IsReference = true)]
     public sealed class GameObject : ListChildManager<Component>
     {
         public event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;

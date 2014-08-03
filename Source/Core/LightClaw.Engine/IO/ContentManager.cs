@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
+using log4net;
 
 namespace LightClaw.Engine.IO
 {
@@ -35,6 +36,8 @@ namespace LightClaw.Engine.IO
                                                                                   }
                                                                                   catch { return null; }
                                                                               }).FilterNull().ToArray();
+
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ContentManager));
 
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
@@ -63,14 +66,10 @@ namespace LightClaw.Engine.IO
             }
         }
 
-        public void ForceReload(string resourceString)
-        {
-            WeakReference weakRef;
-            this.cachedAssets.TryRemove(resourceString, out weakRef);
-        }
-
         public async Task<Stream> GetStreamAsync(string resourceString)
         {
+            logger.Debug("Obtaining stream around '{0}'.".FormatWith(resourceString));
+
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
                 try
@@ -80,6 +79,7 @@ namespace LightClaw.Engine.IO
                 }
                 catch (InvalidOperationException ex)
                 {
+                    logger.Warn("No writable stream around '{0}' found.".FormatWith(resourceString));
                     throw new FileNotFoundException(
                         "No writable stream was found. If reading is required only, consider registering an IContentReader.",
                         ex
@@ -88,17 +88,21 @@ namespace LightClaw.Engine.IO
             }
         }
 
-        public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null)
+        public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
+            logger.Debug("Loading an asset of type '{0}' from resource '{0}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
+
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
                 WeakReference cachedAsset = null;
                 object asset = null;
 
-                if (!this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || 
+                if (forceReload ||
+                    !this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || 
                     (asset = cachedAsset.Target) == null ||
                     !(assetType.IsAssignableFrom(asset.GetType()))) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
                 {
+                    logger.Debug("No cached version of '{0}' available or reload forced, obtaining stream...".FormatWith(resourceString));
                     try
                     {
                         using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
@@ -106,13 +110,16 @@ namespace LightClaw.Engine.IO
                         {
                             if (assetStream == null)
                             {
+                                logger.Warn("Asset '{0}' could not be found.".FormatWith(resourceString));
                                 throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
                             }
+                            logger.Debug("Stream around '{0}' obtained, deserializing...".FormatWith(resourceString));
 
                             asset = await this.readers.Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
                                                       .FirstOrDefaultAsync(t => t.Result != null);
                             if (asset == null)
                             {
+                                logger.Warn("Asset '{0}' could not be deserialized.".FormatWith(assetStream));
                                 throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
                             }
 
@@ -126,6 +133,7 @@ namespace LightClaw.Engine.IO
                     }
                 }
 
+                logger.Debug("Asset '{0}' loaded successfully.".FormatWith(resourceString));
                 return asset;
             }
         }

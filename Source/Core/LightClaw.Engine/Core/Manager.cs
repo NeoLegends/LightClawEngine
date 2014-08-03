@@ -13,7 +13,7 @@ using Munq;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract]
+    [DataContract(IsReference = true)]
     public abstract class Manager : Entity, IDrawable, IControllable, INameable
     {
         private object stateLock = new object();

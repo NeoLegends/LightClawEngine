@@ -168,7 +168,7 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
-    <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\DescriptionAttribute.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
@@ -238,11 +238,12 @@
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
-    <Compile Include="Graphics\Vertex.cs" />
+    <Compile Include="Graphics\P3N3T2Vertex.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
     <Compile Include="Input\InputInterface.cs" />
+    <Compile Include="IO\BufferReader.cs" />
     <Compile Include="IO\ContentManager.cs" />
     <Compile Include="IO\ContentManagerExtensions.cs" />
     <Compile Include="IO\FileSystemContentResolver.cs" />
@@ -250,7 +251,7 @@
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
-    <Compile Include="IO\MeshReader.cs" />
+    <Compile Include="IO\ModelReader.cs" />
     <Compile Include="IO\SceneReader.cs" />
     <Compile Include="IO\ShaderStageReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

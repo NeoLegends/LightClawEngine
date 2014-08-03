@@ -12,8 +12,6 @@ namespace LightClaw.Engine.Graphics
 {
     public class VertexArrayObject : GLObject, IBindable
     {
-        private readonly ILog logger = LogManager.GetLogger(typeof(VertexArrayObject));
-
         public Buffer IndexBuffer { get; private set; }
 
         public int IndexCount
@@ -24,6 +22,8 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public bool IsInitialized { get; private set; }
+
         public BufferDescription[] VertexBuffers { get; private set; }
 
         public VertexArrayObject(IEnumerable<BufferDescription> buffers, Buffer indexBuffer)
@@ -32,9 +32,6 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.VertexBuffer.Target == BufferTarget.ElementArrayBuffer));
-            Contract.Requires<ArgumentException>(indexBuffer.Type == typeof(uint));
-
-            logger.Debug("Initializing a new VertexArrayObject with {0} vertex buffers and {1} indices.".FormatWith(buffers.Count(), indexBuffer.Count));
 
             this.IndexBuffer = indexBuffer;
             this.VertexBuffers = buffers.ToArray();
@@ -42,6 +39,7 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
+            this.Initialize();
             GL.BindVertexArray(this);
         }
 
@@ -52,29 +50,33 @@ namespace LightClaw.Engine.Graphics
 
         public void Initialize()
         {
-            using (GLBinding vaoBinding = new GLBinding(this))
+            if (!this.IsInitialized)
             {
-                foreach (BufferDescription bufferConfig in this.VertexBuffers)
+                using (GLBinding vaoBinding = new GLBinding(this))
                 {
-                    using (GLBinding vboBinding = new GLBinding(bufferConfig.VertexBuffer))
+                    foreach (BufferDescription bufferConfig in this.VertexBuffers)
                     {
-                        foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                        using (GLBinding vboBinding = new GLBinding(bufferConfig.VertexBuffer))
                         {
-                            GL.EnableVertexAttribArray(vertexPointer.Index);
-                            GL.VertexAttribPointer(
-                                vertexPointer.Index,
-                                vertexPointer.Size,
-                                vertexPointer.Type,
-                                vertexPointer.IsNormalized,
-                                vertexPointer.Stride,
-                                vertexPointer.Offset
-                            );
+                            foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                            {
+                                GL.EnableVertexAttribArray(vertexPointer.Index);
+                                GL.VertexAttribPointer(
+                                    vertexPointer.Index,
+                                    vertexPointer.Size,
+                                    vertexPointer.Type,
+                                    vertexPointer.IsNormalized,
+                                    vertexPointer.Stride,
+                                    vertexPointer.Offset
+                                );
+                            }
                         }
                     }
+                    this.IndexBuffer.Bind();
                 }
-                this.IndexBuffer.Bind();
+                this.IndexBuffer.Unbind();
+                this.IsInitialized = true;
             }
-            this.IndexBuffer.Unbind();
         }
 
         protected override void Dispose(bool disposing)

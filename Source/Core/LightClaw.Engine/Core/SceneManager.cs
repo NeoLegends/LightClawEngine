@@ -12,8 +12,6 @@ namespace LightClaw.Engine.Core
 {
     internal class SceneManager : Manager, ISceneManager
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(SceneManager));
-
         private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>(new ReverseComparer<int>());
 
         private readonly List<Scene> workingCopy = new List<Scene>();

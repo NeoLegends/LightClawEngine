@@ -14,7 +14,13 @@ namespace LightClaw.Engine.Graphics
 {
     public class Buffer : GLObject, IBindable
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(Buffer));
+        private bool requiresNameGeneration = true;
+
+        private bool requiresDataUpload = false;
+
+        private GCHandle dataHandle;
+
+        private IntPtr dataSize;
 
         public int Count { get; private set; }
 
@@ -22,19 +28,34 @@ namespace LightClaw.Engine.Graphics
 
         public BufferTarget Target { get; private set; }
 
-        public Type Type { get; private set; }
-
         public Buffer(BufferTarget target, BufferUsageHint hint)
-            : base(GL.GenBuffer())
         {
-            logger.Debug("Initializing a new {0} for {2}".FormatWith(target, hint));
-
             this.Hint = hint;
             this.Target = target;
         }
 
+        public Buffer(BufferTarget target, BufferUsageHint hint, GCHandle dataHandle, IntPtr size)
+            : this(target, hint)
+        {
+            this.dataHandle = dataHandle;
+            this.dataSize = size;
+            this.requiresDataUpload = true;
+        }
+
         public void Bind()
         {
+            if (this.requiresNameGeneration) // Buffer name will be generated lazily in order to allow for multithreaded content loading
+            {
+                this.Handle = GL.GenBuffer();
+                this.requiresNameGeneration = false;
+            }
+            if (this.requiresDataUpload) // Same goes for data, upload when required on drawing thread
+            {
+                this.Update(this.dataHandle.AddrOfPinnedObject(), this.dataSize);
+                this.dataHandle.Free();
+                this.dataSize = IntPtr.Zero;
+                this.requiresDataUpload = false;
+            }
             GL.BindBuffer(this.Target, this);
         }
 
@@ -43,48 +64,37 @@ namespace LightClaw.Engine.Graphics
             GL.BindBuffer(this.Target, 0);
         }
 
-        public void Update<T>(T data)
-            where T : struct
-        {
-            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
-
-            this.Update(data, 0);
-        }
-
-        public void Update<T>(T data, int offsetInBytes)
-            where T : struct
-        {
-            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
-
-            this.CalculateCount(1, Marshal.SizeOf(typeof(T)), offsetInBytes);
-            this.Type = typeof(T);
-            using (GLBinding bufferBinding = new GLBinding(this))
-            {
-                GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)Marshal.SizeOf(typeof(T)), ref data);
-            }
-        }
-
         public void Update<T>(T[] data)
             where T : struct
         {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
-
-            this.UpdateRange(data, 0);
+            GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            this.Update(dataHandle.AddrOfPinnedObject(), (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
+            dataHandle.Free();
         }
 
-        public void UpdateRange<T>(T[] data, int offsetInBytes)
+        public void UpdateRange<T>(T[] data, int offset)
             where T : struct
         {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentOutOfRangeException>(offsetInBytes >= 0);
-            Contract.Requires<ArgumentException>(this.Type == null || typeof(T) == this.Type);
+            GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            this.UpdateRange(dataHandle.AddrOfPinnedObject(), (IntPtr)offset, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
+            dataHandle.Free();
+        }
 
-            this.CalculateCount(data.Length, Marshal.SizeOf(typeof(T)), offsetInBytes);
-            this.Type = typeof(T);
+        public void Update(IntPtr data, IntPtr size)
+        {
             using (GLBinding bufferBinding = new GLBinding(this))
             {
-                GL.BufferSubData(this.Target, (IntPtr)offsetInBytes, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length), data);
+                GL.BufferData(this.Target, size, data, this.Hint);
+                this.CalculateCount((int)size, 0);
+            }
+        }
+
+        public void UpdateRange(IntPtr data, IntPtr offset, IntPtr size)
+        {
+            using (GLBinding bufferBindg = new GLBinding(this))
+            {
+                GL.BufferSubData(this.Target, offset, size, data);
+                this.CalculateCount((int)size, (int)offset);
             }
         }
 
@@ -101,19 +111,10 @@ namespace LightClaw.Engine.Graphics
             base.Dispose(disposing);
         }
 
-        private void CalculateCount(int count, int sizeOfNewData, int offset)
+        private void CalculateCount(int sizeOfNewData, int offset)
         {
-            int difference = (count * sizeOfNewData - (this.Count - offset));
+            int difference = (sizeOfNewData - (this.Count - offset));
             this.Count = this.Count + ((difference >= 0) ? difference : 0);
-        }
-
-        public static Buffer Create<T>(T[] data)
-            where T : struct
-        {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Ensures(Contract.Result<Buffer>() != null);
-
-            return Create(data, BufferTarget.ArrayBuffer);
         }
 
         public static Buffer Create<T>(T[] data, BufferTarget target)
@@ -131,9 +132,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Ensures(Contract.Result<Buffer>() != null);
 
-            Buffer b = new Buffer(target, hint);
-            b.Update(data);
-            return b;
+            return new Buffer(target, hint, GCHandle.Alloc(data, GCHandleType.Pinned), (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
         }
     }
 }

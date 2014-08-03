@@ -14,11 +14,9 @@ using log4net;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract]
+    [DataContract(IsReference = true)]
     public class Scene : ListChildManager<GameObject>, IDrawable
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(Scene));
-
         public event EventHandler<ParameterEventArgs> Saving;
 
         public event EventHandler<ParameterEventArgs> Saved;

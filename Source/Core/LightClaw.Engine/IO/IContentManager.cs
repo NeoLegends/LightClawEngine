@@ -13,11 +13,9 @@ namespace LightClaw.Engine.IO
     {
         Task<bool> ExistsAsync(string resourceString);
 
-        void ForceReload(string resourceString);
-
         Task<Stream> GetStreamAsync(string resourceString);
 
-        Task<object> LoadAsync(string resourceString, Type resourceType, object parameter = null);
+        Task<object> LoadAsync(string resourceString, Type resourceType, object parameter = null, bool forceReload = false);
 
         void Register(IContentReader reader);
 
@@ -35,11 +33,6 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        void IContentManager.ForceReload(string resourceString)
-        {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
-        }
-
         Task<Stream> IContentManager.GetStreamAsync(string resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
@@ -50,7 +43,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<object> IContentManager.LoadAsync(string resourceString, Type assetType, object parameter)
+        Task<object> IContentManager.LoadAsync(string resourceString, Type assetType, object parameter, bool forceReload)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);

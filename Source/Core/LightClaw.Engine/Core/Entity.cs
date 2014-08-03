@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
+using log4net;
 using Munq;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract]
+    [DataContract(IsReference = true)]
+    [Description("A lightweight component base class implementing essential services such as INotifyPropertyChanged and INameable.")]
     public abstract class Entity : INameable, INotifyPropertyChanged
     {
+        protected static readonly ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _Name;
@@ -35,6 +41,7 @@ namespace LightClaw.Engine.Core
         private IocContainer _IocC = LightClawEngine.DefaultIocContainer;
 
         [IgnoreDataMember]
+        [Description("An Ioc-Container used to obtain certain service instances such as IContentManager at runtime.")]
         public IocContainer IocC
         {
             get

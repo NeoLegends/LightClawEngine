@@ -322,21 +322,11 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M13.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M23.GetHashCode();
-
-                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M33.GetHashCode();
-                return hash;
-            }
+            return HashF.GetHashCode(
+                HashF.GetHashCode(this.M11, this.M12, this.M13),
+                HashF.GetHashCode(this.M21, this.M22, this.M23),
+                HashF.GetHashCode(this.M31, this.M32, this.M33)
+            );
         }
 
         /// <summary>

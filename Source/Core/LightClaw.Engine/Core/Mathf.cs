@@ -128,6 +128,17 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Clamps the value to the <see cref="Int32"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        [Pure]
+        public static int ClampToInt32(long value)
+        {
+            return (value <= int.MaxValue) ? (int)value : int.MaxValue;
+        }
+
+        /// <summary>
         /// Gets the biggest common divisor of two numbers.
         /// </summary>
         /// <param name="a">The first number.</param>

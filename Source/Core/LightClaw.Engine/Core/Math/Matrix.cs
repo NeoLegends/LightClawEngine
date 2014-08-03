@@ -543,25 +543,25 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = Constants.HashStart * Constants.HashFactor + this.M11.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M12.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M13.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M14.GetHashCode();
+                int hash = HashF.HashStart * HashF.HashFactor + this.M11.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M12.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M13.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M14.GetHashCode();
 
-                hash = hash * Constants.HashFactor + this.M21.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M22.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M23.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M24.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M21.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M22.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M23.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M24.GetHashCode();
 
-                hash = hash * Constants.HashFactor + this.M31.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M32.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M33.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M34.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M31.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M32.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M33.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M34.GetHashCode();
 
-                hash = hash * Constants.HashFactor + this.M41.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M42.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M43.GetHashCode();
-                hash = hash * Constants.HashFactor + this.M44.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M41.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M42.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M43.GetHashCode();
+                hash = hash * HashF.HashFactor + this.M44.GetHashCode();
                 return hash;
             }
         }

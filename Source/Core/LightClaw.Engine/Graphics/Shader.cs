@@ -14,38 +14,9 @@ namespace LightClaw.Engine.Graphics
 {
     [DataContract]
     [ContractClass(typeof(ShaderProgramContracts))]
-    public abstract class Shader : GLObject, IBindable, ILateUpdateable, IUpdateable
+    public abstract class Shader : GLObject, IBindable
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Shader));
-
         private readonly object updateLock = new object();
-
-        private bool alreadyUpdatedThisFrame = false;
-
-        private bool alreadyLateUpdatedThisFrame = false;
-
-        public event EventHandler<ParameterEventArgs> LateUpdating;
-
-        public event EventHandler<ParameterEventArgs> LateUpdated;
-
-        public event EventHandler<ParameterEventArgs> Updating;
-
-        public event EventHandler<ParameterEventArgs> Updated;
-
-        private Material _Material;
-
-        [IgnoreDataMember]
-        public Material Material
-        {
-            get
-            {
-                return _Material;
-            }
-            protected set
-            {
-                this.SetProperty(ref _Material, value);
-            }
-        }
 
         [IgnoreDataMember]
         public bool IsLinked { get; private set; }
@@ -74,26 +45,22 @@ namespace LightClaw.Engine.Graphics
 
         private Shader() : base(GL.CreateProgram()) { }
 
-        public Shader(IEnumerable<ShaderStage> shaders, Material material)
+        public Shader(IEnumerable<ShaderStage> shaders)
             : this()
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
-            Contract.Requires<ArgumentNullException>(material != null);
             Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
 
             logger.Info("Initializing a new shader with {0} stages.".FormatWith(shaders.Count()));
 
-            this.Material = material;
             this.Stages = shaders.ToArray();
             this.ShaderCount = this.Stages.Length;
         }
 
         public void Bind()
         {
-            if (this.IsLinked)
-            {
-                GL.UseProgram(this);
-            }
+            this.Link();
+            GL.UseProgram(this);
         }
 
         public void Unbind()
@@ -110,69 +77,29 @@ namespace LightClaw.Engine.Graphics
 
         public void Link()
         {
-            lock (this.updateLock)
+            if (!this.IsLinked)
             {
-                if (!this.IsLinked)
+                logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+
+                foreach (ShaderStage shader in this.Stages)
                 {
-                    logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
-
-                    foreach (ShaderStage shader in this.Stages)
-                    {
-                        GL.AttachShader(this, shader);
-                    }
-                    GL.LinkProgram(this);
-
-                    int linkStatus;
-                    if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out linkStatus))
-                    {
-                        string message = "Linking the shader failed. Error Code: {0}".FormatWith(linkStatus);
-                        logger.Error(message);
-                        logger.Error(GL.GetShaderInfoLog(this));
-
-                        throw new InvalidOperationException(message);
-                    }
-                    this.IsLinked = true;
-
-                    logger.Debug("Shader linked.");
+                    shader.Compile();
+                    GL.AttachShader(this, shader);
                 }
-            }
-        }
+                GL.LinkProgram(this);
 
-        public void Update(GameTime gameTime)
-        {
-            if (!alreadyUpdatedThisFrame)
-            {
-                lock (this.updateLock)
+                int linkStatus;
+                if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out linkStatus))
                 {
-                    if (!this.alreadyUpdatedThisFrame)
-                    {
-                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
-                        {
-                            this.alreadyLateUpdatedThisFrame = false;
-                            this.OnUpdate(gameTime);
-                            this.alreadyUpdatedThisFrame = true;
-                        }
-                    }
-                }
-            }
-        }
+                    string message = "Linking the shader failed. Error Code: {0}".FormatWith(linkStatus);
+                    logger.Error(message);
+                    logger.Error(GL.GetShaderInfoLog(this));
 
-        public void LateUpdate()
-        {
-            if (!this.alreadyLateUpdatedThisFrame)
-            {
-                lock (this.updateLock)
-                {
-                    if (!this.alreadyLateUpdatedThisFrame)
-                    {
-                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
-                        {
-                            this.alreadyUpdatedThisFrame = false;
-                            this.OnLateUpdate();
-                            this.alreadyLateUpdatedThisFrame = true;
-                        }
-                    }
+                    throw new InvalidOperationException(message);
                 }
+                this.IsLinked = true;
+
+                logger.Debug("Shader linked.");
             }
         }
 
@@ -222,7 +149,7 @@ namespace LightClaw.Engine.Graphics
     abstract class ShaderProgramContracts : Shader
     {
         public ShaderProgramContracts() 
-            : base(Enumerable.Empty<ShaderStage>(), null) 
+            : base(Enumerable.Empty<ShaderStage>()) 
         {
             Contract.Requires(false);
         }

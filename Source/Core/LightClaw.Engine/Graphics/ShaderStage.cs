@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class ShaderStage : GLObject
     {
-        private static ILog logger = LogManager.GetLogger(typeof(ShaderStage));
+        public bool IsCompiled { get; private set; }
 
         public string Source { get; private set; }
 
@@ -31,20 +31,24 @@ namespace LightClaw.Engine.Graphics
 
         public void Compile()
         {
-            logger.Debug("Compiling shader stage on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
-
-            GL.ShaderSource(this, this.Source);
-            GL.CompileShader(this);
-
-            int result = 0;
-            if (!this.CheckStatus(ShaderParameter.CompileStatus, out result))
+            if (!this.IsCompiled)
             {
-                string message = "Compiling the shader stage (Error Code: {0}) from source ({1}) failed.".FormatWith(result, this.Source);
-                logger.Error(message);
-                throw new InvalidOperationException(message);
-            }
+                logger.Debug("Compiling shader stage on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
 
-            logger.Debug("Shader stage compiled.");
+                GL.ShaderSource(this, this.Source);
+                GL.CompileShader(this);
+
+                int result = 0;
+                if (!this.CheckStatus(ShaderParameter.CompileStatus, out result))
+                {
+                    string message = "Compiling the shader stage (Error Code: {0}) from source ({1}) failed.".FormatWith(result, this.Source);
+                    logger.Error(message);
+                    throw new InvalidOperationException(message);
+                }
+                this.IsCompiled = true;
+
+                logger.Debug("Shader stage compiled.");
+            }
         }
 
         protected override void Dispose(bool disposing)

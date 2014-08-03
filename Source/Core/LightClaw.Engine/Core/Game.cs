@@ -15,8 +15,6 @@ namespace LightClaw.Engine.Core
 {
     public class Game : Entity, IGame
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(Game));
-
         private GameTime _CurrentGameTime;
 
         public GameTime CurrentGameTime
@@ -49,7 +47,15 @@ namespace LightClaw.Engine.Core
             VideoSettings.Default.Width,
             VideoSettings.Default.Height,
             new OpenTK.Graphics.GraphicsMode(),
-            GeneralSettings.Default.WindowTitle
+            GeneralSettings.Default.WindowTitle,
+            OpenTK.GameWindowFlags.Default, 
+            OpenTK.DisplayDevice.Default,
+            4, 3,
+#if DEBUG
+            OpenTK.Graphics.GraphicsContextFlags.Debug
+#else
+            OpenTK.Graphics.GraphicsContextFlags.Default
+#endif
         )
         {
             WindowState = VideoSettings.Default.WindowState,

@@ -8,7 +8,7 @@ using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
-    public interface IControllable : IDisposable,  ILateUpdateable, IUpdateable
+    public interface IControllable : IDisposable, ILateUpdateable, IUpdateable
     {
         event EventHandler<ParameterEventArgs> Enabling;
 

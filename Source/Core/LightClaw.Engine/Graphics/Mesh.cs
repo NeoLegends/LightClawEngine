@@ -14,11 +14,8 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
-    public class Mesh<TVertex> : Component
-        where TVertex : struct
+    public class Mesh : Component
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Mesh<TVertex>));
-
         private Model _Model;
 
         public Model Model
@@ -58,11 +55,6 @@ namespace LightClaw.Engine.Graphics
 
             this.Name = resourceString;
             this.ResourceString = resourceString;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
         }
 
         protected override void OnDraw()

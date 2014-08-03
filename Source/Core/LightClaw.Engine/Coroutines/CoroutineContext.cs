@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
@@ -16,11 +17,6 @@ namespace LightClaw.Engine.Coroutines
     /// </summary>
     public class CoroutineContext : ICoroutineContext, IUpdateable
     {
-        /// <summary>
-        /// Used for locking the event handlers.
-        /// </summary>
-        private readonly object eventLock = new object();
-
         /// <summary>
         /// The coroutine to execute.
         /// </summary>
@@ -51,19 +47,27 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         event EventHandler<ParameterEventArgs> IUpdateable.Updating
         {
-            add 
+            add
             {
-                lock (eventLock)
+                EventHandler<ParameterEventArgs> current, original;
+                do
                 {
-                    _Updating += value;
+                    original = _Updating;
+                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Combine(original, value);
+                    current = Interlocked.CompareExchange(ref _Updating, updated, original);
                 }
+                while (current != original);
             }
             remove
             {
-                lock (eventLock)
+                EventHandler<ParameterEventArgs> current, original;
+                do
                 {
-                    _Updating -= value;
+                    original = _Updating;
+                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Remove(original, value);
+                    current = Interlocked.CompareExchange(ref _Updating, updated, original);
                 }
+                while (current != original);
             }
         }
 
@@ -79,17 +83,25 @@ namespace LightClaw.Engine.Coroutines
         {
             add
             {
-                lock (eventLock)
+                EventHandler<ParameterEventArgs> current, original;
+                do
                 {
-                    _Updated += value;
+                    original = _Updated;
+                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Combine(original, value);
+                    current = Interlocked.CompareExchange(ref _Updated, updated, original);
                 }
+                while (current != original);
             }
             remove
             {
-                lock (eventLock)
+                EventHandler<ParameterEventArgs> current, original;
+                do
                 {
-                    _Updated -= value;
+                    original = _Updated;
+                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Remove(original, value);
+                    current = Interlocked.CompareExchange(ref _Updated, updated, original);
                 }
+                while (current != original);
             }
         }
 
@@ -151,12 +163,8 @@ namespace LightClaw.Engine.Coroutines
         {
             lock (this.enumerable)
             {
-                if (this.IsEnabled && 
-                    !this.IsFinished && 
-                    !this.IsBlocked && 
-                    (this.blockRequest == null || this.blockRequest.CanExecute()))
+                if (this.IsEnabled && !this.IsFinished && (this.blockRequest == null || !(this.IsBlocked = !this.blockRequest.CanExecute())))
                 {
-                    this.IsBlocked = false;
                     this.blockRequest = null;
 
                     bool result = !(this.IsFinished = !this.enumerator.MoveNext());

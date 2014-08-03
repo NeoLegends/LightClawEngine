@@ -53,11 +53,7 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
             {
-                Shader s = this.Shader;
-                if (s != null)
-                {
-                    s.Update(gameTime);
-                }
+                this.OnUpdate(gameTime);
             }
         }
 
@@ -65,11 +61,7 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                Shader s = this.Shader;
-                if (s != null)
-                {
-                    s.LateUpdate();
-                }
+                this.LateUpdate();
             }
         }
 
@@ -78,5 +70,9 @@ namespace LightClaw.Engine.Graphics
         {
             return (T)this.Shader;
         }
+
+        protected abstract void OnUpdate(GameTime gameTime);
+
+        protected abstract void OnLateUpdate();
     }
 }

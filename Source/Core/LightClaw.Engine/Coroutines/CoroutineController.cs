@@ -11,15 +11,28 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Coroutines
 {
+    /// <summary>
+    /// Represents a lightweight <see cref="Component"/> that controls execution of coroutines.
+    /// </summary>
     [DataContract]
     [Solitary(typeof(CoroutineController), "More than one CoroutineController induces unnecessary overhead.")]
     public class CoroutineController : Component
     {
+        /// <summary>
+        /// The list of managed coroutines.
+        /// </summary>
         [IgnoreDataMember]
         private List<ICoroutineContext> contexts = new List<ICoroutineContext>();
 
+        /// <summary>
+        /// Initializes a new <see cref="CoroutineController"/>.
+        /// </summary>
         public CoroutineController() { }
 
+        /// <summary>
+        /// Initializes a new <see cref="CoroutineController"/> from a <see cref="Func{T}"/>.
+        /// </summary>
+        /// <param name="coroutine">The coroutine function.</param>
         public CoroutineController(Func<IEnumerable> coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);
@@ -27,6 +40,10 @@ namespace LightClaw.Engine.Coroutines
             this.Add(coroutine);
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="CoroutineController"/> from a coroutine.
+        /// </summary>
+        /// <param name="coroutine">The coroutine to be executed.</param>
         public CoroutineController(IEnumerable coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);
@@ -34,6 +51,10 @@ namespace LightClaw.Engine.Coroutines
             this.Add(coroutine);
         }
 
+        /// <summary>
+        /// Queries a new coroutine for execution.
+        /// </summary>
+        /// <param name="coroutine">The coroutine to execute.</param>
         public void Add(IEnumerable coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);
@@ -44,6 +65,10 @@ namespace LightClaw.Engine.Coroutines
             }
         }
 
+        /// <summary>
+        /// Queries a new coroutine for execution.
+        /// </summary>
+        /// <param name="coroutine">The coroutine to execute.</param>
         public void Add(Func<IEnumerable> coroutine)
         {
             Contract.Requires<ArgumentNullException>(coroutine != null);
@@ -54,6 +79,10 @@ namespace LightClaw.Engine.Coroutines
             }
         }
 
+        /// <summary>
+        /// Queries coroutines for execution.
+        /// </summary>
+        /// <param name="coroutines">The coroutines to execute.</param>
         public void AddRange(IEnumerable<IEnumerable> coroutines)
         {
             Contract.Requires<ArgumentNullException>(coroutines != null);
@@ -64,6 +93,10 @@ namespace LightClaw.Engine.Coroutines
             }
         }
 
+        /// <summary>
+        /// Queries coroutines for execution.
+        /// </summary>
+        /// <param name="coroutines">The coroutines to execute.</param>
         public void AddRange(IEnumerable<Func<IEnumerable>> coroutines)
         {
             Contract.Requires<ArgumentNullException>(coroutines != null);
@@ -74,6 +107,10 @@ namespace LightClaw.Engine.Coroutines
             }
         }
 
+        /// <summary>
+        /// Updates all coroutines and removes the ones that have finished execution.
+        /// </summary>
+        /// <param name="gameTime">The current game time.</param>
         protected override void OnUpdate(GameTime gameTime)
         {
             IEnumerable<ICoroutineContext> contexts = this.contexts;

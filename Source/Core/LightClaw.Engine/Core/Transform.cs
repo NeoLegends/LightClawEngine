@@ -10,13 +10,11 @@ using log4net;
 
 namespace LightClaw.Engine.Core
 {
-    [DataContract]
+    [DataContract(IsReference = true)]
     [Description("Contains an object's position, rotation and scaling relativ to it's parent and in world space.")]
     [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
     public class Transform : Component, INotifyCollectionChanged
     {
-        private static readonly ILog logger = LogManager.GetLogger(typeof(Transform));
-
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -36,7 +34,8 @@ namespace LightClaw.Engine.Core
         public event EventHandler<ValueChangedEventArgs<Vector3>> ScalingChanged;
 
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
-
+        
+        [DataMember]
         public ObservableCollection<Transform> Childs
         {
             get

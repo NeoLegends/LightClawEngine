@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -54,6 +56,14 @@ namespace LightClaw.Engine.Graphics
                     }
                 }
             };
+        }
+
+        public Model(IEnumerable<ModelMesh> modelMeshes)
+            : this()
+        {
+            Contract.Requires<ArgumentNullException>(modelMeshes != null);
+
+            this.ModelMeshes.AddRange(modelMeshes);
         }
 
         public void Draw()

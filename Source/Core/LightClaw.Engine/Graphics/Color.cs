@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace LightClaw.Engine.Graphics
 #endif
                                   IEquatable<Color>
     {
+        /// <summary>
+        /// Gets the size in bytes of the <see cref="Color"/>-struct.
+        /// </summary>
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Color));
+
         #region Predefined Colors
 
         /// <summary>
@@ -1120,14 +1126,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.R.GetHashCode();
-                hash = hash * Constants.HashFactor + this.G.GetHashCode();
-                hash = hash * Constants.HashFactor + this.B.GetHashCode();
-                hash = hash * Constants.HashFactor + this.A.GetHashCode();
-                return hash;
-            }
+            return HashF.GetHashCode(this.R, this.G, this.B, this.A);
         }
 
         /// <summary>

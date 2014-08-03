@@ -252,12 +252,7 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = Constants.HashStart * Constants.HashFactor + this.X.GetHashCode();
-                hash = hash * Constants.HashFactor + this.Y.GetHashCode();
-                return hash;
-            }
+            return HashF.GetHashCode(this.X, this.Y);
         }
 
         /// <summary>
