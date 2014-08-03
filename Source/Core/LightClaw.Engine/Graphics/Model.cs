@@ -11,6 +11,8 @@ namespace LightClaw.Engine.Graphics
 {
     public class Model : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
+        private IEnumerable<IGrouping<Material, ModelPart>> groupedModelParts;
+
         public event EventHandler<ParameterEventArgs> Drawing;
 
         public event EventHandler<ParameterEventArgs> Drawn;
@@ -23,32 +25,33 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
-        private ModelMeshCollection _ModelMeshes = new ModelMeshCollection();
+        private ModelPartCollection _ModelParts = new ModelPartCollection();
 
-        public ModelMeshCollection ModelMeshes
+        public ModelPartCollection ModelParts
         {
             get
             {
-                return _ModelMeshes;
+                return _ModelParts;
             }
             private set
             {
-                this.SetProperty(ref _ModelMeshes, value);
+                this.SetProperty(ref _ModelParts, value);
             }
         }
 
         public Model()
         {
-            this.ModelMeshes.CollectionChanged += (s, e) =>
+            this.ModelParts.CollectionChanged += (s, e) =>
             {
-                foreach (ModelMesh modelMesh in e.OldItems)
+                this.groupedModelParts = null;
+                foreach (ModelPart modelMesh in e.OldItems)
                 {
                     if (modelMesh != null)
                     {
                         modelMesh.Model = null;
                     }
                 }
-                foreach (ModelMesh modelMesh in e.NewItems)
+                foreach (ModelPart modelMesh in e.NewItems)
                 {
                     if (modelMesh != null)
                     {
@@ -58,23 +61,36 @@ namespace LightClaw.Engine.Graphics
             };
         }
 
-        public Model(IEnumerable<ModelMesh> modelMeshes)
+        public Model(IEnumerable<ModelPart> modelMeshes)
             : this()
         {
             Contract.Requires<ArgumentNullException>(modelMeshes != null);
 
-            this.ModelMeshes.AddRange(modelMeshes);
+            this.ModelParts.AddRange(modelMeshes);
         }
 
         public void Draw()
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                foreach (ModelMesh modelMesh in this.ModelMeshes)
+                IEnumerable<IGrouping<Material, ModelPart>> groupedModelParts = this.groupedModelParts;
+                if (groupedModelParts != null)
                 {
-                    if (modelMesh != null)
+                    foreach (IGrouping<Material, ModelPart> grouping in groupedModelParts)
                     {
-                        modelMesh.Draw();
+                        if (grouping.Key != null)
+                        {
+                            using (GLBinding materialBinding = new GLBinding(grouping.Key))
+                            {
+                                foreach (ModelPart modelMeshPart in grouping)
+                                {
+                                    if (modelMeshPart != null)
+                                    {
+                                        modelMeshPart.Draw();
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -84,12 +100,16 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
             {
-                foreach (ModelMesh modelMesh in this.ModelMeshes)
+                foreach (ModelPart part in this.ModelParts)
                 {
-                    if (modelMesh != null)
+                    if (part != null)
                     {
-                        modelMesh.Update(gameTime);
+                        part.Update(gameTime);
                     }
+                }
+                if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
+                {
+                    this.groupedModelParts = this.ModelParts.GroupBy(modelMeshPart => modelMeshPart.Material);
                 }
             }
         }
@@ -98,11 +118,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                foreach (ModelMesh modelMesh in this.ModelMeshes)
+                foreach (ModelPart part in this.ModelParts)
                 {
-                    if (modelMesh != null)
+                    if (part != null)
                     {
-                        modelMesh.LateUpdate();
+                        part.LateUpdate();
                     }
                 }
             }

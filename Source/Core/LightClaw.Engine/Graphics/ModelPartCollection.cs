@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class ModelMeshCollection : ObservableCollection<ModelMesh>
+    public class ModelPartCollection : ObservableCollection<ModelPart>
     {
-        public ModelMeshCollection() { }
+        public ModelPartCollection() { }
 
-        public ModelMeshCollection(IEnumerable<ModelMesh> modelMeshes)
-            : base(modelMeshes) 
+        public ModelPartCollection(IEnumerable<ModelPart> modelMeshes)
         {
             Contract.Requires<ArgumentNullException>(modelMeshes != null);
 
-            foreach (ModelMesh modelMesh in modelMeshes)
+            foreach (ModelPart modelMeshPart in modelMeshes)
             {
-                this.Add(modelMesh);
+                this.Add(modelMeshPart);
             }
         }
     }

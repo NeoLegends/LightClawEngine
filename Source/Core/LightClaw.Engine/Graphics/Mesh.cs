@@ -80,7 +80,7 @@ namespace LightClaw.Engine.Graphics
             }
 
             Task<Model> meshDescriptionTask = (this.Model != null) ? Task.FromResult(this.Model) :
-                                                                     contentManager.LoadAsync<Model>(this.ResourceString);
+                                                                        contentManager.LoadAsync<Model>(this.ResourceString);
             meshDescriptionTask.ContinueWith(t =>
             {
                 this.Model = t.Result;

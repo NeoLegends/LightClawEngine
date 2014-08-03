@@ -21,30 +21,25 @@ namespace LightClaw.Engine.IO
             ModelData modelData = await Task.Run(() => Serializer.Deserialize<ModelData>(assetStream));
 
             Model model = new Model();
-            foreach (ModelMeshData modelMeshData in modelData.ModelMeshes)
+            foreach (ModelPartData modelPartData in modelData.ModelParts)
             {
-                ModelMesh modelMesh = new ModelMesh();
-                foreach (ModelMeshPartData modelMeshPartData in modelMeshData.ModelMeshParts)
-                {
-                    modelMesh.ModelMeshParts.Add(
-                        new ModelMeshPart(
-                            await contentManager.LoadAsync<Material>(modelMeshPartData.MaterialResourceString),
-                            new VertexArrayObject(
-                                modelMeshPartData.VertexData.Select(vData => 
-                                    new BufferDescription(
-                                        GLBuffer.Create(
-                                            vData.VertexData, 
-                                            BufferTarget.ArrayBuffer
-                                        ), 
-                                        vData.VertexAttributePointers
-                                    )
-                                ),
-                                GLBuffer.Create(modelMeshPartData.IndexData, BufferTarget.ElementArrayBuffer)
-                            )
+                model.ModelParts.Add(
+                    new ModelPart(
+                        await contentManager.LoadAsync<Material>(modelPartData.MaterialResourceString),
+                        new VertexArrayObject(
+                            modelPartData.VertexData.Select(vData => 
+                                new BufferDescription(
+                                    GLBuffer.Create(
+                                        vData.VertexData, 
+                                        BufferTarget.ArrayBuffer
+                                    ), 
+                                    vData.VertexAttributePointers
+                                )
+                            ),
+                            GLBuffer.Create(modelPartData.IndexData, BufferTarget.ElementArrayBuffer)
                         )
-                    );
-                }
-                model.ModelMeshes.Add(modelMesh);
+                    )
+                );
             }
             return model;
         }
@@ -53,34 +48,19 @@ namespace LightClaw.Engine.IO
         private struct ModelData
         {
             [ProtoMember(1)]
-            public ModelMeshData[] ModelMeshes { get; private set; }
+            public ModelPartData[] ModelParts { get; private set; }
 
-            public ModelData(IEnumerable<ModelMeshData> modelMeshes)
+            public ModelData(IEnumerable<ModelPartData> modelParts)
                 : this()
             {
-                Contract.Requires<ArgumentNullException>(modelMeshes != null);
+                Contract.Requires<ArgumentNullException>(modelParts != null);
 
-                this.ModelMeshes = modelMeshes.ToArray();
+                this.ModelParts = modelParts.ToArray();
             }
         }
 
         [ProtoContract]
-        private struct ModelMeshData
-        {
-            [ProtoMember(1)]
-            public ModelMeshPartData[] ModelMeshParts { get; private set; }
-
-            public ModelMeshData(ModelMeshPartData[] modelMeshParts)
-                : this()
-            {
-                Contract.Requires<ArgumentNullException>(modelMeshParts != null);
-
-                this.ModelMeshParts = modelMeshParts;
-            }
-        }
-
-        [ProtoContract]
-        private struct ModelMeshPartData
+        private struct ModelPartData
         {
             [ProtoMember(1)]
             public uint[] IndexData { get; private set; }
@@ -91,7 +71,7 @@ namespace LightClaw.Engine.IO
             [ProtoMember(3)]
             public VertexDataDescription[] VertexData { get; private set; }
 
-            public ModelMeshPartData(string materialResourceString, uint[] indexData, VertexDataDescription[] vertexData)
+            public ModelPartData(string materialResourceString, uint[] indexData, VertexDataDescription[] vertexData)
                 : this()
             {
                 Contract.Requires<ArgumentNullException>(materialResourceString != null);

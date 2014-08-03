@@ -220,10 +220,8 @@
     <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\Material.cs" />
     <Compile Include="Graphics\Model.cs" />
-    <Compile Include="Graphics\ModelMesh.cs" />
-    <Compile Include="Graphics\ModelMeshCollection.cs" />
-    <Compile Include="Graphics\ModelMeshPart.cs" />
-    <Compile Include="Graphics\ModelMeshPartCollection.cs" />
+    <Compile Include="Graphics\ModelPart.cs" />
+    <Compile Include="Graphics\ModelPartCollection.cs" />
     <Compile Include="Graphics\ShaderStage.cs" />
     <Compile Include="Graphics\Shader.cs" />
     <Compile Include="Graphics\Texture.cs" />

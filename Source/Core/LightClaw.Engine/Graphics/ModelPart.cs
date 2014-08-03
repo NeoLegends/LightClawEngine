@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class ModelMeshPart : Entity, IDrawable, IUpdateable, ILateUpdateable
+    public class ModelPart : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
         public event EventHandler<ParameterEventArgs> Drawing;
 
@@ -37,17 +37,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ModelMesh _ModelMesh;
+        private Model _Model;
 
-        public ModelMesh ModelMesh
+        public Model Model
         {
             get
             {
-                return _ModelMesh;
+                return _Model;
             }
             internal set
             {
-                this.SetProperty(ref _ModelMesh, value);
+                this.SetProperty(ref _Model, value);
             }
         }
 
@@ -65,9 +65,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public ModelMeshPart() { }
+        public ModelPart() { }
 
-        public ModelMeshPart(Material material, VertexArrayObject vao)
+        public ModelPart(Material material, VertexArrayObject vao)
         {
             Contract.Requires<ArgumentNullException>(material != null);
             Contract.Requires<ArgumentNullException>(vao != null);
