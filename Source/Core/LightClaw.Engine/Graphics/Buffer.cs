@@ -67,6 +67,8 @@ namespace LightClaw.Engine.Graphics
         public void Update<T>(T[] data)
             where T : struct
         {
+            Contract.Requires<ArgumentNullException>(data != null);
+
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
             this.Update(dataHandle.AddrOfPinnedObject(), (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
             dataHandle.Free();
@@ -75,6 +77,8 @@ namespace LightClaw.Engine.Graphics
         public void UpdateRange<T>(T[] data, int offset)
             where T : struct
         {
+            Contract.Requires<ArgumentNullException>(data != null);
+
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
             this.UpdateRange(dataHandle.AddrOfPinnedObject(), (IntPtr)offset, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
             dataHandle.Free();

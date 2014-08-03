@@ -16,7 +16,7 @@ namespace LightClaw.Engine.Core
     [DataContract(IsReference = true)]
     public abstract class Manager : Entity, IDrawable, IControllable, INameable
     {
-        private object stateLock = new object();
+        private readonly object stateLock = new object();
 
         public event EventHandler<ParameterEventArgs> Enabling;
 

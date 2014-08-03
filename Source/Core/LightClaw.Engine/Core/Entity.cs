@@ -52,7 +52,7 @@ namespace LightClaw.Engine.Core
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
-                _IocC = value;
+                this.SetProperty(ref _IocC, value);
             }
         }
 

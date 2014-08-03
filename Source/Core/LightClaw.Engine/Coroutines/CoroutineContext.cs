@@ -235,7 +235,7 @@ namespace LightClaw.Engine.Coroutines
             /// <summary>
             /// The function returning the coroutine.
             /// </summary>
-            private Func<IEnumerable> coroutineFactory;
+            private readonly Func<IEnumerable> coroutineFactory;
 
             /// <summary>
             /// The coroutine to be executed.

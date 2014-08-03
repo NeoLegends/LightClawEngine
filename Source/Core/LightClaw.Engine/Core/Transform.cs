@@ -10,31 +10,66 @@ using log4net;
 
 namespace LightClaw.Engine.Core
 {
+    /// <summary>
+    /// Contains an object's position, rotation and scaling relative to its parent and in world space.
+    /// </summary>
     [DataContract(IsReference = true)]
-    [Description("Contains an object's position, rotation and scaling relativ to it's parent and in world space.")]
-    [NonRemovable, Solitary(typeof(Transform), "An object cannot be transformed by multiple components.")]
+    [NonRemovable, Solitary(typeof(Transform), "A GameObject cannot have multiple transformations at the same time.")]
     public class Transform : Component, INotifyCollectionChanged
     {
+        /// <summary>
+        /// Notifies about changes in the children collection.
+        /// </summary>
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
 
+        /// <summary>
+        /// Notifies about changes in the children collection.
+        /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        /// <summary>
+        /// Notifies about changes in the local position.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Vector3>> LocalPositionChanged;
 
+        /// <summary>
+        /// Notifies about changes in the local rotation.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Quaternion>> LocalRotationChanged;
 
+        /// <summary>
+        /// Notifies about changes in the local scaling.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Vector3>> LocalScalingChanged;
 
+        /// <summary>
+        /// Notifies about changes in the absolute position.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Vector3>> PositionChanged;
 
+        /// <summary>
+        /// Notifies about changes of the parent.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Transform>> ParentChanged;
 
+        /// <summary>
+        /// Notifies about changes in the absolute rotation.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Quaternion>> RotationChanged;
 
+        /// <summary>
+        /// Notifies about changes in the absolute scaling.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Vector3>> ScalingChanged;
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
         
+        /// <summary>
+        /// The logically attached childs.
+        /// </summary>
         [DataMember]
         public ObservableCollection<Transform> Childs
         {
@@ -48,8 +83,14 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private Transform _Parent;
 
+        /// <summary>
+        /// The parent (if any).
+        /// </summary>
         [DataMember]
         public Transform Parent
         {
@@ -65,8 +106,14 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private Vector3 _LocalPosition = Vector3.Zero;
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s local position in relation to the parent's position.
+        /// </summary>
         [DataMember]
         public Vector3 LocalPosition
         {
@@ -82,23 +129,29 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s absolute position in world space.
+        /// </summary>
         [IgnoreDataMember]
         public Vector3 Position
         {
             get
             {
-                Transform parent = this.Parent;
-                return (parent != null) ? parent.Position + this.LocalPosition : this.LocalPosition;
+                return this.GetParentPosition() + this.LocalPosition;
             }
             set
             {
                 Vector3 previous = this.Position;
-                //throw new NotImplementedException();
-                //this.SetProperty(ref _Position, value);
-                this.Raise(this.PositionChanged, value, previous);
+                Vector3 newValue = value - this.GetParentPosition();
+
+                this.SetProperty(ref _LocalPosition, newValue);
+                this.Raise(this.PositionChanged, newValue, previous);
             }
         }
 
+        /// <summary>
+        /// The absolute position as translation <see cref="Matrix"/>.
+        /// </summary>
         public Matrix PositionMatrix
         {
             get
@@ -107,8 +160,14 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private Quaternion _LocalRotation = Quaternion.Identity;
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.
+        /// </summary>
         [DataMember]
         public Quaternion LocalRotation
         {
@@ -124,23 +183,29 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s absolute rotation in world space.
+        /// </summary>
         [IgnoreDataMember]
         public Quaternion Rotation
         {
             get
             {
-                Transform parent = this.Parent;
-                return (parent != null) ? parent.Rotation * this.LocalRotation : this.LocalRotation;
+                return this.GetParentRotation() * this.LocalRotation;
             }
             set
             {
                 Quaternion previous = this.Rotation;
-                //throw new NotImplementedException();
-                //this.SetProperty(ref _Rotation, value);
-                this.Raise(this.RotationChanged, value, previous);
+                Quaternion newValue = Quaternion.Conjugate(this.GetParentRotation()) * value;
+
+                this.SetProperty(ref _LocalRotation, newValue);
+                this.Raise(this.RotationChanged, newValue, previous);
             }
         }
 
+        /// <summary>
+        /// The absolute rotation in world space as rotation <see cref="Matrix"/>.
+        /// </summary>
         public Matrix RotationMatrix
         {
             get
@@ -149,56 +214,74 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Vector3 _LocalScale = Vector3.One;
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Vector3 _LocalScaling = Vector3.One;
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s scaling relative to the parent's scaling.
+        /// </summary>
         [DataMember]
-        public Vector3 LocalScale
+        public Vector3 LocalScaling
         {
             get
             {
-                return _LocalScale;
+                return _LocalScaling;
             }
             set
             {
-                Vector3 previous = this.LocalScale;
-                this.SetProperty(ref _LocalScale, value);
+                Vector3 previous = this.LocalScaling;
+                this.SetProperty(ref _LocalScaling, value);
                 this.Raise(this.LocalScalingChanged, previous, previous);
             }
         }
 
+        /// <summary>
+        /// The <see cref="GameObject"/>'s absolute scaling in world space.
+        /// </summary>
         [IgnoreDataMember]
-        public Vector3 Scale
+        public Vector3 Scaling
         {
             get
             {
-                Transform parent = this.Parent;
-                return (parent != null) ? parent.Scale * this.LocalScale : this.LocalScale;
+                return this.GetParentScale() * this.LocalScaling;
             }
             set
             {
-                Vector3 previous = this.Scale;
-                //throw new NotImplementedException();
-                //this.SetProperty(ref _Scale, value);
+                Vector3 previous = this.Scaling;
+                Vector3 newValue = Vector3.One;
+
+                this.SetProperty(ref _LocalScaling, newValue);
                 this.Raise(this.ScalingChanged, value, previous);
             }
         }
 
-        public Matrix ScaleMatrix
+        /// <summary>
+        /// The absolute scaling in world space as scaling <see cref="Matrix"/>.
+        /// </summary>
+        public Matrix ScalingMatrix
         {
             get
             {
-                return Matrix.Scaling(this.Scale);
+                return Matrix.Scaling(this.Scaling);
             }
         }
 
+        /// <summary>
+        /// The position-, rotation, and scaling matrices combined as transformation <see cref="Matrix"/>.
+        /// </summary>
         public Matrix ModelMatrix
         {
             get
             {
-                return this.PositionMatrix * this.RotationMatrix * this.ScaleMatrix;
+                return this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix;
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Transform"/>.
+        /// </summary>
         public Transform()
         {
             logger.Debug("Initializing a new transform.");
@@ -218,22 +301,95 @@ namespace LightClaw.Engine.Core
             };
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Transform"/> setting position, rotation and scaling.
+        /// </summary>
+        /// <param name="localPosition">The <see cref="GameObject"/>'s local position in relation to the parent's position.</param>
+        /// <param name="localRotation">The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.</param>
+        /// <param name="localScale">The <see cref="GameObject"/>'s scaling relative to the parent's scaling.</param>
         public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale) : this(null, localPosition, localRotation, localScale) { }
 
+        /// <summary>
+        /// Initializes a new <see cref="Transform"/> the parent, position, rotation and scaling.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="localPosition">The <see cref="GameObject"/>'s local position in relation to the parent's position.</param>
+        /// <param name="localRotation">The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.</param>
+        /// <param name="localScale">The <see cref="GameObject"/>'s scaling relative to the parent's scaling.</param>
         public Transform(Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
             : this()
         {
             this.LocalPosition = localPosition;
             this.LocalRotation = localRotation;
-            this.LocalScale = localScale;
+            this.LocalScaling = localScale;
             this.Parent = parent;
         }
 
+        /// <summary>
+        /// Rotates the <see cref="GameObject"/> by the specified amount.
+        /// </summary>
+        /// <param name="amount">The amount to rotate by.</param>
+        public void Rotate(Quaternion amount)
+        {
+            this.Rotation *= amount;
+        }
+
+        /// <summary>
+        /// Scales the <see cref="GameObject"/> by the specified amount.
+        /// </summary>
+        /// <param name="amount">The amount to scale by.</param>
+        public void Scale(Vector3 amount)
+        {
+            this.Scaling *= amount;
+        }
+
+        /// <summary>
+        /// Translates the <see cref="GameObject"/> by the specified amount.
+        /// </summary>
+        /// <param name="amount">The amount to translate by.</param>
+        public void Translate(Vector3 amount)
+        {
+            this.Position += amount;
+        }
+
+        /// <summary>
+        /// Resets local position, scaling and rotation.
+        /// </summary>
         protected override void OnReset()
         {
             this.LocalPosition = Vector3.Zero;
             this.LocalRotation = Quaternion.Identity;
-            this.LocalScale = Vector3.One;
+            this.LocalScaling = Vector3.One;
+        }
+
+        /// <summary>
+        /// Safely (null-check) gets the parent's rotation and returns <see cref="Quaternion.Identity"/> if it could not be obtained.
+        /// </summary>
+        /// <returns><see cref="Quaternion.Identity"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s rotation.</returns>
+        protected Quaternion GetParentRotation()
+        {
+            Transform parent = this.Parent;
+            return (parent != null) ? parent.Rotation : Quaternion.Identity;
+        }
+
+        /// <summary>
+        /// Safely (null-check) gets the parent's position and returns <see cref="Vector3.Zero"/> if it could not be obtained.
+        /// </summary>
+        /// <returns><see cref="Vector3.Zero"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s position.</returns>
+        protected Vector3 GetParentPosition()
+        {
+            Transform parent = this.Parent;
+            return (parent != null) ? parent.Position : Vector3.Zero;
+        }
+
+        /// <summary>
+        /// Safely (null-check) gets the parent's scaling and returns <see cref="Vector3.One"/> if it could not be obtained.
+        /// </summary>
+        /// <returns><see cref="Vector3.One"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s scaling.</returns>
+        protected Vector3 GetParentScale()
+        {
+            Transform parent = this.Parent;
+            return (parent != null) ? parent.Scaling : Vector3.One;
         }
     }
 }

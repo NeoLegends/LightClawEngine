@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// The <see cref="Stopwatch"/> tracking the time that passed since the block started.
         /// </summary>
-        private Stopwatch watch;
+        private readonly Stopwatch watch;
 
         /// <summary>
         /// The time that should pass until the coroutine is executed again.

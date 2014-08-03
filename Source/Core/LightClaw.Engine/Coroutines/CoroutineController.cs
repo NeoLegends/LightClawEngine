@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Coroutines
         /// The list of managed coroutines.
         /// </summary>
         [IgnoreDataMember]
-        private List<ICoroutineContext> contexts = new List<ICoroutineContext>();
+        private readonly List<ICoroutineContext> contexts = new List<ICoroutineContext>();
 
         /// <summary>
         /// Initializes a new <see cref="CoroutineController"/>.

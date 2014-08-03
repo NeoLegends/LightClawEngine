@@ -21,6 +21,7 @@ namespace LightClaw.Extensions
         public static IEnumerable<T> Except<T>(this IEnumerable<T> collection, T valueToRemove)
         {
             Contract.Requires<ArgumentNullException>(collection != null);
+            Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
             return collection.GroupBy(s => s).SelectMany(g => g.Key.Equals(valueToRemove) ? g.Skip(1) : g);
         }
@@ -28,6 +29,8 @@ namespace LightClaw.Extensions
         [Pure]
         public static IEnumerable<T> FilterNull<T>(this IEnumerable<T> collection)
         {
+            Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
+
             return (collection != null) ? collection.Where(item => item != null) : Enumerable.Empty<T>();
         }
 
