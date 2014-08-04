@@ -29,11 +29,7 @@ namespace LightClaw.Engine.Core
             {
                 Scene previousValue = this.Scene;
                 this.SetProperty(ref _Scene, value);
-                EventHandler<ValueChangedEventArgs<Scene>> handler = this.SceneChanged;
-                if (handler != null)
-                {
-                    handler(this, new ValueChangedEventArgs<Scene>(value, previousValue));
-                }
+                this.Raise(this.SceneChanged, value, previousValue);
             }
         }
 
@@ -94,7 +90,7 @@ namespace LightClaw.Engine.Core
                 this.EnsureAttachability(item);
             }
 
-            List<Component> alreadyAttachedComponents = new List<Component>(8); // 8 seems to be a good number, more components are unlikely to be attached at once
+            List<Component> alreadyAttachedComponents = new List<Component>();
             foreach (Component comp in items)
             {
                 alreadyAttachedComponents.Add(comp);
@@ -139,13 +135,75 @@ namespace LightClaw.Engine.Core
             base.RemoveAt(index);
         }
 
+        public bool TryAdd(Component item)
+        {
+            Contract.Requires<ArgumentNullException>(item != null);
+
+            try
+            {
+                this.Add(item);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool TryAddRange(IEnumerable<Component> items)
+        {
+            Contract.Requires<ArgumentNullException>(items != null);
+
+            try
+            {
+                this.AddRange(items);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool TryInsert(int index, Component item)
+        {
+            Contract.Requires<ArgumentNullException>(item != null);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            try
+            {
+                this.Insert(index, item);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool TryInsertRange(int index, IEnumerable<Component> items)
+        {
+            Contract.Requires<ArgumentNullException>(items != null);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            try
+            {
+                this.InsertRange(index, items);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void EnsureAttachability(Component component)
         {
             Contract.Requires<ArgumentNullException>(component != null);
 
             if (!component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this)))
             {
-                throw new NotSupportedException("The component cannot be attached. One of the validators was not successful.");
+                throw new NotSupportedException("The component cannot be attached. At least one of the validators was not successful.");
             }
         }
 
@@ -156,7 +214,7 @@ namespace LightClaw.Engine.Core
 
             if (!component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this, gameObjectsToAttach)))
             {
-                throw new NotSupportedException("The component cannot be attached. One of the validators was not successful.");
+                throw new NotSupportedException("The component cannot be attached. At least one of the validators was not successful.");
             }
         }
 
@@ -166,7 +224,7 @@ namespace LightClaw.Engine.Core
 
             if (!component.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this)))
             {
-                throw new NotSupportedException("The component cannot be removed. One of the validators was not successful.");
+                throw new NotSupportedException("The component cannot be removed. At least one of the validators was not successful.");
             }
         }
 

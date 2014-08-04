@@ -39,7 +39,7 @@ namespace LightClaw.Engine.Coroutines
         /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
         public bool CanExecute()
         {
-            return this.watch.Elapsed > this.BlockingTime;
+            return (this.watch.Elapsed > this.BlockingTime);
         }
     }
 }

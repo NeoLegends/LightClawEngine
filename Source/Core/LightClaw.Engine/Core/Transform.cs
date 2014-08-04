@@ -331,7 +331,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">The amount to rotate by.</param>
         public void Rotate(Quaternion amount)
         {
-            this.Rotation *= amount;
+            this.Rotation = amount * this.Rotation;
         }
 
         /// <summary>

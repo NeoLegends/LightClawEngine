@@ -11,7 +11,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class Model : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
-        private IEnumerable<IGrouping<Material, ModelPart>> groupedModelParts;
+        private IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts;
 
         public event EventHandler<ParameterEventArgs> Drawing;
 
@@ -73,19 +73,20 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                IEnumerable<IGrouping<Material, ModelPart>> groupedModelParts = this.groupedModelParts;
+                IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts = this.groupedModelParts;
                 if (groupedModelParts != null)
                 {
-                    foreach (IGrouping<Material, ModelPart> grouping in groupedModelParts)
+                    foreach (IGrouping<Shader, ModelPart> grouping in groupedModelParts)
                     {
                         if (grouping.Key != null)
                         {
-                            using (GLBinding materialBinding = new GLBinding(grouping.Key))
+                            using (GLBinding shaderBinding = new GLBinding(grouping.Key))
                             {
                                 foreach (ModelPart modelMeshPart in grouping)
                                 {
                                     if (modelMeshPart != null)
                                     {
+                                        modelMeshPart.Material.Bind();
                                         modelMeshPart.Draw();
                                     }
                                 }
@@ -109,7 +110,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
                 {
-                    this.groupedModelParts = this.ModelParts.GroupBy(modelMeshPart => modelMeshPart.Material);
+                    this.groupedModelParts = this.ModelParts.GroupBy(modelMeshPart => modelMeshPart.Material.Shader);
                 }
             }
         }

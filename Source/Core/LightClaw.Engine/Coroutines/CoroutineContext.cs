@@ -13,7 +13,7 @@ using LightClaw.Engine.Core;
 namespace LightClaw.Engine.Coroutines
 {
     /// <summary>
-    /// Represents a controller for the execution of coroutines.
+    /// Represents a controller for the execution of a coroutine.
     /// </summary>
     public class CoroutineContext : ICoroutineContext, IUpdateable
     {
@@ -169,9 +169,10 @@ namespace LightClaw.Engine.Coroutines
 
                     bool result = !(this.IsFinished = !this.enumerator.MoveNext());
                     current = this.enumerator.Current;
-                    if (!ReferenceEquals(current, null) && current is IExecutionBlockRequest)
+                    IExecutionBlockRequest blockRequest = current as IExecutionBlockRequest;
+                    if (blockRequest != null)
                     {
-                        this.blockRequest = (IExecutionBlockRequest)current;
+                        this.blockRequest = blockRequest;
                         this.IsBlocked = true;
                     }
                     this.RaiseStepped(current, result);

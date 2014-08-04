@@ -79,14 +79,13 @@ namespace LightClaw.Engine.Graphics
                 return;
             }
 
-            Task<Model> meshDescriptionTask = (this.Model != null) ? Task.FromResult(this.Model) :
-                                                                        contentManager.LoadAsync<Model>(this.ResourceString);
-            meshDescriptionTask.ContinueWith(t =>
+            Task<Model> meshTask = (this.Model != null) ? Task.FromResult(this.Model) : contentManager.LoadAsync<Model>(this.ResourceString);
+            meshTask.ContinueWith(t =>
             {
                 this.Model = t.Result;
                 logger.Debug("Mesh '{0}' loaded successfully.");
             }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
-            meshDescriptionTask.ContinueWith(
+            meshTask.ContinueWith(
                 t => logger.Warn("Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );

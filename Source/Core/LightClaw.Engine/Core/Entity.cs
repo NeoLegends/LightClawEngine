@@ -15,16 +15,30 @@ using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
+    /// <summary>
+    /// A lightweight component base class implementing essential services such as INotifyPropertyChanged and INameable.
+    /// </summary>
     [DataContract(IsReference = true)]
-    [Description("A lightweight component base class implementing essential services such as INotifyPropertyChanged and INameable.")]
     public abstract class Entity : INameable, INotifyPropertyChanged
     {
+        /// <summary>
+        /// An instance of <see cref="ILog"/> used to track application events.
+        /// </summary>
         protected static readonly ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        /// <summary>
+        /// Notifies about changes in a specified property.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private string _Name;
 
+        /// <summary>
+        /// The instance's name.
+        /// </summary>
         [DataMember]
         public virtual string Name
         {
@@ -38,10 +52,15 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private IocContainer _IocC = LightClawEngine.DefaultIocContainer;
 
+        /// <summary>
+        /// An Ioc-Container used to obtain certain service instances such as IContentManager at runtime.
+        /// </summary>
         [IgnoreDataMember]
-        [Description("An Ioc-Container used to obtain certain service instances such as IContentManager at runtime.")]
         public IocContainer IocC
         {
             get
@@ -56,14 +75,52 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Entity"/>.
+        /// </summary>
         protected Entity() { }
 
-        protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
+        /// <summary>
+        /// Initializes a new <see cref="Entity"/> and sets the name.
+        /// </summary>
+        /// <param name="name">The <see cref="Entity"/>'s name.</param>
+        protected Entity(string name)
         {
-            location = newValue;
-            this.RaisePropertyChanged(propertyName);
+            this.Name = name;
         }
 
+        /// <summary>
+        /// Raises the specified <paramref name="handler"/>.
+        /// </summary>
+        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
+        /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
+        protected void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
+        {
+            if (handler != null)
+            {
+                handler(this, args ?? ParameterEventArgs.Default);
+            }
+        }
+
+        /// <summary>
+        /// Raises the specified <paramref name="handler"/>.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of value that changed.</typeparam>
+        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
+        /// <param name="newValue">The value of the variable after the change.</param>
+        /// <param name="previousValue">The value of the variable before the change.</param>
+        protected void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
+        {
+            if (handler != null)
+            {
+                handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:PropertyChanged"/>-event for the specified property name.
+        /// </summary>
+        /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
@@ -73,12 +130,17 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        protected void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
+        /// <summary>
+        /// Sets the property with the specified name and raises the <see cref="E:PropertyChanged"/>-event.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the property that changed.</typeparam>
+        /// <param name="location">The property's backing field.</param>
+        /// <param name="newValue">The property's new value.</param>
+        /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
+        protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (handler != null)
-            {
-                handler(this, args ?? ParameterEventArgs.Default);
-            }
+            location = newValue;
+            this.RaisePropertyChanged(propertyName);
         }
     }
 }

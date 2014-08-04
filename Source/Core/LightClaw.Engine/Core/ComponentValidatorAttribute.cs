@@ -6,14 +6,31 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
-    {
+{
+    /// <summary>
+    /// Abstract base class for all component validators.
+    /// </summary>
+    /// <remarks>
+    /// A component validator is an attribute that validates attachment to or removal from a specified <see cref="GameObject"/>.
+    /// It can deny the process resulting in no change in the scene tree.
+    /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public abstract class ComponentValidatorAttribute : Attribute
     {
+        /// <summary>
+        /// The <see cref="Type"/> of component that is involved in the validation.
+        /// </summary>
         public Type ComponentType { get; protected set; }
 
+        /// <summary>
+        /// Initializes a new <see cref="ComponentValidatorAttribute"/>.
+        /// </summary>
         protected ComponentValidatorAttribute() { }
 
+        /// <summary>
+        /// Initializes a new <see cref="ComponentValidatorAttribute"/> setting the type of the component.
+        /// </summary>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
         protected ComponentValidatorAttribute(Type componentType)
         {
             this.ComponentType = componentType;

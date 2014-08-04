@@ -170,7 +170,6 @@
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
     <Compile Include="Core\HashF.cs" />
-    <Compile Include="Core\DescriptionAttribute.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\ILateUpdateable.cs" />
@@ -250,6 +249,7 @@
     <Compile Include="IO\IContentManager.cs" />
     <Compile Include="IO\IContentReader.cs" />
     <Compile Include="IO\IContentResolver.cs" />
+    <Compile Include="IO\MaterialReader.cs" />
     <Compile Include="IO\ModelReader.cs" />
     <Compile Include="IO\SceneReader.cs" />
     <Compile Include="IO\ShaderStageReader.cs" />

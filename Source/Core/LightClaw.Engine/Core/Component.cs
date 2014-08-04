@@ -47,33 +47,40 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected Component() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is enabled.
+        /// </summary>
         protected override void OnEnable() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is disabled.
+        /// </summary>
         protected override void OnDisable() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is being drawn.
+        /// </summary>
         protected override void OnDraw() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is loaded.
+        /// </summary>
         protected override void OnLoad() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is reset.
+        /// </summary>
         protected override void OnReset() { }
 
+        /// <summary>
+        /// Callback when the <see cref="Component"/> is updates with the specified <see cref="GameTime"/>.
+        /// </summary>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         protected override void OnUpdate(GameTime gameTime) { }
 
-        protected override void OnLateUpdate() { }
-
         /// <summary>
-        /// Raises the specified <paramref name="handler"/>.
+        /// Callback when the <see cref="Component"/> is late-updated.
         /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of value that changed.</typeparam>
-        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
-        /// <param name="newValue">The value of the variable after the change.</param>
-        /// <param name="previousValue">The value of the variable before the change.</param>
-        protected void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T previousValue)
-        {
-            if (handler != null)
-            {
-                handler(this, new ValueChangedEventArgs<T>(newValue, previousValue));
-            }
-        }
+        protected override void OnLateUpdate() { }
     }
 }

@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Coroutines
         /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
         public bool CanExecute()
         {
-            return Interlocked.Increment(ref this.tries) > this.RequiredTries;
+            return (Interlocked.Increment(ref this.tries) > this.RequiredTries);
         }
     }
 }

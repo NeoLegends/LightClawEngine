@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
+    [DataContract]
     public abstract class Material : Entity, IBindable, IUpdateable, ILateUpdateable
     {
         public event EventHandler<ParameterEventArgs> Updating;
@@ -19,6 +24,7 @@ namespace LightClaw.Engine.Graphics
 
         private Shader _Shader;
 
+        [IgnoreDataMember]
         public Shader Shader
         {
             get
@@ -31,23 +37,26 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public void Bind()
+        private string _ShaderResourceString;
+
+        [DataMember]
+        public string ShaderResourceString
         {
-            Shader s = this.Shader;
-            if (s != null)
+            get
             {
-                s.Bind();
+                return _ShaderResourceString;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _ShaderResourceString, value);
             }
         }
 
-        public void Unbind()
-        {
-            Shader s = this.Shader;
-            if (s != null)
-            {
-                s.Unbind();
-            }
-        }
+        public abstract void Bind(); // DO NOT (!) bind shader, will be bound by model to reduce shader switches
+
+        public abstract void Unbind();
 
         public void Update(GameTime gameTime)
         {
@@ -61,7 +70,7 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                this.LateUpdate();
+                this.OnLateUpdate();
             }
         }
 
@@ -74,5 +83,33 @@ namespace LightClaw.Engine.Graphics
         protected abstract void OnUpdate(GameTime gameTime);
 
         protected abstract void OnLateUpdate();
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            string shaderResourceString = this.ShaderResourceString;
+            if (shaderResourceString != null)
+            {
+                Task<Shader> shaderTask = this.IocC.Resolve<IContentManager>().LoadAsync<Shader>(shaderResourceString);
+                shaderTask.ContinueWith(
+                    t =>
+                    {
+                        this.Shader = t.Result;
+                        logger.Debug("Shader '{0}' loaded successfully into material.".FormatWith(shaderResourceString));
+                    },
+                    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
+                );
+                shaderTask.ContinueWith(
+                    t => logger.Warn("Shader '{0}' could not be loaded after deserialization.".FormatWith(shaderResourceString), t.Exception),
+                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
+                );
+            }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.ShaderResourceString != null);
+        }
     }
 }

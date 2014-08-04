@@ -13,7 +13,7 @@ namespace LightClaw.Engine.IO
     {
         public async Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
-            if (assetType == typeof(ShaderStage) && parameter != null)
+            if (assetType == typeof(ShaderStage) && parameter != null && parameter is ShaderType)
             {
                 using (StreamReader sr = new StreamReader(assetStream))
                 {
