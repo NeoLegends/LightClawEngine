@@ -16,11 +16,11 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     [DataContract, ProtoContract]
     [StructureInformation(4, 1, false)]
-    public partial struct Color : ICloneable,
+    public struct Color : ICloneable,
 #if SYSTEMDRAWING_INTEROP
-                                  IEquatable<System.Drawing.Color>,
+                          IEquatable<System.Drawing.Color>,
 #endif
-                                  IEquatable<Color>
+                          IEquatable<Color>
     {
         /// <summary>
         /// Gets the size in bytes of the <see cref="Color"/>-struct.

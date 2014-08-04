@@ -14,6 +14,8 @@ namespace LightClaw.Engine.Graphics
     [DataContract]
     public abstract class Material : Entity, IBindable, IUpdateable, ILateUpdateable
     {
+        public event EventHandler<ValueChangedEventArgs<ModelPart>> ModelPartChanged;
+
         public event EventHandler<ParameterEventArgs> Updating;
 
         public event EventHandler<ParameterEventArgs> Updated;
@@ -21,6 +23,25 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
+
+        public event EventHandler<ValueChangedEventArgs<Shader>> ShaderChanged;
+
+        private ModelPart _ModelPart;
+
+        [IgnoreDataMember]
+        public ModelPart ModelPart
+        {
+            get
+            {
+                return _ModelPart;
+            }
+            internal set
+            {
+                ModelPart previous = this.ModelPart;
+                this.SetProperty(ref _ModelPart, value);
+                this.Raise(this.ModelPartChanged, value, previous);
+            }
+        }
 
         private Shader _Shader;
 
@@ -33,7 +54,9 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
+                Shader previous = this.Shader;
                 this.SetProperty(ref _Shader, value);
+                this.Raise(this.ShaderChanged, value, previous);
             }
         }
 

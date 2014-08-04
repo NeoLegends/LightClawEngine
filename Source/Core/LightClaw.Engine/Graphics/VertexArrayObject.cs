@@ -31,7 +31,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
-            Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.VertexBuffer.Target == BufferTarget.ElementArrayBuffer));
+            Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.Buffer.Target == BufferTarget.ElementArrayBuffer));
 
             this.IndexBuffer = indexBuffer;
             this.VertexBuffers = buffers.ToArray();
@@ -56,7 +56,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     foreach (BufferDescription bufferConfig in this.VertexBuffers)
                     {
-                        using (GLBinding vboBinding = new GLBinding(bufferConfig.VertexBuffer))
+                        using (GLBinding vboBinding = new GLBinding(bufferConfig.Buffer))
                         {
                             foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
                             {

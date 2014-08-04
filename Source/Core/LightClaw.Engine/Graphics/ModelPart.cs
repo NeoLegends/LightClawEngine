@@ -15,6 +15,10 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> Drawn;
 
+        public event EventHandler<ValueChangedEventArgs<Material>> MaterialChanged;
+
+        public event EventHandler<ValueChangedEventArgs<Model>> ModelChanged;
+
         public event EventHandler<ParameterEventArgs> Updating;
 
         public event EventHandler<ParameterEventArgs> Updated;
@@ -22,6 +26,8 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
+
+        public event EventHandler<ValueChangedEventArgs<VertexArrayObject>> VaoChanged;
 
         private Material _Material;
 
@@ -33,7 +39,13 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
+                if (value != null)
+                {
+                    value.ModelPart = this;
+                }
+                Material previous = this.Material;
                 this.SetProperty(ref _Material, value);
+                this.Raise(this.MaterialChanged, value, previous);
             }
         }
 
@@ -47,7 +59,9 @@ namespace LightClaw.Engine.Graphics
             }
             internal set
             {
+                Model previous = this.Model;
                 this.SetProperty(ref _Model, value);
+                this.Raise(this.ModelChanged, value, previous);
             }
         }
 
@@ -61,7 +75,9 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
+                VertexArrayObject previous = this.Vao;
                 this.SetProperty(ref _Vao, value);
+                this.Raise(this.VaoChanged, value, previous);
             }
         }
 
@@ -80,10 +96,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
+                Material mat = this.Material;
                 VertexArrayObject vao = this.Vao;
-                if (vao != null)
+                if ((vao != null) && (mat != null))
                 {
-                    // Material will be bound by ModelMesh to reduce shader switches, do not bind here
+                    using (GLBinding materialBinding = new GLBinding(mat))
                     using (GLBinding vaoBinding = new GLBinding(vao))
                     {
                         GL.DrawElements(BeginMode.TriangleStrip, vao.IndexCount, DrawElementsType.UnsignedShort, 0);

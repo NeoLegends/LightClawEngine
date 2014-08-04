@@ -29,7 +29,7 @@ namespace LightClaw.Engine.Core
         public ValueChangedEventArgs(T newValue) : this(newValue, default(T)) { }
 
         /// <summary>
-        /// Initializes a new <see cref="ValueChangedEventArgs{T}"/>.
+        /// Initializes a new <see cref="ValueChangedEventArgs{T}"/> setting the new and the old value.
         /// </summary>
         /// <param name="newValue">The variable's new value.</param>
         /// <param name="oldValue">The variable's old value.</param>

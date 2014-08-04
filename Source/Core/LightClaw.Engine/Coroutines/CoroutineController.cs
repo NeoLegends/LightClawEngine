@@ -25,6 +25,11 @@ namespace LightClaw.Engine.Coroutines
         private readonly List<ICoroutineContext> contexts = new List<ICoroutineContext>();
 
         /// <summary>
+        /// Notifies when a new coroutine was added to the <see cref="CoroutineController"/>.
+        /// </summary>
+        public event EventHandler<ParameterEventArgs> CoroutineAdded;
+
+        /// <summary>
         /// Initializes a new <see cref="CoroutineController"/>.
         /// </summary>
         public CoroutineController() { }
@@ -63,6 +68,7 @@ namespace LightClaw.Engine.Coroutines
             {
                 this.contexts.Add(new CoroutineContext(coroutine));
             }
+            this.Raise(this.CoroutineAdded);
         }
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace LightClaw.Engine.Coroutines
             {
                 this.contexts.Add(new CoroutineContext(coroutine));
             }
+            this.Raise(this.CoroutineAdded);
         }
 
         /// <summary>

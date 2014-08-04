@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
+using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
@@ -187,6 +188,8 @@ namespace LightClaw.Engine.Core
 
             logger.Info("Depth testing enabled.");
 
+            GL.ClearColor(Color.CornflowerBlue);
+
             this.SceneManager.Load();
         }
 
@@ -209,6 +212,7 @@ namespace LightClaw.Engine.Core
 
         protected virtual void OnUpdate(double elapsedSinceLastUpdate)
         {
+            elapsedSinceLastUpdate = (elapsedSinceLastUpdate >= 0.0) ? elapsedSinceLastUpdate : 0.0;
             this.CurrentGameTime = new GameTime(
                 this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
                 this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate

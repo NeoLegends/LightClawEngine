@@ -55,6 +55,7 @@ namespace LightClaw.Engine.Core
             get
             {
                 Contract.Ensures(Contract.Result<string[]>() != null);
+                Contract.Ensures(Contract.Result<string[]>().Length == byte.MaxValue);
 
                 return _HexTable.ToArray();
             }

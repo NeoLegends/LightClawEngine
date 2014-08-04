@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
 {
@@ -16,16 +18,19 @@ namespace LightClaw.Engine.Coroutines
     /// a <see cref="CoroutineController"/> calling <see cref="M:ICoroutineContext.Step"/> (which results in
     /// <see cref="M:CanExecute"/> being called) every frame.
     /// </remarks>
+    [DataContract, ProtoContract]
     public struct UpdateCountBlockRequest : IExecutionBlockRequest
     {
         /// <summary>
         /// The amount of tries.
         /// </summary>
+        [DataMember, ProtoMember(1)]
         private int tries;
 
         /// <summary>
         /// The required amount of tries to unblock execution again.
         /// </summary>
+        [DataMember, ProtoMember(2)]
         public int RequiredTries { get; private set; }
 
         /// <summary>

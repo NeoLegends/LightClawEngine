@@ -16,6 +16,8 @@ namespace LightClaw.Engine.Graphics
     [DataContract]
     public class Mesh : Component
     {
+        public event EventHandler<ValueChangedEventArgs<Model>> ModelChanged;
+
         private Model _Model;
 
         public Model Model
@@ -26,7 +28,9 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
+                Model previous = this.Model;
                 this.SetProperty(ref _Model, value);
+                this.Raise(this.ModelChanged, value, previous);
             }
         }
 
