@@ -363,7 +363,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (null-check) gets the parent's rotation and returns <see cref="Quaternion.Identity"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's rotation and returns <see cref="Quaternion.Identity"/> if it could not be obtained.
         /// </summary>
         /// <returns><see cref="Quaternion.Identity"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s rotation.</returns>
         protected Quaternion GetParentRotation()
@@ -373,7 +373,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (null-check) gets the parent's position and returns <see cref="Vector3.Zero"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's position and returns <see cref="Vector3.Zero"/> if it could not be obtained.
         /// </summary>
         /// <returns><see cref="Vector3.Zero"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s position.</returns>
         protected Vector3 GetParentPosition()
@@ -383,7 +383,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (null-check) gets the parent's scaling and returns <see cref="Vector3.One"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's scaling and returns <see cref="Vector3.One"/> if it could not be obtained.
         /// </summary>
         /// <returns><see cref="Vector3.One"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s scaling.</returns>
         protected Vector3 GetParentScale()

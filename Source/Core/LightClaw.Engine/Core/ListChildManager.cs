@@ -71,12 +71,9 @@ namespace LightClaw.Engine.Core
 
         public virtual void Add(T item)
         {
-            this.Items.Add(item);
-
-            NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
-            if (handler != null)
+            lock (this.Items)
             {
-                handler(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+                this.Items.Add(item);
             }
         }
 
@@ -92,30 +89,36 @@ namespace LightClaw.Engine.Core
 
         public virtual void Clear()
         {
-            this.Items.Clear();
-
-            NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
-            if (handler != null)
+            lock (this.Items)
             {
-                handler(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                this.Items.Clear();
             }
         }
 
         public virtual bool Contains(T item)
         {
-            return this.Items.Contains(item);
+            lock (this.Items)
+            {
+                return this.Items.Contains(item);
+            }
         }
 
         public virtual void CopyTo(T[] array, int arrayIndex)
         {
             Contract.Assert(arrayIndex <= (array.Length - this.Count));
 
-            this.Items.CopyTo(array, arrayIndex);
+            lock (this.Items)
+            {
+                this.Items.CopyTo(array, arrayIndex);
+            }
         }
 
         public virtual IEnumerator<T> GetEnumerator()
         {
-            return this.Items.GetEnumerator();
+            lock (this.Items)
+            {
+                return this.Items.GetEnumerator();
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -125,12 +128,18 @@ namespace LightClaw.Engine.Core
 
         public virtual int IndexOf(T item)
         {
-            return this.Items.IndexOf(item);
+            lock (this.Items)
+            {
+                return this.Items.IndexOf(item);
+            }
         }
 
         public virtual void Insert(int index, T item)
         {
-            this.Items.Insert(index, item);
+            lock (this.Items)
+            {
+                this.Items.Insert(index, item);
+            }
         }
 
         public virtual void InsertRange(int index, IEnumerable<T> items)
@@ -147,14 +156,39 @@ namespace LightClaw.Engine.Core
 
         public virtual bool Remove(T item)
         {
-            return this.Items.Remove(item);
+            lock (this.Items)
+            {
+                return this.Items.Remove(item);
+            }
         }
 
         public virtual void RemoveAt(int index)
         {
             Contract.Assert(index < this.Count);
 
-            this.Items.RemoveAt(index);
+            lock (this.Items)
+            {
+                this.Items.RemoveAt(index);
+            }
+        }
+
+        public virtual bool TryGetItem(int index, out T item)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            lock (this.Items)
+            {
+                try
+                {
+                    item = this.Items[index];
+                    return true;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    item = default(T);
+                    return false;   
+                }
+            }
         }
 
         [ContractInvariantMethod]

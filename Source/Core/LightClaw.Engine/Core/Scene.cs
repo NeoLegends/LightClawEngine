@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Core
 
         public async Task Save(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
             using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
             {
@@ -105,17 +105,53 @@ namespace LightClaw.Engine.Core
         public Task Save(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanWrite);
+
+            return this.Save(s, CompressionLevel.Optimal);
+        }
+
+        public Task Save(Stream s, CompressionLevel level)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanWrite);
 
             return Task.Run(() =>
             {
-                logger.Info("Saving scene to a stream.");
+                logger.Info("Saving compressed with level '{0}' scene to a stream.".FormatWith(level));
 
-                this.Raise(this.Saving);
-                using (DeflateStream deflateStream = new DeflateStream(s, CompressionLevel.Optimal, true))
+                using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
+                using (DeflateStream deflateStream = new DeflateStream(s, level, true))
                 {
                     new NetDataContractSerializer().WriteObject(deflateStream, this);
                 }
-                this.Raise(this.Saved);
+
+                logger.Info("Scene saved.");
+            });
+        }
+
+        public async Task SaveXml(string resourceString)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
+
+            using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
+            {
+                await this.SaveXml(s);
+            }
+        }
+
+        public Task SaveXml(Stream s)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanWrite);
+
+            return Task.Run(() =>
+            {
+                logger.Info("Saving scene as XML to a stream.");
+
+                using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
+                {
+                    new NetDataContractSerializer().WriteObject(s, this);
+                }
 
                 logger.Info("Scene saved.");
             });
@@ -171,9 +207,17 @@ namespace LightClaw.Engine.Core
             {
                 using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
                 {
-                    return (Scene)new NetDataContractSerializer().ReadObject(deflateStream);
+                    return (Scene)new NetDataContractSerializer().ReadObject(s);
                 }
             });
+        }
+
+        public static Task<Scene> LoadXml(Stream s)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanRead);
+
+            return Task.Run(() => (Scene)new NetDataContractSerializer().ReadObject(s));
         }
     }
 }

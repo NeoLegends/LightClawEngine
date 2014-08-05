@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Core
 {
@@ -45,7 +46,10 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Component"/>.
         /// </summary>
-        protected Component() { }
+        protected Component() 
+        {
+            logger.Debug("Initializes a new Component of type '{0}'.".FormatWith(this.GetType().FullName));
+        }
 
         /// <summary>
         /// Callback when the <see cref="Component"/> is enabled.

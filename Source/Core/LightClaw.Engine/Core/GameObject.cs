@@ -58,15 +58,14 @@ namespace LightClaw.Engine.Core
 
         public override void Clear()
         {
-            foreach (Component comp in this)
+            lock (this.Items)
             {
-                this.EnsureRemovability(comp);
+                foreach (Component comp in this)
+                {
+                    this.EnsureRemovability(comp);
+                }
+                base.Clear();
             }
-            foreach (Component comp in this)
-            {
-                this.Remove(comp);
-            }
-            base.Clear();
         }
 
         public Component Find(string name)
@@ -126,13 +125,16 @@ namespace LightClaw.Engine.Core
 
         public override void RemoveAt(int index)
         {
-            if (this[index] != null)
+            lock (this.Items)
             {
-                this.EnsureRemovability(this[index]);
+                if (this[index] != null)
+                {
+                    this.EnsureRemovability(this[index]);
 
-                this[index].GameObject = null;
+                    this[index].GameObject = null;
+                }
+                base.RemoveAt(index);
             }
-            base.RemoveAt(index);
         }
 
         public bool TryAdd(Component item)

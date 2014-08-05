@@ -24,6 +24,7 @@ namespace LightClaw.Engine.Core
             get
             {
                 Contract.Ensures(Contract.Result<double[]>() != null);
+                Contract.Ensures(Contract.Result<double[]>().Length == 16);
 
                 return _ZeroThresholds.ToArray();
             }
@@ -36,8 +37,6 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                Contract.Assert(ZeroThresholds.Length > 10);
-
                 return ZeroThresholds[10];
             }
         }
@@ -137,6 +136,28 @@ namespace LightClaw.Engine.Core
         public static int ClampToInt32(long value)
         {
             return (value <= int.MaxValue) ? (int)value : int.MaxValue;
+        }
+
+        /// <summary>
+        /// Converts the specified value in degrees to radians.
+        /// </summary>
+        /// <param name="value">The value to convert to radians.</param>
+        /// <returns>The value in radians.</returns>
+        [Pure]
+        public static float DegreesToRadians(float value)
+        {
+            return (float)(value * (Math.PI / 180));
+        }
+
+        /// <summary>
+        /// Converts the specified value in degrees to radians.
+        /// </summary>
+        /// <param name="value">The value to convert to radians.</param>
+        /// <returns>The value in radians.</returns>
+        [Pure]
+        public static double DegreesToRadians(double value)
+        {
+            return value * (Math.PI / 180);
         }
 
         /// <summary>
@@ -420,6 +441,28 @@ namespace LightClaw.Engine.Core
         public static double PowerOfTwo(double n)
         {
             return Math.Pow(2, n);
+        }
+
+        /// <summary>
+        /// Converts the specified angle in radians into degrees.
+        /// </summary>
+        /// <param name="value">The value in radians to convert.</param>
+        /// <returns>The input value in degrees.</returns>
+        [Pure]
+        public static float RadiansToDegrees(float value)
+        {
+            return (float)(value * (180 / Math.PI));
+        }
+
+        /// <summary>
+        /// Converts the specified angle in radians into degrees.
+        /// </summary>
+        /// <param name="value">The value in radians to convert.</param>
+        /// <returns>The input value in degrees.</returns>
+        [Pure]
+        public static double RadiansToDegrees(double value)
+        {
+            return value * (180 / Math.PI);
         }
 
         /// <summary>

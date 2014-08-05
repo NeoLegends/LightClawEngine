@@ -61,7 +61,7 @@ namespace CoreTests
                     new GameObject(
                         new Component[] {
                             new Transform(new Vector3(10, 15, 20), Quaternion.Identity, Vector3.One),
-                            new Camera() { FoV = 16 / 9, Iso = 100, Zoom = 18 }
+                            new Camera() { FoV = 16 / 9, Height = 1080, Width = 1920, Zoom = 18 }
                         }
                     )
                 }

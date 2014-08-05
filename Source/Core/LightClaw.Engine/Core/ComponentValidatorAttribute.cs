@@ -37,14 +37,28 @@ namespace LightClaw.Engine.Core
         }
     }
 
+    /// <summary>
+    /// Validates the attachment of a <see cref="Component"/> to a <see cref="GameObject"/>.
+    /// </summary>
     [ContractClass(typeof(AttachmentValidatorAttributeContracts))]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public abstract class AttachmentValidatorAttribute : ComponentValidatorAttribute
     {
+        /// <summary>
+        /// Initializes a new <see cref="AttachmentValidatorAttribute"/>.
+        /// </summary>
         public AttachmentValidatorAttribute() { }
 
+        /// <summary>
+        /// Initializes a new <see cref="AttachmentValidatorAttribute"/> setting the <see cref="Type"/> of component to be validated.
+        /// </summary>
         public AttachmentValidatorAttribute(Type componentType) : base(componentType) { }
 
+        /// <summary>
+        /// Validates attachment of the <see cref="Component"/> to the specified <see cref="GameObject"/>.
+        /// </summary>
+        /// <param name="gameObjectToAttachTo">The <see cref="GameObject"/> the <see cref="Component"/> is about to be attached to.</param>
+        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c>.</returns>
         public bool Validate(GameObject gameObjectToAttachTo)
         {
             Contract.Requires<ArgumentNullException>(gameObjectToAttachTo != null);
@@ -52,17 +66,40 @@ namespace LightClaw.Engine.Core
             return this.Validate(gameObjectToAttachTo, Enumerable.Empty<Component>());
         }
 
+        /// <summary>
+        /// Validates attachment of the <see cref="Component"/> to the specified <see cref="GameObject"/>.
+        /// </summary>
+        /// <param name="gameObjectToAttachTo">The <see cref="GameObject"/> the <see cref="Component"/> is about to be attached to.</param>
+        /// <param name="componentsToAttach">
+        /// Other <see cref="Component"/>s (except the current one being attached!) that are supposed to be attached in the same transaction 
+        /// as the current object. Used to provide support for attaching multiple interdependent <see cref="Component"/>s.
+        /// </param>
+        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c>.</returns>
         public abstract bool Validate(GameObject gameObjectToAttachTo, IEnumerable<Component> componentsToAttach);
     }
     
+    /// <summary>
+    /// Validates the removal of a <see cref="Component"/> from a <see cref="GameObject"/>.
+    /// </summary>
     [ContractClass(typeof(RemovalValidatorAttributeContracts))]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public abstract class RemovalValidatorAttribute : ComponentValidatorAttribute
     {
+        /// <summary>
+        /// Initializes a new <see cref="RemovalValidatorAttribute"/>.
+        /// </summary>
         public RemovalValidatorAttribute() { }
 
+        /// <summary>
+        /// Initializes a new <see cref="RemovalValidatorAttribute"/> setting the <see cref="Type"/> of component to be validated.
+        /// </summary>
         public RemovalValidatorAttribute(Type componentType) : base(componentType) { }
 
+        /// <summary>
+        /// Validates a removal process from the specified <paramref name="gameObjectToRemoveFrom"/>.
+        /// </summary>
+        /// <param name="gameObjectToRemoveFrom">The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.</param>
+        /// <returns><c>true</c> if the <see cref="Component"/> can be safely removed, otherwise <c>false</c>.</returns>
         public abstract bool Validate(GameObject gameObjectToRemoveFrom);
     }
 

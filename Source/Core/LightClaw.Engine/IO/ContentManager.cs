@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
 
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
-        private readonly ConcurrentDictionary<string, WeakReference> cachedAssets = new ConcurrentDictionary<string, WeakReference>();
+        private readonly ConcurrentDictionary<string, WeakReference<object>> cachedAssets = new ConcurrentDictionary<string, WeakReference<object>>();
 
         private readonly ConcurrentBag<IContentReader> readers = new ConcurrentBag<IContentReader>();
 
@@ -94,13 +94,13 @@ namespace LightClaw.Engine.IO
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                WeakReference cachedAsset = null;
+                WeakReference<object> cachedAsset = null;
                 object asset = null;
 
-                if (forceReload ||
-                    !this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || 
-                    (asset = cachedAsset.Target) == null ||
-                    !(assetType.IsAssignableFrom(asset.GetType()))) // Load new if asset is not cached, WeakRef was collected or cached asset is not of requested type
+                if (forceReload ||                                                     // Load if reload forced,
+                    !this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || // no cache available,
+                    !cachedAsset.TryGetTarget(out asset) ||                            // weak reference to cached asset collected or
+                    !(assetType.IsAssignableFrom(asset.GetType())))                    // types mismatch.
                 {
                     logger.Debug("No cached version of '{0}' available or reload forced, obtaining stream...".FormatWith(resourceString));
                     try
@@ -110,8 +110,9 @@ namespace LightClaw.Engine.IO
                         {
                             if (assetStream == null)
                             {
-                                logger.Warn("Asset '{0}' could not be found.".FormatWith(resourceString));
-                                throw new FileNotFoundException("Asset '{0}' could not be found.".FormatWith(resourceString));
+                                string message = "Asset '{0}' could not be found.".FormatWith(resourceString);
+                                logger.Warn(message);
+                                throw new FileNotFoundException(message);
                             }
                             logger.Debug("Stream around '{0}' obtained, deserializing...".FormatWith(resourceString));
 
@@ -119,11 +120,12 @@ namespace LightClaw.Engine.IO
                                                       .FirstOrDefaultAsync(t => t.Result != null);
                             if (asset == null)
                             {
-                                logger.Warn("Asset '{0}' could not be deserialized.".FormatWith(assetStream));
-                                throw new InvalidOperationException("Asset '{0}' could not be deserialized from the stream.".FormatWith(resourceString));
+                                string message = "Asset '{0}' could not be deserialized.".FormatWith(assetStream);
+                                logger.Warn(message);
+                                throw new InvalidOperationException(message);
                             }
 
-                            cachedAsset = new WeakReference(asset);
+                            cachedAsset = new WeakReference<object>(asset);
                             this.cachedAssets.AddOrUpdate(resourceString, cachedAsset, (key, oldValue) => cachedAsset);
                         }
                     }
@@ -131,6 +133,10 @@ namespace LightClaw.Engine.IO
                     {
                         // Although it shouldn't, Stream might throw ODE when disposed two times -> catch that.
                     }
+                }
+                else
+                {
+                    logger.Debug("Cached version of '{0}' available, loading that instead.".FormatWith(resourceString));
                 }
 
                 logger.Debug("Asset '{0}' loaded successfully.".FormatWith(resourceString));

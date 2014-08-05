@@ -8,19 +8,42 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.Graphics
 {
+    /// <summary>
+    /// Represents a camera.
+    /// </summary>
     [DataContract]
     public class Camera : Component
     {
-        public event EventHandler<ValueChangedEventArgs<double>> FoVChanged;
+        /// <summary>
+        /// Notifies about changes in the <see cref="Camera"/>'s field of view.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<float>> FoVChanged;
 
-        public event EventHandler<ValueChangedEventArgs<int>> IsoChanged;
+        /// <summary>
+        /// Notifies about changes in the height of the rendered frame.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<int>> HeightChanged;
 
+        /// <summary>
+        /// Notifies about changes in the width of the rendered frame.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<int>> WidthChanged;
+
+        /// <summary>
+        /// Notifies about changes in the <see cref="Camera"/>'s zoom level.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<double>> ZoomChanged;
 
-        private double _FoV;
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private float _FoV = 90.0f;
 
+        /// <summary>
+        /// The <see cref="Camera"/>'s horizontal field of view (in degrees).
+        /// </summary>
         [DataMember]
-        public double FoV
+        public float FoV
         {
             get
             {
@@ -28,31 +51,67 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                double previous = this.FoV;
+                float previous = this.FoV;
+                value = value % 360.0f;
                 this.SetProperty(ref _FoV, value);
                 this.Raise(this.FoVChanged, value, previous);
             }
         }
 
-        private int _Iso;
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private int _Height;
 
+        /// <summary>
+        /// The height of the rendered frame.
+        /// </summary>
         [DataMember]
-        public int Iso
+        public int Height
         {
             get
             {
-                return _Iso;
+                return _Height;
             }
             set
             {
-                int previous = this.Iso;
-                this.SetProperty(ref _Iso, value);
-                this.Raise(this.IsoChanged, value, previous);
+                int previous = this.Width;
+                this.SetProperty(ref _Height, value);
+                this.Raise(this.WidthChanged, value, previous);
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private int _Width;
+
+        /// <summary>
+        /// The width of the rendered frame.
+        /// </summary>
+        [DataMember]
+        public int Width
+        {
+            get
+            {
+                return _Width;
+            }
+            set
+            {
+                int previous = this.Width;
+                this.SetProperty(ref _Width, value);
+                this.Raise(this.WidthChanged, value, previous);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private double _Zoom;
 
+        /// <summary>
+        /// Gets the <see cref="Camera"/>'s zoom level.
+        /// </summary>
         [DataMember]
         public double Zoom
         {
