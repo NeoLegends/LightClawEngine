@@ -11,10 +11,9 @@ using ProtoBuf;
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// Represents a 3x3 Matrix ( contains only Scale and Rotation ).
+    /// Represents a 3x3 Matrix (contains only Scale and Rotation).
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(9, 4, true)]
     public struct Matrix3x3 : IEquatable<Matrix3x3>
     {
         /// <summary>
@@ -108,6 +107,49 @@ namespace LightClaw.Engine.Core
         /// </summary>
         [DataMember, ProtoMember(9)]
         public float M33;
+
+        /// <summary>
+        /// Gets or sets the components as array.
+        /// </summary>
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 9);
+
+                return this.ToArray();
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Length >= 9);
+
+                this.M11 = value[0];
+                this.M12 = value[1];
+                this.M13 = value[2];
+
+                this.M21 = value[3];
+                this.M22 = value[4];
+                this.M23 = value[5];
+
+                this.M31 = value[6];
+                this.M32 = value[7];
+                this.M33 = value[8];
+            }
+        }
+
+        /// <summary>
+        /// Calculates the determinant of the Matrix3x3.
+        /// </summary>
+        /// <returns>The determinant of the Matrix3x3.</returns>
+        public float Determinant
+        {
+            get
+            {
+                return M11 * M22 * M33 + M12 * M23 * M31 + M13 * M21 * M32 - M13 * M22 * M31 - M12 * M21 * M33 - M11 * M23 * M32;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first row in the Matrix3x3; that is M11, M12, M13
@@ -396,15 +438,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Calculates the determinant of the Matrix3x3.
-        /// </summary>
-        /// <returns>The determinant of the Matrix3x3.</returns>
-        public float Determinant()
-        {
-            return M11 * M22 * M33 + M12 * M23 * M31 + M13 * M21 * M32 - M13 * M22 * M31 - M12 * M21 * M33 - M11 * M23 * M32;
-        }
-
-        /// <summary>
         /// Inverts the Matrix3x3.
         /// </summary>
         public void Invert()
@@ -646,6 +679,9 @@ namespace LightClaw.Engine.Core
         /// <returns>A 9-element array containing the components of the Matrix3x3.</returns>
         public float[] ToArray()
         {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 9);
+
             return new[] { M11, M12, M13, M21, M22, M23, M31, M32, M33 };
         }
 

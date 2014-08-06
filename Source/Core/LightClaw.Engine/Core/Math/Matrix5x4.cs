@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Core
     /// Represents a 4x4 mathematical Matrix5x4.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(20, 4, true)]
     public struct Matrix5x4 : IEquatable<Matrix5x4>
     {
         /// <summary>
@@ -175,6 +174,50 @@ namespace LightClaw.Engine.Core
         /// </summary>
         [DataMember, ProtoMember(20)]
         public float M54;
+
+        /// <summary>
+        /// Gets or sets the components as array.
+        /// </summary>
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 20);
+
+                return this.ToArray();
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Length >= 20);
+
+                this.M11 = value[0];
+                this.M12 = value[1];
+                this.M13 = value[2];
+                this.M14 = value[3];
+
+                this.M21 = value[4];
+                this.M22 = value[5];
+                this.M23 = value[6];
+                this.M24 = value[7];
+
+                this.M31 = value[8];
+                this.M32 = value[9];
+                this.M33 = value[10];
+                this.M34 = value[11];
+
+                this.M41 = value[12];
+                this.M42 = value[13];
+                this.M43 = value[14];
+                this.M44 = value[15];
+
+                this.M51 = value[16];
+                this.M52 = value[17];
+                this.M53 = value[18];
+                this.M54 = value[19];
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first row in the Matrix5x4; that is M11, M12, M13, and M14.
@@ -496,6 +539,9 @@ namespace LightClaw.Engine.Core
         /// <returns>All components as array.</returns>
         public float[] ToArray()
         {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 20);
+
             return new[] 
             { 
                 this.M11, this.M12, this.M13, this.M14,
@@ -520,10 +566,10 @@ namespace LightClaw.Engine.Core
                 "[M31:{8} M32:{9} M33:{10} M34:{11}] " +
                 "[M41:{12} M42:{13} M43:{14} M44:{15}] " +
                 "[M51:{16} M52:{17} M53:{18} M54:{19}]").FormatWith(M11, M12, M13, M14, 
-                                                                M21, M22, M23, M24, 
-                                                                M31, M32, M33, M34, 
-                                                                M41, M42, M43, M44, 
-                                                                M51, M52, M53, M54
+                                                                    M21, M22, M23, M24, 
+                                                                    M31, M32, M33, M34, 
+                                                                    M41, M42, M43, M44, 
+                                                                    M51, M52, M53, M54
             );
         }
 

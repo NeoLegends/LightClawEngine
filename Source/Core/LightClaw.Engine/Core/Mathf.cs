@@ -37,7 +37,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return ZeroThresholds[10];
+                return ZeroThresholds[8];
             }
         }
 

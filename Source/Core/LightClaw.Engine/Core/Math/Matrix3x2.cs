@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Core
     /// Direct2D Matrix3x2. Supports implicit cast from <see cref="Matrix"/>.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(6, 4, true)]
     public struct Matrix3x2
     {
         /// <summary>
@@ -87,6 +86,46 @@ namespace LightClaw.Engine.Core
         /// </summary>
         [DataMember, ProtoMember(6)]
         public float M32;
+
+        /// <summary>
+        /// Gets or sets the components as array.
+        /// </summary>
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 6);
+
+                return this.ToArray();
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Length >= 6);
+
+                this.M11 = value[0];
+                this.M12 = value[1];
+
+                this.M21 = value[2];
+                this.M22 = value[3];
+
+                this.M31 = value[4];
+                this.M32 = value[5];
+            }
+        }
+
+        /// <summary>
+        /// Calculates the determinant of this matrix.
+        /// </summary>
+        /// <returns>Result of the determinant.</returns>
+        public float Determinant
+        {
+            get
+            {
+                return (M11 * M22) - (M12 * M21);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the first row in the matrix; that is M11 and M12.
@@ -335,6 +374,9 @@ namespace LightClaw.Engine.Core
         /// <returns>A sixteen-element array containing the components of the matrix.</returns>
         public float[] ToArray()
         {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 6);
+
             return new[] { M11, M12, M21, M22, M31, M32 };
         }
 
@@ -706,15 +748,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Calculates the determinant of this matrix.
-        /// </summary>
-        /// <returns>Result of the determinant.</returns>
-        public float Determinant()
-        {
-                return (M11 * M22) - (M12 * M21);
-        }
-
-        /// <summary>
         /// Creates a matrix that rotates.
         /// </summary>
         /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
@@ -927,7 +960,7 @@ namespace LightClaw.Engine.Core
         /// <param name="result">When the method completes, contains the inverse of the specified matrix.</param>
         public static void Invert(ref Matrix3x2 value, out Matrix3x2 result)
         {
-            float determinant = value.Determinant();
+            float determinant = value.Determinant;
 
             if (MathF.IsAlmostZero(determinant))
             {

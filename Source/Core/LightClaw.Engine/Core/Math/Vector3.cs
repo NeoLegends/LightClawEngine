@@ -14,7 +14,6 @@ namespace LightClaw.Engine.Core
     /// Represents a three dimensional mathematical vector.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(3, 4, true)]
     public struct Vector3 : IEquatable<Vector3>
     {
         /// <summary>
@@ -209,7 +208,7 @@ namespace LightClaw.Engine.Core
                 Contract.Ensures(Contract.Result<float[]>() != null);
                 Contract.Ensures(Contract.Result<float[]>().Length == 3);
 
-                return new[] { this.X, this.Y, this.Z };
+                return this.ToArray();
             }
             set
             {
@@ -426,6 +425,17 @@ namespace LightClaw.Engine.Core
                 Y *= inv;
                 Z *= inv;
             }
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Vector3"/> into an array.
+        /// </summary>
+        public float[] ToArray()
+        {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 3);
+
+            return new[] { this.X, this.Y, this.Z };
         }
 
         /// <summary>

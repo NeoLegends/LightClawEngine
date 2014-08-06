@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Core
     /// Represents a four dimensional mathematical vector.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(4, 4, true)]
     public struct Vector4 : IEquatable<Vector4>
     {
         /// <summary>
@@ -139,7 +138,7 @@ namespace LightClaw.Engine.Core
                 Contract.Ensures(Contract.Result<float[]>() != null);
                 Contract.Ensures(Contract.Result<float[]>().Length == 4);
 
-                return new[] { this.X, this.Y, this.Z, this.W };
+                return this.ToArray();
             }
             set
             {
@@ -373,6 +372,17 @@ namespace LightClaw.Engine.Core
                 Z *= inverse;
                 W *= inverse;
             }
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Vector4"/> into an array.
+        /// </summary>
+        public float[] ToArray()
+        {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 4);
+
+            return new[] { this.X, this.Y, this.Z, this.W };
         }
 
         /// <summary>

@@ -8,8 +8,20 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Extensions
 {
+    /// <summary>
+    /// Contains extension methods to <see cref="Stream"/>.
+    /// </summary>
     public static class StreamExtensions
     {
+        /// <summary>
+        /// Reads exactly <paramref name="count"/> bytes from the <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="s">The <see cref="Stream"/> to read from.</param>
+        /// <param name="count">The amount of bytes to read.</param>
+        /// <returns>The read bytes.</returns>
+        /// <exception cref="EndOfStreamException">
+        /// The end of the <see cref="Stream"/> was reached before the specified amount of bytes could be read.
+        /// </exception>
         public static byte[] ReadExactly(this Stream s, long count)
         {
             Contract.Requires<ArgumentNullException>(s != null);
@@ -33,6 +45,15 @@ namespace LightClaw.Extensions
             return result;
         }
 
+        /// <summary>
+        /// Asynchronously reads exactly <paramref name="count"/> bytes from the <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="s">The <see cref="Stream"/> to read from.</param>
+        /// <param name="count">The amount of bytes to read.</param>
+        /// <returns>The read bytes.</returns>
+        /// <exception cref="EndOfStreamException">
+        /// The end of the <see cref="Stream"/> was reached before the specified amount of bytes could be read.
+        /// </exception>
         public static async Task<byte[]> ReadExactlyAsync(this Stream s, long count)
         {
             Contract.Requires<ArgumentNullException>(s != null);

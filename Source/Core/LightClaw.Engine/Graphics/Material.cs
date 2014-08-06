@@ -84,7 +84,7 @@ namespace LightClaw.Engine.Graphics
         /// The <see cref="Shader"/> the <see cref="Material"/> interfaces with.
         /// </summary>
         [IgnoreDataMember]
-        public virtual Shader Shader
+        public Shader Shader
         {
             get
             {
@@ -124,8 +124,8 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Binds the material to the graphics pipeline.
         /// </summary>
-        /// <remarks>DO NOT BIND THE SHADER. IT WILL BE BOUND BY AN UPPER LEVEL TO REDUCE SHADER SWITCHES.</remarks>
-        public abstract void Bind(); // DO NOT (!) bind shader, will be bound by model to reduce shader switches
+        /// <remarks>Do not bind the shader. It will be bound by an upper level to reduce shader switches.</remarks>
+        public abstract void Bind(); 
 
         /// <summary>
         /// Unbinds the <see cref="Material"/> from the graphics pipeline.

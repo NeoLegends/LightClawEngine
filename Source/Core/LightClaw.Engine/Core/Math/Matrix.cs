@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Core
     /// Represents a 4x4 mathematical matrix.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(16, 4, true)]
     public struct Matrix : IEquatable<Matrix>
     {
         /// <summary>
@@ -151,6 +150,65 @@ namespace LightClaw.Engine.Core
         /// </summary>
         [DataMember, ProtoMember(16)]
         public float M44;
+
+        /// <summary>
+        /// Gets or sets the components as array.
+        /// </summary>
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 16);
+
+                return this.ToArray();
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Length >= 16);
+
+                this.M11 = value[0];
+                this.M12 = value[1];
+                this.M13 = value[2];
+                this.M14 = value[3];
+
+                this.M21 = value[4];
+                this.M22 = value[5];
+                this.M23 = value[6];
+                this.M24 = value[7];
+
+                this.M31 = value[8];
+                this.M32 = value[9];
+                this.M33 = value[10];
+                this.M34 = value[11];
+
+                this.M41 = value[12];
+                this.M42 = value[13];
+                this.M43 = value[14];
+                this.M44 = value[15];
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="Matrix"/>' determinant.
+        /// </summary>
+        public float Determinant
+        {
+            get
+            {
+                float temp1 = (M33 * M44) - (M34 * M43);
+                float temp2 = (M32 * M44) - (M34 * M42);
+                float temp3 = (M32 * M43) - (M33 * M42);
+                float temp4 = (M31 * M44) - (M34 * M41);
+                float temp5 = (M31 * M43) - (M33 * M41);
+                float temp6 = (M31 * M42) - (M32 * M41);
+
+                return ((((M11 * (((M22 * temp1) - (M23 * temp2)) + (M24 * temp3))) - (M12 * (((M21 * temp1) -
+                    (M23 * temp4)) + (M24 * temp5)))) + (M13 * (((M21 * temp2) - (M22 * temp4)) + (M24 * temp6)))) -
+                    (M14 * (((M21 * temp3) - (M22 * temp5)) + (M23 * temp6))));
+            }
+        }
      
         /// <summary>
         /// Gets or sets the up <see cref="Vector3"/> of the matrix; that is M21, M22, and M23.
@@ -625,24 +683,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Calculates the determinant of the matrix.
-        /// </summary>
-        /// <returns>The determinant of the matrix.</returns>
-        public float Determinant()
-        {
-            float temp1 = (M33 * M44) - (M34 * M43);
-            float temp2 = (M32 * M44) - (M34 * M42);
-            float temp3 = (M32 * M43) - (M33 * M42);
-            float temp4 = (M31 * M44) - (M34 * M41);
-            float temp5 = (M31 * M43) - (M33 * M41);
-            float temp6 = (M31 * M42) - (M32 * M41);
-
-            return ((((M11 * (((M22 * temp1) - (M23 * temp2)) + (M24 * temp3))) - (M12 * (((M21 * temp1) -
-                (M23 * temp4)) + (M24 * temp5)))) + (M13 * (((M21 * temp2) - (M22 * temp4)) + (M24 * temp6)))) -
-                (M14 * (((M21 * temp3) - (M22 * temp5)) + (M23 * temp6))));
-        }
-
-        /// <summary>
         /// Inverts the matrix.
         /// </summary>
         public void Invert()
@@ -920,6 +960,9 @@ namespace LightClaw.Engine.Core
         /// <returns>A sixteen-element array containing the components of the matrix.</returns>
         public float[] ToArray()
         {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 16);
+
             return new[] { M11, M12, M13, M14, M21, M22, M23, M24, M31, M32, M33, M34, M41, M42, M43, M44 };
         }
 

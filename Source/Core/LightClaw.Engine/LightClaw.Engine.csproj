@@ -48,8 +48,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\LightClaw.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -204,7 +203,6 @@
     <Compile Include="Core\SolitaryAttribute.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
-    <Compile Include="Core\StructureInformationAttribute.cs" />
     <Compile Include="Core\XmlLayout.cs" />
     <Compile Include="Coroutines\IExecutionBlockRequest.cs" />
     <Compile Include="Coroutines\TimeBlockRequest.cs" />
@@ -238,7 +236,7 @@
     <Compile Include="Graphics\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
-    <Compile Include="Graphics\P3N3T2Vertex.cs" />
+    <Compile Include="Graphics\VertexPositionNormalTexCoord.cs" />
     <Compile Include="Graphics\Buffer.cs" />
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />

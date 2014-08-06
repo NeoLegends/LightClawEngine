@@ -14,7 +14,6 @@ namespace LightClaw.Engine.Core
     /// Represents a four dimensional mathematical quaternion.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(4, 4, true)]
     public struct Quaternion : IEquatable<Quaternion>
     {
         /// <summary>
@@ -89,6 +88,30 @@ namespace LightClaw.Engine.Core
         /// </summary>
         [DataMember, ProtoMember(4)]
         public float W;
+
+        /// <summary>
+        /// Gets or sets the <see cref="Quaternion"/>s components as array.
+        /// </summary>
+        public float[] Array
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<float[]>() != null);
+                Contract.Ensures(Contract.Result<float[]>().Length == 4);
+
+                return this.ToArray();
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Length >= 4);
+
+                this.X = value[0];
+                this.Y = value[1];
+                this.Z = value[2];
+                this.W = value[3];
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
@@ -250,7 +273,6 @@ namespace LightClaw.Engine.Core
 
                 throw new ArgumentOutOfRangeException("index", "Indices for Quaternion run from 0 to 3, inclusive.");
             }
-
             set
             {
                 switch (index)
@@ -313,6 +335,9 @@ namespace LightClaw.Engine.Core
         /// <returns>A four-element array containing the components of the quaternion.</returns>
         public float[] ToArray()
         {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 4);
+
             return new float[] { X, Y, Z, W };
         }
 

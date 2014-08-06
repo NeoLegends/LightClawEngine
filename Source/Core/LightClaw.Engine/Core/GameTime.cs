@@ -13,7 +13,6 @@ namespace LightClaw.Engine.Core
     /// Represents the game's time in fixed- or variable-step game loops.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(2, 8, true)]
     public struct GameTime : ICloneable, IEquatable<GameTime>
     {
         /// <summary>

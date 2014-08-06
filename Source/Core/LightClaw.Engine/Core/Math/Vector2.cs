@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Core
     /// Represents a two dimensional mathematical vector.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(2, 4, true)]
     public struct Vector2 : IEquatable<Vector2>
     {
         /// <summary>
@@ -105,7 +104,7 @@ namespace LightClaw.Engine.Core
                 Contract.Ensures(Contract.Result<float[]>() != null);
                 Contract.Ensures(Contract.Result<float[]>().Length == 2);
 
-                return new[] { this.X, this.Y };
+                return this.ToArray();
             }
             set
             {
@@ -306,6 +305,17 @@ namespace LightClaw.Engine.Core
                 X *= inv;
                 Y *= inv;
             }
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Vector2"/> into an array.
+        /// </summary>
+        public float[] ToArray()
+        {
+            Contract.Ensures(Contract.Result<float[]>() != null);
+            Contract.Ensures(Contract.Result<float[]>().Length == 2);
+
+            return new[] { this.X, this.Y };
         }
 
         /// <summary>

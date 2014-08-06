@@ -15,7 +15,6 @@ namespace LightClaw.Engine.Graphics
     /// Class that represents a color with RGBA data.
     /// </summary>
     [DataContract, ProtoContract]
-    [StructureInformation(4, 1, false)]
     public struct Color : ICloneable,
 #if SYSTEMDRAWING_INTEROP
                           IEquatable<System.Drawing.Color>,

@@ -32,9 +32,9 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> Drawn;
 
         /// <summary>
-        /// Notifies about a change in the <see cref="P:Mesh"/>.
+        /// Notifies about a change in the <see cref="P:Component"/>.
         /// </summary>
-        public event EventHandler<ValueChangedEventArgs<Mesh>> MeshChanged;
+        public event EventHandler<ValueChangedEventArgs<Component>> ComponentChanged;
 
         /// <summary>
         /// Notifies about the start of the updating process.
@@ -63,22 +63,22 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Mesh _Mesh;
+        private Component _Component;
 
         /// <summary>
-        /// The mesh the <see cref="Model"/> currently is attached to.
+        /// The <see cref="Component"/> the <see cref="Model"/> currently is attached to.
         /// </summary>
-        public Mesh Mesh
+        public Component Component
         {
             get
             {
-                return _Mesh;
+                return _Component;
             }
             internal set
             {
-                Mesh previous = this.Mesh;
-                this.SetProperty(ref _Mesh, value);
-                this.Raise(this.MeshChanged, value, previous);
+                Component previous = this.Component;
+                this.SetProperty(ref _Component, value);
+                this.Raise(this.ComponentChanged, value, previous);
             }
         }
 
@@ -153,17 +153,14 @@ namespace LightClaw.Engine.Graphics
                 {
                     foreach (IGrouping<Shader, ModelPart> grouping in groupedModelParts)
                     {
-                        if (grouping.Key != null)
+                        using (GLBinding shaderBinding = new GLBinding(grouping.Key))
                         {
-                            using (GLBinding shaderBinding = new GLBinding(grouping.Key))
+                            foreach (ModelPart modelMeshPart in grouping)
                             {
-                                foreach (ModelPart modelMeshPart in grouping)
+                                if (modelMeshPart != null)
                                 {
-                                    if (modelMeshPart != null)
-                                    {
-                                        modelMeshPart.Material.Bind();
-                                        modelMeshPart.Draw();
-                                    }
+                                    modelMeshPart.Material.Bind();
+                                    modelMeshPart.Draw();
                                 }
                             }
                         }
@@ -189,7 +186,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
                 {
-                    this.groupedModelParts = this.ModelParts.GroupBy(modelMeshPart => modelMeshPart.Material.Shader);
+                    this.groupedModelParts = this.ModelParts.Where(modelPart => modelPart.Material != null)
+                                                            .GroupBy(modelPart => modelPart.Material.Shader)
+                                                            .Where(grouping => grouping.Key != null);
                 }
             }
         }
