@@ -39,7 +39,8 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                if (value != null)
+                Model model = this.Model;
+                if (value != null && model != null)
                 {
                     value.Component = this.Model.Mesh;
                 }

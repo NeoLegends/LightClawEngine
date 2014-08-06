@@ -202,14 +202,5 @@ namespace LightClaw.Engine.Graphics
                 );
             }
         }
-
-        /// <summary>
-        /// Contains Contract.Invariant-definitions.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.ShaderResourceString != null);
-        }
     }
 }

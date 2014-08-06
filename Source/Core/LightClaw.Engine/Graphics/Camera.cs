@@ -77,7 +77,7 @@ namespace LightClaw.Engine.Graphics
             {
                 int previous = this.Width;
                 this.SetProperty(ref _Height, value);
-                this.Raise(this.WidthChanged, value, previous);
+                this.Raise(this.HeightChanged, value, previous);
             }
         }
 

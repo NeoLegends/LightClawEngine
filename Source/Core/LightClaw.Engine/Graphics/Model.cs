@@ -31,6 +31,9 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>Raised after any binding / drawing operations.</remarks>
         public event EventHandler<ParameterEventArgs> Drawn;
 
+        /// <summary>
+        /// Notifies about a change in the <see cref="P:Mesh"/>.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Mesh>> MeshChanged;
 
         /// <summary>
@@ -73,7 +76,9 @@ namespace LightClaw.Engine.Graphics
             }
             internal set
             {
+                Mesh previous = this.Mesh;
                 this.SetProperty(ref _Mesh, value);
+                this.Raise(this.MeshChanged, value, previous);
             }
         }
 

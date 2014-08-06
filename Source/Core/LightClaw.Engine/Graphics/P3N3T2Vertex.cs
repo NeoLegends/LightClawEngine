@@ -35,13 +35,14 @@ namespace LightClaw.Engine.Graphics
             : this(data, 0)
         {
             Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(data.Length == 8);
+            Contract.Requires<ArgumentException>(data.Length >= 8);
         }
 
         public P3N3T2Vertex(float[] data, int offset)
         {
             Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(offset + 8 < data.Length);
+            Contract.Requires<ArgumentException>(offset + 8 <= data.Length);
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
 
             this.Position.X = data[offset];
             this.Position.Y = data[offset + 1];
