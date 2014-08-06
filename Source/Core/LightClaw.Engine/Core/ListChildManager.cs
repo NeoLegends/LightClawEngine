@@ -23,13 +23,19 @@ namespace LightClaw.Engine.Core
             {
                 Contract.Assert(index < this.Count);
 
-                return this.Items[index];
+                lock (this.Items)
+                {
+                    return this.Items[index];
+                }
             }
             set
             {
                 Contract.Assert(index < this.Count);
 
-                this.Items[index] = value;
+                lock (this.Items)
+                {
+                    this.Items[index] = value;
+                }
             }
         }
 

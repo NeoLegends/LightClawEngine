@@ -11,13 +11,18 @@ namespace LightClaw.Engine.IO
 {
     public static class ContentManagerExtensions
     {
-        public static async Task<T> LoadAsync<T>(this IContentManager contentManager, string resourceString, object parameter = null)
+        public static async Task<T> LoadAsync<T>(
+                this IContentManager contentManager, 
+                string resourceString, 
+                object parameter = null, 
+                bool forceReload = false
+            )
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(resourceString != null);
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
-            return (T)await contentManager.LoadAsync(resourceString, typeof(T), parameter);
+            return (T)await contentManager.LoadAsync(resourceString, typeof(T), parameter, forceReload);
         }
 
         public static void Register(this IContentManager manager, IEnumerable<IContentReader> readers)

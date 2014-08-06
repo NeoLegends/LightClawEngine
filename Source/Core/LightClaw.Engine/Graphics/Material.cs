@@ -11,42 +11,80 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
+    /// <summary>
+    /// Represents a material, an interface from the game and drawing code to the shader.
+    /// </summary>
     [DataContract]
     public abstract class Material : Entity, IBindable, IUpdateable, ILateUpdateable
     {
-        public event EventHandler<ValueChangedEventArgs<ModelPart>> ModelPartChanged;
+        /// <summary>
+        /// Notifies about changes in the component the material works for.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<Component>> ComponentChanged;
 
+        /// <summary>
+        /// Notifies about the start of the updating process.
+        /// </summary>
+        /// <remarks>Raised before any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updating;
 
+        /// <summary>
+        /// Notifies about the finsih of the updating process.
+        /// </summary>
+        /// <remarks>Raised after any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updated;
 
+        /// <summary>
+        /// Notifies about the start of the late updating process.
+        /// </summary>
+        /// <remarks>Raised before any late updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
+        /// <summary>
+        /// Notifies about the finsih of the late updating process.
+        /// </summary>
+        /// <remarks>Raised after any late updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
+        /// <summary>
+        /// Notifies about changes in the <see cref="Shader"/> the material uses.
+        /// </summary>
         public event EventHandler<ValueChangedEventArgs<Shader>> ShaderChanged;
 
-        private ModelPart _ModelPart;
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Component _Component;
 
+        /// <summary>
+        /// The <see cref="Component"/> the <see cref="Material"/> provides a binding to the shader for.
+        /// </summary>
+        /// <remarks>This could be a <see cref="Mesh"/>, a <see cref="Texture"/>-renderer-component, really anything that draws.</remarks>
         [IgnoreDataMember]
-        public ModelPart ModelPart
+        public Component Component
         {
             get
             {
-                return _ModelPart;
+                return _Component;
             }
             internal set
             {
-                ModelPart previous = this.ModelPart;
-                this.SetProperty(ref _ModelPart, value);
-                this.Raise(this.ModelPartChanged, value, previous);
+                Component previous = this.Component;
+                this.SetProperty(ref _Component, value);
+                this.Raise(this.ComponentChanged, value, previous);
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private Shader _Shader;
 
+        /// <summary>
+        /// The <see cref="Shader"/> the <see cref="Material"/> interfaces with.
+        /// </summary>
         [IgnoreDataMember]
-        public Shader Shader
+        public virtual Shader Shader
         {
             get
             {
@@ -60,8 +98,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private string _ShaderResourceString;
 
+        /// <summary>
+        /// The resource string of the shader.
+        /// </summary>
         [DataMember]
         public string ShaderResourceString
         {
@@ -77,10 +121,21 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Binds the material to the graphics pipeline.
+        /// </summary>
+        /// <remarks>DO NOT BIND THE SHADER. IT WILL BE BOUND BY AN UPPER LEVEL TO REDUCE SHADER SWITCHES.</remarks>
         public abstract void Bind(); // DO NOT (!) bind shader, will be bound by model to reduce shader switches
 
+        /// <summary>
+        /// Unbinds the <see cref="Material"/> from the graphics pipeline.
+        /// </summary>
         public abstract void Unbind();
 
+        /// <summary>
+        /// Updates the <see cref="Material"/> with the current <see cref="GameTime"/>.
+        /// </summary>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         public void Update(GameTime gameTime)
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
@@ -89,6 +144,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Late-updates the <see cref="Material"/>.
+        /// </summary>
         public void LateUpdate()
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
@@ -97,16 +155,32 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="P:Shader"/> in a strongly-typed way.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to cast the property to.</typeparam>
+        /// <returns>The <see cref="Shader"/> as strongly typed object or <c>null</c> if the shader is not of the requested <see cref="Type"/>.</returns>
         protected T GetShader<T>()
             where T : Shader
         {
-            return (T)this.Shader;
+            return this.Shader as T;
         }
 
+        /// <summary>
+        /// Update-callback.
+        /// </summary>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         protected abstract void OnUpdate(GameTime gameTime);
 
+        /// <summary>
+        /// Late-update callback.
+        /// </summary>
         protected abstract void OnLateUpdate();
 
+        /// <summary>
+        /// Called after deserialization of the <see cref="Material"/>, loads the <see cref="Shader"/> from the resource string.
+        /// </summary>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -129,6 +203,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Contains Contract.Invariant-definitions.
+        /// </summary>
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {

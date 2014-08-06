@@ -94,14 +94,17 @@ namespace LightClaw.Engine.Core
 
         public void Enable()
         {
-            lock (this.stateLock)
+            if (this.IsLoaded && !this.IsEnabled)
             {
-                if (this.IsLoaded && !this.IsEnabled)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Enabling, this.Enabled))
+                    if (this.IsLoaded && !this.IsEnabled)
                     {
-                        this.OnEnable();
-                        this.IsEnabled = true;
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Enabling, this.Enabled))
+                        {
+                            this.OnEnable();
+                            this.IsEnabled = true;
+                        }
                     }
                 }
             }
@@ -109,14 +112,17 @@ namespace LightClaw.Engine.Core
 
         public void Disable()
         {
-            lock (this.stateLock)
+            if (this.IsLoaded && this.IsEnabled)
             {
-                if (this.IsLoaded && this.IsEnabled)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Disabling, this.Disabled))
+                    if (this.IsLoaded && this.IsEnabled)
                     {
-                        this.OnDisable();
-                        this.IsEnabled = false;
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Disabling, this.Disabled))
+                        {
+                            this.OnDisable();
+                            this.IsEnabled = false;
+                        }
                     }
                 }
             }
@@ -124,13 +130,16 @@ namespace LightClaw.Engine.Core
 
         public void Draw()
         {
-            lock (this.stateLock)
+            if (this.IsLoaded && this.IsEnabled)
             {
-                if (this.IsLoaded && this.IsEnabled)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
+                    if (this.IsLoaded && this.IsEnabled)
                     {
-                        this.OnDraw();
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
+                        {
+                            this.OnDraw();
+                        }
                     }
                 }
             }
@@ -138,14 +147,17 @@ namespace LightClaw.Engine.Core
 
         public void Load()
         {
-            lock (this.stateLock)
+            if (!this.IsLoaded)
             {
-                if (!this.IsLoaded)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Loading, this.Loaded))
+                    if (!this.IsLoaded)
                     {
-                        this.OnLoad();
-                        this.IsLoaded = true;
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Loading, this.Loaded))
+                        {
+                            this.OnLoad();
+                            this.IsLoaded = true;
+                        }
                     }
                 }
             }
@@ -164,13 +176,16 @@ namespace LightClaw.Engine.Core
 
         public void Update(GameTime gameTime)
         {
-            lock (this.stateLock)
+            if (this.IsLoaded && this.IsEnabled)
             {
-                if (this.IsEnabled)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+                    if (this.IsLoaded && this.IsEnabled)
                     {
-                        this.OnUpdate(gameTime);
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+                        {
+                            this.OnUpdate(gameTime);
+                        }
                     }
                 }
             }
@@ -178,13 +193,16 @@ namespace LightClaw.Engine.Core
 
         public void LateUpdate()
         {
-            lock (this.stateLock)
+            if (this.IsLoaded && this.IsEnabled)
             {
-                if (this.IsEnabled)
+                lock (this.stateLock)
                 {
-                    using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+                    if (this.IsLoaded && this.IsEnabled)
                     {
-                        this.OnLateUpdate();
+                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+                        {
+                            this.OnLateUpdate();
+                        }
                     }
                 }
             }

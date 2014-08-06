@@ -45,7 +45,7 @@ namespace LightClaw.Engine.IO
         }
 
         [ProtoContract]
-        private struct ModelData
+        public struct ModelData
         {
             [ProtoMember(1)]
             public ModelPartData[] ModelParts { get; private set; }
@@ -60,7 +60,7 @@ namespace LightClaw.Engine.IO
         }
 
         [ProtoContract]
-        private struct ModelPartData
+        public struct ModelPartData
         {
             [ProtoMember(1)]
             public uint[] IndexData { get; private set; }
@@ -85,7 +85,7 @@ namespace LightClaw.Engine.IO
         }
 
         [ProtoContract]
-        private struct VertexDataDescription
+        public struct VertexDataDescription
         {
             [ProtoMember(1)]
             public VertexAttributePointer[] VertexAttributePointers { get; private set; }
@@ -93,14 +93,14 @@ namespace LightClaw.Engine.IO
             [ProtoMember(2)]
             public float[] VertexData { get; private set; }
 
-            public VertexDataDescription(VertexAttributePointer[] vertexAttributePointers, byte[] vertexData)
+            public VertexDataDescription(VertexAttributePointer[] vertexAttributePointers, float[] vertexData)
                 : this()
             {
                 Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
                 Contract.Requires<ArgumentNullException>(vertexData != null);
 
                 this.VertexAttributePointers = vertexAttributePointers;
-                this.VertexData = VertexData;
+                this.VertexData = vertexData;
             }
         }
     }

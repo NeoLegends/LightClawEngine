@@ -33,6 +33,7 @@ namespace LightClaw.Engine.Core
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+            DefaultIocContainer.Register<IPerformanceCounter>(d => new PerformanceCounter());
         }
 
         static void Main(string[] args)

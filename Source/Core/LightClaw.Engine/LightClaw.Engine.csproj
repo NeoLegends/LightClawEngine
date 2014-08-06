@@ -194,6 +194,7 @@
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\ParameterEventArgsRaiser.cs" />
+    <Compile Include="Core\PerformanceCounter.cs" />
     <Compile Include="Core\RandomF.cs" />
     <Compile Include="Core\DependsOnAttribute.cs" />
     <Compile Include="Core\ReverseComparer.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Graphics\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
+    <Compile Include="Core\IPerformanceCounter.cs" />
     <Compile Include="Graphics\Material.cs" />
     <Compile Include="Graphics\Model.cs" />
     <Compile Include="Graphics\ModelPart.cs" />

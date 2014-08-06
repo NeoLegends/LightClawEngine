@@ -12,12 +12,9 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    [DataContract]
     [ContractClass(typeof(ShaderProgramContracts))]
     public abstract class Shader : GLObject, IBindable
     {
-        private readonly object updateLock = new object();
-
         [IgnoreDataMember]
         public bool IsLinked { get; private set; }
 
@@ -139,10 +136,6 @@ namespace LightClaw.Engine.Graphics
             GL.GetProgram(this, parameter, out result);
             return (result == 1);
         }
-
-        protected abstract void OnUpdate(GameTime gameTime);
-
-        protected abstract void OnLateUpdate();
     }
 
     [ContractClassFor(typeof(Shader))]

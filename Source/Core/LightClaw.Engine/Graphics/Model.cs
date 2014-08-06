@@ -9,24 +9,82 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
+    /// <summary>
+    /// Represents a three-dimensional polygon model.
+    /// </summary>
     public class Model : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
+        /// <summary>
+        /// A cache of the <see cref="ModelPart"/>s grouped by their shader.
+        /// </summary>
         private IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts;
 
+        /// <summary>
+        /// Notifies about the start of the drawing process.
+        /// </summary>
+        /// <remarks>Raised before any binding / drawing occurs.</remarks>
         public event EventHandler<ParameterEventArgs> Drawing;
 
+        /// <summary>
+        /// Notifies about the finish of the drawing process.
+        /// </summary>
+        /// <remarks>Raised after any binding / drawing operations.</remarks>
         public event EventHandler<ParameterEventArgs> Drawn;
 
+        public event EventHandler<ValueChangedEventArgs<Mesh>> MeshChanged;
+
+        /// <summary>
+        /// Notifies about the start of the updating process.
+        /// </summary>
+        /// <remarks>Raised before any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updating;
 
+        /// <summary>
+        /// Notifies about the finsih of the updating process.
+        /// </summary>
+        /// <remarks>Raised after any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updated;
 
+        /// <summary>
+        /// Notifies about the start of the late updating process.
+        /// </summary>
+        /// <remarks>Raised before any late updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
+        /// <summary>
+        /// Notifies about the finsih of the late updating process.
+        /// </summary>
+        /// <remarks>Raised after any late updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Mesh _Mesh;
+
+        /// <summary>
+        /// The mesh the <see cref="Model"/> currently is attached to.
+        /// </summary>
+        public Mesh Mesh
+        {
+            get
+            {
+                return _Mesh;
+            }
+            internal set
+            {
+                this.SetProperty(ref _Mesh, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ModelPartCollection _ModelParts = new ModelPartCollection();
 
+        /// <summary>
+        /// A collection of <see cref="ModelPart"/>s this <see cref="Model"/> consists of.
+        /// </summary>
         public ModelPartCollection ModelParts
         {
             get
@@ -35,10 +93,15 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _ModelParts, value);
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Model"/>.
+        /// </summary>
         public Model()
         {
             this.ModelParts.CollectionChanged += (s, e) =>
@@ -61,6 +124,10 @@ namespace LightClaw.Engine.Graphics
             };
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
+        /// </summary>
+        /// <param name="modelMeshes"></param>
         public Model(IEnumerable<ModelPart> modelMeshes)
             : this()
         {
@@ -69,6 +136,9 @@ namespace LightClaw.Engine.Graphics
             this.ModelParts.AddRange(modelMeshes);
         }
 
+        /// <summary>
+        /// Draws the model to the screen.
+        /// </summary>
         public void Draw()
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
@@ -97,6 +167,10 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Updates the model.
+        /// </summary>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         public void Update(GameTime gameTime)
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
@@ -115,6 +189,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        /// <summary>
+        /// Late-updates the <see cref="Model"/>.
+        /// </summary>
         public void LateUpdate()
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))

@@ -284,8 +284,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public Transform()
         {
-            logger.Debug("Initializing a new transform.");
-
             this.Childs.CollectionChanged += (s, e) =>
             {
                 NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;

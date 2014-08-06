@@ -33,6 +33,27 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        public override Component this[int index]
+        {
+            get
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(index < this.Count);
+
+                return base[index];
+            }
+            set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(index < this.Count);
+
+                this.EnsureAttachability(value);
+                lock (this.Items)
+                {
+                    this.EnsureRemovability(this[index]);
+                    base[index] = value;
+                }
+            }
+        }
+
         public GameObject() : this(new Component[] { }) { }
 
         public GameObject(params Component[] components)

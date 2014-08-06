@@ -41,7 +41,7 @@ namespace LightClaw.Engine.Graphics
             {
                 if (value != null)
                 {
-                    value.ModelPart = this;
+                    value.Component = this.Model.Mesh;
                 }
                 Material previous = this.Material;
                 this.SetProperty(ref _Material, value);

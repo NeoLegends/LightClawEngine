@@ -31,7 +31,9 @@ namespace LightClaw.Extensions
         {
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
-            return (collection != null) ? collection.Where(item => item != null) : Enumerable.Empty<T>();
+            return (collection != null) ? 
+                collection.Where(item => item != null) ?? Enumerable.Empty<T>() : // Enumerable.Empty<T>() required to fulfill contract
+                Enumerable.Empty<T>();
         }
 
         public static async Task<T> FirstAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
