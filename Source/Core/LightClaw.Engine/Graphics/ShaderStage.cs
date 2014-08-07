@@ -23,7 +23,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(source != null);
 
-            logger.Info("Initializing a new shader stage of type '{0}'.".FormatWith(type));
+            logger.Info(() => "Initializing a new shader stage of type '{0}'.".FormatWith(type));
 
             this.Source = source;
             this.Type = type;
@@ -33,7 +33,7 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.IsCompiled)
             {
-                logger.Debug("Compiling shader stage on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+                logger.Debug(() => "Compiling shader stage on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
 
                 GL.ShaderSource(this, this.Source);
                 GL.CompileShader(this);
@@ -47,7 +47,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 this.IsCompiled = true;
 
-                logger.Debug("Shader stage compiled.");
+                logger.Debug(() => "Shader stage compiled.");
             }
         }
 
@@ -59,7 +59,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                logger.Warn(
+                logger.Warn(() => 
                     "An exception of type '{0}' was thrown while deleting the shader. Swallowing...".FormatWith(ex.GetType().AssemblyQualifiedName),
                     ex
                 );

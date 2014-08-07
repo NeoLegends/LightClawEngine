@@ -62,7 +62,7 @@ namespace LightClaw.Extensions
         }
 
         /// <summary>
-        /// An asynchronous version of <see cref="Enumerable.First"/>.
+        /// An asynchronous version of .First().
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the collection.</typeparam>
         /// <param name="collection">The collection to filter.</param>
@@ -93,7 +93,7 @@ namespace LightClaw.Extensions
         }
 
         /// <summary>
-        /// An asynchronous version of <see cref="Enumerable.FirstOrDefault"/>.
+        /// An asynchronous version of .FirstOrDefault().
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the collection.</typeparam>
         /// <param name="collection">The collection to filter.</param>

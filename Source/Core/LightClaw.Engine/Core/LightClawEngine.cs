@@ -16,35 +16,54 @@ using Munq;
 
 namespace LightClaw.Engine.Core
 {
+    /// <summary>
+    /// Represents the entry point for any game.
+    /// </summary>
     public class LightClawEngine
     {
+        /// <summary>
+        /// A <see cref="ILog"/> used to track application messages.
+        /// </summary>
         private static readonly ILog logger = LogManager.GetLogger(typeof(LightClawEngine));
 
+        /// <summary>
+        /// Backign field.
+        /// </summary>
         private static readonly IocContainer _DefaultIocContainer = new IocContainer();
 
+        /// <summary>
+        /// A <see cref="IocContainer"/> used to resolve instances of certain interfaces at runtime.
+        /// </summary>
         public static IocContainer DefaultIocContainer
         {
             get
             {
+                Contract.Ensures(Contract.Result<IocContainer>() != null);
+
                 return _DefaultIocContainer;
             }
         }
 
+        /// <summary>
+        /// Initializes all static members of <see cref="LightClawEngine"/>.
+        /// </summary>
         static LightClawEngine()
         {
             DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
-            DefaultIocContainer.Register<IPerformanceCounter>(d => new PerformanceCounter());
         }
 
+        /// <summary>
+        /// Main entry point.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
         static void Main(string[] args)
         {
-            logger.Info("Starting engine...");
+            logger.Info(() => "Starting engine...");
 
             try
             {
                 Contract.Assume(GeneralSettings.Default.StartScene != null);
-                Contract.Assume(GeneralSettings.Default.GameCodeAssembly != null);
-                using (IGame game = new Game(Assembly.LoadFrom(GeneralSettings.Default.GameCodeAssembly), GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
+                using (IGame game = new Game(GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
                     DefaultIocContainer.Register<IGame>(d => game);
                     game.Run();
@@ -52,7 +71,7 @@ namespace LightClaw.Engine.Core
             }
             catch (Exception ex)
             {
-                logger.Fatal("An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
+                logger.Fatal(() => "An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
                 throw;
             }
             finally

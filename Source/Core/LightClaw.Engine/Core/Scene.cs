@@ -23,7 +23,7 @@ namespace LightClaw.Engine.Core
 
         public Scene() 
         {
-            logger.Info("Initializing a new scene.");
+            logger.Info(() => "Initializing a new scene.");
         }
 
         public Scene(IEnumerable<GameObject> gameObjects)
@@ -117,7 +117,7 @@ namespace LightClaw.Engine.Core
 
             return Task.Run(() =>
             {
-                logger.Info("Saving compressed with level '{0}' scene to a stream.".FormatWith(level));
+                logger.Info(() => "Saving compressed with level '{0}' scene to a stream.".FormatWith(level));
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
                 using (DeflateStream deflateStream = new DeflateStream(s, level, true))
@@ -125,7 +125,7 @@ namespace LightClaw.Engine.Core
                     new NetDataContractSerializer().WriteObject(deflateStream, this);
                 }
 
-                logger.Info("Scene saved.");
+                logger.Info(() => "Scene saved.");
             });
         }
 
@@ -146,14 +146,14 @@ namespace LightClaw.Engine.Core
 
             return Task.Run(() =>
             {
-                logger.Info("Saving scene as XML to a stream.");
+                logger.Info(() => "Saving scene as XML to a stream.");
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
                 {
                     new NetDataContractSerializer().WriteObject(s, this);
                 }
 
-                logger.Info("Scene saved.");
+                logger.Info(() => "Scene saved.");
             });
         }
 

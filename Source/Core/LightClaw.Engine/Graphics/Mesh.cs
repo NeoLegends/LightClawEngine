@@ -81,7 +81,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
-            logger.Info("Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
+            logger.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
 
             this.Name = resourceString;
             this.ResourceString = resourceString;
@@ -106,12 +106,12 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         protected override void OnLoad()
         {
-            logger.Debug("Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
+            logger.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
 
             IContentManager contentManager = this.IocC.Resolve<IContentManager>();
             if (contentManager == null)
             {
-                logger.Warn("IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
+                logger.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
                 return;
             }
 
@@ -119,10 +119,10 @@ namespace LightClaw.Engine.Graphics
             meshTask.ContinueWith(t =>
             {
                 this.Model = t.Result;
-                logger.Debug("Mesh '{0}' loaded successfully.");
+                logger.Debug(() => "Mesh '{0}' loaded successfully.");
             }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
             meshTask.ContinueWith(
-                t => logger.Warn("Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
+                t => logger.Warn(() => "Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );
 

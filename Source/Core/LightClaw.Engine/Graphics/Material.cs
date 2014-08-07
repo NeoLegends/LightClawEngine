@@ -192,12 +192,12 @@ namespace LightClaw.Engine.Graphics
                     t =>
                     {
                         this.Shader = t.Result;
-                        logger.Debug("Shader '{0}' loaded successfully into material.".FormatWith(shaderResourceString));
+                        logger.Debug(() => "Shader '{0}' loaded successfully into material.".FormatWith(shaderResourceString));
                     },
                     TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
                 );
                 shaderTask.ContinueWith(
-                    t => logger.Warn("Shader '{0}' could not be loaded after deserialization.".FormatWith(shaderResourceString), t.Exception),
+                    t => logger.Warn(() => "Shader '{0}' could not be loaded after deserialization.".FormatWith(shaderResourceString), t.Exception),
                     TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
                 );
             }

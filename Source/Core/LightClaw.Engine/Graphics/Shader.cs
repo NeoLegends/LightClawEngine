@@ -40,15 +40,13 @@ namespace LightClaw.Engine.Graphics
         [IgnoreDataMember]
         public abstract int UniformLocationCount { get; protected set; }
 
-        private Shader() : base(GL.CreateProgram()) { }
-
         public Shader(IEnumerable<ShaderStage> shaders)
-            : this()
+            : base(GL.CreateProgram())
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentException>(!shaders.Duplicates(shader => shader.Type));
 
-            logger.Info("Initializing a new shader with {0} stages.".FormatWith(shaders.Count()));
+            logger.Info(() => "Initializing a new shader with {0} stages.".FormatWith(shaders.Count()));
 
             this.Stages = shaders.ToArray();
             this.ShaderCount = this.Stages.Length;
@@ -76,9 +74,9 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.IsLinked)
             {
-                logger.Debug("Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
+                logger.Debug(() => "Linking shader on thread {0}.".FormatWith(System.Threading.Thread.CurrentThread.ManagedThreadId));
 
-                foreach (ShaderStage shader in this.Stages)
+                foreach (ShaderStage shader in this.Stages.FilterNull())
                 {
                     shader.Compile();
                     GL.AttachShader(this, shader);
@@ -96,14 +94,14 @@ namespace LightClaw.Engine.Graphics
                 }
                 this.IsLinked = true;
 
-                logger.Debug("Shader linked.");
+                logger.Debug(() => "Shader linked.");
             }
         }
 
         protected override void Dispose(bool disposing)
         {
             this.Unbind();
-            foreach (ShaderStage shader in this.Stages)
+            foreach (ShaderStage shader in this.Stages.FilterNull())
             {
                 try
                 {
@@ -117,7 +115,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                logger.Warn(
+                logger.Warn(() => 
                     "An exception of type '{0}' was thrown while deleting the shader. Swallowing...".FormatWith(ex.GetType().AssemblyQualifiedName),
                     ex
                 );
@@ -135,6 +133,12 @@ namespace LightClaw.Engine.Graphics
         {
             GL.GetProgram(this, parameter, out result);
             return (result == 1);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Stages != null);
         }
     }
 

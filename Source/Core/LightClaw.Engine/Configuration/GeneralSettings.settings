@@ -5,9 +5,6 @@
     <Setting Name="GameName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw Game</Value>
     </Setting>
-    <Setting Name="GameCodeAssembly" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">LightClaw.GameCode.dll</Value>
-    </Setting>
     <Setting Name="WindowTitle" Type="System.String" Scope="Application">
       <Value Profile="(Default)">LightClaw Game</Value>
     </Setting>

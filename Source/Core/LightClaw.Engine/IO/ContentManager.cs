@@ -68,7 +68,7 @@ namespace LightClaw.Engine.IO
 
         public async Task<Stream> GetStreamAsync(string resourceString)
         {
-            logger.Debug("Obtaining stream around '{0}'.".FormatWith(resourceString));
+            logger.Debug(() => "Obtaining stream around '{0}'.".FormatWith(resourceString));
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.IO
                 }
                 catch (InvalidOperationException ex)
                 {
-                    logger.Warn("No writable stream around '{0}' found.".FormatWith(resourceString));
+                    logger.Warn(() => "No writable stream around '{0}' found.".FormatWith(resourceString));
                     throw new FileNotFoundException(
                         "No writable stream was found. If reading is required only, consider registering an IContentReader.",
                         ex
@@ -90,7 +90,7 @@ namespace LightClaw.Engine.IO
 
         public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
-            logger.Debug("Loading an asset of type '{0}' from resource '{0}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
+            logger.Debug(() => "Loading an asset of type '{0}' from resource '{0}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
@@ -102,7 +102,7 @@ namespace LightClaw.Engine.IO
                     !cachedAsset.TryGetTarget(out asset) ||                            // weak reference to cached asset collected or
                     !(assetType.IsAssignableFrom(asset.GetType())))                    // types mismatch.
                 {
-                    logger.Debug("No cached version of '{0}' available or reload forced, obtaining stream...".FormatWith(resourceString));
+                    logger.Debug(() => "No cached version of '{0}' available or reload forced, obtaining stream...".FormatWith(resourceString));
                     try
                     {
                         using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
@@ -111,17 +111,17 @@ namespace LightClaw.Engine.IO
                             if (assetStream == null)
                             {
                                 string message = "Asset '{0}' could not be found.".FormatWith(resourceString);
-                                logger.Warn(message);
+                                logger.Warn(() => message);
                                 throw new FileNotFoundException(message);
                             }
-                            logger.Debug("Stream around '{0}' obtained, deserializing...".FormatWith(resourceString));
+                            logger.Debug(() => "Stream around '{0}' obtained, deserializing...".FormatWith(resourceString));
 
                             asset = await this.readers.Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
                                                       .FirstOrDefaultAsync(t => t.Result != null);
                             if (asset == null)
                             {
                                 string message = "Asset '{0}' could not be deserialized.".FormatWith(assetStream);
-                                logger.Warn(message);
+                                logger.Warn(() => message);
                                 throw new InvalidOperationException(message);
                             }
 
@@ -136,10 +136,10 @@ namespace LightClaw.Engine.IO
                 }
                 else
                 {
-                    logger.Debug("Cached version of '{0}' available, loading that instead.".FormatWith(resourceString));
+                    logger.Debug(() => "Cached version of '{0}' available, loading that instead.".FormatWith(resourceString));
                 }
 
-                logger.Debug("Asset '{0}' loaded successfully.".FormatWith(resourceString));
+                logger.Debug(() => "Asset '{0}' loaded successfully.".FormatWith(resourceString));
                 return asset;
             }
         }

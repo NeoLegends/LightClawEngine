@@ -8,16 +8,24 @@ using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using log4net;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
 
 namespace LightClaw.Engine.Core
 {
+    /// <summary>
+    /// Represents a game.
+    /// </summary>
     public class Game : Entity, IGame
     {
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private GameTime _CurrentGameTime;
 
+        /// <summary>
+        /// The current <see cref="GameTime"/>.
+        /// </summary>
         public GameTime CurrentGameTime
         {
             get
@@ -30,23 +38,12 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Assembly _GameCodeAssembly;
-
-        public Assembly GameCodeAssembly
-        {
-            get
-            {
-                return _GameCodeAssembly;
-            }
-            set
-            {
-                this.SetProperty(ref _GameCodeAssembly, value);
-            }
-        }
-
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private IGameWindow _GameWindow = new OpenTK.GameWindow(
-            VideoSettings.Default.Width,
-            VideoSettings.Default.Height,
+            MathF.ClampToInt32(VideoSettings.Default.Width),
+            MathF.ClampToInt32(VideoSettings.Default.Height),
             new OpenTK.Graphics.GraphicsMode(),
             GeneralSettings.Default.WindowTitle,
             OpenTK.GameWindowFlags.Default, 
@@ -63,10 +60,15 @@ namespace LightClaw.Engine.Core
             VSync = VideoSettings.Default.VSync
         };
 
+        /// <summary>
+        /// The <see cref="IGameWindow"/> the game is presented in.
+        /// </summary>
         public IGameWindow GameWindow
         {
             get
             {
+                Contract.Ensures(Contract.Result<IGameWindow>() != null);
+
                 return _GameWindow;
             }
             private set
@@ -77,22 +79,39 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ISceneManager _SceneManager;
 
+        /// <summary>
+        /// The <see cref="ISceneManager"/> managing the currently loaded <see cref="Scene"/>s.
+        /// </summary>
         public ISceneManager SceneManager
         {
             get
             {
+                Contract.Ensures(Contract.Result<ISceneManager>() != null);
+
                 return _SceneManager;
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _SceneManager, value);
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private bool _SuppressDraw;
 
+        /// <summary>
+        /// Indicates whether to suppress the drawing of the <see cref="Scene"/>s.
+        /// </summary>
+        /// <remarks>Used for dedicated servers where drawing is not required.</remarks>
         public bool SuppressDraw
         {
             get
@@ -105,13 +124,13 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        private Game(Assembly gameCodeAssembly)
+        /// <summary>
+        /// Initializes a new <see cref="Game"/>.
+        /// </summary>
+        private Game()
         {
-            Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
+            logger.Info(() => "Initializing a new game instance.");
 
-            logger.Info("Initializing a new game instance.");
-
-            this.GameCodeAssembly = gameCodeAssembly;
             this.Name = GeneralSettings.Default.GameName;
 
             this.GameWindow.Closed += (s, e) => this.OnClosed();
@@ -122,77 +141,115 @@ namespace LightClaw.Engine.Core
 
             this.IocC.Resolve<IContentManager>()
                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath)
-                     .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+                     .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
         }
-
-        public Game(Assembly gameCodeAssembly, string startScene)
-            : this(gameCodeAssembly)
+        
+        /// <summary>
+        /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
+        /// </summary>
+        /// <param name="startScene">The resource string of the <see cref="Scene"/> to be loaded at startup.</param>
+        public Game(string startScene)
+            : this()
         {
-            Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             this.SceneManager = new SceneManager(startScene);
             this.IocC.Register<ISceneManager>(d => this.SceneManager);
 
-            logger.Info("Game successfully created.");
+            logger.Info(() => "Game successfully created.");
         }
 
-        public Game(Assembly gameCodeAssembly, Scene startScene)
-            : this(gameCodeAssembly)
+        /// <summary>
+        /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
+        /// </summary>
+        /// <param name="startScene">The <see cref="Scene"/> that will be run at startup.</param>
+        public Game(Scene startScene)
+            : this()
         {
-            Contract.Requires<ArgumentNullException>(gameCodeAssembly != null);
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             this.SceneManager = new SceneManager(startScene);
             this.IocC.Register<ISceneManager>(d => this.SceneManager);
 
-            logger.Info("Game successfully created.");
+            logger.Info(() => "Game successfully created.");
         }
 
+        /// <summary>
+        /// Finalizes the instance before the object is reclaimed by garbage collection.
+        /// </summary>
         ~Game()
         {
             this.Dispose(false);
         }
 
+        /// <summary>
+        /// Runs the game.
+        /// </summary>
         public void Run()
         {
-            logger.Info("Entering game loop.");
+            bool limitFps = VideoSettings.Default.LimitFPS;
+            double maxFrameRate = (double)VideoSettings.Default.FPSLimit;
 
-            this.GameWindow.Run(60.0);
+            if (limitFps)
+            {
+                logger.Info(() => "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate));
+            }
+            else
+            {
+                logger.Info(() => "Entering game loop with unlimited frame rate.");
+            }
+
+            this.GameWindow.Run(limitFps ? maxFrameRate : 0.0);
         }
 
+        /// <summary>
+        /// Disposes the <see cref="Game"/> freeing all managed and unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
         }
 
+        /// <summary>
+        /// Disposes the <see cref="Game"/> and optionally releases managed resources as well.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected virtual void Dispose(bool disposing)
         {
             this.GameWindow.Dispose();
             this.SceneManager.Dispose();
         }
 
+        /// <summary>
+        /// Callback for <see cref="E:IGameWindow.Closed"/>.
+        /// </summary>
         protected virtual void OnClosed()
         {
-            logger.Info("Closing game window.");
+            logger.Info(() => "Closing game window.");
 
             this.Dispose();
         }
 
+        /// <summary>
+        /// Callback for <see cref="E:IGameWindow.Load"/>.
+        /// </summary>
         protected virtual void OnLoad()
         {
-            logger.Info("OnLoad callback called. Loading SceneManager and enabling depth testing.");
+            logger.Info(() => "OnLoad callback called. Loading SceneManager and enabling depth testing.");
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            logger.Info("Depth testing enabled.");
+            logger.Info(() => "Depth testing enabled.");
 
             GL.ClearColor(Color.CornflowerBlue);
 
             this.SceneManager.Load();
         }
 
+        /// <summary>
+        /// Callback for <see cref="E:IGameWindow.RenderFrame"/>.
+        /// </summary>
         protected virtual void OnRender()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
@@ -203,13 +260,22 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        /// <summary>
+        /// Callback for <see cref="E:IGameWindow.Resize"/>.
+        /// </summary>
+        /// <param name="width">The <see cref="IGameWindow"/>s new width.</param>
+        /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
         protected virtual void OnResize(int width, int height)
         {
-            logger.Info("Resizing window to {0}x{1}.".FormatWith(width, height));
+            logger.Info(() => "Resizing window to {0}x{1}.".FormatWith(width, height));
 
             GL.Viewport(0, 0, width, height);
         }
 
+        /// <summary>
+        /// Callback for <see cref="E:IGameWindow.UpdateFrame"/>.
+        /// </summary>
+        /// <param name="elapsedSinceLastUpdate">The time that passed since the last call to this callback.</param>
         protected virtual void OnUpdate(double elapsedSinceLastUpdate)
         {
             elapsedSinceLastUpdate = (elapsedSinceLastUpdate >= 0.0) ? elapsedSinceLastUpdate : 0.0;
@@ -222,6 +288,9 @@ namespace LightClaw.Engine.Core
             this.SceneManager.LateUpdate();
         }
 
+        /// <summary>
+        /// Contains Contract.Invariant definitions.
+        /// </summary>
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {

@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------
 
 namespace LightClaw.Engine.Configuration {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
     public sealed partial class VideoSettings : global::System.Configuration.ApplicationSettingsBase {
@@ -45,9 +47,9 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1280")]
-        public int Width {
+        public uint Width {
             get {
-                return ((int)(this["Width"]));
+                return ((uint)(this["Width"]));
             }
             set {
                 this["Width"] = value;
@@ -57,9 +59,9 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("720")]
-        public int Height {
+        public uint Height {
             get {
-                return ((int)(this["Height"]));
+                return ((uint)(this["Height"]));
             }
             set {
                 this["Height"] = value;
@@ -75,6 +77,30 @@ namespace LightClaw.Engine.Configuration {
             }
             set {
                 this["WindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LimitFPS {
+            get {
+                return ((bool)(this["LimitFPS"]));
+            }
+            set {
+                this["LimitFPS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public uint FPSLimit {
+            get {
+                return ((uint)(this["FPSLimit"]));
+            }
+            set {
+                this["FPSLimit"] = value;
             }
         }
     }

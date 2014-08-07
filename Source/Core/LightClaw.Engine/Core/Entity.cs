@@ -65,6 +65,8 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Ensures(Contract.Result<IocContainer>() != null);
+
                 return _IocC;
             }
             protected set
@@ -108,7 +110,7 @@ namespace LightClaw.Engine.Core
         /// <typeparam name="T">The <see cref="Type"/> of value that changed.</typeparam>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="newValue">The value of the variable after the change.</param>
-        /// <param name="previousValue">The value of the variable before the change.</param>
+        /// <param name="oldValue">The value of the variable before the change.</param>
         protected void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
         {
             if (handler != null)
@@ -141,6 +143,42 @@ namespace LightClaw.Engine.Core
         {
             location = newValue;
             this.RaisePropertyChanged(propertyName);
+        }
+
+        /// <summary>
+        /// Callback called during deserialization with data contract serializers.
+        /// </summary>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context)
+        {
+            this.Initialize();
+        }
+
+        /// <summary>
+        /// Callback called during deserialization with protobuf-net.
+        /// </summary>
+        [ProtoBeforeDeserialization]
+        private void ProtoBeforeDeserialization()
+        {
+            this.Initialize();
+        }
+
+        /// <summary>
+        /// Sets <see cref="P:IocC"/> to a non-null-value during deserialization.
+        /// </summary>
+        private void Initialize()
+        {
+            this.IocC = LightClawEngine.DefaultIocContainer;
+        }
+
+        /// <summary>
+        /// Contains Contract.Invariant definitions.
+        /// </summary>
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.IocC != null);
         }
     }
 }

@@ -133,6 +133,17 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
         [Pure]
+        public static int ClampToInt32(uint value)
+        {
+            return (value <= int.MaxValue) ? (int)value : int.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the value to the <see cref="Int32"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        [Pure]
         public static int ClampToInt32(long value)
         {
             return (value <= int.MaxValue) ? (int)value : int.MaxValue;
@@ -250,6 +261,36 @@ namespace LightClaw.Engine.Core
         public static bool IsDivisorOf(int n, int divisor)
         {
             return (n % divisor == 0);
+        }
+
+        /// <summary>
+        /// Checks whether the specified value is in the specified range.
+        /// </summary>
+        /// <param name="value">The value to check for.</param>
+        /// <param name="min">The range's lower boundary.</param>
+        /// <param name="max">The range's lower boundary.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller than <paramref name="max"/>.
+        /// </returns>
+        [Pure]
+        public static bool IsInRange(int value, int min, int max)
+        {
+            return (value > min) && (value < max);
+        }
+
+        /// <summary>
+        /// Checks whether the specified value is in the specified range.
+        /// </summary>
+        /// <param name="value">The value to check for.</param>
+        /// <param name="min">The range's lower boundary.</param>
+        /// <param name="max">The range's lower boundary.</param>
+        /// <returns>
+        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller than <paramref name="max"/>.
+        /// </returns>
+        [Pure]
+        public static bool IsInRange(double value, double min, double max)
+        {
+            return (value > min) && (value < max);
         }
 
         /// <summary>

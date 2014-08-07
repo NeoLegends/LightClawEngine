@@ -44,6 +44,7 @@ namespace LightClaw.Engine.Core
             set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(index < this.Count);
+                Contract.Assume(value != null);
 
                 this.EnsureAttachability(value);
                 lock (this.Items)
