@@ -80,13 +80,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Entity"/>.
         /// </summary>
-        protected Entity() { }
+        protected Entity() 
+        {
+            logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(this.GetType().AssemblyQualifiedName));
+        }
 
         /// <summary>
         /// Initializes a new <see cref="Entity"/> and sets the name.
         /// </summary>
         /// <param name="name">The <see cref="Entity"/>'s name.</param>
         protected Entity(string name)
+            : this()
         {
             this.Name = name;
         }

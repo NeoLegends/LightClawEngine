@@ -12,10 +12,12 @@ namespace LightClaw.Engine.Core
     /// Represents an asynchronous lock built around a <see cref="SemaphoreSlim"/> for use with the 'using'-dispose-pattern.
     /// </summary>
     /// <example>
+    /// <c>
     /// using (AsyncLockReleaser releaser = await this.asyncLock.LockAsync())
     /// {
     ///     // do locked stuff here
     /// }
+    /// </c>
     /// </example>
     /// <seealso cref="SemaphoreSlim"/>
     public class AsyncLock

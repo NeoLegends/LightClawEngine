@@ -6,11 +6,22 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
 {
+    /// <summary>
+    /// Marks a <see cref="Component"/> as non-removable from its <see cref="GameObject"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     internal sealed class NonRemovableAttribute : RemovalValidatorAttribute
     {
+        /// <summary>
+        /// Initializes a new <see cref="NonRemovableAttribute"/>.
+        /// </summary>
         public NonRemovableAttribute() : base(null) { }
 
+        /// <summary>
+        /// Validates removal from the specified <paramref name="gameObjectToRemoveFrom"/>.
+        /// </summary>
+        /// <param name="gameObjectToRemoveFrom">The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.</param>
+        /// <returns><c>false</c>, as <see cref="NonRemovableAttribute"/> makes a <see cref="Component"/> non-removable. (obviously, lol)</returns>
         public override bool Validate(GameObject gameObjectToRemoveFrom)
         {
             return false;

@@ -12,10 +12,12 @@ namespace LightClaw.Engine.Graphics
     /// time using the 'using'-clause for convenient syntax and ensured unbinding after usage.
     /// </summary>
     /// <example>
+    /// <c>
     /// using (GLBinding shaderBinding = new GLBinding(this.Shader))
     /// {
     ///     // Code interacting with bound shader
     /// }
+    /// </c>
     /// </example>
     public struct GLBinding : IDisposable, IBindable
     {

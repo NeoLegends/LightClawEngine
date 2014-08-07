@@ -44,12 +44,12 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Initializes a new <see cref="ChildManager"/>.
+        /// Initializes a new <see cref="ChildManager{T}"/>.
         /// </summary>
         protected ChildManager() { }
 
         /// <summary>
-        /// Initializes a new <see cref="ChildManager"/> using a collection of children.
+        /// Initializes a new <see cref="ChildManager{T}"/> using a collection of children.
         /// </summary>
         /// <param name="items"></param>
         protected ChildManager(IEnumerable<T> items)
@@ -138,15 +138,6 @@ namespace LightClaw.Engine.Core
             {
                 action(item);
             }
-        }
-
-        /// <summary>
-        /// Contains Contract.Invariant-definitions.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.Items != null);
         }
     }
 }

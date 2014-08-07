@@ -32,7 +32,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Notifies about changes in the <see cref="Camera"/>'s zoom level.
         /// </summary>
-        public event EventHandler<ValueChangedEventArgs<double>> ZoomChanged;
+        public event EventHandler<ValueChangedEventArgs<float>> ZoomChanged;
 
         /// <summary>
         /// Backing field.
@@ -107,13 +107,13 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private double _Zoom;
+        private float _Zoom;
 
         /// <summary>
         /// Gets the <see cref="Camera"/>'s zoom level.
         /// </summary>
         [DataMember]
-        public double Zoom
+        public float Zoom
         {
             get
             {
@@ -121,7 +121,7 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                double previous = this.Zoom;
+                float previous = this.Zoom;
                 this.SetProperty(ref _Zoom, value);
                 this.Raise(this.ZoomChanged, value, previous);
             }
