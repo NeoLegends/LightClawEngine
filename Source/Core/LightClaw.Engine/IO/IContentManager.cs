@@ -5,26 +5,114 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.IO
 {
+    /// <summary>
+    /// Represents an instance enabling access to the game's assets and content.
+    /// </summary>
     [ContractClass(typeof(IContentManagerContracts))]
     public interface IContentManager
     {
+        /// <summary>
+        /// Notifies about the start of an asset loading process.
+        /// </summary>
+        event EventHandler<ParameterEventArgs> AssetLoading;
+
+        /// <summary>
+        /// Notifies about the end of an asset loading process.
+        /// </summary>
+        event EventHandler<ParameterEventArgs> AssetLoaded;
+
+        /// <summary>
+        /// Occurs when a new <see cref="IContentResolver"/> was registered.
+        /// </summary>
+        event EventHandler<ParameterEventArgs> ContentReaderRegistered;
+
+        /// <summary>
+        /// Occurs when a new <see cref="IContentResolver"/> was registered.
+        /// </summary>
+        event EventHandler<ParameterEventArgs> ContentResolverRegistered;
+
+        /// <summary>
+        /// Notifies about the start of <see cref="GetStreamAsync"/>.
+        /// </summary>
+        /// <seealso cref="GetStreamAsync"/>
+        event EventHandler<ParameterEventArgs> StreamObtaining;
+
+        /// <summary>
+        /// Notifies about the end of <see cref="GetStreamAsync"/>.
+        /// </summary>
+        /// <seealso cref="GetStreamAsync"/>
+        event EventHandler<ParameterEventArgs> StreamObtained;
+
+        /// <summary>
+        /// Checks whether an asset with the specified resource string exists.
+        /// </summary>
+        /// <param name="resourceString">The resource string to check for.</param>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         Task<bool> ExistsAsync(string resourceString);
 
+        /// <summary>
+        /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no
+        /// asset with the specified resource string, it will be created.
+        /// </summary>
+        /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
+        /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
+        /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
+        /// <seealso cref="Stream"/>
         Task<Stream> GetStreamAsync(string resourceString);
 
-        Task<object> LoadAsync(string resourceString, Type resourceType, object parameter = null, bool forceReload = false);
+        /// <summary>
+        /// Asynchronously loads the asset with the specified resource string.
+        /// </summary>
+        /// <param name="resourceString">The resource string of the asset to load.</param>
+        /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
+        /// <param name="parameter">
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
+        /// information about the asset being read.
+        /// <example>
+        /// Imagine a content reader reading texture files to a generic texture class. It needs information about
+        /// the file type of the image to load to be able to properly load it.
+        /// </example>
+        /// </param>
+        /// <param name="forceReload">Indicates whether to force-load the asset from the disk and bypass any caching structures.</param>
+        /// <returns>The loaded asset.</returns>
+        /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
+        /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
+        Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false);
 
+        /// <summary>
+        /// Registers a new <see cref="IContentReader"/>.
+        /// </summary>
+        /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
+        /// <seealso cref="IContentReader"/>
         void Register(IContentReader reader);
 
+        /// <summary>
+        /// Registers a new <see cref="IContentResolver"/>.
+        /// </summary>
+        /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
+        /// <seealso cref="IContentResolver"/>
         void Register(IContentResolver resolver);
     }
 
     [ContractClassFor(typeof(IContentManager))]
     abstract class IContentManagerContracts : IContentManager
     {
+        event EventHandler<ParameterEventArgs> IContentManager.AssetLoading { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> IContentManager.AssetLoaded { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> IContentManager.ContentReaderRegistered { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> IContentManager.ContentResolverRegistered { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> IContentManager.StreamObtaining { add { } remove { } }
+
+        event EventHandler<ParameterEventArgs> IContentManager.StreamObtained { add { } remove { } }
+
         Task<bool> IContentManager.ExistsAsync(string resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));

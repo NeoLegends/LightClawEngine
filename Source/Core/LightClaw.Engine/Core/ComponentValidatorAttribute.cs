@@ -23,6 +23,11 @@ namespace LightClaw.Engine.Core
         public Type ComponentType { get; protected set; }
 
         /// <summary>
+        /// The reason why the validator works the way it works.
+        /// </summary>
+        public string Reason { get; private set; }
+
+        /// <summary>
         /// Initializes a new <see cref="ComponentValidatorAttribute"/>.
         /// </summary>
         protected ComponentValidatorAttribute() { }
@@ -31,9 +36,23 @@ namespace LightClaw.Engine.Core
         /// Initializes a new <see cref="ComponentValidatorAttribute"/> setting the type of the component.
         /// </summary>
         /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
-        protected ComponentValidatorAttribute(Type componentType)
+        protected ComponentValidatorAttribute(Type componentType) : this(componentType, null) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="ComponentValidatorAttribute"/> setting the reason.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        protected ComponentValidatorAttribute(string reason) : this(null, reason) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="ComponentValidatorAttribute"/> setting the reason and the type of the component.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
+        protected ComponentValidatorAttribute(Type componentType, string reason)
         {
             this.ComponentType = componentType;
+            this.Reason = reason;
         }
     }
 
@@ -50,9 +69,23 @@ namespace LightClaw.Engine.Core
         public AttachmentValidatorAttribute() { }
 
         /// <summary>
+        /// Initializes a new <see cref="AttachmentValidatorAttribute"/>.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        public AttachmentValidatorAttribute(string reason) : base(reason) { }
+
+        /// <summary>
         /// Initializes a new <see cref="AttachmentValidatorAttribute"/> setting the <see cref="Type"/> of component to be validated.
         /// </summary>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
         public AttachmentValidatorAttribute(Type componentType) : base(componentType) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="AttachmentValidatorAttribute"/>.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
+        public AttachmentValidatorAttribute(Type componentType, string reason) : base(componentType, reason) { }
 
         /// <summary>
         /// Validates attachment of the <see cref="Component"/> to the specified <see cref="GameObject"/>.
@@ -93,7 +126,21 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="RemovalValidatorAttribute"/> setting the <see cref="Type"/> of component to be validated.
         /// </summary>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
         public RemovalValidatorAttribute(Type componentType) : base(componentType) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="RemovalValidatorAttribute"/>.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        public RemovalValidatorAttribute(string reason) : base(reason) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="RemovalValidatorAttribute"/>.
+        /// </summary>
+        /// <param name="reason">The reason why the validator works the way it works.</param>
+        /// <param name="componentType">The <see cref="Type"/> of component to validate.</param>
+        public RemovalValidatorAttribute(Type componentType, string reason) : base(componentType, reason) { }
 
         /// <summary>
         /// Validates a removal process from the specified <paramref name="gameObjectToRemoveFrom"/>.

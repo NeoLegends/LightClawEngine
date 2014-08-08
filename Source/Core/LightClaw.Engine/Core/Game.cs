@@ -104,27 +104,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private bool _SuppressDraw;
-
-        /// <summary>
-        /// Indicates whether to suppress the drawing of the <see cref="Scene"/>s.
-        /// </summary>
-        /// <remarks>Used for dedicated servers where drawing is not required.</remarks>
-        public bool SuppressDraw
-        {
-            get
-            {
-                return _SuppressDraw;
-            }
-            set
-            {
-                this.SetProperty(ref _SuppressDraw, value);
-            }
-        }
-
-        /// <summary>
         /// Initializes a new <see cref="Game"/>.
         /// </summary>
         private Game()
@@ -254,10 +233,7 @@ namespace LightClaw.Engine.Core
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            if (!this.SuppressDraw)
-            {
-                this.SceneManager.Draw();
-            }
+            this.SceneManager.Draw();
         }
 
         /// <summary>
@@ -278,13 +254,14 @@ namespace LightClaw.Engine.Core
         /// <param name="elapsedSinceLastUpdate">The time that passed since the last call to this callback.</param>
         protected virtual void OnUpdate(double elapsedSinceLastUpdate)
         {
-            elapsedSinceLastUpdate = (elapsedSinceLastUpdate >= 0.0) ? elapsedSinceLastUpdate : 0.0;
-            this.CurrentGameTime = new GameTime(
+            elapsedSinceLastUpdate = Math.Max(elapsedSinceLastUpdate, 0.0);
+            GameTime currentGameTime = new GameTime(
                 this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
                 this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate
             );
 
-            this.SceneManager.Update(this.CurrentGameTime);
+            this.CurrentGameTime = currentGameTime;
+            this.SceneManager.Update(currentGameTime);
             this.SceneManager.LateUpdate();
         }
 

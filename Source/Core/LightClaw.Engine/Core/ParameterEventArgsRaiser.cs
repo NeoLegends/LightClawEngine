@@ -57,18 +57,18 @@ namespace LightClaw.Engine.Core
         /// of the <see cref="ParameterEventArgsRaiser"/> or only on <see cref="M:RaiseOnBefore"/>.
         /// </param>
         public ParameterEventArgsRaiser(
-                object sender, 
-                EventHandler<ParameterEventArgs> onBeforeHandler, 
+                object sender,
+                EventHandler<ParameterEventArgs> onBeforeHandler,
                 EventHandler<ParameterEventArgs> onAfterHandler,
-                ParameterEventArgs onBeforeEventArgs = null,
-                ParameterEventArgs onAfterEventArgs = null,
+                object onBeforeEventArgs = null,
+                object onAfterEventArgs = null,
                 bool raiseImmediately = true
             )
         {
             this.onAfterHandler = onAfterHandler;
-            this.onAfterEventArgs = onAfterEventArgs;
+            this.onAfterEventArgs = (onAfterEventArgs != null) ? new ParameterEventArgs(onAfterEventArgs) : ParameterEventArgs.Default;
             this.onBeforeHandler = onBeforeHandler;
-            this.onBeforeEventArgs = onBeforeEventArgs;
+            this.onBeforeEventArgs = (onBeforeEventArgs != null) ? new ParameterEventArgs(onBeforeEventArgs) : ParameterEventArgs.Default;
             this.sender = sender;
 
             if (raiseImmediately)

@@ -34,7 +34,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                Contract.Assume(index < this.Count);
+                Contract.Assert(index < this.Count);
 
                 lock (this.Items)
                 {
@@ -43,7 +43,7 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Contract.Assume(index < this.Count);
+                Contract.Assert(index < this.Count);
 
                 lock (this.Items)
                 {
@@ -124,11 +124,11 @@ namespace LightClaw.Engine.Core
 
             lock (this.Items)
             {
-                foreach (T item in items)
-                {
-                    this.Items.Add(item);
-                }
-                //this.Items.AddRange(items);
+                //foreach (T item in items)
+                //{
+                //    this.Items.Add(item);
+                //}
+                this.Items.AddRange(items);
             }
         }
 
@@ -177,10 +177,12 @@ namespace LightClaw.Engine.Core
         /// <returns>The <see cref="IEnumerator{T}"/>.</returns>
         public virtual IEnumerator<T> GetEnumerator()
         {
+            T[] items;
             lock (this.Items)
             {
-                return this.Items.GetEnumerator();
+                items = this.Items.ToArray();
             }
+            return ((IEnumerable<T>)items).GetEnumerator();
         }
 
         /// <summary>

@@ -144,20 +144,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets the <see cref="IEnumerator{T}"/>.
-        /// </summary>
-        /// <returns>The <see cref="IEnumerator{T}"/>.</returns>
-        public override IEnumerator<Component> GetEnumerator()
-        {
-            List<Component> items;
-            lock (this.Items)
-            {
-                items = this.Items.ToList();
-            }
-            return (IEnumerator<Component>)items.GetEnumerator();
-        }
-
-        /// <summary>
         /// Inserts the specified <paramref name="item"/> at the specified <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index to insert the item at.</param>

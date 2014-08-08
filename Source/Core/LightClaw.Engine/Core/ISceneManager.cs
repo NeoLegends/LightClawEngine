@@ -27,7 +27,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c>.</returns>
-        Task<bool> Load(int index, string resourceString);
+        Task<int> Load(int index, string resourceString);
 
         /// <summary>
         /// Loads the specified <see cref="Scene"/> into the specified position.
@@ -35,7 +35,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="s">The <see cref="Scene"/> to load.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted, otherwise <c>false</c>.</returns>
-        bool Load(int index, Scene s);
+        int Load(int index, Scene s);
 
         /// <summary>
         /// Moves the <see cref="Scene"/> from the specified index to the new index.
@@ -43,7 +43,7 @@ namespace LightClaw.Engine.Core
         /// <param name="index">The old index of the <see cref="Scene"/> to move.</param>
         /// <param name="newIndex">The index to move the <see cref="Scene"/> to.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be moved, otherwise <c>false</c>.</returns>
-        bool Move(int index, int newIndex);
+        void Move(int index, int newIndex);
 
         /// <summary>
         /// Unloads the <see cref="Scene"/> at the specified index.
@@ -123,29 +123,27 @@ namespace LightClaw.Engine.Core
             return null;
         }
 
-        Task<bool> ISceneManager.Load(int index, string resourceString)
+        Task<int> ISceneManager.Load(int index, string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(resourceString != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-            Contract.Ensures(Contract.Result<Task<bool>>() != null);
+            Contract.Ensures(Contract.Result<Task<int>>() != null);
 
             return null;
         }
 
-        bool ISceneManager.Load(int index, Scene s)
+        int ISceneManager.Load(int index, Scene s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
-            return false;
+            return 0;
         }
 
-        bool ISceneManager.Move(int index, int newIndex)
+        void ISceneManager.Move(int index, int newIndex)
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(newIndex >= 0);
-
-            return false;
         }
 
         bool ISceneManager.Unload(int index)

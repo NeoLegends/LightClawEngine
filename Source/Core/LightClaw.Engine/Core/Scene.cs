@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Core
     /// Represents a layer on the final composed image that is presented to the screen.
     /// </summary>
     [DataContract(IsReference = true)]
-    public class Scene : ListChildManager<GameObject>, IDrawable
+    public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
     {
         /// <summary>
         /// Occurs before the <see cref="Scene"/> is saved.
@@ -31,6 +31,35 @@ namespace LightClaw.Engine.Core
         public event EventHandler<ParameterEventArgs> Saved;
 
         /// <summary>
+        /// Notifies about changes in the <see cref="P:SuppressDraw"/>-property.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<bool>> SuppressDrawChanged;
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private bool _SuppressDraw;
+
+        /// <summary>
+        /// Indicates whether to suppress the drawing of the <see cref="Scene"/>.
+        /// </summary>
+        /// <remarks>Used for dedicated servers where drawing is not required.</remarks>
+        [DataMember]
+        public bool SuppressDraw
+        {
+            get
+            {
+                return _SuppressDraw;
+            }
+            set
+            {
+                bool previous = this.SuppressDraw;
+                this.SetProperty(ref _SuppressDraw, value);
+                this.Raise(this.SuppressDrawChanged, value, previous);
+            }
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="Scene"/>.
         /// </summary>
         public Scene() 
@@ -39,11 +68,32 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Initializes a new <see cref="Scene"/> and sets the <see cref="P:Name"/>.
+        /// </summary>
+        /// <param name="name">The name of the <see cref="Scene"/>.</param>
+        public Scene(string name)
+            : this() 
+        {
+            this.Name = name;
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="Scene"/> from an initial set of <see cref="GameObject"/>s.
         /// </summary>
         /// <param name="gameObjects">A set of <see cref="GameObject"/>s to start with.</param>
         public Scene(IEnumerable<GameObject> gameObjects)
-            : this()
+            : this(null, gameObjects)
+        {
+            Contract.Requires<ArgumentNullException>(gameObjects != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Scene"/> from an initial set of <see cref="GameObject"/>s and a <paramref name="name"/>.
+        /// </summary>
+        /// <param name="gameObjects">A set of <see cref="GameObject"/>s to start with.</param>
+        /// <param name="name">The name of the <see cref="Scene"/>.</param>
+        public Scene(string name, IEnumerable<GameObject> gameObjects)
+            : this(name)
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
 
@@ -82,11 +132,29 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public override void Clear()
         {
-            foreach (GameObject gameObject in this)
+            foreach (GameObject gameObject in this.FilterNull())
             {
                 gameObject.Scene = null;
             }
             base.Clear();
+        }
+
+        /// <summary>
+        /// Creates a flat copy of the <see cref="Scene"/>.
+        /// </summary>
+        /// <returns>The newly created <see cref="Scene"/>.</returns>
+        public object Clone()
+        {
+            GameObject[] items;
+            lock (this.Items)
+            {
+                items = this.Items.ToArray();
+            }
+            return new Scene(items)
+            {
+                Name = this.Name,
+                SuppressDraw = this.SuppressDraw
+            };
         }
 
         /// <summary>
@@ -107,6 +175,7 @@ namespace LightClaw.Engine.Core
         /// <param name="items">The <see cref="GameObject"/>s to insert.</param>
         public override void InsertRange(int index, IEnumerable<GameObject> items)
         {
+            items = items.FilterNull();
             foreach (GameObject gameObject in items)
             {
                 gameObject.Scene = this;
@@ -252,6 +321,17 @@ namespace LightClaw.Engine.Core
         protected override void OnDisable()
         {
             Parallel.ForEach(this.Items, item => item.Disable());
+        }
+
+        /// <summary>
+        /// Overriden implementation of <see cref="M:Draw"/> with the possibility to suppress the drawing process.
+        /// </summary>
+        protected override void OnDraw()
+        {
+            if (!this.SuppressDraw)
+            {
+                base.OnDraw();
+            }
         }
 
         /// <summary>

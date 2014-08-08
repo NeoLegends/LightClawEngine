@@ -99,6 +99,16 @@ namespace LightClaw.Engine.Core
         /// Raises the specified <paramref name="handler"/>.
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
+        /// <param name="args">Arguments for creation of a new <see cref="ParameterEventArgs"/>.</param>
+        protected void Raise(EventHandler<ParameterEventArgs> handler, object args)
+        {
+            this.Raise(handler, new ParameterEventArgs(args));
+        }
+
+        /// <summary>
+        /// Raises the specified <paramref name="handler"/>.
+        /// </summary>
+        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
         protected void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
         {

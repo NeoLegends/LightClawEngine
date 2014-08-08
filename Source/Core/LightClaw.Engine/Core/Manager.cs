@@ -9,7 +9,7 @@ using LightClaw.Engine.Graphics;
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// Reference implementation of <see cref="IControllable"/>.
+    /// Reference implementation of <see cref="IControllable"/> and <see cref="IDrawable"/>.
     /// </summary>
     [DataContract(IsReference = true)]
     public abstract class Manager : Entity, IDrawable, IControllable, INameable

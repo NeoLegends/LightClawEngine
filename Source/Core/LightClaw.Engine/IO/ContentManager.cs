@@ -13,39 +13,70 @@ using log4net;
 
 namespace LightClaw.Engine.IO
 {
-    public class ContentManager : IContentManager
+    /// <summary>
+    /// Represents a caching <see cref="IContentManager"/>.
+    /// </summary>
+    public class ContentManager : Entity, IContentManager
     {
-        private static readonly IContentReader[] defaultReaders = Assembly.GetExecutingAssembly()
-                                                                          .GetTypesByBase<IContentReader>(true)
-                                                                          .Select(t =>
-                                                                          {
-                                                                              try
-                                                                              {
-                                                                                  return (IContentReader)Activator.CreateInstance(t);
-                                                                              }
-                                                                              catch { return null; }
-                                                                          }).FilterNull().ToArray();
+        /// <summary>
+        /// A list of all <see cref="IContentReader"/>s contained in the main assembly.
+        /// </summary>
+        private static readonly IEnumerable<IContentReader> defaultReaders = Assembly.GetExecutingAssembly()
+                                                                                     .GetTypesByBase<IContentReader>(true)
+                                                                                     .Select(t =>
+                                                                                     {
+                                                                                         try
+                                                                                         {
+                                                                                             return (IContentReader)Activator.CreateInstance(t);
+                                                                                         }
+                                                                                         catch { return null; }
+                                                                                     }).FilterNull();
 
-        private static readonly IContentResolver[] defaultResolvers = Assembly.GetExecutingAssembly()
-                                                                              .GetTypesByBase<IContentResolver>(true)
-                                                                              .Select(t =>
-                                                                              {
-                                                                                  try
-                                                                                  {
-                                                                                      return (IContentResolver)Activator.CreateInstance(t);
-                                                                                  }
-                                                                                  catch { return null; }
-                                                                              }).FilterNull().ToArray();
+        /// <summary>
+        /// A list of all <see cref="IContentResolver"/>s contained in the main assembly.
+        /// </summary>
+        private static readonly IEnumerable<IContentResolver> defaultResolvers = Assembly.GetExecutingAssembly()
+                                                                                         .GetTypesByBase<IContentResolver>(true)
+                                                                                         .Select(t =>
+                                                                                         {
+                                                                                             try
+                                                                                             {
+                                                                                                 return (IContentResolver)Activator.CreateInstance(t);
+                                                                                             }
+                                                                                             catch { return null; }
+                                                                                         }).FilterNull();
 
-        private static readonly ILog logger = LogManager.GetLogger(typeof(ContentManager));
-
+        /// <summary>
+        /// Contains <see cref="AsyncLock"/>s used to lock access to a specific asset while it is being loaded.
+        /// </summary>
         private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
 
+        /// <summary>
+        /// Represents the asset cache. Assets are cached using weak references to reduce memory pressure.
+        /// </summary>
         private readonly ConcurrentDictionary<string, WeakReference<object>> cachedAssets = new ConcurrentDictionary<string, WeakReference<object>>();
 
+        /// <summary>
+        /// A collection of all registered <see cref="IContentReader"/>s.
+        /// </summary>
         private readonly ConcurrentBag<IContentReader> readers = new ConcurrentBag<IContentReader>();
 
+        /// <summary>
+        /// A collection of all registered <see cref="IContentResolver"/>s.
+        /// </summary>
         private readonly ConcurrentBag<IContentResolver> resolvers = new ConcurrentBag<IContentResolver>();
+
+        public event EventHandler<ParameterEventArgs> AssetLoading;
+
+        public event EventHandler<ParameterEventArgs> AssetLoaded;
+
+        public event EventHandler<ParameterEventArgs> ContentReaderRegistered;
+
+        public event EventHandler<ParameterEventArgs> ContentResolverRegistered;
+
+        public event EventHandler<ParameterEventArgs> StreamObtaining;
+
+        public event EventHandler<ParameterEventArgs> StreamObtained;
 
         public ContentManager() : this(defaultReaders, defaultResolvers) { }
 
@@ -71,6 +102,7 @@ namespace LightClaw.Engine.IO
             logger.Debug(() => "Obtaining stream around '{0}'.".FormatWith(resourceString));
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.StreamObtaining, this.StreamObtained, resourceString, resourceString))
             {
                 try
                 {
@@ -93,6 +125,7 @@ namespace LightClaw.Engine.IO
             logger.Debug(() => "Loading an asset of type '{0}' from resource '{0}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
                 WeakReference<object> cachedAsset = null;
                 object asset = null;
@@ -147,11 +180,13 @@ namespace LightClaw.Engine.IO
         public void Register(IContentReader reader)
         {
             this.readers.Add(reader);
+            this.Raise(this.ContentReaderRegistered, reader);
         }
 
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
+            this.Raise(this.ContentResolverRegistered, resolver);
         }
 
         [ContractInvariantMethod]

@@ -205,7 +205,10 @@
     <Compile Include="Core\SolitaryAttribute.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
-    <Compile Include="Core\XmlLayout.cs" />
+    <Compile Include="Logging\ExceptionInfo.cs" />
+    <Compile Include="Logging\LocationInfo.cs" />
+    <Compile Include="Logging\LoggingEventInfo.cs" />
+    <Compile Include="Logging\XmlLayout.cs" />
     <Compile Include="Coroutines\IExecutionBlockRequest.cs" />
     <Compile Include="Coroutines\TimeBlockRequest.cs" />
     <Compile Include="Coroutines\CoroutineContext.cs" />
