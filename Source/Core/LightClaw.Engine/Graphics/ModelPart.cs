@@ -169,7 +169,7 @@ namespace LightClaw.Engine.Graphics
                     using (GLBinding materialBinding = new GLBinding(mat))
                     using (GLBinding vaoBinding = new GLBinding(vao))
                     {
-                        GL.DrawElements(BeginMode.TriangleStrip, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
+                        GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
                     }
                 }
             }
