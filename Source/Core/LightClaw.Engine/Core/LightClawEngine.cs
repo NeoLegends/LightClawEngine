@@ -7,12 +7,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
-using Munq;
 
 namespace LightClaw.Engine.Core
 {
@@ -29,16 +29,16 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backign field.
         /// </summary>
-        private static readonly IocContainer _DefaultIocContainer = new IocContainer();
+        private static readonly Container _DefaultIocContainer = new Container();
 
         /// <summary>
         /// A <see cref="IocContainer"/> used to resolve instances of certain interfaces at runtime.
         /// </summary>
-        public static IocContainer DefaultIocContainer
+        public static Container DefaultIocContainer
         {
             get
             {
-                Contract.Ensures(Contract.Result<IocContainer>() != null);
+                Contract.Ensures(Contract.Result<DryIoc.Container>() != null);
 
                 return _DefaultIocContainer;
             }
@@ -49,7 +49,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         static LightClawEngine()
         {
-            DefaultIocContainer.Register<IContentManager>(d => new ContentManager());
+            DefaultIocContainer.Register<IContentManager, ContentManager>(Reuse.Singleton);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace LightClaw.Engine.Core
                 Contract.Assume(GeneralSettings.Default.StartScene != null);
                 using (IGame game = new Game(GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
                 {
-                    DefaultIocContainer.Register<IGame>(d => game);
+                    DefaultIocContainer.RegisterInstance<IGame>(game);
                     game.Run();
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace LightClaw.Engine.Graphics
 
         public bool IsInitialized { get; private set; }
 
-        public BufferDescription[] VertexBuffers { get; private set; }
+        public ImmutableList<BufferDescription> VertexBuffers { get; private set; }
 
         public VertexArrayObject(IEnumerable<BufferDescription> buffers, Buffer indexBuffer)
             : base(GL.GenVertexArray())
@@ -34,7 +35,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.Buffer.Target == BufferTarget.ElementArrayBuffer));
 
             this.IndexBuffer = indexBuffer;
-            this.VertexBuffers = buffers.ToArray();
+            this.VertexBuffers = buffers.ToImmutableList();
         }
 
         public void Bind()

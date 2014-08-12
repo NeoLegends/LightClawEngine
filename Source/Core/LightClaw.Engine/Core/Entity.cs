@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
 using log4net;
-using Munq;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core
@@ -55,17 +54,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private IocContainer _IocC = LightClawEngine.DefaultIocContainer;
+        private DryIoc.Container _IocC = LightClawEngine.DefaultIocContainer;
 
         /// <summary>
         /// An Ioc-Container used to obtain certain service instances such as IContentManager at runtime.
         /// </summary>
         [IgnoreDataMember]
-        public IocContainer IocC
+        public DryIoc.Container IocC
         {
             get
             {
-                Contract.Ensures(Contract.Result<IocContainer>() != null);
+                Contract.Ensures(Contract.Result<DryIoc.Container>() != null);
 
                 return _IocC;
             }

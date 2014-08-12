@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.
         /// </summary>
-        public IEnumerable<VertexAttributePointer> VertexAttributePointers { get; private set; }
+        public ImmutableList<VertexAttributePointer> VertexAttributePointers { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="BufferDescription"/> setting the buffer and the attribute pointers.
@@ -35,7 +36,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
 
             this.Buffer = vertexBuffer;
-            this.VertexAttributePointers = vertexAttributePointers.FilterNull();
+            this.VertexAttributePointers = vertexAttributePointers.FilterNull().ToImmutableList();
         }
     }
 }

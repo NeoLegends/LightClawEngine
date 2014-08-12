@@ -16,32 +16,33 @@ namespace LightClaw.Engine.IO
 {
     public class ModelReader : IContentReader
     {
-        public async Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
-            ModelData modelData = await Task.Run(() => Serializer.Deserialize<ModelData>(assetStream));
+            throw new NotImplementedException();
+            //ModelData modelData = await Task.Run(() => Serializer.Deserialize<ModelData>(assetStream));
 
-            Model model = new Model();
-            foreach (ModelPartData modelPartData in modelData.ModelParts)
-            {
-                model.ModelParts.Add(
-                    new ModelPart(
-                        await contentManager.LoadAsync<Material>(modelPartData.MaterialResourceString),
-                        new VertexArrayObject(
-                            modelPartData.VertexData.Select(vData => 
-                                new BufferDescription(
-                                    GLBuffer.Create(
-                                        vData.VertexData, 
-                                        BufferTarget.ArrayBuffer
-                                    ), 
-                                    vData.VertexAttributePointers
-                                )
-                            ),
-                            GLBuffer.Create(modelPartData.IndexData, BufferTarget.ElementArrayBuffer)
-                        )
-                    )
-                );
-            }
-            return model;
+            //Model model = new Model();
+            //foreach (ModelPartData modelPartData in modelData.ModelParts)
+            //{
+            //    model.ModelParts.Add(
+            //        new ModelPart(
+            //            await contentManager.LoadAsync<Material>(modelPartData.MaterialResourceString),
+            //            new VertexArrayObject(
+            //                modelPartData.VertexData.Select(vData => 
+            //                    new BufferDescription(
+            //                        GLBuffer.Create(
+            //                            vData.VertexData, 
+            //                            BufferTarget.ArrayBuffer
+            //                        ), 
+            //                        vData.VertexAttributePointers
+            //                    )
+            //                ),
+            //                GLBuffer.Create(modelPartData.IndexData, BufferTarget.ElementArrayBuffer)
+            //            )
+            //        )
+            //    );
+            //}
+            //return model;
         }
 
         [ProtoContract]

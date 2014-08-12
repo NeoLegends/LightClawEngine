@@ -1151,12 +1151,12 @@ namespace LightClaw.Engine.Graphics
             switch (order)
             {
                 case FormatOrder.Argb:
-                    return MathF.HexTable[this.A] + MathF.HexTable[this.R] + MathF.HexTable[this.G] + MathF.HexTable[this.B];
+                    return MathF.HexTable.GetHexData(this.A) + MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.B);
                 case FormatOrder.Bgra:
-                    return MathF.HexTable[this.B] + MathF.HexTable[this.G] + MathF.HexTable[this.R] + MathF.HexTable[this.A];
+                    return MathF.HexTable.GetHexData(this.B) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.A);
                 default:
                 case FormatOrder.Rgba:
-                    return MathF.HexTable[this.R] + MathF.HexTable[this.G] + MathF.HexTable[this.B] + MathF.HexTable[this.A];
+                    return MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.B) + MathF.HexTable.GetHexData(this.A);
             }
         }
 

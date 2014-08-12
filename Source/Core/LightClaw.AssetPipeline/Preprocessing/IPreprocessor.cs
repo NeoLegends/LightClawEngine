@@ -9,6 +9,6 @@ namespace LightClaw.AssetPipeline.Preprocessing
 {
     public interface IPreprocessor
     {
-        Task PreprocessAsync(Stream data);
+        Task PreprocessAsync(Stream data, object parameter);
     }
 }

@@ -44,25 +44,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private static readonly string[] _HexTable = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
-
-        /// <summary>
-        /// Contains the hexadecimal representation of all byte values.
-        /// </summary>
-        public static string[] HexTable
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string[]>() != null);
-                Contract.Ensures(Contract.Result<string[]>().Length == byte.MaxValue);
-
-                return _HexTable.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private static readonly double _RootTwo = Math.Sqrt(2);
 
         /// <summary>
@@ -572,6 +553,35 @@ namespace LightClaw.Engine.Core
                 (amount >= 1) ?
                     1 :
                     amount * amount * amount * (amount * ((amount * 6) - 15) + 10);
+        }
+
+        /// <summary>
+        /// Class used to convert bytes into hex strings.
+        /// </summary>
+        public static class HexTable
+        {
+            /// <summary>
+            /// Backing field.
+            /// </summary>
+            private static readonly string[] hexData = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
+
+            /// <summary>
+            /// Gets the specified byte as hexadecimal string.
+            /// </summary>
+            /// <param name="index">The byte to obtain as hex string.</param>
+            /// <returns>The byte's representation as hex string.</returns>
+            public static string GetHexData(byte index)
+            {
+                return hexData[index];
+            }
+
+            /// <summary>
+            /// Gets the hexadecimal representation of all byte values.
+            /// </summary>
+            public static string[] GetHexData()
+            {
+                return hexData.ToArray();
+            }
         }
     }
 }

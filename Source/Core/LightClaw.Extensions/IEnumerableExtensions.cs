@@ -10,7 +10,7 @@ namespace LightClaw.Extensions
     /// <summary>
     /// Contains extension methods to <see cref="IEnumerable{T}"/>.
     /// </summary>
-    public static class EnumerableExtensions
+    public static class IEnumerableExtensions
     {
         /// <summary>
         /// Determines whether there are any duplicates in the specified <paramref name="collection"/>.
@@ -120,18 +120,6 @@ namespace LightClaw.Extensions
             }
 
             return default(T);
-        }
-
-        /// <summary>
-        /// "Converts" the specified <paramref name="item"/> into a collection containing the item.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
-        /// <param name="item">The item to yield back as <see cref="IEnumerable{T}"/>.</param>
-        /// <returns>The item in the newly generated collection.</returns>
-        [Pure]
-        public static IEnumerable<T> Yield<T>(this T item)
-        {
-            yield return item;
         }
     }
 }

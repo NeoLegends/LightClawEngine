@@ -62,24 +62,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\StreamableObject.cs" />
-    <Compile Include="Database\MongoObject.cs" />
-    <Compile Include="Database\TeamDatabase.cs" />
-    <Compile Include="LiveEdit\AssetSynchronization.cs" />
-    <Compile Include="LiveEdit\Binary.cs" />
-    <Compile Include="LiveEdit\File.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\ActionGuidServer.cs" />
-    <Compile Include="Server\AuthedActionGuidServer.cs" />
-    <Compile Include="Server\TcpServer.cs" />
-    <Compile Include="Server\TcpUtilities.cs" />
-    <Compile Include="Server\ThreadedDispatcher.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Client\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LightClaw.TeamServer.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

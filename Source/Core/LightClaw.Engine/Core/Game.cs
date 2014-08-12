@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
@@ -48,7 +49,7 @@ namespace LightClaw.Engine.Core
             GeneralSettings.Default.WindowTitle,
             OpenTK.GameWindowFlags.Default, 
             OpenTK.DisplayDevice.Default,
-            4, 3,
+            4, 4,
 #if DEBUG
             OpenTK.Graphics.GraphicsContextFlags.Debug
 #else
@@ -133,7 +134,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             this.SceneManager = new SceneManager(startScene);
-            this.IocC.Register<ISceneManager>(d => this.SceneManager);
+            this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
             logger.Info(() => "Game successfully created.");
         }
@@ -148,7 +149,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             this.SceneManager = new SceneManager(startScene);
-            this.IocC.Register<ISceneManager>(d => this.SceneManager);
+            this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
             logger.Info(() => "Game successfully created.");
         }

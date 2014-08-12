@@ -26,10 +26,10 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>Raised after any binding / drawing operations.</remarks>
         public event EventHandler<ParameterEventArgs> Drawn;
 
-        /// <summary>
-        /// Notifies about changes in the <see cref="Material"/>.
-        /// </summary>
-        public event EventHandler<ValueChangedEventArgs<Material>> MaterialChanged;
+        ///// <summary>
+        ///// Notifies about changes in the <see cref="Material"/>.
+        ///// </summary>
+        //public event EventHandler<ValueChangedEventArgs<Material>> MaterialChanged;
 
         /// <summary>
         /// Notifies about changes in the parent <see cref="Model"/>.
@@ -65,32 +65,32 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<VertexArrayObject>> VaoChanged;
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private Material _Material;
+        ///// <summary>
+        ///// Backing field.
+        ///// </summary>
+        //private Material _Material;
 
-        /// <summary>
-        /// The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.
-        /// </summary>
-        public Material Material
-        {
-            get
-            {
-                return _Material;
-            }
-            set
-            {
-                Model model = this.Model;
-                if (value != null && model != null)
-                {
-                    value.Component = this.Model.Component;
-                }
-                Material previous = this.Material;
-                this.SetProperty(ref _Material, value);
-                this.Raise(this.MaterialChanged, value, previous);
-            }
-        }
+        ///// <summary>
+        ///// The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.
+        ///// </summary>
+        //public Material Material
+        //{
+        //    get
+        //    {
+        //        return _Material;
+        //    }
+        //    set
+        //    {
+        //        Model model = this.Model;
+        //        if (value != null && model != null)
+        //        {
+        //            value.Component = this.Model.Component;
+        //        }
+        //        Material previous = this.Material;
+        //        this.SetProperty(ref _Material, value);
+        //        this.Raise(this.MaterialChanged, value, previous);
+        //    }
+        //}
 
         /// <summary>
         /// Backing field.
@@ -141,19 +141,19 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public ModelPart() { }
 
-        /// <summary>
-        /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
-        /// </summary>
-        /// <param name="material">The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.</param>
-        /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
-        public ModelPart(Material material, VertexArrayObject vao)
-        {
-            Contract.Requires<ArgumentNullException>(material != null);
-            Contract.Requires<ArgumentNullException>(vao != null);
+        ///// <summary>
+        ///// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
+        ///// </summary>
+        ///// <param name="material">The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.</param>
+        ///// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
+        //public ModelPart(Material material, VertexArrayObject vao)
+        //{
+        //    Contract.Requires<ArgumentNullException>(material != null);
+        //    Contract.Requires<ArgumentNullException>(vao != null);
 
-            this.Material = material;
-            this.Vao = vao;
-        }
+        //    this.Material = material;
+        //    this.Vao = vao;
+        //}
 
         /// <summary>
         /// Draws the <see cref="ModelPart"/> to the screen.
@@ -162,16 +162,16 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                Material mat = this.Material;
-                VertexArrayObject vao = this.Vao;
-                if ((vao != null) && (mat != null))
-                {
-                    using (GLBinding materialBinding = new GLBinding(mat))
-                    using (GLBinding vaoBinding = new GLBinding(vao))
-                    {
-                        GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
-                    }
-                }
+                //Material mat = this.Material;
+                //VertexArrayObject vao = this.Vao;
+                //if ((vao != null) && (mat != null))
+                //{
+                //    using (GLBinding materialBinding = new GLBinding(mat))
+                //    using (GLBinding vaoBinding = new GLBinding(vao))
+                //    {
+                //        GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
+                //    }
+                //}
             }
         }
 
@@ -183,11 +183,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
             {
-                Material mat = this.Material;
-                if (mat != null)
-                {
-                    mat.Update(gameTime);
-                }
+                //Material mat = this.Material;
+                //if (mat != null)
+                //{
+                //    mat.Update(gameTime);
+                //}
             }
         }
 
@@ -198,11 +198,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                Material mat = this.Material;
-                if (mat != null)
-                {
-                    mat.LateUpdate();
-                }
+                //Material mat = this.Material;
+                //if (mat != null)
+                //{
+                //    mat.LateUpdate();
+                //}
             }
         }
     }

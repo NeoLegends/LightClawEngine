@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     /// <example>
     /// <c>
-    /// using (GLBinding shaderBinding = new GLBinding(this.Shader))
+    /// using (GLBinding bufferBinding = new GLBinding(this.Buffer))
     /// {
     ///     // Code interacting with bound shader
     /// }

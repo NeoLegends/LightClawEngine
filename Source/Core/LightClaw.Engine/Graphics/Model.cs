@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,10 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     public class Model : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
-        /// <summary>
-        /// A cache of the <see cref="ModelPart"/>s grouped by their shader.
-        /// </summary>
-        private IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts;
+        ///// <summary>
+        ///// A cache of the <see cref="ModelPart"/>s grouped by their shader.
+        ///// </summary>
+        //private IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts;
 
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -85,12 +86,12 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private ModelPartCollection _ModelParts = new ModelPartCollection();
+        private ObservableCollection<ModelPart> _ModelParts = new ObservableCollection<ModelPart>();
 
         /// <summary>
         /// A collection of <see cref="ModelPart"/>s this <see cref="Model"/> consists of.
         /// </summary>
-        public ModelPartCollection ModelParts
+        public ObservableCollection<ModelPart> ModelParts
         {
             get
             {
@@ -111,7 +112,7 @@ namespace LightClaw.Engine.Graphics
         {
             this.ModelParts.CollectionChanged += (s, e) =>
             {
-                this.groupedModelParts = null;
+                //this.groupedModelParts = null;
                 foreach (ModelPart modelMesh in e.OldItems)
                 {
                     if (modelMesh != null)
@@ -148,24 +149,24 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts = this.groupedModelParts;
-                if (groupedModelParts != null)
-                {
-                    foreach (IGrouping<Shader, ModelPart> grouping in groupedModelParts)
-                    {
-                        using (GLBinding shaderBinding = new GLBinding(grouping.Key))
-                        {
-                            foreach (ModelPart modelMeshPart in grouping)
-                            {
-                                if (modelMeshPart != null)
-                                {
-                                    modelMeshPart.Material.Bind();
-                                    modelMeshPart.Draw();
-                                }
-                            }
-                        }
-                    }
-                }
+                //IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts = this.groupedModelParts;
+                //if (groupedModelParts != null)
+                //{
+                //    foreach (IGrouping<Shader, ModelPart> grouping in groupedModelParts)
+                //    {
+                //        using (GLBinding shaderBinding = new GLBinding(grouping.Key))
+                //        {
+                //            foreach (ModelPart modelMeshPart in grouping)
+                //            {
+                //                if (modelMeshPart != null)
+                //                {
+                //                    modelMeshPart.Material.Bind();
+                //                    modelMeshPart.Draw();
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
             }
         }
 
@@ -184,12 +185,12 @@ namespace LightClaw.Engine.Graphics
                         part.Update(gameTime);
                     }
                 }
-                if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
-                {
-                    this.groupedModelParts = this.ModelParts.Where(modelPart => modelPart.Material != null)
-                                                            .GroupBy(modelPart => modelPart.Material.Shader)
-                                                            .Where(grouping => grouping.Key != null);
-                }
+                //if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
+                //{
+                //    this.groupedModelParts = this.ModelParts.Where(modelPart => modelPart.Material != null)
+                //                                            .GroupBy(modelPart => modelPart.Material.Shader)
+                //                                            .Where(grouping => grouping.Key != null);
+                //}
             }
         }
 
