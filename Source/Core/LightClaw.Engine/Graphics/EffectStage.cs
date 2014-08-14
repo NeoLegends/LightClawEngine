@@ -11,7 +11,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectStage : GLObject
+    public class EffectStage : GLObject // Wrapper for shader program
     {
         private readonly object compileLock = new object();
 
@@ -67,7 +67,7 @@ namespace LightClaw.Engine.Graphics
             {
                 return _UboPool;
             }
-            set
+            private set
             {
                 this.SetProperty(ref _UboPool, value);
             }
@@ -170,7 +170,7 @@ namespace LightClaw.Engine.Graphics
                 }
             }
 
-            throw new NotSupportedException("Compiling an {0} two times is not supported (as the source-parameter might be different). Create a new one instead.".FormatWith(typeof(EffectStage).Name));
+            throw new NotSupportedException("{0} cannot be compiled twice.".FormatWith(typeof(EffectStage).Name));
         }
 
         public bool TryGetUniform(string name, out EffectUniform uniform)

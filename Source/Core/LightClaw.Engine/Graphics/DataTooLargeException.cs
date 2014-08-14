@@ -8,24 +8,34 @@ namespace LightClaw.Engine.Graphics
 {
     public class DataTooLargeException : ArgumentOutOfRangeException
     {
-        public string ConditionString { get; private set; }
+        public int Offset { get; private set; }
+
+        public BufferRange Range { get; private set; }
+
+        public int SizeInBytes { get; private set; }
 
         public DataTooLargeException() { }
 
         public DataTooLargeException(string message) : base(message) { }
 
-        public DataTooLargeException(string message, string condition)
-            : this(message) 
+        public DataTooLargeException(int sizeInBytes, int offset, BufferRange range) : this(null, sizeInBytes, offset, range) { }
+
+        public DataTooLargeException(string message, int sizeInBytes, int offset, BufferRange range)
+            : this(message)
         {
-            this.ConditionString = condition;
+            this.SizeInBytes = sizeInBytes;
+            this.Offset = offset;
+            this.Range = range;
         }
 
         public DataTooLargeException(string message, Exception inner) : base(message, inner) { }
 
-        public DataTooLargeException(string message, Exception inner, string condition)
-            : base(message, inner)
+        public DataTooLargeException(string message, Exception inner, int sizeInBytes, int offset, BufferRange range)
+            : this(message, inner)
         {
-            this.ConditionString = condition;
+            this.SizeInBytes = sizeInBytes;
+            this.Offset = offset;
+            this.Range = range;
         }
     }
 }

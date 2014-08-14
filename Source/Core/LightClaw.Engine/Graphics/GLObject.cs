@@ -58,7 +58,10 @@ namespace LightClaw.Engine.Graphics
         /// <param name="disposing">Indicates whether to free managed resources as well.</param>
         protected virtual void Dispose(bool disposing)
         {
-            this.Handle = 0;
+            if (disposing)
+            {
+                this.Handle = 0;
+            }
             GC.SuppressFinalize(this);
         }
 

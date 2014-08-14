@@ -13,7 +13,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectPass : GLObject, IBindable
+    public class EffectPass : GLObject, IBindable // Wrapper for program pipeline object
     {
         private readonly object initializationLock = new object();
 
@@ -137,7 +137,7 @@ namespace LightClaw.Engine.Graphics
                 }
             }
 
-            throw new NotSupportedException("{0} already initialized. Cannot be initialized again. Create a new one instead.".FormatWith(typeof(EffectPass).Name));
+            throw new NotSupportedException("{0} cannot be initialized twice.".FormatWith(typeof(EffectPass).Name));
         }
 
         protected override void Dispose(bool disposing)

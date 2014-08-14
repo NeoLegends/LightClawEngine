@@ -17,40 +17,29 @@ namespace LightClaw.Engine.Graphics
     public struct BufferRange : IEquatable<BufferRange>
     {
         /// <summary>
-        /// Gets the length of the range.
-        /// </summary>
-        public int Length
-        { 
-            get
-            {
-                return this.End - this.Start;
-            }
-        }
-
-        /// <summary>
         /// The starting location (in bytes).
         /// </summary>
         [DataMember, ProtoMember(1)]
         public int Start { get; private set; }
 
         /// <summary>
-        /// The end of the range (in bytes).
+        /// The length of the range (in bytes).
         /// </summary>
         [DataMember, ProtoMember(2)]
-        public int End { get; private set; }
+        public int Length { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="BufferRange"/>.
         /// </summary>
         /// <param name="start">The starting location (in bytes).</param>
-        /// <param name="end">The end of the range (in bytes).</param>
-        public BufferRange(int start, int end)
+        /// <param name="length">The length of the range (in bytes).</param>
+        public BufferRange(int start, int length)
             : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(start >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(end > start, "End has to be greater than start + 4 due to the UBO alignment.");
+            Contract.Requires<ArgumentOutOfRangeException>(length > 0);
 
-            this.End = end;
+            this.Length = length;
             this.Start = start;
         }
 
@@ -74,7 +63,7 @@ namespace LightClaw.Engine.Graphics
         /// <returns><c>true</c> if the <see cref="BufferRange"/>s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(BufferRange other)
         {
-            return (this.Start == other.Start) && (this.End == other.End);
+            return (this.Start == other.Start) && (this.Length == other.Length);
         }
 
         /// <summary>
@@ -83,7 +72,7 @@ namespace LightClaw.Engine.Graphics
         /// <returns>The <see cref="BufferRange"/>'s hash code.</returns>
         public override int GetHashCode()
         {
-            return HashF.GetHashCode(this.Start, this.End);
+            return HashF.GetHashCode(this.Start, this.Length);
         }
 
         /// <summary>

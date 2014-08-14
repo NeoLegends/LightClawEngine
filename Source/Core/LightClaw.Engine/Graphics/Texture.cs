@@ -11,6 +11,22 @@ namespace LightClaw.Engine.Graphics
 {
     public abstract class Texture : GLObject, IBindable
     {
+        protected readonly object initializationLock = new object();
+
+        private bool _IsInitialized;
+
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            protected set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
         private int _Levels = 1;
 
         public int Levels
@@ -38,6 +54,24 @@ namespace LightClaw.Engine.Graphics
             protected set
             {
                 this.SetProperty(ref _SizedInternalFormat, value);
+            }
+        }
+
+        private int _TextureUnit;
+
+        public int TextureUnit
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
+                return Math.Max(_TextureUnit, 0);
+            }
+            set
+            {
+                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
+
+                this.SetProperty(ref _TextureUnit, value);
             }
         }
 
@@ -87,10 +121,9 @@ namespace LightClaw.Engine.Graphics
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMapArray);
         }
 
-        protected Texture() : base(GL.GenTexture()) { }
+        protected Texture() { }
 
         protected Texture(TextureTarget target, SizedInternalFormat sizedInternalFormat, int width, int levels)
-            : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
@@ -103,11 +136,23 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
+            this.Bind(this.TextureUnit);
+        }
+
+        public void Bind(int textureUnit)
+        {
+            GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
             GL.BindTexture(this.Target, this);
         }
 
         public void Unbind()
         {
+            this.Unbind(this.TextureUnit);
+        }
+
+        public void Unbind(int textureUnit)
+        {
+            GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
             GL.BindTexture(this.Target, 0);
         }
 

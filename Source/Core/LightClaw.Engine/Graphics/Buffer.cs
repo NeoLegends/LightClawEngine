@@ -149,8 +149,14 @@ namespace LightClaw.Engine.Graphics
             where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)));
-            dataHandle.Free();
+            try
+            {
+                this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)));
+            }
+            finally
+            {
+                dataHandle.Free();
+            }
         }
 
         /// <summary>
@@ -162,8 +168,14 @@ namespace LightClaw.Engine.Graphics
             where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)) * data.Length);
-            dataHandle.Free();
+            try
+            {
+                this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)) * data.Length);
+            }
+            finally
+            {
+                dataHandle.Free();
+            } 
         }
 
         /// <summary>
@@ -176,8 +188,14 @@ namespace LightClaw.Engine.Graphics
             where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)));
-            dataHandle.Free();
+            try
+            {
+                this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)));
+            }
+            finally
+            {
+                dataHandle.Free();
+            }
         }
 
         /// <summary>
@@ -190,8 +208,14 @@ namespace LightClaw.Engine.Graphics
             where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)) * data.Length);
-            dataHandle.Free();
+            try
+            {
+                this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)) * data.Length);
+            }
+            finally
+            {
+                dataHandle.Free();
+            }
         }
 
         /// <summary>

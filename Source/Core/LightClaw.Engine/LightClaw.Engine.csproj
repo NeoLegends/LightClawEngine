@@ -99,7 +99,7 @@
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
@@ -148,7 +148,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
@@ -214,8 +214,12 @@
     <Compile Include="Graphics\IBuffer.cs" />
     <Compile Include="Graphics\IGLObject.cs" />
     <Compile Include="Graphics\RangedBuffer.cs" />
+    <Compile Include="Graphics\Sampler.cs" />
+    <Compile Include="Graphics\SamplerEffectUniform.cs" />
+    <Compile Include="Graphics\SamplerParameterDescription.cs" />
     <Compile Include="Graphics\UniformBufferPool.cs" />
     <Compile Include="Graphics\BufferRange.cs" />
+    <Compile Include="Graphics\ValueEffectUniform.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
     <Compile Include="Logging\LoggingEventInfo.cs" />
