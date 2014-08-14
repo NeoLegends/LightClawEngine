@@ -13,24 +13,8 @@ namespace LightClaw.Engine.Graphics
     /// Represents the base class for all OpenGL-wrapper-objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : Entity, IDisposable
+    public abstract class GLObject : Entity, IDisposable, IGLObject
     {
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private static readonly int _MaxCombinedTextureImageUnits = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits);
-
-        /// <summary>
-        /// Gets the maximum count of concurrently bound textures.
-        /// </summary>
-        public static int MaxCombinedTextureImageUnits
-        {
-            get
-            {
-                return _MaxCombinedTextureImageUnits;
-            }
-        }
-
         /// <summary>
         /// The OpenGL-handle.
         /// </summary>

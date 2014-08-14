@@ -131,7 +131,7 @@ namespace LightClaw.Engine.Core
         public Game(string startScene)
             : this()
         {
-            Contract.Requires<ArgumentNullException>(startScene != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
@@ -170,14 +170,11 @@ namespace LightClaw.Engine.Core
             bool limitFps = VideoSettings.Default.LimitFPS;
             double maxFrameRate = (double)VideoSettings.Default.FPSLimit;
 
-            if (limitFps)
-            {
-                logger.Info(() => "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate));
-            }
-            else
-            {
-                logger.Info(() => "Entering game loop with unlimited frame rate.");
-            }
+            logger.Info(
+                () => limitFps ? 
+                    "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate) :
+                    "Entering game loop with unlimited frame rate."
+            );
 
             this.GameWindow.Run(limitFps ? maxFrameRate : 0.0);
         }
@@ -272,8 +269,8 @@ namespace LightClaw.Engine.Core
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this.GameWindow != null);
-            Contract.Invariant(this.SceneManager != null);
+            Contract.Invariant(this._GameWindow != null);
+            Contract.Invariant(this._SceneManager != null);
         }
     }
 }

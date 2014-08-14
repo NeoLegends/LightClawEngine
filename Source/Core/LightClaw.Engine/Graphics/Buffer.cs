@@ -15,42 +15,92 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a data store on GPU memory.
     /// </summary>
-    public class Buffer : GLObject, IBindable
+    public class Buffer : GLObject, IBuffer
     {
         /// <summary>
-        /// Indicates whether the <see cref="Buffer"/> still needs an OpenGL buffer name.
+        /// Used for restricting access to the name generation process.
         /// </summary>
-        private bool requiresNameGeneration = true;
+        private readonly object nameGenerationLock = new object();
 
         /// <summary>
-        /// Indicates whether the data has yet to be uploaded to the GPU.
+        /// Backing field.
         /// </summary>
-        private bool requiresDataUpload = false;
-
-        /// <summary>
-        /// The handle to the data.
-        /// </summary>
-        private GCHandle dataHandle;
-
-        /// <summary>
-        /// The size of the data in bytes.
-        /// </summary>
-        private IntPtr dataSize;
+        private int _Count;
 
         /// <summary>
         /// The length of the buffer in bytes.
         /// </summary>
-        public int Count { get; private set; }
+        public int Count
+        {
+            get
+            {
+                return _Count;
+            }
+            private set
+            {
+                this.SetProperty(ref _Count, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private BufferUsageHint _Hint;
 
         /// <summary>
         /// The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.
         /// </summary>
-        public BufferUsageHint Hint { get; private set; }
+        public BufferUsageHint Hint
+        {
+            get
+            {
+                return _Hint;
+            }
+            private set
+            {
+                this.SetProperty(ref _Hint, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private bool _IsInitialized;
+
+        /// <summary>
+        /// Indicates whether the <see cref="Buffer"/> is already initialized and has got a name.
+        /// </summary>
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private BufferTarget _Target;
 
         /// <summary>
         /// The <see cref="BufferTarget"/>.
         /// </summary>
-        public BufferTarget Target { get; private set; }
+        public BufferTarget Target
+        {
+            get
+            {
+                return _Target;
+            }
+            private set
+            {
+                this.SetProperty(ref _Target, value);
+            }
+        }
 
         /// <summary>
         /// Initializes a new <see cref="Buffer"/> setting usage hint and target.
@@ -64,40 +114,20 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Initializes a new <see cref="Buffer"/> setting usage hint and target and specifying the data to upload.
-        /// </summary>
-        /// <param name="target">The <see cref="BufferTarget"/>.</param>
-        /// <param name="hint">The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.</param>
-        /// <param name="dataHandle">A managed handle to the data.</param>
-        /// <param name="size">The size of the data in bytes.</param>
-        /// <remarks>
-        /// The data will be uploaded lazily, meaning that the upload will take place on the first call to <see cref="M:Bind"/>.
-        /// This allows for data loading and <see cref="Buffer"/>-creation on a background thread.
-        /// </remarks>
-        public Buffer(BufferTarget target, BufferUsageHint hint, GCHandle dataHandle, IntPtr size)
-            : this(target, hint)
-        {
-            this.dataHandle = dataHandle;
-            this.dataSize = size;
-            this.requiresDataUpload = true;
-        }
-
-        /// <summary>
-        /// Uploads the data to the GPU if required and binds the buffer to the specified <see cref="BufferTarget"/>.
+        /// Binds the buffer to the specified <see cref="BufferTarget"/>.
         /// </summary>
         public void Bind()
         {
-            if (this.requiresNameGeneration) // Buffer name will be generated lazily in order to allow for multithreaded content loading
+            if (!this.IsInitialized) // Buffer name will be generated lazily in order to allow for multithreaded content loading
             {
-                this.Handle = GL.GenBuffer();
-                this.requiresNameGeneration = false;
-            }
-            if (this.requiresDataUpload) // Same goes for data, upload when required on drawing thread
-            {
-                this.Update(this.dataHandle.AddrOfPinnedObject(), this.dataSize);
-                this.dataHandle.Free();
-                this.dataSize = IntPtr.Zero;
-                this.requiresDataUpload = false;
+                lock (this.nameGenerationLock)
+                {
+                    if (!this.IsInitialized)
+                    {
+                        this.Handle = GL.GenBuffer();
+                        this.IsInitialized = true;
+                    }
+                }
             }
             GL.BindBuffer(this.Target, this);
         }
@@ -115,13 +145,38 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
-        public void Update<T>(T[] data)
+        public virtual void Set<T>(T data)
             where T : struct
         {
-            Contract.Requires<ArgumentNullException>(data != null);
-
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.Update(dataHandle.AddrOfPinnedObject(), (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
+            this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)));
+            dataHandle.Free();
+        }
+
+        /// <summary>
+        /// Updates the <see cref="Buffer"/>'s contents.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
+        /// <param name="data">The data itself.</param>
+        public virtual void Set<T>(T[] data)
+            where T : struct
+        {
+            GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            this.Set(dataHandle.AddrOfPinnedObject(), Marshal.SizeOf(typeof(T)) * data.Length);
+            dataHandle.Free();
+        }
+
+        /// <summary>
+        /// Sets a range of the <see cref="Buffer"/>'s contents.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
+        /// <param name="data">The data itself.</param>
+        /// <param name="offset">The offset in bytes to start applying the new data at.</param>
+        public virtual void SetRange<T>(T data, int offset)
+            where T : struct
+        {
+            GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)));
             dataHandle.Free();
         }
 
@@ -131,13 +186,11 @@ namespace LightClaw.Engine.Graphics
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
         /// <param name="offset">The offset in bytes to start applying the new data at.</param>
-        public void UpdateRange<T>(T[] data, int offset)
+        public virtual void SetRange<T>(T[] data, int offset)
             where T : struct
         {
-            Contract.Requires<ArgumentNullException>(data != null);
-
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            this.UpdateRange(dataHandle.AddrOfPinnedObject(), (IntPtr)offset, (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
+            this.SetRange(dataHandle.AddrOfPinnedObject(), offset, Marshal.SizeOf(typeof(T)) * data.Length);
             dataHandle.Free();
         }
 
@@ -145,13 +198,13 @@ namespace LightClaw.Engine.Graphics
         /// Updates the <see cref="Buffer"/>'s contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
-        /// <param name="size">The size of the data in bytes.</param>
-        public void Update(IntPtr data, IntPtr size)
+        /// <param name="sizeInBytes">The size of the data in bytes.</param>
+        public virtual void Set(IntPtr data, int sizeInBytes)
         {
             using (GLBinding bufferBinding = new GLBinding(this))
             {
-                GL.BufferData(this.Target, size, data, this.Hint);
-                this.CalculateCount((int)size, 0);
+                GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
+                this.CalculateCount((int)sizeInBytes, 0);
             }
         }
 
@@ -159,14 +212,14 @@ namespace LightClaw.Engine.Graphics
         /// Updates the <see cref="Buffer"/>'s contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
-        /// <param name="size">The size of the data in bytes.</param>
+        /// <param name="sizeInBytes">The size of the data in bytes.</param>
         /// <param name="offset">The offset in bytes to start applying the new data at.</param>
-        public void UpdateRange(IntPtr data, IntPtr offset, IntPtr size)
+        public virtual void SetRange(IntPtr data, int offset, int sizeInBytes)
         {
             using (GLBinding bufferBindg = new GLBinding(this))
             {
-                GL.BufferSubData(this.Target, offset, size, data);
-                this.CalculateCount((int)size, (int)offset);
+                GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
+                this.CalculateCount((int)sizeInBytes, (int)offset);
             }
         }
 
@@ -207,10 +260,6 @@ namespace LightClaw.Engine.Graphics
         /// <typeparam name="T">The <see cref="Type"/> of data to upload.</typeparam>
         /// <param name="data">The data.</param>
         /// <param name="target">The <see cref="BufferTarget"/> the <see cref="Buffer"/> will be bound to.</param>
-        /// <remarks>
-        /// The data will be uploaded lazily, meaning that the upload will take place on the first call to <see cref="M:Bind"/>.
-        /// This allows for data loading and <see cref="Buffer"/>-creation on a background thread.
-        /// </remarks>
         /// <returns>The newly created <see cref="Buffer"/>.</returns>
         public static Buffer Create<T>(T[] data, BufferTarget target)
             where T : struct
@@ -228,10 +277,6 @@ namespace LightClaw.Engine.Graphics
         /// <param name="data">The data.</param>
         /// <param name="target">The <see cref="BufferTarget"/> the <see cref="Buffer"/> will be bound to.</param>
         /// <param name="hint">The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.</param>
-        /// <remarks>
-        /// The data will be uploaded lazily, meaning that the upload will take place on the first call to <see cref="M:Bind"/>.
-        /// This allows for data loading and <see cref="Buffer"/>-creation on a background thread.
-        /// </remarks>
         /// <returns>The newly created <see cref="Buffer"/>.</returns>
         public static Buffer Create<T>(T[] data, BufferTarget target, BufferUsageHint hint)
             where T : struct
@@ -239,7 +284,9 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Ensures(Contract.Result<Buffer>() != null);
 
-            return new Buffer(target, hint, GCHandle.Alloc(data, GCHandleType.Pinned), (IntPtr)(Marshal.SizeOf(typeof(T)) * data.Length));
+            Buffer buffer = new Buffer(target, hint);
+            buffer.Set(data);
+            return buffer;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
@@ -63,7 +64,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Scene"/>.
         /// </summary>
-        public Scene() 
+        public Scene()
         {
             logger.Info(() => "Initializing a new scene.");
         }
@@ -73,7 +74,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="name">The name of the <see cref="Scene"/>.</param>
         public Scene(string name)
-            : this() 
+            : this()
         {
             this.Name = name;
         }
@@ -165,6 +166,7 @@ namespace LightClaw.Engine.Core
         /// <param name="item">The <see cref="GameObject"/> to insert.</param>
         public override void Insert(int index, GameObject item)
         {
+            Contract.Assume(item != null);
             item.Scene = this;
             base.Insert(index, item);
         }
@@ -313,7 +315,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnEnable()
         {
-            Parallel.ForEach(this.Items, item => item.Enable());
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.Enable());
+            }
         }
 
         /// <summary>
@@ -321,7 +327,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDisable()
         {
-            Parallel.ForEach(this.Items, item => item.Disable());
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.Disable());
+            }
         }
 
         /// <summary>
@@ -340,7 +350,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            Parallel.ForEach(this.Items, item => item.Load());
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.Load());
+            }
         }
 
         /// <summary>
@@ -348,7 +362,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnReset()
         {
-            Parallel.ForEach(this.Items, item => item.Reset());
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.Reset());
+            }
         }
 
         /// <summary>
@@ -356,7 +374,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnUpdate(GameTime gameTime)
         {
-            Parallel.ForEach(this.Items, item => item.Update(gameTime));
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.Update(gameTime));
+            }
         }
 
         /// <summary>
@@ -364,7 +386,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLateUpdate()
         {
-            Parallel.ForEach(this.Items, item => item.LateUpdate());
+            ObservableCollection<GameObject> items = this.Items;
+            if (items != null)
+            {
+                Parallel.ForEach(items, item => item.LateUpdate());
+            }
         }
 
         /// <summary>

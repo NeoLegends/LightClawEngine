@@ -6,7 +6,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
+using OpenTK.Graphics.OpenGL4;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Core

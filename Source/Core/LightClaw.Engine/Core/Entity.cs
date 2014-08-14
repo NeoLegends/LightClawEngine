@@ -23,7 +23,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// An instance of <see cref="ILog"/> used to track application events.
         /// </summary>
-        protected static readonly ILog logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        protected readonly ILog logger;
 
         /// <summary>
         /// Notifies about changes in a specified property.
@@ -81,7 +81,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected Entity() 
         {
-            logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(this.GetType().AssemblyQualifiedName));
+            Type entityType = this.GetType();
+            this.logger = LogManager.GetLogger(entityType);
+            logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(entityType.AssemblyQualifiedName));
         }
 
         /// <summary>
@@ -191,7 +193,8 @@ namespace LightClaw.Engine.Core
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this.IocC != null);
+            Contract.Invariant(this._IocC != null);
+            Contract.Invariant(this.logger != null);
         }
     }
 }

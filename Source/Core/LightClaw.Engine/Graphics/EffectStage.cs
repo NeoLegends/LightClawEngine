@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object compileLock = new object();
 
-        private bool _IsCompiled;
+        private bool _IsCompiled = false;
 
         public bool IsCompiled
         {
@@ -29,20 +29,6 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ImmutableDictionary<string, EffectUniform> _Uniforms;
-
-        public ImmutableDictionary<string, EffectUniform> Uniforms
-        {
-            get
-            {
-                return _Uniforms;
-            }
-            private set
-            {
-                this.SetProperty(ref _Uniforms, value);
-            }
-        }
-
         private string _Source;
 
         public string Source
@@ -53,6 +39,8 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(value));
+
                 this.SetProperty(ref _Source, value);
             }
         }
@@ -71,6 +59,38 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        private UniformBufferPool _UboPool = UniformBufferPool.Default;
+
+        public UniformBufferPool UboPool
+        {
+            get
+            {
+                return _UboPool;
+            }
+            set
+            {
+                this.SetProperty(ref _UboPool, value);
+            }
+        }
+
+        private ImmutableDictionary<string, EffectUniform> _Uniforms = ImmutableDictionary<string, EffectUniform>.Empty;
+
+        public ImmutableDictionary<string, EffectUniform> Uniforms
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, EffectUniform>>() != null);
+
+                return _Uniforms;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Uniforms, value);
+            }
+        }
+
         public EffectUniform this[string uniformName]
         {
             get
@@ -83,44 +103,95 @@ namespace LightClaw.Engine.Graphics
 
         public EffectUniform this[int location]
         {
+            [ContractVerification(false)]
             get
             {
-                return this.Uniforms.Values.First(uniform => uniform.Location == location);
+                Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
+
+                IEnumerable<EffectUniform> values = this.Uniforms.Values;
+                if (values == null)
+                {
+                    throw new NullReferenceException("The collection containing the values of the dictionary containing the uniforms was null.");
+                }
+                return values.FilterNull().First(uniform => uniform.Location == location);
             }
         }
 
-        //public EffectStage(string source, ShaderType type, IEnumerable<EffectUniform> uniforms)
-        //{
-        //    Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+        public EffectStage() { }
 
-        //    this.Source = source;
-        //    this.Type = type;
-        //    this.Uniforms = (uniforms != null) ?
-        //        uniforms.ToImmutableDictionary(uniform => uniform.UniformName) :
-        //        ImmutableDictionary<string, EffectUniform>.Empty;
-        //}
-
-        public void Compile()
+        public EffectStage(string source, ShaderType type)
         {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+
+            this.Compile(source, type);
+        }
+
+        public void Compile(string source, ShaderType type)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+
             if (!this.IsCompiled) // Double check to avoid lock acquiring, if possible
             {
                 lock (this.compileLock)
                 {
                     if (!this.IsCompiled)
                     {
+                        this.Source = source;
+                        this.Type = type;
                         this.Handle = GL.CreateShaderProgram(this.Type, 1, this.Source.YieldArray());
-                        this.IsCompiled = true;
 
                         int result;
                         if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
                         {
-                            throw new InvalidOperationException(
-                                "Compiling the {0}'s underlying OpenGL Shader Program failed with code {1}.".FormatWith(typeof(EffectStage).Name, result)
+                            throw new CompilationFailedException(
+                                "Compiling the {0}'s underlying OpenGL Shader Program failed with code {1}.".FormatWith(typeof(EffectStage).Name, result),
+                                GL.GetProgramInfoLog(this),
+                                result
                             );
                         }
+                        throw new NotImplementedException("Shader compilation seems to work fine (no exception yet), but uniform variable handling is not finished yet.");
+
+#pragma warning disable 0162 // Unreachable code, remove when NotImplementedException is gone
+
+                        int uniformCount = 0;
+                        GL.GetProgram(this, GetProgramParameterName.ActiveUniforms, out uniformCount);
+                        for (int i = 0; i < uniformCount; i++)
+                        {
+                            int nameLength;
+                            ActiveUniformType uniformType;
+                            string uniformName = GL.GetActiveUniform(this, i, out nameLength, out uniformType);
+                        }
+
+#pragma warning restore 0162
+
+                        this.IsCompiled = true;
+                        return;
                     }
                 }
             }
+
+            throw new NotSupportedException("Compiling an {0} two times is not supported (as the source-parameter might be different). Create a new one instead.".FormatWith(typeof(EffectStage).Name));
+        }
+
+        public bool TryGetUniform(string name, out EffectUniform uniform)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out uniform) != null);
+
+            return this.Uniforms.TryGetValue(name, out uniform);
+        }
+
+        public bool TryGetUniform(int location, out EffectUniform uniform)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
+            Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out uniform) != null);
+
+            IEnumerable<EffectUniform> values = this.Uniforms.Values;
+            if (values == null)
+            {
+                throw new NullReferenceException("The collection containing the values of the dictionary containing the uniforms was null.");
+            }
+            return (uniform = values.FilterNull().FirstOrDefault(u => u.Location == location)) != null;
         }
 
         protected override void Dispose(bool disposing)
@@ -152,6 +223,12 @@ namespace LightClaw.Engine.Graphics
             int result;
             GL.GetProgram(this, pName, out result);
             return result;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Uniforms != null);
         }
     }
 }

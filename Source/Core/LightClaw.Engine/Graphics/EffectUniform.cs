@@ -11,6 +11,34 @@ namespace LightClaw.Engine.Graphics
 {
     public abstract class EffectUniform : Entity
     {
+        private Buffer _Buffer;
+
+        public Buffer Buffer
+        {
+            get
+            {
+                return _Buffer;
+            }
+            private set
+            {
+                this.SetProperty(ref _Buffer, value);
+            }
+        }
+
+        private BufferRange _BufferRange;
+
+        public BufferRange BufferRange
+        {
+            get
+            {
+                return _BufferRange;
+            }
+            private set
+            {
+                this.SetProperty(ref _BufferRange, value);
+            }
+        }
+
         private int _Location;
 
         public int Location
@@ -33,7 +61,7 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                throw new NotSupportedException("{0}'s name cannot be set.".FormatWith(typeof(EffectUniform).Name));
+                throw new NotSupportedException("{0}'s name cannot be set. It is hardcoded in the shader file".FormatWith(typeof(EffectUniform).Name));
             }
         }
 
@@ -51,6 +79,20 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        private ActiveUniformType _Type;
+
+        public ActiveUniformType Type
+        {
+            get
+            {
+                return _Type;
+            }
+            private set
+            {
+                this.SetProperty(ref _Type, value);
+            }
+        }
+        
         private string _UniformName;
 
         public string UniformName
@@ -63,6 +105,23 @@ namespace LightClaw.Engine.Graphics
             {
                 this.SetProperty(ref _UniformName, value);
             }
+        }
+
+        public void Set<T>(T value)
+            where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set<T>(T[] value)
+            where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set(Texture sampler)
+        {
+            throw new NotImplementedException();
         }
     }
 }

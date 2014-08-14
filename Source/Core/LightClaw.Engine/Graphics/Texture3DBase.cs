@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Graphics
         }
 
         protected Texture3DBase(TextureTarget3d target, SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
-            : this(target, sizedInternalFormat, width, height, depth, (int)Math.Min(Math.Min(Math.Log(width, 2), Math.Log(height, 2)), Math.Log(depth, 2)) + 1) // Generate as many mipmaps as needed to shrink width or height to 1px
+            : this(target, sizedInternalFormat, width, height, depth, Math.Max((int)Math.Min(Math.Min(Math.Log(width, 2), Math.Log(height, 2)), Math.Log(depth, 2)) + 1, 1)) // Generate as many levels as needed, but at least one
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);

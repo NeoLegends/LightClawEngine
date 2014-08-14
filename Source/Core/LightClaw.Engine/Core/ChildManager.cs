@@ -33,6 +33,8 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Ensures(Contract.Result<ObservableCollection<T>>() != null);
+
                 return _Items;
             }
             set
@@ -134,10 +136,23 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            foreach (T item in this.Items)
+            ObservableCollection<T> items = this.Items;
+            if (items != null)
             {
-                action(item);
+                foreach (T item in items)
+                {
+                    action(item);
+                }
             }
+        }
+
+        /// <summary>
+        /// Contains Contract.Invariant definitions.
+        /// </summary>
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Items != null);
         }
     }
 }

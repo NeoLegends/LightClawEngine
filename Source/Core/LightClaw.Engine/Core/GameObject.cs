@@ -54,13 +54,10 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                Contract.Requires<ArgumentOutOfRangeException>(index < this.Count);
-
                 return base[index];
             }
             set
             {
-                Contract.Requires<ArgumentOutOfRangeException>(index < this.Count);
                 Contract.Assume(value != null);
 
                 this.CheckAttachability(value);
@@ -98,6 +95,7 @@ namespace LightClaw.Engine.Core
         /// <param name="item">The <see cref="Component"/> to add.</param>
         public override void Add(Component item)
         {
+            Contract.Assume(item != null);
             if (!this.TryAdd(item))
             {
                 throw new NotSupportedException("The item could not be added");
@@ -144,12 +142,46 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/>, if possible, and
+        /// sets <paramref name="result"/> to the first <see cref="Component"/> of typo <typeparamref name="T"/>, if
+        /// the attachment fails.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to add.</typeparam>
+        /// <param name="component">The <see cref="Component"/> to try to add.</param>
+        /// <param name="result">The <see cref="Component"/> that was either retreived or added.</param>
+        /// <returns>
+        /// <c>true</c> if the value in <paramref name="result"/> is not <c>null</c> (i.e. a <see cref="Component"/> could be fetched). 
+        /// Otherwise <c>false</c>.
+        /// </returns>
+        public bool GetOrAdd<T>(T component, out T result)
+            where T : Component
+        {
+            Contract.Requires<ArgumentNullException>(component != null);
+            Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out result) != null);
+
+            lock (this.Items)
+            {
+                if (this.TryCheckAttachability(component))
+                {
+                    base.Add(component);
+                    result = component;
+                    return true;
+                }
+                else
+                {
+                    return (result = (T)this.FirstOrDefault(comp => comp is T)) != null;
+                }
+            }
+        }
+
+        /// <summary>
         /// Inserts the specified <paramref name="item"/> at the specified <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index to insert the item at.</param>
         /// <param name="item">The <see cref="Component"/> to insert.</param>
         public override void Insert(int index, Component item)
         {
+            Contract.Assume(item != null);
             if (!this.TryInsert(index, item))
             {
                 throw new NotSupportedException("The item could not be inserted.");
@@ -268,6 +300,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(item != null);
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Assume(index <= this.Count);
 
             lock (this.Items)
             {
@@ -293,6 +326,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(items != null);
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Assume(index <= this.Count);
 
             lock (this.Items)
             {
@@ -407,7 +441,8 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(component != null);
 
-            return component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this));
+            return (component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>() ?? Enumerable.Empty<AttachmentValidatorAttribute>())
+                       .All(attr => attr.Validate(this));
         }
 
         /// <summary>
@@ -420,7 +455,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(components != null);
 
             List<Component> attachables = new List<Component>();
-            foreach (Component item in components)
+            foreach (Component item in components.FilterNull())
             {
                 attachables.Add(item);
                 if (!this.TryCheckAttachability(item, components.Except(attachables)))
@@ -444,7 +479,8 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(component != null);
             Contract.Requires<ArgumentNullException>(gameObjectsToAttach != null);
 
-            return component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>().All(attr => attr.Validate(this, gameObjectsToAttach));
+            return (component.GetType().GetCustomAttributes<AttachmentValidatorAttribute>() ?? Enumerable.Empty<AttachmentValidatorAttribute>())
+                       .All(attr => attr.Validate(this, gameObjectsToAttach));
         }
 
         /// <summary>
@@ -456,7 +492,8 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(component != null);
 
-            return component.GetType().GetCustomAttributes<RemovalValidatorAttribute>().All(attr => attr.Validate(this));
+            return (component.GetType().GetCustomAttributes<RemovalValidatorAttribute>() ?? Enumerable.Empty<RemovalValidatorAttribute>())
+                .All(attr => attr.Validate(this));
         }
 
         /// <summary>

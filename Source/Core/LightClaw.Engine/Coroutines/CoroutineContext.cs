@@ -291,6 +291,15 @@ namespace LightClaw.Engine.Coroutines
                     this.enumerator = this.coroutineFactory().GetEnumerator();
                 }
             }
+
+            /// <summary>
+            /// Contains Contract.Invariant definitions.
+            /// </summary>
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.coroutineFactory != null);
+            }
         }
     }
 }

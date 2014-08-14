@@ -39,7 +39,7 @@ namespace LightClaw.Engine.Logging
         /// <param name="loggingEvent">The <see cref="LoggingEvent"/> containing the data about the log entry.</param>
         protected override void FormatXml(XmlWriter writer, LoggingEvent loggingEvent)
         {
-            if (loggingEvent != null && writer != null)
+            if (loggingEvent != null && writer != null && loggingEvent.Level != null)
             {
                 using (StringWriter sw = new StringWriter(new StringBuilder(2048)))
                 using (XmlTextWriter xmlTw = new XmlTextWriter(sw))

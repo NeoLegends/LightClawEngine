@@ -10,12 +10,12 @@ namespace LightClaw.Engine.Core
     /// A struct raising <see cref="ParameterEventArgs"/>-events. Made for use with the 'using'-clause.
     /// </summary>
     /// <example>
-    /// <c>
+    /// <code>
     /// using (ParameterEventRaiser raiser = new ParameterEventRaiser(this, this.Updating, this.Updated))
     /// {
     ///     // Code surrounded by events. Updating will be raised on entry of the block, Updated right after.
     /// }
-    /// </c>
+    /// </code>
     /// </example>
     public struct ParameterEventArgsRaiser : IDisposable
     {

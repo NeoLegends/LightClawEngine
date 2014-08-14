@@ -13,7 +13,21 @@ namespace LightClaw.Engine.Graphics
 {
     public class VertexArrayObject : GLObject, IBindable
     {
-        public Buffer IndexBuffer { get; private set; }
+        private readonly object initializationLock = new object();
+
+        private Buffer _IndexBuffer;
+
+        public Buffer IndexBuffer
+        {
+            get
+            {
+                return _IndexBuffer;
+            }
+            private set
+            {
+                this.SetProperty(ref _IndexBuffer, value);
+            }
+        }
 
         public int IndexCount
         {
@@ -23,9 +37,33 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public bool IsInitialized { get; private set; }
+        private bool _IsInitialized;
 
-        public ImmutableList<BufferDescription> VertexBuffers { get; private set; }
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
+        private ImmutableList<BufferDescription> _VertexBuffers;
+
+        public ImmutableList<BufferDescription> VertexBuffers
+        {
+            get
+            {
+                return _VertexBuffers;
+            }
+            private set
+            {
+                this.SetProperty(ref _VertexBuffers, value);
+            }
+        }
 
         public VertexArrayObject(IEnumerable<BufferDescription> buffers, Buffer indexBuffer)
             : base(GL.GenVertexArray())
@@ -53,30 +91,36 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.IsInitialized)
             {
-                using (GLBinding vaoBinding = new GLBinding(this))
+                lock (this.initializationLock)
                 {
-                    foreach (BufferDescription bufferConfig in this.VertexBuffers)
+                    if (!this.IsInitialized)
                     {
-                        using (GLBinding vboBinding = new GLBinding(bufferConfig.Buffer))
+                        using (GLBinding vaoBinding = new GLBinding(this))
                         {
-                            foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                            foreach (BufferDescription bufferConfig in this.VertexBuffers)
                             {
-                                GL.EnableVertexAttribArray(vertexPointer.Index);
-                                GL.VertexAttribPointer(
-                                    vertexPointer.Index,
-                                    vertexPointer.Size,
-                                    vertexPointer.Type,
-                                    vertexPointer.IsNormalized,
-                                    vertexPointer.Stride,
-                                    vertexPointer.Offset
-                                );
+                                using (GLBinding vboBinding = new GLBinding(bufferConfig.Buffer))
+                                {
+                                    foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                                    {
+                                        GL.EnableVertexAttribArray(vertexPointer.Index);
+                                        GL.VertexAttribPointer(
+                                            vertexPointer.Index,
+                                            vertexPointer.Size,
+                                            vertexPointer.Type,
+                                            vertexPointer.IsNormalized,
+                                            vertexPointer.Stride,
+                                            vertexPointer.Offset
+                                        );
+                                    }
+                                }
                             }
+                            this.IndexBuffer.Bind();
                         }
+                        this.IndexBuffer.Unbind();
+                        this.IsInitialized = true;
                     }
-                    this.IndexBuffer.Bind();
                 }
-                this.IndexBuffer.Unbind();
-                this.IsInitialized = true;
             }
         }
 

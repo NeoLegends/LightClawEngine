@@ -269,8 +269,25 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The position-, rotation, and scaling matrices combined as transformation <see cref="Matrix"/>.
+        /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/> (up to you how you call it ;)).
         /// </summary>
+        /// <remarks>
+        /// <list type="number">
+        ///     <listheader>
+        ///         <term>Order of Operations</term>
+        ///         <description>Contains the order in which the transformation matrices are applied to form the final model / world-matrix.</description>
+        ///     </listheader>
+        ///     <item>
+        ///         <description>Scaling</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>Rotation</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>Position</description>
+        ///     </item>
+        /// </list>
+        /// </remarks>
         public Matrix ModelMatrix
         {
             get

@@ -59,7 +59,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         public SceneManager(string startScene)
         {
-            Contract.Requires<ArgumentNullException>(startScene != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
             logger.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
             this.Load(0, startScene).Wait();
@@ -184,7 +184,7 @@ namespace LightClaw.Engine.Core
                 Scene scene;
                 if (this.scenes.TryGetValue(slot, out scene) && this.scenes.Remove(slot))
                 {
-                    for (int i = newSlot; i < int.MinValue; i--)
+                    for (int i = newSlot; i >= int.MinValue; i--)
                     {
                         try
                         {

@@ -205,12 +205,17 @@
     <Compile Include="Core\SolitaryAttribute.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
+    <Compile Include="Graphics\CompilationFailedException.cs" />
+    <Compile Include="Graphics\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
     <Compile Include="Graphics\EffectStage.cs" />
-    <Compile Include="Graphics\EffectUniformStruct.cs" />
-    <Compile Include="Graphics\EffectUniformVariable.cs" />
+    <Compile Include="Graphics\IBuffer.cs" />
+    <Compile Include="Graphics\IGLObject.cs" />
+    <Compile Include="Graphics\RangedBuffer.cs" />
+    <Compile Include="Graphics\UniformBufferPool.cs" />
+    <Compile Include="Graphics\BufferRange.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
     <Compile Include="Logging\LoggingEventInfo.cs" />
@@ -247,7 +252,6 @@
     <Compile Include="Graphics\Texture2D.cs" />
     <Compile Include="Graphics\VertexAttributePointer.cs" />
     <Compile Include="Input\InputInterface.cs" />
-    <Compile Include="IO\BufferReader.cs" />
     <Compile Include="IO\ContentManager.cs" />
     <Compile Include="IO\ContentManagerExtensions.cs" />
     <Compile Include="IO\FileSystemContentResolver.cs" />
@@ -300,7 +304,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Configuration\GeneralSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>GeneralSettings.Designer.cs</LastGenOutput>

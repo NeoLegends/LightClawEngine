@@ -131,6 +131,28 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Clamps the value to the <see cref="Int32"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        [Pure]
+        public static int ClampToInt32(ulong value)
+        {
+            return (value <= int.MaxValue) ? (int)value : int.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the value to the <see cref="Int642"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        [Pure]
+        public static long ClampToInt64(ulong value)
+        {
+            return (value <= long.MaxValue) ? (long)value : long.MaxValue;
+        }
+
+        /// <summary>
         /// Converts the specified value in degrees to radians.
         /// </summary>
         /// <param name="value">The value to convert to radians.</param>
@@ -187,6 +209,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        /// <remarks>
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>. 
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// </remarks>
         [Pure]
         public static bool IsAlmostOne(double value)
         {
@@ -199,6 +225,10 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check for whether it is one.</param>
         /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        /// <remarks>
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>. 
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// </remarks>
         [Pure]
         public static bool IsAlmostOne(double value, int decimalPlaceCount)
         {
@@ -212,6 +242,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
+        /// <remarks>
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>. 
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// </remarks>
         [Pure]
         public static bool IsAlmostZero(double value)
         {
@@ -224,6 +258,10 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check.</param>
         /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
+        /// <remarks>
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>. 
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// </remarks>
         [Pure]
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
@@ -242,6 +280,18 @@ namespace LightClaw.Engine.Core
         public static bool IsDivisorOf(int n, int divisor)
         {
             return (n % divisor == 0);
+        }
+
+        /// <summary>
+        /// Checks whether a number is a divisor of another number.
+        /// </summary>
+        /// <param name="n">The number to be divided.</param>
+        /// <param name="divisor">The numbers divisor.</param>
+        /// <returns>Whether n is dividable by the divisor.</returns>
+        [Pure]
+        public static bool IsDivisorOf(double n, double divisor)
+        {
+            return IsAlmostZero(n % divisor);
         }
 
         /// <summary>
@@ -301,18 +351,6 @@ namespace LightClaw.Engine.Core
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Checks whether a number is a divisor of another number.
-        /// </summary>
-        /// <param name="n">The number to be divided.</param>
-        /// <param name="divisor">The numbers divisor.</param>
-        /// <returns>Whether n is dividable by the divisor.</returns>
-        [Pure]
-        public static bool IsDivisorOf(double n, double divisor)
-        {
-            return IsAlmostZero(n % divisor, 15);
         }
 
         /// <summary>
@@ -572,6 +610,8 @@ namespace LightClaw.Engine.Core
             /// <returns>The byte's representation as hex string.</returns>
             public static string GetHexData(byte index)
             {
+                Contract.Assume(index < hexData.Length);
+
                 return hexData[index];
             }
 
@@ -581,6 +621,12 @@ namespace LightClaw.Engine.Core
             public static string[] GetHexData()
             {
                 return hexData.ToArray();
+            }
+
+            [ContractInvariantMethod]
+            private static void ObjectInvariant()
+            {
+                Contract.Invariant(hexData.Length == 256);
             }
         }
     }

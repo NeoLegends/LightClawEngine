@@ -10,7 +10,7 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Effect : GLObject
+    public class Effect : GLObject, IEnumerable<EffectPass>
     {
         private ObservableCollection<EffectPass> _Passes = new ObservableCollection<EffectPass>();
 
@@ -18,20 +18,19 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<ObservableCollection<EffectPass>>() != null);
+
                 return _Passes;
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _Passes, value);
             }
         }
 
-        public Effect()
-        {
-            this.Passes.CollectionChanged += (s, e) =>
-            {
-            };
-        }
+        public Effect() { }
 
         public Effect(IEnumerable<EffectPass> techniques)
             : this()
@@ -39,6 +38,22 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(techniques != null);
 
             this.Passes.AddRange(techniques);
+        }
+
+        public IEnumerator<EffectPass> GetEnumerator()
+        {
+            return this.Passes.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Passes != null);
         }
     }
 }

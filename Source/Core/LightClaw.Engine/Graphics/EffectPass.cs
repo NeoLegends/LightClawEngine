@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
@@ -42,20 +43,6 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ObservableCollection<EffectStage> _Stages = new ObservableCollection<EffectStage>();
-
-        public ObservableCollection<EffectStage> Stages
-        {
-            get
-            {
-                return _Stages;
-            }
-            private set
-            {
-                this.SetProperty(ref _Stages, value);
-            }
-        }
-
         private string _PassName;
 
         public string PassName
@@ -67,6 +54,24 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 this.SetProperty(ref _PassName, value);
+            }
+        }
+
+        private ObservableCollection<EffectStage> _Stages = new ObservableCollection<EffectStage>();
+
+        public ObservableCollection<EffectStage> Stages
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ObservableCollection<EffectStage>>() != null);
+
+                return _Stages;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Stages, value);
             }
         }
 
@@ -108,6 +113,11 @@ namespace LightClaw.Engine.Graphics
             GL.BindProgramPipeline(this);
         }
 
+        public void Unbind()
+        {
+            GL.BindProgramPipeline(0);
+        }
+
         public void Initialize(IEnumerable<EffectStage> stages)
         {
             Contract.Requires<ArgumentNullException>(stages != null);
@@ -127,13 +137,7 @@ namespace LightClaw.Engine.Graphics
                 }
             }
 
-            // Throw as ignoring initialization with parameter is more severe than ignoring the call to .Compile in EffectStage
             throw new NotSupportedException("{0} already initialized. Cannot be initialized again. Create a new one instead.".FormatWith(typeof(EffectPass).Name));
-        }
-
-        public void Unbind()
-        {
-            GL.BindProgramPipeline(0);
         }
 
         protected override void Dispose(bool disposing)
@@ -185,8 +189,14 @@ namespace LightClaw.Engine.Graphics
                 case ShaderType.VertexShader:
                     return ProgramStageMask.VertexShaderBit;
                 default:
-                    return ProgramStageMask.AllShaderBits;
+                    throw new NotSupportedException("Getting the program stage mask is only supported for predefined values in ShaderType.");
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Stages != null);
         }
     }
 }
