@@ -18,7 +18,7 @@ REQUIREMENTS:
         - (Multiplatform-capabilities (Windows, Mac OS X, Linux, Android, iOS, Xbox 360 / One, Ps Vita, WP8))
         - GameObject / Decorator-System
         - Scripting with all .NET languages
-        - Engine Components shall never depend on class Game, instead take a IServiceRegistry as constructor parameter.
+        - Engine Components shall never depend on class Game, use IoC Container to resolve runtime instances
 		
     LightClaw.Editor
         - Multiplatform-capabilities (Windows, Mac OS X, Linux)

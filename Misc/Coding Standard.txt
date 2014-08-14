@@ -100,20 +100,22 @@ CODING STANDARD:
 		1. Static parameters (same order as non-static parameters in respect to accessibility / visibility)
         2. Fields
         3. Events
-        4. Properties WITH backing fields
+        4. Properties WITH backing fields (see Properties-Section)
         5. Constructors
         6. Public Methods
-            - Sort by alphabet, if it makes sense, oder by purpose->alphabet.
+            - Sort by alphabet, if it makes sense, or by purpose->alphabet.
             - Overloads calling one base method shall go above the aforementioned base method
         7. Internal methods
         8. Protected methods
         9. Private methods
-        10. Static methods (same order like non-static methods in respect to the accessibility)
-        11. Overloaded operators
+        10. Contract Invariant method
+        11. Static methods (same order like non-static methods in respect to the accessibility)
+        12. Overloaded operators
 		
 	Contracts:
-		- Combine contract clauses that serve the same purpose (e.g. null-checking) with &&
-			- Contract.Requires(param1 != null && param2 != null);
+        - Use one contract call per contract
+            - Contract.Requires<ArgumentNullException>(value1 != null);
+              Contract.Requires<ArgumentNullException>(value2 != null);
 		- Invariant Contract declaration methods shall be named "ObjectInvariant"
 			- private void ObjectInvariant() { /* Contract definitions */ }
 		- Interface Contract definitions shall be made in the same file with an internal abstract class named <InterfaceName>Contracts
