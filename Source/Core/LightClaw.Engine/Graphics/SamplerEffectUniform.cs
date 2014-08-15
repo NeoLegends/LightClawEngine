@@ -55,6 +55,7 @@ namespace LightClaw.Engine.Graphics
 
             lock (this.setLock)
             {
+                this.TextureUnit = textureUnit;
                 GL.ProgramUniform1(this.Stage, this.Location, textureUnit);
                 texture.Bind(textureUnit);
                 if (sampler != null) // Samplers are not always wanted, so don't bind one if it's null

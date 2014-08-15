@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,20 @@ namespace LightClaw.Engine.Graphics
 {
     public class ValueEffectUniform : EffectUniform
     {
+        private int _Index;
+
+        public int Index
+        {
+            get
+            {
+                return _Index;
+            }
+            private set
+            {
+                this.SetProperty(ref _Index, value);
+            }
+        }
+
         private RangedBuffer _Ubo;
 
         public RangedBuffer Ubo
@@ -16,9 +31,27 @@ namespace LightClaw.Engine.Graphics
             {
                 return _Ubo;
             }
-            set
+            private set
             {
                 this.SetProperty(ref _Ubo, value);
+            }
+        }
+
+        private UniformBufferPool _UboPool;
+
+        public UniformBufferPool UboPool
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
+
+                return _UboPool;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _UboPool, value);
             }
         }
 
@@ -76,6 +109,12 @@ namespace LightClaw.Engine.Graphics
             {
                 return false;
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._UboPool != null);
         }
     }
 }

@@ -91,6 +91,8 @@ namespace LightClaw.Engine.Graphics
         void IBindable.Bind() { }
 
         void IBindable.Unbind() { }
+
+        void IDisposable.Dispose() { }
     }
 
 }

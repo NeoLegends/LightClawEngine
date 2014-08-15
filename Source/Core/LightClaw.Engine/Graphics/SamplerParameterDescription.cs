@@ -32,8 +32,8 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="SamplerParameterDescription"/>.
         /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
+        /// <param name="parameterName">The sampler parameter to set.</param>
+        /// <param name="value">The value.</param>
         public SamplerParameterDescription(SamplerParameterName parameterName, float value)
             : this()
         {

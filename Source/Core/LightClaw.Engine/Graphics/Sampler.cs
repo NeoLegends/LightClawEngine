@@ -101,11 +101,19 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
+            int unit = this.TextureUnit;
+            if (unit < 0)
+            {
+                throw new InvalidOperationException("The texture unit to bind to was {0} but has to be greater than or equal to zero.".FormatWith(unit));
+            }
             this.Bind(this.TextureUnit);
         }
 
         public void Bind(int textureUnit)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
+
+            this.TextureUnit = textureUnit;
             GL.BindSampler(textureUnit, this);
         }
 
@@ -116,6 +124,8 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind(int textureUnit)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
+
             GL.BindSampler(textureUnit, 0);
         }
 

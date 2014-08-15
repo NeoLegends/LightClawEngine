@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
-    public interface IGLObject
+    public interface IGLObject : IDisposable
     {
         int Handle { get; }
     }
