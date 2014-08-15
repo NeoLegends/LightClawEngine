@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
@@ -158,8 +159,15 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            this.Unbind();
-            GL.DeleteTexture(this);
+            try
+            {
+                this.Unbind();
+                GL.DeleteTexture(this);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {0}'s underlying OpenGL Texture.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Texture).Name));
+            }
 
             base.Dispose(disposing);
         }

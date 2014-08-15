@@ -94,5 +94,29 @@ namespace LightClaw.Engine.Configuration {
                 this["FPSLimit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AnisotropicFiltering {
+            get {
+                return ((bool)(this["AnisotropicFiltering"]));
+            }
+            set {
+                this["AnisotropicFiltering"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public float AnisotropicLevel {
+            get {
+                return ((float)(this["AnisotropicLevel"]));
+            }
+            set {
+                this["AnisotropicLevel"] = value;
+            }
+        }
     }
 }

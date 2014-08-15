@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LightClaw.Engine")]
-[assembly: AssemblyProduct("LightClaw Engine")]
+[assembly: AssemblyProduct("LightClaw.Engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("The core library of the LightClaw engine.")]
 [assembly: AssemblyCompany("LightClaw")]
