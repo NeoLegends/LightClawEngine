@@ -12,8 +12,8 @@ namespace LightClaw.Engine.Graphics
 {
     public class Texture3D : Texture3DBase
     {
-        public Texture3D(SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
-            : base(TextureTarget3d.Texture3D, sizedInternalFormat, width, height, depth)
+        public Texture3D(PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
+            : base(TextureTarget3d.Texture3D, pixelInternalFormat, width, height, depth)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -23,8 +23,8 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
         }
 
-        public Texture3D(SizedInternalFormat sizedInternalFormat, int width, int height, int depth, int levels)
-            : base(TextureTarget3d.Texture3D, sizedInternalFormat, width, height, depth, levels)
+        public Texture3D(PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
+            : base(TextureTarget3d.Texture3D, pixelInternalFormat, width, height, depth, levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);

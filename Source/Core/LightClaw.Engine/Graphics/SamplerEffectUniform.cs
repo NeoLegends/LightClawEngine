@@ -39,6 +39,7 @@ namespace LightClaw.Engine.Graphics
         public void Set(Texture texture, Sampler sampler)
         {
             Contract.Requires<ArgumentNullException>(texture != null);
+            Contract.Requires<ArgumentNullException>(sampler != null);
 
             int unit = this.TextureUnit;
             if (unit < 0)
@@ -52,16 +53,14 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(texture != null);
+            Contract.Requires<ArgumentNullException>(sampler != null);
 
             lock (this.setLock)
             {
                 this.TextureUnit = textureUnit;
                 GL.ProgramUniform1(this.Stage, this.Location, textureUnit);
                 texture.Bind(textureUnit);
-                if (sampler != null) // Samplers are not always wanted, so don't bind one if it's null
-                {
-                    sampler.Bind(textureUnit);
-                }
+                sampler.Bind(textureUnit);
             }
         }
     }

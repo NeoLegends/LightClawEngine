@@ -27,6 +27,20 @@ namespace LightClaw.Extensions
 
             return (collection != null) ? collection.GroupBy(selector).Where(x => x.Skip(1).Any()).Any() : false;
         }
+        
+
+        /// <summary>
+        /// Makes sure that the return value is not null and returns an empty enumerable if <paramref name="source"/> was null.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of values inside the <paramref name="source"/>.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <returns><paramref name="source"/> or an empty enumerable if <paramref name="source"/> was null.</returns>
+        public static IEnumerable<T> EnsureNonNull<T>(this IEnumerable<T> source)
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
+
+            return source ?? Enumerable.Empty<T>();
+        }
 
         /// <summary>
         /// Removes a value from a collection.
@@ -98,7 +112,7 @@ namespace LightClaw.Extensions
         /// <typeparam name="T">The <see cref="Type"/> of the collection.</typeparam>
         /// <param name="collection">The collection to filter.</param>
         /// <param name="predicate">The predicate used to select the element.</param>
-        /// <returns>The first element that passed the <paramref name="predicate"/> or <c>default(T)</c> if no element passed the test..</returns>
+        /// <returns>The first element that passed the <paramref name="predicate"/> or <c>default(T)</c> if no element passed the test.</returns>
         public static async Task<T> FirstOrDefaultAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
         {
             Contract.Requires<ArgumentNullException>(collection != null);
@@ -120,6 +134,22 @@ namespace LightClaw.Extensions
             }
 
             return default(T);
+        }
+
+        /// <summary>
+        /// Checks whether the specified <paramref name="subset"/> is a subset of the specified <paramref name="superset"/>.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of values in the sets.</typeparam>
+        /// <param name="subset">The subset.</param>
+        /// <param name="superset">The superset.</param>
+        /// <returns><c>true</c> if <paramref name="subset"/> is a subset of <paramref name="superset"/>.</returns>
+        public static bool IsSubsetOf<T>(IEnumerable<T> subset, IEnumerable<T> superset)
+        {
+            Contract.Requires<ArgumentNullException>(subset != null);
+            Contract.Requires<ArgumentNullException>(superset != null);
+            
+            HashSet<T> hashSet = new HashSet<T>(subset);
+            return hashSet.IsSubsetOf(superset);
         }
     }
 }

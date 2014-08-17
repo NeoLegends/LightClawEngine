@@ -14,32 +14,32 @@ namespace LightClaw.Engine.Graphics
     {
         public Texture1D() { }
 
-        public Texture1D(SizedInternalFormat sizedInternalFormat, int width)
+        public Texture1D(PixelInternalFormat pixelInternalFormat, int width)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
 
-            this.Initialize(sizedInternalFormat, width);
+            this.Initialize(pixelInternalFormat, width);
         }
 
-        public Texture1D(SizedInternalFormat sizedInternalFormat, int width, int levels)
+        public Texture1D(PixelInternalFormat pixelInternalFormat, int width, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
 
-            this.Initialize(sizedInternalFormat, width, levels);
+            this.Initialize(pixelInternalFormat, width, levels);
         }
 
-        public void Initialize(SizedInternalFormat sizedInternalFormat, int width)
+        public void Initialize(PixelInternalFormat pixelInternalFormat, int width)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
 
-            this.Initialize(sizedInternalFormat, width, Math.Max((int)Math.Log(width, 2), 1));
+            this.Initialize(pixelInternalFormat, width, Math.Max((int)Math.Log(width, 2), 1));
         }
 
-        public void Initialize(SizedInternalFormat sizedInternalFormat, int width, int levels)
+        public void Initialize(PixelInternalFormat pixelInternalFormat, int width, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
@@ -52,13 +52,13 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         this.Levels = levels;
-                        this.SizedInternalFormat = sizedInternalFormat;
+                        this.PixelInternalFormat = pixelInternalFormat;
                         this.Target = (TextureTarget)TextureTarget1d.Texture1D;
                         this.Width = width;
 
                         using (GLBinding textureBinding = new GLBinding(this))
                         {
-                            GL.TexStorage1D(TextureTarget1d.Texture1D, levels, sizedInternalFormat, width);
+                            GL.TexStorage1D(TextureTarget1d.Texture1D, levels, (SizedInternalFormat)pixelInternalFormat, width);
                         }
 
                         this.IsInitialized = true;

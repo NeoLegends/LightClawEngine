@@ -219,7 +219,6 @@
     <Compile Include="Graphics\Sampler.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\SamplerParameterDescription.cs" />
-    <Compile Include="Graphics\UniformBufferDescription.cs" />
     <Compile Include="Graphics\UniformBufferPool.cs" />
     <Compile Include="Graphics\BufferRange.cs" />
     <Compile Include="Graphics\ValueEffectUniform.cs" />

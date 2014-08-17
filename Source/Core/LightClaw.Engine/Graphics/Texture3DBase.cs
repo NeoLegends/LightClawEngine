@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Texture3DBase(TextureTarget3d target, SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
+        protected Texture3DBase(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -53,10 +53,10 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
 
-            this.Initialize(target, sizedInternalFormat, width, height, depth);
+            this.Initialize(target, pixelInternalFormat, width, height, depth);
         }
 
-        protected Texture3DBase(TextureTarget3d target, SizedInternalFormat sizedInternalFormat, int width, int height, int depth, int levels)
+        protected Texture3DBase(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -66,10 +66,10 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
 
-            this.Initialize(target, sizedInternalFormat, width, height, depth, levels);
+            this.Initialize(target, pixelInternalFormat, width, height, depth, levels);
         }
 
-        public void Initialize(TextureTarget3d target, SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
+        public void Initialize(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -80,7 +80,7 @@ namespace LightClaw.Engine.Graphics
 
             this.Initialize(
                 target,
-                sizedInternalFormat,
+                pixelInternalFormat,
                 width,
                 height,
                 depth,
@@ -88,7 +88,7 @@ namespace LightClaw.Engine.Graphics
             );
         }
 
-        public void Initialize(TextureTarget3d target, SizedInternalFormat sizedInternalFormat, int width, int height, int depth, int levels)
+        public void Initialize(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -107,13 +107,13 @@ namespace LightClaw.Engine.Graphics
                         this.Depth = depth;
                         this.Height = height;
                         this.Levels = levels;
-                        this.SizedInternalFormat = sizedInternalFormat;
+                        this.PixelInternalFormat = pixelInternalFormat;
                         this.Target = (TextureTarget)target;
                         this.Width = width;
 
                         using (GLBinding textureBinding = new GLBinding(this))
                         {
-                            GL.TexStorage3D(target, levels, sizedInternalFormat, width, height, depth);
+                            GL.TexStorage3D(target, levels, (SizedInternalFormat)pixelInternalFormat, width, height, depth);
                         }
 
                         this.IsInitialized = true;

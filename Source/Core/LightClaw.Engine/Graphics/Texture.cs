@@ -44,17 +44,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private SizedInternalFormat _SizedInternalFormat = SizedInternalFormat.Rgba8i;
+        private PixelInternalFormat _InternalFormat = PixelInternalFormat.Rgba8i;
 
-        public SizedInternalFormat SizedInternalFormat
+        public PixelInternalFormat PixelInternalFormat
         {
             get
             {
-                return _SizedInternalFormat;
+                return _InternalFormat;
             }
             protected set
             {
-                this.SetProperty(ref _SizedInternalFormat, value);
+                this.SetProperty(ref _InternalFormat, value);
             }
         }
 
@@ -124,14 +124,14 @@ namespace LightClaw.Engine.Graphics
 
         protected Texture() { }
 
-        protected Texture(TextureTarget target, SizedInternalFormat sizedInternalFormat, int width, int levels)
+        protected Texture(TextureTarget target, PixelInternalFormat pixelInternalFormat, int width, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
 
             this.Levels = levels;
             this.Target = target;
-            this.SizedInternalFormat = sizedInternalFormat;
+            this.PixelInternalFormat = pixelInternalFormat;
             this.Width = width;
         }
 

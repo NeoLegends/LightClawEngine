@@ -48,9 +48,7 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
-                return Math.Max(_TextureUnit, 0);
+                return _TextureUnit;
             }
             set
             {

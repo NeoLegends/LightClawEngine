@@ -526,6 +526,62 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Rounds the specified <paramref name="number"/> up to a multiple of <paramref name="factor"/>.
+        /// </summary>
+        /// <param name="number">The number to round up.</param>
+        /// <param name="factor">The factor to round up to a multiple of to.</param>
+        /// <returns>The <paramref name="number"/> rounded up to a multiple of <paramref name="factor"/>.</returns>
+        /// <example>
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>
+        ///             <code>RoundUp(1, 10) = 10</code>
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             <code>RoundUp(11, 10) = 20</code>
+        ///         </description>
+        ///     </item>
+        /// </list>
+        /// </example>
+        [Pure]
+        public static int RoundToMultiple(int number, int factor)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(factor >= 0);
+
+            return number + factor - 1 - (number - 1) % factor;
+        }
+
+        /// <summary>
+        /// Rounds the specified <paramref name="number"/> up to a multiple of <paramref name="factor"/>.
+        /// </summary>
+        /// <param name="number">The number to round up.</param>
+        /// <param name="factor">The factor to round up to a multiple of to.</param>
+        /// <returns>The <paramref name="number"/> rounded up to a multiple of <paramref name="factor"/>.</returns>
+        /// <example>
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>
+        ///             <code>RoundUp(1, 10) = 10</code>
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             <code>RoundUp(11, 10) = 20</code>
+        ///         </description>
+        ///     </item>
+        /// </list>
+        /// </example>
+        [Pure]
+        public static long RoundToMultiple(long number, long factor)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(factor >= 0);
+
+            return number + factor - 1 - (number - 1) % factor;
+        }
+
+        /// <summary>
         /// Performs smooth (cubic Hermite) interpolation between 0 and 1.
         /// </summary>
         /// <remarks>

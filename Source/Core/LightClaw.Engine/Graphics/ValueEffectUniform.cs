@@ -4,11 +4,14 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
     public class ValueEffectUniform : EffectUniform
     {
+        private readonly object initializationLock = new object();
+
         private int _Index;
 
         public int Index
@@ -20,6 +23,34 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 this.SetProperty(ref _Index, value);
+            }
+        }
+
+        private bool _IsInitialized;
+
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
+        private int _Length;
+
+        public int Length
+        {
+            get
+            {
+                return _Length;
+            }
+            private set
+            {
+                this.SetProperty(ref _Length, value);
             }
         }
 
@@ -55,37 +86,69 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public ValueEffectUniform(EffectStage stage, UniformBufferPool pool, string name, int length)
+            : base(stage, name)
+        {
+            Contract.Requires<ArgumentNullException>(stage != null);
+            Contract.Requires<ArgumentNullException>(pool != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires<ArgumentOutOfRangeException>(length > 0);
+
+            this.Length = length;
+            this.UboPool = pool;
+        }
+
+        public void Initialize()
+        {
+            if (!this.IsInitialized)
+            {
+                lock (this.initializationLock)
+                {
+                    if (!this.IsInitialized)
+                    {
+                        this.Ubo = this.UboPool.GetBuffer(this.Length, UniformBufferPool.Stage.Fragment, this.Stage);
+                    }
+                }
+            }
+        }
+
         public void Set<T>(T value)
             where T : struct
         {
+            this.Initialize();
             RangedBuffer buffer = this.Ubo;
-            if (buffer != null)
+            if (buffer == null)
             {
-                buffer.Set(value);
+                throw new NullReferenceException("The uniform buffer was null.");
             }
+            buffer.Set(value);
         }
 
         public void Set<T>(T[] value)
             where T : struct
         {
+            this.Initialize();
             RangedBuffer buffer = this.Ubo;
-            if (buffer != null)
+            if (buffer == null)
             {
-                buffer.Set(value);
+                throw new NullReferenceException("The uniform buffer was null.");
             }
+            buffer.Set(value);
         }
 
         public bool TrySet<T>(T value)
             where T : struct
         {
+            this.Initialize();
             try
             {
                 RangedBuffer buffer = this.Ubo;
                 if (buffer != null)
                 {
                     buffer.Set(value);
+                    return true;
                 }
-                return true;
+                return false;
             }
             catch
             {
@@ -96,14 +159,16 @@ namespace LightClaw.Engine.Graphics
         public bool TrySet<T>(T[] value)
             where T : struct
         {
+            this.Initialize();
             try
             {
                 RangedBuffer buffer = this.Ubo;
                 if (buffer != null)
                 {
                     buffer.Set(value);
+                    return true;
                 }
-                return true;
+                return false;
             }
             catch
             {

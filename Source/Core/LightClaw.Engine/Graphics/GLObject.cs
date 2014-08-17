@@ -13,13 +13,49 @@ namespace LightClaw.Engine.Graphics
     /// Represents the base class for all OpenGL-wrapper-objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : Entity, IDisposable, IGLObject
+    public abstract class GLObject : Entity, IGLObject
     {
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private int _Handle;
+
         /// <summary>
         /// The OpenGL-handle.
         /// </summary>
         [IgnoreDataMember]
-        public int Handle { get; protected set; }
+        public int Handle
+        {
+            get
+            {
+                return _Handle;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Handle, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private bool _IsDisposed;
+
+        /// <summary>
+        /// Indicates whether the instance has already been disposed or not.
+        /// </summary>
+        [IgnoreDataMember]
+        public bool IsDisposed
+        {
+            get
+            {
+                return _IsDisposed;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsDisposed, value);
+            }
+        }
 
         /// <summary>
         /// Initializes a new <see cref="GLObject"/>.
@@ -62,6 +98,7 @@ namespace LightClaw.Engine.Graphics
             {
                 this.Handle = 0;
             }
+            this.IsDisposed = true;
             GC.SuppressFinalize(this);
         }
 

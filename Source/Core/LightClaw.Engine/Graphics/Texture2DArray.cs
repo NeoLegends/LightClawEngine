@@ -12,8 +12,8 @@ namespace LightClaw.Engine.Graphics
 {
     public class Texture2DArray : Texture3DBase
     {
-        public Texture2DArray(SizedInternalFormat sizedInternalFormat, int width, int height, int depth)
-            : base(TextureTarget3d.Texture2DArray, sizedInternalFormat, width, height, depth)
+        public Texture2DArray(PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
+            : base(TextureTarget3d.Texture2DArray, pixelInternalFormat, width, height, depth)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -23,8 +23,8 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
         }
 
-        public Texture2DArray(SizedInternalFormat sizedInternalFormat, int width, int height, int depth, int levels)
-            : base(TextureTarget3d.Texture2DArray, sizedInternalFormat, width, height, depth, levels)
+        public Texture2DArray(PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
+            : base(TextureTarget3d.Texture2DArray, pixelInternalFormat, width, height, depth, levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);

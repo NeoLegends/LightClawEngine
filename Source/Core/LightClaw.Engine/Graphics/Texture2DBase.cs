@@ -30,17 +30,17 @@ namespace LightClaw.Engine.Graphics
 
         protected Texture2DBase() { }
 
-        protected Texture2DBase(TextureTarget2d target, SizedInternalFormat sizedInternalFormat, int width, int height)
+        protected Texture2DBase(TextureTarget2d target, PixelInternalFormat pixelInternalFormat, int width, int height)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
 
-            this.Initialize(target, sizedInternalFormat, width, height);
+            this.Initialize(target, pixelInternalFormat, width, height);
         }
 
-        protected Texture2DBase(TextureTarget2d target, SizedInternalFormat sizedInternalFormat, int width, int height, int levels)
+        protected Texture2DBase(TextureTarget2d target, PixelInternalFormat pixelInternalFormat, int width, int height, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -48,20 +48,20 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
 
-            this.Initialize(target, sizedInternalFormat, width, height, levels);
+            this.Initialize(target, pixelInternalFormat, width, height, levels);
         }
 
-        public void Initialize(TextureTarget2d target, SizedInternalFormat sizedInternalFormat, int width, int height)
+        public void Initialize(TextureTarget2d target, PixelInternalFormat pixelInternalFormat, int width, int height)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
 
-            this.Initialize(target, sizedInternalFormat, width, height, Math.Max((int)Math.Min(Math.Log(width, 2), Math.Log(height, 2)) + 1, 1));
+            this.Initialize(target, pixelInternalFormat, width, height, Math.Max((int)Math.Min(Math.Log(width, 2), Math.Log(height, 2)) + 1, 1));
         }
 
-        public void Initialize(TextureTarget2d target, SizedInternalFormat sizedInternalFormat, int width, int height, int levels)
+        public void Initialize(TextureTarget2d target, PixelInternalFormat pixelInternalFormat, int width, int height, int levels)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -77,13 +77,13 @@ namespace LightClaw.Engine.Graphics
                     {
                         this.Height = height;
                         this.Levels = levels;
-                        this.SizedInternalFormat = sizedInternalFormat;
+                        this.PixelInternalFormat = pixelInternalFormat;
                         this.Target = (TextureTarget)target;
                         this.Width = width;
 
                         using (GLBinding textureBinding = new GLBinding(this))
                         {
-                            GL.TexStorage2D(target, levels, sizedInternalFormat, width, height);
+                            GL.TexStorage2D(target, levels, (SizedInternalFormat)pixelInternalFormat, width, height);
                         }
 
                         this.IsInitialized = true;

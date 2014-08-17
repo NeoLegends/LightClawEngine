@@ -59,7 +59,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private UniformBufferPool _UboPool = UniformBufferPool.Default;
+        private UniformBufferPool _UboPool;
 
         public UniformBufferPool UboPool
         {
@@ -69,6 +69,8 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _UboPool, value);
             }
         }
@@ -186,12 +188,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
             Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out uniform) != null);
 
-            IEnumerable<EffectUniform> values = this.Uniforms.Values;
-            if (values == null)
-            {
-                throw new NullReferenceException("The collection containing the values of the dictionary containing the uniforms was null.");
-            }
-            return (uniform = values.FilterNull().FirstOrDefault(u => u.Location == location)) != null;
+            return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
         }
 
         protected override void Dispose(bool disposing)

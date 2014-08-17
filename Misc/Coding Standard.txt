@@ -22,6 +22,7 @@ CODING STANDARD:
         - public <type> SomeFloat;
 		- Do not use var-keyword, except for exceptionally long and awful variable names! (by that I mean I used it 3 and only 3 times in LightClaw!)
 		- Avoid creating public static readonly fields, create properties instead
+        - Use readonly whereever possible. If a field will only be used and never set, make it readonly. (except for backing fields, ofc)
         
     Properties:
         - private <type> _MyProperty = <value>; (Backing fields start with Underscore to distinguish from "actual" fields)

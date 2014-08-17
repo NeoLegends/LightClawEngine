@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace LightClaw.Engine.Graphics
             {
                 return _Location;
             }
-            private set
+            protected set
             {
                 this.SetProperty(ref _Location, value);
             }
@@ -45,23 +46,9 @@ namespace LightClaw.Engine.Graphics
             {
                 return _Stage;
             }
-            private set
+            protected set
             {
                 this.SetProperty(ref _Stage, value);
-            }
-        }
-
-        private ActiveUniformType _Type;
-
-        public ActiveUniformType Type
-        {
-            get
-            {
-                return _Type;
-            }
-            private set
-            {
-                this.SetProperty(ref _Type, value);
             }
         }
 
@@ -73,10 +60,22 @@ namespace LightClaw.Engine.Graphics
             {
                 return _UniformName;
             }
-            private set
+            protected set
             {
                 this.SetProperty(ref _UniformName, value);
             }
+        }
+
+        protected EffectUniform() { }
+
+        protected EffectUniform(EffectStage stage, string name)
+        {
+            Contract.Requires<ArgumentNullException>(stage != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+
+            this.Location = GL.GetUniformLocation(stage, name);
+            this.Stage = stage;
+            this.UniformName = name;
         }
     }
 }
