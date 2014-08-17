@@ -106,6 +106,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
+                        throw new NotImplementedException();
                         this.Ubo = this.UboPool.GetBuffer(this.Length, UniformBufferPool.Stage.Fragment, this.Stage);
                     }
                 }
