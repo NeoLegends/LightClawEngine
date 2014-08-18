@@ -213,12 +213,16 @@
     <Compile Include="Graphics\EffectStage.cs" />
     <Compile Include="Graphics\IBuffer.cs" />
     <Compile Include="Graphics\IGLObject.cs" />
+    <Compile Include="Core\IInitializable.cs" />
     <Compile Include="Graphics\OutOfUniformBufferSpaceException.cs" />
     <Compile Include="Graphics\RangedBuffer.cs" />
     <Compile Include="Graphics\RangedBufferDisposedEventArgs.cs" />
     <Compile Include="Graphics\Sampler.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\SamplerParameterDescription.cs" />
+    <Compile Include="Graphics\ShaderPipeline.cs" />
+    <Compile Include="Graphics\ShaderProgram.cs" />
+    <Compile Include="Graphics\TextureDescription.cs" />
     <Compile Include="Graphics\UniformBufferPool.cs" />
     <Compile Include="Graphics\BufferRange.cs" />
     <Compile Include="Graphics\ValueEffectUniform.cs" />

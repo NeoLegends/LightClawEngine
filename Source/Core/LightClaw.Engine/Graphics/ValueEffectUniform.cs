@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
@@ -107,7 +108,7 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         throw new NotImplementedException();
-                        this.Ubo = this.UboPool.GetBuffer(this.Length, UniformBufferPool.Stage.Fragment, this.Stage);
+                        this.Ubo = this.UboPool.GetBuffer(this.Length, GetStage(this.Stage.Type), this.Stage);
                     }
                 }
             }
@@ -116,25 +117,19 @@ namespace LightClaw.Engine.Graphics
         public void Set<T>(T value)
             where T : struct
         {
-            this.Initialize();
-            RangedBuffer buffer = this.Ubo;
-            if (buffer == null)
+            if (!this.TrySet(value))
             {
-                throw new NullReferenceException("The uniform buffer was null.");
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
             }
-            buffer.Set(value);
         }
 
         public void Set<T>(T[] value)
             where T : struct
         {
-            this.Initialize();
-            RangedBuffer buffer = this.Ubo;
-            if (buffer == null)
+            if (!this.TrySet(value))
             {
-                throw new NullReferenceException("The uniform buffer was null.");
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
             }
-            buffer.Set(value);
         }
 
         public bool TrySet<T>(T value)
@@ -151,8 +146,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -171,8 +167,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -181,6 +178,21 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._UboPool != null);
+        }
+
+        private static UniformBufferPool.Stage GetStage(ShaderType type)
+        {
+            switch (type)
+            {
+                case ShaderType.FragmentShader:
+                    return UniformBufferPool.Stage.Fragment;
+                case ShaderType.GeometryShader:
+                    return UniformBufferPool.Stage.Geometry;
+                case ShaderType.VertexShader:
+                    return UniformBufferPool.Stage.Vertex;
+                default:
+                    throw new NotSupportedException("Only fragment, geometry and vertex shader are supported.");
+            }
         }
     }
 }

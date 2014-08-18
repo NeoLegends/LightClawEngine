@@ -21,9 +21,24 @@ namespace LightClaw.Engine.Core
     public abstract class Entity : INameable, INotifyPropertyChanged
     {
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        protected ILog _Logger;
+
+        /// <summary>
         /// An instance of <see cref="ILog"/> used to track application events.
         /// </summary>
-        protected readonly ILog logger;
+        protected ILog Logger
+        {
+            get
+            {
+                return _Logger;
+            }
+            private set
+            {
+                _Logger = value;
+            }
+        }
 
         /// <summary>
         /// Notifies about changes in a specified property.
@@ -82,8 +97,8 @@ namespace LightClaw.Engine.Core
         protected Entity() 
         {
             Type entityType = this.GetType();
-            this.logger = LogManager.GetLogger(entityType);
-            logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(entityType.AssemblyQualifiedName));
+            this.Logger = LogManager.GetLogger(entityType);
+            Logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(entityType.AssemblyQualifiedName));
         }
 
         /// <summary>
@@ -194,7 +209,7 @@ namespace LightClaw.Engine.Core
         private void ObjectInvariant()
         {
             Contract.Invariant(this._IocC != null);
-            Contract.Invariant(this.logger != null);
+            Contract.Invariant(this.Logger != null);
         }
     }
 }

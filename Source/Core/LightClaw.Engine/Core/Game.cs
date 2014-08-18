@@ -9,6 +9,7 @@ using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
 
@@ -109,7 +110,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         private Game()
         {
-            logger.Info(() => "Initializing a new game instance.");
+            Logger.Info(() => "Initializing a new game instance.");
 
             this.Name = GeneralSettings.Default.GameName;
 
@@ -136,7 +137,7 @@ namespace LightClaw.Engine.Core
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
-            logger.Info(() => "Game successfully created.");
+            Logger.Info(() => "Game successfully created.");
         }
 
         /// <summary>
@@ -151,7 +152,7 @@ namespace LightClaw.Engine.Core
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
-            logger.Info(() => "Game successfully created.");
+            Logger.Info(() => "Game successfully created.");
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace LightClaw.Engine.Core
             bool limitFps = VideoSettings.Default.LimitFPS;
             double maxFrameRate = (double)VideoSettings.Default.FPSLimit;
 
-            logger.Info(
+            Logger.Info(
                 () => limitFps ? 
                     "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate) :
                     "Entering game loop with unlimited frame rate."
@@ -202,7 +203,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected virtual void OnClosed()
         {
-            logger.Info(() => "Closing game window.");
+            Logger.Info(() => "Closing game window.");
 
             this.Dispose();
         }
@@ -212,12 +213,12 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected virtual void OnLoad()
         {
-            logger.Info(() => "OnLoad callback called. Loading SceneManager and enabling depth testing.");
+            Logger.Info(() => "OnLoad callback called. Loading SceneManager and enabling depth testing.");
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            logger.Info(() => "Depth testing enabled.");
+            Logger.Info(() => "Depth testing enabled.");
 
             GL.ClearColor(Color.CornflowerBlue);
 
@@ -241,7 +242,7 @@ namespace LightClaw.Engine.Core
         /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
         protected virtual void OnResize(int width, int height)
         {
-            logger.Info(() => "Resizing window to {0}x{1}.".FormatWith(width, height));
+            Logger.Info(() => "Resizing window to {0}x{1}.".FormatWith(width, height));
 
             GL.Viewport(0, 0, width, height);
         }

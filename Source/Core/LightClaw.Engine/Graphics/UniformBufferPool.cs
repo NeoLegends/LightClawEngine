@@ -142,13 +142,13 @@ namespace LightClaw.Engine.Graphics
                 int maxUbos = GetMaxUniformBlocksForStage(stage);
                 if (bindings.Count(binding => binding.Stage == stage) + 1 > maxUbos)
                 {
-                    throw new NotSupportedException("The maximum amount of bound uniform buffers for the specified stage ({0}) is reached. {1} buffers are already bound.".FormatWith(stage, maxUbos));
+                    throw new OutOfUniformBufferSpaceException("The maximum amount of bound uniform buffers for the specified stage ({0}) is reached. {1} buffers are already bound.".FormatWith(stage, maxUbos));
                 }
 
                 int bindingIndex = GetMinimumBindingIndex(bindings);
                 if (bindingIndex > maxUbos)
                 {
-                    throw new NotSupportedException("All bindable uniform blocks ({0}) taken.".FormatWith(bindings.Count));
+                    throw new OutOfUniformBufferSpaceException("All bindable uniform blocks ({0}) taken.".FormatWith(bindings.Count));
                 }
 
                 Buffer targetBuffer = this.uniformBuffers.FirstOrDefault(buffer => buffer.Count + length < MaxUboLength);
@@ -190,7 +190,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn(() => "An error occured while disposing one of the {0}'s underlying {1}s.".FormatWith(typeof(UniformBufferPool).Name, typeof(Buffer).Name), ex);
+                    Logger.Warn(() => "An error occured while disposing one of the {0}'s underlying {1}s.".FormatWith(typeof(UniformBufferPool).Name, typeof(Buffer).Name), ex);
                 }
             }
             if (disposing)

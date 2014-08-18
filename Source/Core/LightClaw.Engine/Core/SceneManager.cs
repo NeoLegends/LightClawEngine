@@ -61,7 +61,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
-            logger.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
+            Logger.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
             this.Load(0, startScene).Wait();
         }
 
@@ -73,7 +73,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            logger.Info(() => "Initializing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
+            Logger.Info(() => "Initializing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
             this.Load(0, startScene);
         }
 
@@ -131,7 +131,7 @@ namespace LightClaw.Engine.Core
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
         public int Load(int slot, Scene s)
         {
-            logger.Info(() => "Loading a new scene into position {0}.".FormatWith(slot));
+            Logger.Info(() => "Loading a new scene into position {0}.".FormatWith(slot));
 
             if (this.IsLoaded && !s.IsLoaded)
             {
@@ -143,19 +143,19 @@ namespace LightClaw.Engine.Core
                 {
                     try
                     {
-                        logger.Debug(() => "Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/A", i));
+                        Logger.Debug(() => "Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/A", i));
                         this.scenes.Add(i, s);
-                        logger.Debug(() => "Scene inserted successfully.");
+                        Logger.Debug(() => "Scene inserted successfully.");
                         return i;
                     }
                     catch (ArgumentException)
                     {
-                        logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
+                        Logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
                     }
                 }
 
                 // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its already taken ;)
-                logger.Warn(() => "Scene insertion failed, all slots below were taken.");
+                Logger.Warn(() => "Scene insertion failed, all slots below were taken.");
                 throw new InvalidOperationException("Scene insertion failed, all slots below were taken.");
             }
         }
@@ -177,7 +177,7 @@ namespace LightClaw.Engine.Core
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be moved.</exception>
         public void Move(int slot, int newSlot)
         {
-            logger.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
+            Logger.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
 
             lock (this.scenes)
             {
@@ -188,19 +188,19 @@ namespace LightClaw.Engine.Core
                     {
                         try
                         {
-                            logger.Debug(() => "Trying to move scene to {0}.".FormatWith(i));
+                            Logger.Debug(() => "Trying to move scene to {0}.".FormatWith(i));
                             this.scenes.Add(i, scene);
-                            logger.Debug(() => "Scene moved.");
+                            Logger.Debug(() => "Scene moved.");
                             return;
                         }
                         catch (ArgumentException)
                         {
-                            logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
+                            Logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
                         }
                     }
 
                     // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its already taken ;)
-                    logger.Warn(() => "All slots below taken, scene could not be moved. Reinserting into old position.");
+                    Logger.Warn(() => "All slots below taken, scene could not be moved. Reinserting into old position.");
                     this.scenes[slot] = scene;
                     throw new InvalidOperationException("All slots below taken, scene could not be moved. Reinserting into old position.");
                 }
@@ -214,7 +214,7 @@ namespace LightClaw.Engine.Core
         /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c>.</returns>
         public bool Unload(int slot)
         {
-            logger.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));
+            Logger.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));
 
             Scene s = null;
             bool result;
@@ -224,11 +224,11 @@ namespace LightClaw.Engine.Core
             }
             if (s != null)
             {
-                logger.Debug(() => "Disposing scene...");
+                Logger.Debug(() => "Disposing scene...");
                 s.Dispose();
             }
 
-            logger.Debug(() => result ? "Scene unloaded from position {0}.".FormatWith(slot) : "Scene could not be removed.");
+            Logger.Debug(() => result ? "Scene unloaded from position {0}.".FormatWith(slot) : "Scene could not be removed.");
             return result;
         }
 
@@ -285,7 +285,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            logger.Info(() => "Loading scene manager.");
+            Logger.Info(() => "Loading scene manager.");
 
             lock (this.scenes)
             {
@@ -297,7 +297,7 @@ namespace LightClaw.Engine.Core
             }
             this.workingCopy.Clear();
 
-            logger.Info(() => "Scene manager loaded.");
+            Logger.Info(() => "Scene manager loaded.");
         }
 
         /// <summary>

@@ -4,125 +4,68 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
+    [ContractClass(typeof(Texture3DBaseContracts))]
     public abstract class Texture3DBase : Texture
     {
-        private int _Depth;
+        protected Texture3DBase(TextureDescription description) : base(description) { }
 
-        public int Depth
+        public abstract void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level) where T : struct;
+
+        protected override void OnInitialize()
         {
-            get
+            using (GLBinding textureBinding = new GLBinding(this))
             {
-                return _Depth;
-            }
-            protected set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
-
-                this.SetProperty(ref _Depth, value);
-            }
-        }
-
-        private int _Height;
-
-        public int Height
-        {
-            get
-            {
-                return _Height;
-            }
-            protected set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
-
-                this.SetProperty(ref _Height, value);
-            }
-        }
-
-        protected Texture3DBase(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
-
-            this.Initialize(target, pixelInternalFormat, width, height, depth);
-        }
-
-        protected Texture3DBase(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
-            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
-
-            this.Initialize(target, pixelInternalFormat, width, height, depth, levels);
-        }
-
-        public void Initialize(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
-
-            this.Initialize(
-                target,
-                pixelInternalFormat,
-                width,
-                height,
-                depth,
-                Math.Max((int)Math.Min(Math.Min(Math.Log(width, 2), Math.Log(height, 2)), Math.Log(depth, 2)) + 1, 1)
-            );
-        }
-
-        public void Initialize(TextureTarget3d target, PixelInternalFormat pixelInternalFormat, int width, int height, int depth, int levels)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
-            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
-
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
+                switch (this.Target)
                 {
-                    if (!this.IsInitialized)
-                    {
-                        this.Depth = depth;
-                        this.Height = height;
-                        this.Levels = levels;
-                        this.PixelInternalFormat = pixelInternalFormat;
-                        this.Target = (TextureTarget)target;
-                        this.Width = width;
-
-                        using (GLBinding textureBinding = new GLBinding(this))
-                        {
-                            GL.TexStorage3D(target, levels, (SizedInternalFormat)pixelInternalFormat, width, height, depth);
-                        }
-
-                        this.IsInitialized = true;
-                        return;
-                    }
+                    case TextureTarget.Texture2DMultisampleArray:
+                    case TextureTarget.ProxyTexture2DMultisampleArray:
+                        GL.TexStorage3DMultisample(
+                            (TextureTargetMultisample3d)this.Target,
+                            this.MultisamplingLevels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
+                            this.Height,
+                            this.Depth,
+                            false
+                        );
+                        break;
+                    default:
+                        GL.TexStorage3D(
+                            (TextureTarget3d)this.Target,
+                            this.Levels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
+                            this.Height,
+                            this.Depth
+                        );
+                        break;
                 }
             }
+        }
+    }
 
-            throw new NotSupportedException("{0} cannot be initialized twice.".FormatWith(this.GetType().Name));
+    [ContractClassFor(typeof(Texture3DBase))]
+    abstract class Texture3DBaseContracts : Texture3DBase
+    {
+        public Texture3DBaseContracts() : base(new TextureDescription()) { }
+
+        public override void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(yOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(zOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return ZeroThresholds[8];
+                return _ZeroThresholds[8]; // We want the backing field here to avoid the ToArray
             }
         }
 
@@ -329,6 +329,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="number">The number to test.</param>
         /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
+        /// <remarks>
+        /// This function is expensive (lots of divisions (worst case Sqrt(<paramref name="number"/>) - 2), one Math.Sqrt). 
+        /// Call only if absolutely required.
+        /// </remarks>
         [Pure]
         public static bool IsPrime(int number)
         {
@@ -342,7 +346,7 @@ namespace LightClaw.Engine.Core
             }
 
             int boundary = (int)Math.Floor(Math.Sqrt(number));
-            for (int i = 2; i <= boundary; ++i)
+            for (int i = 2; i <= boundary; i++)
             {
                 if (number % i == 0)
                 {
@@ -457,7 +461,7 @@ namespace LightClaw.Engine.Core
         [Pure]
         public static uint NextPowerOfTwo(uint x)
         {
-            // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
+            // See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
 
             x--;
             x |= x >> 1;
@@ -478,7 +482,7 @@ namespace LightClaw.Engine.Core
         [Pure]
         public static ulong NextPowerOfTwo(ulong x)
         {
-            // Applying bitwise operations causes the number to give us the right value in the end. See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
+            // See http://acius2.blogspot.de/2007/11/calculating-next-power-of-2.html
 
             x--;
             x |= x >> 1;

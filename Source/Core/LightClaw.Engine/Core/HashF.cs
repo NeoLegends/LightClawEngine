@@ -111,5 +111,35 @@ namespace LightClaw.Engine.Core
                 return hash;
             }
         }
+
+        /// <summary>
+        /// Computes the hash code of six elements.
+        /// </summary>
+        /// <typeparam name="T1">The type of the first element.</typeparam>
+        /// <typeparam name="T2">The type of the second element.</typeparam>
+        /// <typeparam name="T3">The type of the third element.</typeparam>
+        /// <typeparam name="T4">The type of the fourth element.</typeparam>
+        /// <typeparam name="T5">The type of the fifth element.</typeparam>
+        /// <typeparam name="T5">The type of the sixth element.</typeparam>
+        /// <param name="first">The first element.</param>
+        /// <param name="second">The second element.</param>
+        /// <param name="third">The third element.</param>
+        /// <param name="fourth">The fourth element.</param>
+        /// <param name="fifth">The fifth element.</param>
+        /// <param name="fifth">The sixth element.</param>
+        /// <returns>The hash code.</returns>
+        public static int GetHashCode<T1, T2, T3, T4, T5, T6>(T1 first, T2 second, T3 third, T4 fourth, T5 fifth, T6 sixth)
+        {
+            unchecked
+            {
+                int hash = HashStart * HashFactor + first.GetHashCode();
+                hash = hash * HashFactor + second.GetHashCode();
+                hash = hash * HashFactor + third.GetHashCode();
+                hash = hash * HashFactor + fourth.GetHashCode();
+                hash = hash * HashFactor + fifth.GetHashCode();
+                hash = hash * HashFactor + sixth.GetHashCode();
+                return hash;
+            }
+        }
     }
 }

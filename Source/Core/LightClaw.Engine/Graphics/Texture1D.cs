@@ -12,63 +12,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class Texture1D : Texture
     {
-        public Texture1D() { }
-
-        public Texture1D(PixelInternalFormat pixelInternalFormat, int width)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-
-            this.Initialize(pixelInternalFormat, width);
-        }
-
-        public Texture1D(PixelInternalFormat pixelInternalFormat, int width, int levels)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-
-            this.Initialize(pixelInternalFormat, width, levels);
-        }
-
-        public void Initialize(PixelInternalFormat pixelInternalFormat, int width)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-
-            this.Initialize(pixelInternalFormat, width, Math.Max((int)Math.Log(width, 2), 1));
-        }
-
-        public void Initialize(PixelInternalFormat pixelInternalFormat, int width, int levels)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        this.Levels = levels;
-                        this.PixelInternalFormat = pixelInternalFormat;
-                        this.Target = (TextureTarget)TextureTarget1d.Texture1D;
-                        this.Width = width;
-
-                        using (GLBinding textureBinding = new GLBinding(this))
-                        {
-                            GL.TexStorage1D(TextureTarget1d.Texture1D, levels, (SizedInternalFormat)pixelInternalFormat, width);
-                        }
-
-                        this.IsInitialized = true;
-                        return;
-                    }
-                }
-            }
-
-            throw new NotSupportedException("Initializing a {0} twice is not supported. Parameters might be different.".FormatWith(typeof(Texture1D).Name));
-        }
+        public Texture1D(TextureDescription description) : base(description) { }
 
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
             where T : struct
@@ -79,18 +23,16 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
 
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        throw new InvalidOperationException("{0} has to be initialized before setting the data.".FormatWith(typeof(Texture1D).Name));
-                    }
-                }
-            }
-
+            this.Initialize();
             GL.TexSubImage1D(TextureTarget.Texture1D, level, xOffset, width, pixelFormat, pixelType, data);
+        }
+
+        protected override void OnInitialize()
+        {
+            using (GLBinding textureBinding = new GLBinding(this))
+            {
+                GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
+            }
         }
     }
 }

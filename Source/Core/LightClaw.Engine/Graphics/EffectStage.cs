@@ -11,51 +11,37 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectStage : GLObject // Wrapper for shader program
+    public class EffectStage : Entity, IInitializable
     {
-        private readonly object compileLock = new object();
+        private readonly object initializationLock = new object();
 
-        private bool _IsCompiled = false;
+        private bool _IsInitialized = false;
 
-        public bool IsCompiled
+        public bool IsInitialized
         {
             get
             {
-                return _IsCompiled;
+                return _IsInitialized;
             }
             private set
             {
-                this.SetProperty(ref _IsCompiled, value);
+                this.SetProperty(ref _IsInitialized, value);
             }
         }
 
-        private string _Source;
+        private ShaderProgram _ShaderProgram;
 
-        public string Source
+        public ShaderProgram ShaderProgram
         {
             get
             {
-                return _Source;
+                return _ShaderProgram;
             }
             private set
             {
-                Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(value));
+                Contract.Requires<ArgumentNullException>(value != null);
 
-                this.SetProperty(ref _Source, value);
-            }
-        }
-
-        private ShaderType _Type;
-
-        public ShaderType Type
-        {
-            get
-            {
-                return _Type;
-            }
-            private set
-            {
-                this.SetProperty(ref _Type, value);
+                this.SetProperty(ref _ShaderProgram, value);
             }
         }
 
@@ -99,6 +85,7 @@ namespace LightClaw.Engine.Graphics
             {
                 Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(uniformName));
 
+                this.Initialize();
                 return this.Uniforms[uniformName];
             }
         }
@@ -110,6 +97,7 @@ namespace LightClaw.Engine.Graphics
             {
                 Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
 
+                this.Initialize();
                 IEnumerable<EffectUniform> values = this.Uniforms.Values;
                 if (values == null)
                 {
@@ -119,60 +107,36 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectStage() { }
-
-        public EffectStage(string source, ShaderType type)
+        public EffectStage(ShaderProgram program)
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+            Contract.Requires<ArgumentNullException>(program != null);
 
-            this.Compile(source, type);
+            this.ShaderProgram = program;
         }
 
-        public void Compile(string source, ShaderType type)
+        public void Initialize()
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
-
-            if (!this.IsCompiled) // Double check to avoid lock acquiring, if possible
+            if (!this.IsInitialized) // Double check to avoid lock acquiring, if possible
             {
-                lock (this.compileLock)
+                lock (this.initializationLock)
                 {
-                    if (!this.IsCompiled)
+                    if (!this.IsInitialized)
                     {
-                        this.Source = source;
-                        this.Type = type;
-                        this.Handle = GL.CreateShaderProgram(this.Type, 1, this.Source.YieldArray());
-
-                        int result;
-                        if (!this.CheckStatus(GetProgramParameterName.LinkStatus, out result))
-                        {
-                            throw new CompilationFailedException(
-                                "Compiling the {0}'s underlying OpenGL Shader Program failed with code {1}.".FormatWith(typeof(EffectStage).Name, result),
-                                GL.GetProgramInfoLog(this),
-                                result
-                            );
-                        }
-                        throw new NotImplementedException("Shader compilation seems to work fine (no exception yet), but uniform variable handling is not finished yet.");
-
-#pragma warning disable 0162 // Unreachable code, remove when NotImplementedException is gone
+                        throw new NotImplementedException();
 
                         int uniformCount = 0;
-                        GL.GetProgram(this, GetProgramParameterName.ActiveUniforms, out uniformCount);
+                        GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out uniformCount);
                         for (int i = 0; i < uniformCount; i++)
                         {
                             int nameLength;
                             ActiveUniformType uniformType;
-                            string uniformName = GL.GetActiveUniform(this, i, out nameLength, out uniformType);
+                            string uniformName = GL.GetActiveUniform(this.ShaderProgram, i, out nameLength, out uniformType);
                         }
 
-#pragma warning restore 0162
-
-                        this.IsCompiled = true;
-                        return;
+                        this.IsInitialized = true;
                     }
                 }
             }
-
-            throw new NotSupportedException("{0} cannot be compiled twice.".FormatWith(typeof(EffectStage).Name));
         }
 
         public bool TryGetUniform(string name, out EffectUniform uniform)
@@ -180,6 +144,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
             Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out uniform) != null);
 
+            this.Initialize();
             return this.Uniforms.TryGetValue(name, out uniform);
         }
 
@@ -188,38 +153,8 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
             Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out uniform) != null);
 
+            this.Initialize();
             return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                GL.DeleteProgram(this.Handle);
-            }
-            catch (Exception ex)
-            {
-                logger.Warn("An error occured while disposing an {0}' underlying OpenGL Shader Program.".FormatWith(typeof(EffectStage).Name), ex);
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool CheckStatus(GetProgramParameterName pName)
-        {
-            return (QueryValue(pName) == 1);
-        }
-
-        private bool CheckStatus(GetProgramParameterName pName, out int result)
-        {
-            result = this.QueryValue(pName);
-            return (result == 1);
-        }
-
-        private int QueryValue(GetProgramParameterName pName)
-        {
-            int result;
-            GL.GetProgram(this, pName, out result);
-            return result;
         }
 
         [ContractInvariantMethod]

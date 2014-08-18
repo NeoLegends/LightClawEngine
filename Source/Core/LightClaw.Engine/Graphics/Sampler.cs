@@ -5,16 +5,17 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Sampler : GLObject, IBindable
+    public class Sampler : GLObject, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
 
-        private bool _IsInitialized;
+        private bool _IsInitialized = false;
 
         public bool IsInitialized
         {
@@ -28,7 +29,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ImmutableList<SamplerParameterDescription> _Parameters = ImmutableList<SamplerParameterDescription>.Empty;
+        private ImmutableList<SamplerParameterDescription> _Parameters;
 
         public ImmutableList<SamplerParameterDescription> Parameters
         {
@@ -58,21 +59,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public Sampler() { }
-
         public Sampler(int textureUnit, IEnumerable<SamplerParameterDescription> parameters)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(parameters != null);
 
-            this.Initialize(textureUnit, parameters);
+            this.TextureUnit = textureUnit;
+            this.Parameters = parameters.ToImmutableList();
         }
 
-        public void Initialize(int textureUnit, IEnumerable<SamplerParameterDescription> parameters)
+        public void Initialize()
         {
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
-            Contract.Requires<ArgumentNullException>(parameters != null);
-
             if (!this.IsInitialized)
             {
                 lock (this.initializationLock)
@@ -80,21 +77,15 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         this.Handle = GL.GenSampler();
-                        this.Parameters = parameters.ToImmutableList();
-                        this.TextureUnit = TextureUnit;
-
-                        foreach (SamplerParameterDescription description in parameters)
+                        foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
                         {
                             GL.SamplerParameter(this, description.ParameterName, description.Value);
                         }
 
                         this.IsInitialized = true;
-                        return;
                     }
                 }
             }
-
-            throw new NotSupportedException("{0}s cannot be initialized twice.".FormatWith(typeof(Sampler).Name));
         }
 
         public void Bind()
@@ -111,6 +102,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
+            this.Initialize();
             this.TextureUnit = textureUnit;
             GL.BindSampler(textureUnit, this);
         }
@@ -135,7 +127,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
+                Logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
             }
             base.Dispose(disposing);
         }

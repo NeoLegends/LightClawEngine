@@ -62,7 +62,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                logger.Warn(() => "An error of type '{0}' occured while obtaining the stream to an asset.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
+                Logger.Warn(() => "An error of type '{0}' occured while obtaining the stream to an asset.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
                 result = null;
             }
             return Task.FromResult(result);

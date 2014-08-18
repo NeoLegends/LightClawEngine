@@ -10,9 +10,9 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class Texture : GLObject, IBindable
+    public abstract class Texture : GLObject, IBindable, IInitializable
     {
-        protected readonly object initializationLock = new object();
+        private readonly object initializationLock = new object();
 
         private bool _IsInitialized;
 
@@ -28,33 +28,41 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _Levels = 1;
+        private TextureDescription _Description;
+
+        public TextureDescription Description
+        {
+            get
+            {
+                return _Description;
+            }
+            protected set
+            {
+                this.SetProperty(ref _Description, value);
+            }
+        }
 
         public int Levels
         {
             get
             {
-                return _Levels;
-            }
-            protected set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
-
-                this.SetProperty(ref _Levels, value);
+                return this.Description.TextureLevels;
             }
         }
 
-        private PixelInternalFormat _InternalFormat = PixelInternalFormat.Rgba8i;
+        public int MultisamplingLevels
+        {
+            get
+            {
+                return this.Description.MultisamplingLevels;
+            }
+        }
 
         public PixelInternalFormat PixelInternalFormat
         {
             get
             {
-                return _InternalFormat;
-            }
-            protected set
-            {
-                this.SetProperty(ref _InternalFormat, value);
+                return this.Description.PixelInternalFormat;
             }
         }
 
@@ -64,9 +72,7 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
-                return Math.Max(_TextureUnit, 0);
+                return _TextureUnit;
             }
             set
             {
@@ -76,38 +82,42 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private TextureTarget _Target = TextureTarget.Texture2D;
-
         public TextureTarget Target
         {
             get
             {
-                return _Target;
-            }
-            protected set
-            {
-                this.SetProperty(ref _Target, value);
+                return this.Description.Target;
             }
         }
-
-        private int _Width;
 
         public int Width
         {
             get
             {
-                return _Width;
+                return this.Description.Width;
             }
-            protected set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
+        }
 
-                this.SetProperty(ref _Width, value);
+        public int Height
+        {
+            get
+            {
+                return this.Description.Height;
+            }
+        }
+
+        public int Depth
+        {
+            get
+            {
+                return this.Description.Depth;
             }
         }
 
         static Texture()
         {
+            // Assume GLContext is present
+            GL.Enable(EnableCap.Texture1D);
             // Not sure whether bug still exists, but on http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states
             // that ATI cards had problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card,
             // I can't test that.
@@ -122,28 +132,42 @@ namespace LightClaw.Engine.Graphics
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMapArray);
         }
 
-        protected Texture() { }
-
-        protected Texture(TextureTarget target, PixelInternalFormat pixelInternalFormat, int width, int levels)
+        protected Texture(TextureDescription description)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(levels > 0);
-
-            this.Levels = levels;
-            this.Target = target;
-            this.PixelInternalFormat = pixelInternalFormat;
-            this.Width = width;
+            this.Description = description;
         }
 
         public void Bind()
         {
+            int unit = this.TextureUnit;
+            if (unit < 0)
+            {
+                throw new InvalidOperationException("The texture unit to bind to ({0}) was smaller than zero.".FormatWith(unit));
+            }
             this.Bind(this.TextureUnit);
         }
 
         public void Bind(int textureUnit)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
+
             GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
             GL.BindTexture(this.Target, this);
+        }
+
+        public void Initialize()
+        {
+            if (!this.IsInitialized)
+            {
+                lock (this.initializationLock)
+                {
+                    if (!this.IsInitialized)
+                    {
+                        this.OnInitialize();
+                        this.IsInitialized = true;
+                    }
+                }
+            }
         }
 
         public void Unbind()
@@ -153,6 +177,8 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind(int textureUnit)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
+
             GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
             GL.BindTexture(this.Target, 0);
         }
@@ -166,10 +192,12 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {0}'s underlying OpenGL Texture.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Texture).Name));
+                Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {0}'s underlying OpenGL Texture.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Texture).Name));
             }
 
             base.Dispose(disposing);
         }
+
+        protected abstract void OnInitialize();
     }
 }

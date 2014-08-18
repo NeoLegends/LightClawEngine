@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class RangedBuffer : GLObject, IBuffer
     {
-        public event EventHandler<RangedBufferDisposedEventArgs> Disposed; // Used to notify UniformBufferPool that a range in a buffer is free
+        public event EventHandler<RangedBufferDisposedEventArgs> Disposed;
 
         private IBuffer _BaseBuffer;
 
@@ -111,12 +111,14 @@ namespace LightClaw.Engine.Graphics
             : this(baseBuffer, range, index, rangeTarget, false)
         {
             Contract.Requires<ArgumentNullException>(baseBuffer != null);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
         }
 
         public RangedBuffer(IBuffer baseBuffer, BufferRange range, int index, BufferRangeTarget rangeTarget, bool ownsBaseBuffer)
             : base(baseBuffer.Handle)
         {
             Contract.Requires<ArgumentNullException>(baseBuffer != null);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
             this.BaseBuffer = baseBuffer;
             this.Index = index;
@@ -256,6 +258,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     handler(this, new RangedBufferDisposedEventArgs(this.Range, this.RangeTarget));
                 }
+                this.BaseBuffer = null;
             }
             base.Dispose(disposing);
         }

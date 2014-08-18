@@ -48,7 +48,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected Component() 
         {
-            logger.Debug(() => "Initializes a new Component of type '{0}'.".FormatWith(this.GetType().FullName));
+            Logger.Debug(() => "Initializes a new Component of type '{0}'.".FormatWith(this.GetType().FullName));
         }
 
         /// <summary>
