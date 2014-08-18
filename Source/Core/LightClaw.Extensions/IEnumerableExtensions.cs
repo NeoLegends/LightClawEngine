@@ -13,6 +13,60 @@ namespace LightClaw.Extensions
     public static class IEnumerableExtensions
     {
         /// <summary>
+        /// Returns all distinct elements of the given source, where "distinctness" is determined via a projection and 
+        /// the default comparer for the projected type.
+        /// </summary>
+        /// <remarks>
+        /// This operator uses deferred execution and streams the results, although a set of already-seen keys is retained.
+        /// If a key is seen multiple times, only the first element with that key is returned.
+        /// </remarks>
+        /// <typeparam name="TSource">Type of the source sequence.</typeparam>
+        /// <typeparam name="TKey">Type of the projected element.</typeparam>
+        /// <param name="source">Source sequence.</param>
+        /// <param name="selector">Projection for determining "distinctness".</param>
+        /// <returns>A sequence consisting of distinct elements from the source sequence, comparing them by the specified key projection.</returns>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector)
+        {
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(selector != null);
+            
+            return DistinctBy(source, selector, EqualityComparer<TKey>.Default);
+        }
+
+        /// <summary>
+        /// Returns all distinct elements of the given source, where "distinctness" is determined via a projection and 
+        /// the specified comparer for the projected type.
+        /// </summary>
+        /// <remarks>
+        /// This operator uses deferred execution and streams the results, although a set of already-seen keys is retained.
+        /// If a key is seen multiple times, only the first element with that key is returned.
+        /// </remarks>
+        /// <typeparam name="TSource">Type of the source sequence.</typeparam>
+        /// <typeparam name="TKey">Type of the projected element.</typeparam>
+        /// <param name="source">Source sequence.</param>
+        /// <param name="selector">Projection for determining "distinctness".</param>
+        /// <param name="comparer">
+        /// The equality comparer to use to determine whether or not keys are equal.
+        /// If null, the default equality comparer for <c>TSource</c> is used.
+        /// </param>
+        /// <returns>A sequence consisting of distinct elements from the source sequence, comparing them by the specified key projection.</returns>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer)
+        {
+            Contract.Requires<ArgumentNullException>(source != null);
+            Contract.Requires<ArgumentNullException>(selector != null);
+            Contract.Requires<ArgumentNullException>(comparer != null);
+
+            HashSet<TKey> knownKeys = new HashSet<TKey>(comparer);
+            foreach (TSource element in source)
+            {
+                if (knownKeys.Add(selector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        /// <summary>
         /// Determines whether there are any duplicates in the specified <paramref name="collection"/>.
         /// </summary>
         /// <typeparam name="T1">The <see cref="Type"/> of collection.</typeparam>
@@ -28,7 +82,6 @@ namespace LightClaw.Extensions
             return (collection != null) ? collection.GroupBy(selector).Where(x => x.Skip(1).Any()).Any() : false;
         }
         
-
         /// <summary>
         /// Makes sure that the return value is not null and returns an empty enumerable if <paramref name="source"/> was null.
         /// </summary>
@@ -68,7 +121,7 @@ namespace LightClaw.Extensions
         public static IEnumerable<T> FilterNull<T>(this IEnumerable<T> collection)
         {
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
-            Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<T>>(), t => t != null));
+            Contract.Ensures(Contract.Result<IEnumerable<T>>().All(item => item != null));
 
             return (collection != null) ? 
                 collection.Where(item => item != null) ?? Enumerable.Empty<T>() : // Enumerable.Empty<T>() required to fulfill contract

@@ -13,7 +13,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectPass : Entity, IBindable // Wrapper for program pipeline object
+    public class EffectPass : Entity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
 
@@ -57,13 +57,31 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ObservableCollection<EffectStage> _Stages = new ObservableCollection<EffectStage>();
+        private ShaderPipeline _ShaderPipeline;
 
-        public ObservableCollection<EffectStage> Stages
+        public ShaderPipeline ShaderPipeline
         {
             get
             {
-                Contract.Ensures(Contract.Result<ObservableCollection<EffectStage>>() != null);
+                Contract.Ensures(Contract.Result<ShaderPipeline>() != null);
+
+                return _ShaderPipeline;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _ShaderPipeline, value);
+            }
+        }
+
+        private ImmutableList<EffectStage> _Stages = ImmutableList<EffectStage>.Empty;
+
+        public ImmutableList<EffectStage> Stages
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableList<EffectStage>>() != null);
 
                 return _Stages;
             }
@@ -75,14 +93,29 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectPass() 
+        private UniformBufferPool _UboPool = UniformBufferPool.Default;
+
+        public UniformBufferPool UboPool
         {
+            get
+            {
+                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
+
+                return _UboPool;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _UboPool, value);
+            }
         }
 
-        public EffectPass(IEnumerable<EffectStage> stages)
-            : this()
+        public EffectPass(ShaderPipeline pipeline) 
         {
-            Contract.Requires<ArgumentNullException>(stages != null);
+            Contract.Requires<ArgumentNullException>(pipeline != null);
+
+            this.ShaderPipeline = pipeline;
         }
 
         public void Bind()
@@ -95,10 +128,27 @@ namespace LightClaw.Engine.Graphics
             throw new NotImplementedException();
         }
 
+        public void Initialize()
+        {
+            if (!this.IsInitialized)
+            {
+                lock (this.initializationLock)
+                {
+                    if (!this.IsInitialized)
+                    {
+                        this.Stages = this.ShaderPipeline.Programs.FilterNull().Select(program => new EffectStage(program)).ToImmutableList();
+                        this.IsInitialized = true;
+                    }
+                }
+            }
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            Contract.Invariant(this._ShaderPipeline != null);
             Contract.Invariant(this._Stages != null);
+            Contract.Invariant(this._UboPool != null);
         }
     }
 }

@@ -138,7 +138,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentOutOfRangeException>(count > 0);
             Contract.Ensures(Contract.Result<float[]>().Length == count);
-            Contract.Ensures(Contract.ForAll(Contract.Result<float[]>(), f => f >= 0.0f));
+            Contract.Ensures(Contract.Result<float[]>().All(f => (f >= 0.0f) && (f <= 1.0f)));
 
             lock (random)
             {
@@ -169,7 +169,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentOutOfRangeException>(count > 0);
             Contract.Ensures(Contract.Result<double[]>().Length == count);
-            Contract.Ensures(Contract.ForAll(Contract.Result<double[]>(), f => f >= 0.0));
+            Contract.Ensures(Contract.Result<double[]>().All(d => (d >= 0.0) && (d <= 1.0)));
 
             lock (random)
             {

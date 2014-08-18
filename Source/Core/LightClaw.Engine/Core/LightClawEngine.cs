@@ -45,6 +45,11 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// The managed thread ID of the main thread the <see cref="IGame"/> was created on.
+        /// </summary>
+        public static int MainThreadId { get; private set; }
+
+        /// <summary>
         /// Initializes all static members of <see cref="LightClawEngine"/>.
         /// </summary>
         static LightClawEngine()
@@ -62,8 +67,15 @@ namespace LightClaw.Engine.Core
 
             try
             {
-                Contract.Assume(GeneralSettings.Default.StartScene != null);
-                using (IGame game = new Game(GeneralSettings.Default.StartScene) { Name = GeneralSettings.Default.GameName })
+                MainThreadId = Thread.CurrentThread.ManagedThreadId;
+
+                string startScene = GeneralSettings.Default.StartScene;
+                if (startScene == null)
+                {
+                    throw new NullReferenceException("Start scene settings entry was null.");
+                }
+
+                using (IGame game = new Game(startScene) { Name = GeneralSettings.Default.GameName })
                 {
                     DefaultIocContainer.RegisterInstance<IGame>(game);
                     game.Run();

@@ -18,10 +18,14 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
                 return _Location;
             }
             protected set
             {
+                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
+
                 this.SetProperty(ref _Location, value);
             }
         }
@@ -44,10 +48,14 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<EffectStage>() != null);
+
                 return _Stage;
             }
             protected set
             {
+                Contract.Requires(value != null);
+
                 this.SetProperty(ref _Stage, value);
             }
         }
@@ -58,24 +66,34 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
                 return _UniformName;
             }
             protected set
             {
+                Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(value));
+
                 this.SetProperty(ref _UniformName, value);
             }
         }
-
-        protected EffectUniform() { }
 
         protected EffectUniform(EffectStage stage, string name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
 
-            this.Location = GL.GetUniformLocation(stage, name);
+            this.Location = GL.GetUniformLocation(stage.ShaderProgram, name);
             this.Stage = stage;
             this.UniformName = name;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Location >= 0);
+            Contract.Invariant(this._Stage != null);
+            Contract.Invariant(!string.IsNullOrWhiteSpace(this._UniformName));
         }
     }
 }

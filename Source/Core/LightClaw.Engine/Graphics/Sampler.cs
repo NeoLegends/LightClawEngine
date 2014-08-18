@@ -116,6 +116,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
+            ThreadF.AssertMainThread();
             GL.BindSampler(textureUnit, 0);
         }
 

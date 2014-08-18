@@ -10,6 +10,19 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains methods to compute the hash of multiple elements.
     /// </summary>
+    /// <remarks>
+    /// Hashes will be computed using the following method:
+    /// <code>
+    /// unchecked
+    /// {
+    ///     int hash = <see cref="HashStart"/> * <see cref="HashFactor"/> + GetHashCode(first);
+    ///     hash = hash * <see cref="HashFactor"/> + GetHashCode(second);
+    ///     ...
+    ///     hash = hash * <see cref="HashFactor"/> + GetHashCode(nth);
+    ///     return hash;
+    /// }
+    /// </code>
+    /// </remarks>
     public static class HashF
     {
         /// <summary>
@@ -23,6 +36,17 @@ namespace LightClaw.Engine.Core
         public const int HashStart = 397;
 
         /// <summary>
+        /// Safely gets the hash code of the specified item.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
+        /// <param name="item">The item to get the hash code of.</param>
+        /// <returns>The <paramref name="item"/>'s hash code or <c>0</c>, if <paramref name="item"/> was null.</returns>
+        public static int GetHashCode<T>(T item)
+        {
+            return (item != null) ? item.GetHashCode() : 0;
+        }
+
+        /// <summary>
         /// Computes the hash code of two elements.
         /// </summary>
         /// <typeparam name="T1">The type of the first element.</typeparam>
@@ -34,8 +58,8 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = HashStart * HashFactor + first.GetHashCode();
-                hash = hash * HashFactor + second.GetHashCode();
+                int hash = HashStart * HashFactor + GetHashCode(first);
+                hash = hash * HashFactor + GetHashCode(second);
                 return hash;
             }
         }
@@ -54,9 +78,9 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = HashStart * HashFactor + first.GetHashCode();
-                hash = hash * HashFactor + second.GetHashCode();
-                hash = hash * HashFactor + third.GetHashCode();
+                int hash = HashStart * HashFactor + GetHashCode(first);
+                hash = hash * HashFactor + GetHashCode(second);
+                hash = hash * HashFactor + GetHashCode(third);
                 return hash;
             }
         }
@@ -77,10 +101,10 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = HashStart * HashFactor + first.GetHashCode();
-                hash = hash * HashFactor + second.GetHashCode();
-                hash = hash * HashFactor + third.GetHashCode();
-                hash = hash * HashFactor + fourth.GetHashCode();
+                int hash = HashStart * HashFactor + GetHashCode(first);
+                hash = hash * HashFactor + GetHashCode(second);
+                hash = hash * HashFactor + GetHashCode(third);
+                hash = hash * HashFactor + GetHashCode(fourth);
                 return hash;
             }
         }
@@ -103,11 +127,11 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = HashStart * HashFactor + first.GetHashCode();
-                hash = hash * HashFactor + second.GetHashCode();
-                hash = hash * HashFactor + third.GetHashCode();
-                hash = hash * HashFactor + fourth.GetHashCode();
-                hash = hash * HashFactor + fifth.GetHashCode();
+                int hash = HashStart * HashFactor + GetHashCode(first);
+                hash = hash * HashFactor + GetHashCode(second);
+                hash = hash * HashFactor + GetHashCode(third);
+                hash = hash * HashFactor + GetHashCode(fourth);
+                hash = hash * HashFactor + GetHashCode(fifth);
                 return hash;
             }
         }
@@ -132,12 +156,12 @@ namespace LightClaw.Engine.Core
         {
             unchecked
             {
-                int hash = HashStart * HashFactor + first.GetHashCode();
-                hash = hash * HashFactor + second.GetHashCode();
-                hash = hash * HashFactor + third.GetHashCode();
-                hash = hash * HashFactor + fourth.GetHashCode();
-                hash = hash * HashFactor + fifth.GetHashCode();
-                hash = hash * HashFactor + sixth.GetHashCode();
+                int hash = HashStart * HashFactor + GetHashCode(first);
+                hash = hash * HashFactor + GetHashCode(second);
+                hash = hash * HashFactor + GetHashCode(third);
+                hash = hash * HashFactor + GetHashCode(fourth);
+                hash = hash * HashFactor + GetHashCode(fifth);
+                hash = hash * HashFactor + GetHashCode(sixth);
                 return hash;
             }
         }

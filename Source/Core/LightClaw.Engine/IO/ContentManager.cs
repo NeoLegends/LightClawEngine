@@ -192,8 +192,8 @@ namespace LightClaw.Engine.IO
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(Contract.ForAll(this.readers, reader => reader != null));
-            Contract.Invariant(Contract.ForAll(this.resolvers, resolver => resolver != null));
+            Contract.Invariant(this.readers.All(reader => reader != null));
+            Contract.Invariant(this.resolvers.All(resolver => resolver != null));
         }
     }
 }

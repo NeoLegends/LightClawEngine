@@ -37,6 +37,8 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Assume(_ZeroThresholds.Length > 8);
+
                 return _ZeroThresholds[8]; // We want the backing field here to avoid the ToArray
             }
         }

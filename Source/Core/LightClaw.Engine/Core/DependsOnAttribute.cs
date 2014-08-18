@@ -30,8 +30,8 @@ namespace LightClaw.Engine.Core
         public DependsOnAttribute(params Type[] dependencies)
         {
             Contract.Requires<ArgumentNullException>(dependencies != null);
-            Contract.Requires<ArgumentException>(Contract.ForAll(dependencies, dependency => dependency != null));
-            Contract.Requires<ArgumentException>(Contract.ForAll(dependencies, dependency => typeof(Component).IsAssignableFrom(dependency)));
+            Contract.Requires<ArgumentException>(dependencies.All(dependency => dependency != null));
+            Contract.Requires<ArgumentException>(dependencies.All(dependency => typeof(Component).IsAssignableFrom(dependency)));
 
             this.Dependencies = dependencies.Distinct();
         }

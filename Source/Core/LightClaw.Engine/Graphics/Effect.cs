@@ -10,8 +10,16 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class Effect : GLObject, IEnumerable<EffectPass>
+    public abstract class Effect : GLObject, IEnumerable<EffectPass>, IUpdateable, ILateUpdateable
     {
+        public event EventHandler<ParameterEventArgs> Updating;
+
+        public event EventHandler<ParameterEventArgs> Updated;
+
+        public event EventHandler<ParameterEventArgs> LateUpdating;
+
+        public event EventHandler<ParameterEventArgs> LateUpdated;
+
         private ObservableCollection<EffectPass> _Passes = new ObservableCollection<EffectPass>();
 
         public ObservableCollection<EffectPass> Passes
@@ -30,10 +38,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public Effect() { }
+        protected Effect() { }
 
-        public Effect(IEnumerable<EffectPass> techniques)
-            : this()
+        protected Effect(IEnumerable<EffectPass> techniques)
         {
             Contract.Requires<ArgumentNullException>(techniques != null);
 
@@ -49,6 +56,26 @@ namespace LightClaw.Engine.Graphics
         {
             return this.GetEnumerator();
         }
+
+        public void Update(GameTime gameTime)
+        {
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+            {
+                this.OnUpdate(gameTime);
+            }
+        }
+
+        public void LateUpdate()
+        {
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+            {
+                this.OnLateUpdate();
+            }
+        }
+
+        protected abstract void OnUpdate(GameTime gameTime);
+
+        protected abstract void OnLateUpdate();
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

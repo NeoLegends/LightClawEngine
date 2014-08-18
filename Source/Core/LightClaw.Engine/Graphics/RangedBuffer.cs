@@ -33,6 +33,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return this.Range.Length;
+            }
+        }
+
         public BufferUsageHint Hint
         {
             get

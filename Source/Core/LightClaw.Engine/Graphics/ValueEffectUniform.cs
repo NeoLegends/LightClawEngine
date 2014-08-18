@@ -13,20 +13,6 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object initializationLock = new object();
 
-        private int _Index;
-
-        public int Index
-        {
-            get
-            {
-                return _Index;
-            }
-            private set
-            {
-                this.SetProperty(ref _Index, value);
-            }
-        }
-
         private bool _IsInitialized;
 
         public bool IsInitialized
@@ -69,6 +55,15 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public int UboBindingIndex
+        {
+            get
+            {
+                RangedBuffer ubo = this.Ubo;
+                return (ubo != null) ? this.Ubo.Index : -1;
+            }
+        }
+
         private UniformBufferPool _UboPool;
 
         public UniformBufferPool UboPool
@@ -108,7 +103,7 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         throw new NotImplementedException();
-                        this.Ubo = this.UboPool.GetBuffer(this.Length, GetStage(this.Stage.Type), this.Stage);
+                        this.Ubo = this.UboPool.GetBuffer(this.Length, GetStage(this.Stage.ShaderProgram.Type), this.Stage);
                     }
                 }
             }

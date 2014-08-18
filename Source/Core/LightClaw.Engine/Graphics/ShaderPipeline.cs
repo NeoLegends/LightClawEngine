@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
@@ -30,50 +31,32 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ObservableCollection<ShaderProgram> _Programs = new ObservableCollection<ShaderProgram>();
+        private ImmutableList<ShaderProgram> _Programs;
 
-        public ObservableCollection<ShaderProgram> Programs
+        public ImmutableList<ShaderProgram> Programs
         {
             get
             {
-                Contract.Ensures(Contract.Result<ObservableCollection<ShaderProgram>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableList<ShaderProgram>>() != null);
 
                 return _Programs;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.All(program => program != null));
 
                 this.SetProperty(ref _Programs, value);
             }
         }
 
-        public ShaderPipeline(IEnumerable<ShaderProgram> programs)
+        public ShaderPipeline(params ShaderProgram[] programs)
         {
             Contract.Requires<ArgumentNullException>(programs != null);
-            Contract.Requires<ArgumentException>(programs.Any());
+            Contract.Requires<ArgumentException>(programs.Any(program => program.Type == ShaderType.FragmentShader));
+            Contract.Requires<ArgumentException>(programs.Any(program => program.Type == ShaderType.VertexShader));
 
-            this.Programs.CollectionChanged += (s, e) =>
-            {
-                if (e.Action != NotifyCollectionChangedAction.Move)
-                {
-                    if (e.OldItems != null)
-                    {
-                        foreach (ShaderProgram program in e.OldItems)
-                        {
-                            GL.UseProgramStages(this, GetProgramStageMask(program.Type), 0);
-                        }
-                    }
-                    if (e.NewItems != null)
-                    {
-                        foreach (ShaderProgram program in e.NewItems)
-                        {
-                            GL.UseProgramStages(this, GetProgramStageMask(program.Type), program);
-                        }
-                    }
-                }
-            };
-            this.Programs.AddRange(programs);
+            this.Programs = programs.FilterNull().DistinctBy(program => program.Type).ToImmutableList();
         }
 
         public void Bind()
@@ -90,8 +73,9 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         this.Handle = GL.GenProgramPipeline();
-                        foreach (ShaderProgram program in this.Programs.FilterNull())
+                        foreach (ShaderProgram program in this.Programs)
                         {
+                            program.Initialize();
                             GL.UseProgramStages(this, GetProgramStageMask(program.Type), program);
                         }
 

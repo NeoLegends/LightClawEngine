@@ -15,9 +15,9 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object initializationLock = new object();
 
-        private Buffer _IndexBuffer;
+        private IBuffer _IndexBuffer;
 
-        public Buffer IndexBuffer
+        public IBuffer IndexBuffer
         {
             get
             {
@@ -128,12 +128,11 @@ namespace LightClaw.Engine.Graphics
         {
             try
             {
-                this.Unbind();
                 GL.DeleteVertexArray(this);
             }
-            catch (AccessViolationException)
+            catch (Exception ex)
             {
-                throw; // Log and swallow in the future
+                Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {1}'s underlying OpenGL vertex array object.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(VertexArrayObject).Name), ex);
             }
             base.Dispose(disposing);
         }

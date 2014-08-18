@@ -27,10 +27,11 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public SamplerEffectUniform() { }
-
-        public SamplerEffectUniform(int textureUnit)
+        public SamplerEffectUniform(EffectStage stage, string name, int textureUnit)
+            : base(stage, name)
         {
+            Contract.Requires<ArgumentNullException>(stage != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
             this.TextureUnit = textureUnit;
@@ -58,7 +59,7 @@ namespace LightClaw.Engine.Graphics
             lock (this.setLock)
             {
                 this.TextureUnit = textureUnit;
-                GL.ProgramUniform1(this.Stage, this.Location, textureUnit);
+                GL.ProgramUniform1(this.Stage.ShaderProgram, this.Location, textureUnit);
                 texture.Bind(textureUnit);
                 sampler.Bind(textureUnit);
             }

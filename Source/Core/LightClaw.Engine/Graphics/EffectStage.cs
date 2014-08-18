@@ -35,6 +35,8 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<ShaderProgram>() != null);
+
                 return _ShaderProgram;
             }
             private set
@@ -51,6 +53,8 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
+
                 return _UboPool;
             }
             private set
@@ -108,10 +112,18 @@ namespace LightClaw.Engine.Graphics
         }
 
         public EffectStage(ShaderProgram program)
+            : this(program, UniformBufferPool.Default)
         {
             Contract.Requires<ArgumentNullException>(program != null);
+        }
+
+        public EffectStage(ShaderProgram program, UniformBufferPool uboPool)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+            Contract.Requires<ArgumentNullException>(uboPool != null);
 
             this.ShaderProgram = program;
+            this.UboPool = uboPool;
         }
 
         public void Initialize()
@@ -160,6 +172,8 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            Contract.Invariant(this._ShaderProgram != null);
+            Contract.Invariant(this._UboPool != null);
             Contract.Invariant(this._Uniforms != null);
         }
     }

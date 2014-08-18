@@ -114,9 +114,11 @@ CODING STANDARD:
         12. Overloaded operators
 		
 	Contracts:
-        - Use one contract call per contract
+        - Use one contract call per condition
             - Contract.Requires<ArgumentNullException>(value1 != null);
               Contract.Requires<ArgumentNullException>(value2 != null);
+            - Call Enumerable.All instead of Contract.ForAll
+                - Contract.Requires<ArgumentException>(sources.All(source => source != null));
 		- Invariant Contract declaration methods shall be named "ObjectInvariant"
 			- private void ObjectInvariant() { /* Contract definitions */ }
 		- Interface Contract definitions shall be made in the same file with an internal abstract class named <InterfaceName>Contracts

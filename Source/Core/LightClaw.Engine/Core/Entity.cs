@@ -23,11 +23,12 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        protected ILog _Logger;
+        private ILog _Logger;
 
         /// <summary>
         /// An instance of <see cref="ILog"/> used to track application events.
         /// </summary>
+        [IgnoreDataMember]
         protected ILog Logger
         {
             get

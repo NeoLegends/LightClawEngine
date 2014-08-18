@@ -175,6 +175,7 @@
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\ILateUpdateable.cs" />
+    <Compile Include="Core\WrongThreadException.cs" />
     <Compile Include="Core\ISceneManager.cs" />
     <Compile Include="Core\IUpdateable.cs" />
     <Compile Include="Core\LightClawEngine.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="Core\ParameterEventArgs.cs" />
     <Compile Include="Core\SceneManager.cs" />
     <Compile Include="Core\SolitaryAttribute.cs" />
+    <Compile Include="Core\ThreadF.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />

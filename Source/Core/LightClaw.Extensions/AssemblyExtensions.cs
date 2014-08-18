@@ -30,7 +30,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(assembly != null);
             Contract.Ensures(Contract.Result<IEnumerable<Type>>() != null);
-            Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<Type>>(), type => typeof(T).IsAssignableFrom(type)));
+            Contract.Ensures(Contract.Result<IEnumerable<Type>>().All(type => typeof(T).IsAssignableFrom(type)));
 
             return GetTypesByBase(assembly, typeof(T), includeNonPublic);
         }
@@ -52,7 +52,7 @@ namespace LightClaw.Extensions
             Contract.Requires<ArgumentNullException>(assembly != null);
             Contract.Requires<ArgumentNullException>(baseType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Type>>() != null);
-            Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<Type>>(), type => baseType.IsAssignableFrom(type)));
+            Contract.Ensures(Contract.Result<IEnumerable<Type>>().All(type => baseType.IsAssignableFrom(type)));
 
             return from searchResult in (includeNonPublic ? assembly.GetTypes() : assembly.GetExportedTypes())
                    where (searchResult.IsClass &&

@@ -11,6 +11,8 @@ namespace LightClaw.Engine.Graphics
     [ContractClass(typeof(IBufferContracts))]
     public interface IBuffer : IBindable, IGLObject
     {
+        int Count { get; }
+
         BufferUsageHint Hint { get; }
 
         BufferTarget Target { get; }
@@ -31,6 +33,14 @@ namespace LightClaw.Engine.Graphics
     [ContractClassFor(typeof(IBuffer))]
     abstract class IBufferContracts : IBuffer
     {
+        int IBuffer.Count
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
         int IGLObject.Handle
         {
             get
