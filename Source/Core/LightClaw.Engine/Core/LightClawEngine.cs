@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,6 +64,16 @@ namespace LightClaw.Engine.Core
         /// <param name="args">Command line arguments.</param>
         static void Main(string[] args)
         {
+            ProfileOptimization.SetProfileRoot(
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                    "LightClaw",
+                    Assembly.GetExecutingAssembly().GetName().FullName,
+                    "ProfileOptimization"
+                )
+            );
+            ProfileOptimization.StartProfile("LightClaw.Engine");
+
             logger.Info(() => "Starting engine...");
 
             try

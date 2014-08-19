@@ -39,7 +39,7 @@ namespace LightClaw.Engine.Coroutines
 
             Stopwatch st = Stopwatch.StartNew();
             bool isFinished = false;
-            while (!isFinished && (st.Elapsed < timeOut) && (isFinished = context.Step())) { }
+            while ((st.Elapsed < timeOut) && !(isFinished = context.Step())) { }
             return isFinished;
         }
     }

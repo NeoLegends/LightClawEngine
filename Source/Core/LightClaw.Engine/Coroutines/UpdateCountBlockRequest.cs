@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
@@ -19,7 +20,7 @@ namespace LightClaw.Engine.Coroutines
     /// <see cref="M:CanExecute"/> being called) every frame.
     /// </remarks>
     [DataContract, ProtoContract]
-    public struct UpdateCountBlockRequest : IExecutionBlockRequest
+    public sealed class UpdateCountBlockRequest : IExecutionBlockRequest // Class because this is instance is mutable
     {
         /// <summary>
         /// The amount of tries.
@@ -38,7 +39,6 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="requiredTries">The required amount of tries to unblock execution again.</param>
         public UpdateCountBlockRequest(int requiredTries)
-            : this()
         {
             this.RequiredTries = requiredTries;
         }
@@ -50,6 +50,60 @@ namespace LightClaw.Engine.Coroutines
         public bool CanExecute()
         {
             return (Interlocked.Increment(ref this.tries) > this.RequiredTries);
+        }
+
+        /// <summary>
+        /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
+        /// </summary>
+        /// <param name="obj">The object to check against.</param>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+                return false;
+
+            return (obj is UpdateCountBlockRequest) ? this.Equals((UpdateCountBlockRequest)obj) : false;
+        }
+
+        /// <summary>
+        /// Tests for equality with the <paramref name="other"/> specified <see cref="UpdateCountBlockRequest"/>.
+        /// </summary>
+        /// <param name="other">The <see cref="UpdateCountBlockRequest"/> to test against.</param>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        public bool Equals(UpdateCountBlockRequest other)
+        {
+            return (this.tries == other.tries) && (this.RequiredTries == other.RequiredTries);
+        }
+
+        /// <summary>
+        /// Gets the hash code.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
+        {
+            return HashF.GetHashCode(this.tries, this.RequiredTries);
+        }
+
+        /// <summary>
+        /// Checks whether the two <see cref="UpdateCountBlockRequest"/>s are equal.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns><c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are equal, otherwise <c>false</c>.</returns>
+        public static bool operator ==(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Checks whether the two <see cref="UpdateCountBlockRequest"/>s are inequal.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns><c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are inequal, otherwise <c>false</c>.</returns>
+        public static bool operator !=(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
+        {
+            return !(left == right);
         }
     }
 }

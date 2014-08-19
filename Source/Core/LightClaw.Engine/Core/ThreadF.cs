@@ -17,6 +17,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the current thread is the main thread and throws a <see cref="WrongThreadException"/> if it is not.
         /// </summary>
         /// <seealso cref="LightClawEngine.MainThreadId"/>
+        /// <seealso cref="WrongThreadException"/>
         public static void AssertMainThread()
         {
             if (!TryAssertMainThread())
@@ -32,6 +33,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Checks whether the current thread is the specified thread and throws a <see cref="WrongThreadException"/> if it is not.
         /// </summary>
+        /// <seealso cref="WrongThreadException"/>
         public static void AssertThread(int targetThreadId)
         {
             if (!TryAssertThread(targetThreadId))

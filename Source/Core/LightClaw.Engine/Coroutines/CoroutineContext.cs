@@ -45,11 +45,12 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Occurs before the coroutine is being updated.
         /// </summary>
-        event EventHandler<ParameterEventArgs> IUpdateable.Updating
+        event EventHandler<ParameterEventArgs> IUpdateable.Updating // Uses lock-free reference implementation of auto events
         {
             add
             {
-                EventHandler<ParameterEventArgs> current, original;
+                EventHandler<ParameterEventArgs> current;
+                EventHandler<ParameterEventArgs> original;
                 do
                 {
                     original = _Updating;
@@ -60,7 +61,8 @@ namespace LightClaw.Engine.Coroutines
             }
             remove
             {
-                EventHandler<ParameterEventArgs> current, original;
+                EventHandler<ParameterEventArgs> current;
+                EventHandler<ParameterEventArgs> original;
                 do
                 {
                     original = _Updating;
@@ -79,11 +81,12 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Occurs after the coroutine is was updated.
         /// </summary>
-        event EventHandler<ParameterEventArgs> IUpdateable.Updated
+        event EventHandler<ParameterEventArgs> IUpdateable.Updated // Uses lock-free reference implementation of auto events
         {
             add
             {
-                EventHandler<ParameterEventArgs> current, original;
+                EventHandler<ParameterEventArgs> current;
+                EventHandler<ParameterEventArgs> original;
                 do
                 {
                     original = _Updated;
@@ -94,7 +97,8 @@ namespace LightClaw.Engine.Coroutines
             }
             remove
             {
-                EventHandler<ParameterEventArgs> current, original;
+                EventHandler<ParameterEventArgs> current;
+                EventHandler<ParameterEventArgs> original;
                 do
                 {
                     original = _Updated;

@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Core
     /// <code>
     /// using (ParameterEventRaiser raiser = new ParameterEventRaiser(this, this.Updating, this.Updated))
     /// {
-    ///     // Code surrounded by events. Updating will be raised on entry of the block, Updated right after.
+    ///     // Code surrounded by events. "Updating" will be raised on entry of the block, "Updated" right after.
     /// }
     /// </code>
     /// </example>
@@ -50,8 +50,8 @@ namespace LightClaw.Engine.Core
         /// <param name="sender">The object that triggered the event.</param>
         /// <param name="onBeforeHandler">The handler raised on entry of the block.</param>
         /// <param name="onAfterHandler">The handler raised on exit of the block.</param>
-        /// <param name="onBeforeEventArgs"><see cref="EventArgs"/> for the event raised on entry.</param>
-        /// <param name="onAfterEventArgs"><see cref="EventArgs"/> for the event raised on exit.</param>
+        /// <param name="onBeforeParameter">The parameter for the for the event raised on entry.</param>
+        /// <param name="onAfterParameter">The parameter for the for the event raised on exit.</param>
         /// <param name="raiseImmediately">
         /// Indicates whether to raise the <paramref name="onBeforeHandler"/> immediately on construction
         /// of the <see cref="ParameterEventArgsRaiser"/> or only on <see cref="M:RaiseOnBefore"/>.
@@ -60,15 +60,15 @@ namespace LightClaw.Engine.Core
                 object sender,
                 EventHandler<ParameterEventArgs> onBeforeHandler,
                 EventHandler<ParameterEventArgs> onAfterHandler,
-                object onBeforeEventArgs = null,
-                object onAfterEventArgs = null,
+                object onBeforeParameter = null,
+                object onAfterParameter = null,
                 bool raiseImmediately = true
             )
         {
             this.onAfterHandler = onAfterHandler;
-            this.onAfterEventArgs = (onAfterEventArgs != null) ? new ParameterEventArgs(onAfterEventArgs) : ParameterEventArgs.Default;
+            this.onAfterEventArgs = (onAfterParameter != null) ? new ParameterEventArgs(onAfterParameter) : ParameterEventArgs.Default;
             this.onBeforeHandler = onBeforeHandler;
-            this.onBeforeEventArgs = (onBeforeEventArgs != null) ? new ParameterEventArgs(onBeforeEventArgs) : ParameterEventArgs.Default;
+            this.onBeforeEventArgs = (onBeforeParameter != null) ? new ParameterEventArgs(onBeforeParameter) : ParameterEventArgs.Default;
             this.sender = sender;
 
             if (raiseImmediately)

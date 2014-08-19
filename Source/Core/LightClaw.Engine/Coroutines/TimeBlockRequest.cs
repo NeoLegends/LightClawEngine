@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
@@ -13,7 +14,7 @@ namespace LightClaw.Engine.Coroutines
     /// Represents a request of a coroutine to wait for the next step until the specified time has passed.
     /// </summary>
     [DataContract, ProtoContract]
-    public struct TimeBlockRequest : IExecutionBlockRequest
+    public struct TimeBlockRequest : IEquatable<TimeBlockRequest>, IExecutionBlockRequest
     {
         /// <summary>
         /// The elapsed time when the <see cref="TimeBlockRequest"/> was created.
@@ -49,7 +50,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="ticks">The amount of ticks the <see cref="TimeBlockRequest"/> blocks execution.</param>
         /// <remarks>
-        /// Using the other constructor ´(accepting a <see cref="TimeSpan"/>) is the preferred way of initializing the
+        /// Using the other constructor (accepting a <see cref="TimeSpan"/>) is the preferred way of initializing the
         /// <see cref="TimeBlockRequest"/>. It uses ticks internally for an efficient implementation, but representing 
         /// time as <see cref="TimeSpan"/> is much more natural (and readable / maintainable).
         /// </remarks>
@@ -67,6 +68,60 @@ namespace LightClaw.Engine.Coroutines
         public bool CanExecute()
         {
             return ((Stopwatch.GetTimestamp() - this.startTicks) > this.BlockingTicks);
+        }
+
+        /// <summary>
+        /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
+        /// </summary>
+        /// <param name="obj">The object to check against.</param>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+                return false;
+
+            return (obj is TimeBlockRequest) ? this.Equals((TimeBlockRequest)obj) : false;
+        }
+
+        /// <summary>
+        /// Tests for equality with the <paramref name="other"/> specified <see cref="TimeBlockRequest"/>.
+        /// </summary>
+        /// <param name="other">The <see cref="TimeBlockRequest"/> to test against.</param>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        public bool Equals(TimeBlockRequest other)
+        {
+            return (this.startTicks == other.startTicks) && (this.BlockingTicks == other.BlockingTicks);
+        }
+
+        /// <summary>
+        /// Gets the hash code.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
+        {
+            return HashF.GetHashCode(this.startTicks, this.BlockingTicks);
+        }
+
+        /// <summary>
+        /// Checks whether the two <see cref="TimeBlockRequest"/>s are equal.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are equal, otherwise <c>false</c>.</returns>
+        public static bool operator ==(TimeBlockRequest left, TimeBlockRequest right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Checks whether the two <see cref="TimeBlockRequest"/>s are inequal.
+        /// </summary>
+        /// <param name="left">The first operand.</param>
+        /// <param name="right">The second operand.</param>
+        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are inequal, otherwise <c>false</c>.</returns>
+        public static bool operator !=(TimeBlockRequest left, TimeBlockRequest right)
+        {
+            return !(left == right);
         }
     }
 }
