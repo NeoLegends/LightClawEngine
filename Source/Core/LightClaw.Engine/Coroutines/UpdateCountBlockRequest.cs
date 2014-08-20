@@ -72,6 +72,11 @@ namespace LightClaw.Engine.Coroutines
         /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public bool Equals(UpdateCountBlockRequest other)
         {
+            if (ReferenceEquals(other, null))
+                return false;
+            if (ReferenceEquals(other, this))
+                return true;
+
             return (this.tries == other.tries) && (this.RequiredTries == other.RequiredTries);
         }
 
@@ -92,6 +97,11 @@ namespace LightClaw.Engine.Coroutines
         /// <returns><c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
         {
+            if (ReferenceEquals(left, right))
+                return true;
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+
             return left.Equals(right);
         }
 

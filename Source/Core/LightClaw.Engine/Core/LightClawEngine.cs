@@ -64,6 +64,7 @@ namespace LightClaw.Engine.Core
         /// <param name="args">Command line arguments.</param>
         static void Main(string[] args)
         {
+#if DESKTOP
             ProfileOptimization.SetProfileRoot(
                 Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
@@ -73,6 +74,7 @@ namespace LightClaw.Engine.Core
                 )
             );
             ProfileOptimization.StartProfile("LightClaw.Engine");
+#endif
 
             logger.Info(() => "Starting engine...");
 

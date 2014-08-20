@@ -118,5 +118,29 @@ namespace LightClaw.Engine.Configuration {
                 this["AnisotropicLevel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LoDing {
+            get {
+                return ((bool)(this["LoDing"]));
+            }
+            set {
+                this["LoDing"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float LoDAggressivness {
+            get {
+                return ((float)(this["LoDAggressivness"]));
+            }
+            set {
+                this["LoDAggressivness"] = value;
+            }
+        }
     }
 }
