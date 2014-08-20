@@ -69,11 +69,10 @@ namespace LightClaw.Engine.Core
                 Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                     "LightClaw",
-                    Assembly.GetExecutingAssembly().GetName().FullName,
                     "ProfileOptimization"
                 )
             );
-            ProfileOptimization.StartProfile("LightClaw.Engine");
+            ProfileOptimization.StartProfile(Assembly.GetExecutingAssembly().GetName().FullName);
 #endif
 
             logger.Info(() => "Starting engine...");
