@@ -88,6 +88,7 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.All(stage => stage != null));
 
                 this.SetProperty(ref _Stages, value);
             }
@@ -118,14 +119,24 @@ namespace LightClaw.Engine.Graphics
             this.ShaderPipeline = pipeline;
         }
 
+        public EffectPass(ShaderPipeline pipeline, UniformBufferPool uboPool)
+            : this(pipeline)
+        {
+            Contract.Requires<ArgumentNullException>(pipeline != null);
+            Contract.Requires<ArgumentNullException>(uboPool != null);
+
+            this.UboPool = uboPool;
+        }
+
         public void Bind()
         {
-            throw new NotImplementedException();
+            this.Initialize();
+            GL.BindProgramPipeline(this.ShaderPipeline);
         }
 
         public void Unbind()
         {
-            throw new NotImplementedException();
+            GL.BindProgramPipeline(0);
         }
 
         public void Initialize()
@@ -137,6 +148,10 @@ namespace LightClaw.Engine.Graphics
                     if (!this.IsInitialized)
                     {
                         this.Stages = this.ShaderPipeline.Programs.FilterNull().Select(program => new EffectStage(program)).ToImmutableList();
+                        foreach (EffectStage stage in this.Stages)
+                        {
+                            stage.Initialize();
+                        }
                         this.IsInitialized = true;
                     }
                 }
@@ -149,6 +164,11 @@ namespace LightClaw.Engine.Graphics
             Contract.Invariant(this._ShaderPipeline != null);
             Contract.Invariant(this._Stages != null);
             Contract.Invariant(this._UboPool != null);
+        }
+
+        public static implicit operator ShaderPipeline(EffectPass pass)
+        {
+            return (pass != null) ? pass.ShaderPipeline : null;
         }
     }
 }

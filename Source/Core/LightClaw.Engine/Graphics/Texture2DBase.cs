@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
@@ -15,7 +16,34 @@ namespace LightClaw.Engine.Graphics
     {
         protected Texture2DBase(TextureDescription description) : base(description) { }
 
-        public abstract void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level) where T : struct;
+        public void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(yOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
+
+            GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            try
+            {
+                this.Set(
+                    dataHandle.AddrOfPinnedObject(),
+                    pixelFormat, pixelType,
+                    width, height,
+                    xOffset, yOffset,
+                    level
+                );
+            }
+            finally
+            {
+                dataHandle.Free();
+            }
+        }
+
+        public abstract void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level);
 
         protected override void OnInitialize()
         {
@@ -53,9 +81,9 @@ namespace LightClaw.Engine.Graphics
     {
         public Texture2DBaseContracts() : base(new TextureDescription()) { }
 
-        public override void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
+        public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
-            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
             Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);

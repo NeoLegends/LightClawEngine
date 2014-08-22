@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -28,19 +29,22 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private string[] _Source;
+        private ImmutableList<string> _Sources;
 
-        public string[] Sources
+        public ImmutableList<string> Sources
         {
             get
             {
-                return _Source;
+                Contract.Ensures(Contract.Result<ImmutableList<string>>() != null);
+
+                return _Sources;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.All(source => source != null)); // No IsNullOrEmpty here as the compiler will just ignore it, no need for beef
 
-                this.SetProperty(ref _Source, value);
+                this.SetProperty(ref _Sources, value);
             }
         }
 
@@ -63,7 +67,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(sources != null);
             Contract.Requires<ArgumentException>(sources.Any(source => !string.IsNullOrWhiteSpace(source)));
 
-            this.Sources = sources;
+            this.Sources = sources.ToImmutableList();
             this.Type = type;
         }
 
@@ -75,7 +79,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        this.Handle = GL.CreateShaderProgram(this.Type, this.Sources.Length, this.Sources);
+                        this.Handle = GL.CreateShaderProgram(this.Type, this.Sources.Count, this.Sources.ToArray());
 
                         int result;
                         GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
@@ -114,6 +118,12 @@ namespace LightClaw.Engine.Graphics
                 Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {1}'s underlying OpenGL Shader Program.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ShaderProgram).Name), ex);
             }
             base.Dispose(disposing);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Sources != null);
         }
     }
 }

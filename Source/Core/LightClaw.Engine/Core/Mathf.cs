@@ -9,6 +9,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains extensions to the math class.
     /// </summary>
+    [Pure]
     public static class MathF
     {
         /// <summary>

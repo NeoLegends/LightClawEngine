@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -20,19 +21,20 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
-        private ObservableCollection<EffectPass> _Passes = new ObservableCollection<EffectPass>();
+        private ImmutableList<EffectPass> _Passes = ImmutableList<EffectPass>.Empty;
 
-        public ObservableCollection<EffectPass> Passes
+        public ImmutableList<EffectPass> Passes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ObservableCollection<EffectPass>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableList<EffectPass>>() != null);
 
                 return _Passes;
             }
-            private set
+            protected set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.All(pass => pass != null));
 
                 this.SetProperty(ref _Passes, value);
             }
@@ -44,11 +46,21 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(techniques != null);
 
-            this.Passes.AddRange(techniques);
+            this.Passes = techniques.ToImmutableList();
+        }
+
+        public void Apply(int index)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            if (!this.TryApply(index))
+            {
+                throw new InvalidOperationException("The pass at index {0} could not be applied.".FormatWith(index));
+            }
         }
 
         public IEnumerator<EffectPass> GetEnumerator()
-        {
+        {   
             return this.Passes.GetEnumerator();
         }
 
@@ -70,6 +82,22 @@ namespace LightClaw.Engine.Graphics
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
                 this.OnLateUpdate();
+            }
+        }
+
+        public bool TryApply(int index)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            ImmutableList<EffectPass> passes = this.Passes;
+            if (passes.Count > index)
+            {
+                passes[index].Bind();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

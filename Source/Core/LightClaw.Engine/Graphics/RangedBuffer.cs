@@ -49,12 +49,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _Index;
+        private int _Index = 0;
 
         public int Index
         {
             get
             {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
                 return _Index;
             }
             set
@@ -137,11 +139,6 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
-            int index = this.Index;
-            if (index < 0)
-            {
-                throw new InvalidOperationException("The buffer binding index to bind to was smaller than zero ({0}).".FormatWith(index));
-            }
             this.Bind(this.Index);
         }
 
@@ -149,7 +146,6 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
-            this.Index = index;
             GL.BindBufferRange(this.RangeTarget, this.Index, this.BaseBuffer.Handle, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
@@ -266,7 +262,6 @@ namespace LightClaw.Engine.Graphics
                 {
                     handler(this, new RangedBufferDisposedEventArgs(this.Range, this.RangeTarget));
                 }
-                this.BaseBuffer = null;
             }
             base.Dispose(disposing);
         }
@@ -275,6 +270,7 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._BaseBuffer != null);
+            Contract.Invariant(this._Index >= 0);
         }
     }
 }

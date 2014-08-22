@@ -184,7 +184,7 @@ namespace LightClaw.Engine.Core
                 Scene scene;
                 if (this.scenes.TryGetValue(slot, out scene) && this.scenes.Remove(slot))
                 {
-                    for (int i = newSlot; i >= int.MinValue; i--)
+                    for (int i = newSlot; i > int.MinValue; i--)
                     {
                         try
                         {

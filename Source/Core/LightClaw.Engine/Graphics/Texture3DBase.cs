@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
@@ -16,7 +17,36 @@ namespace LightClaw.Engine.Graphics
     {
         protected Texture3DBase(TextureDescription description) : base(description) { }
 
-        public abstract void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level) where T : struct;
+        public void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(yOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(zOffset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
+
+            GCHandle arrayHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            try
+            {
+                this.Set(
+                    arrayHandle.AddrOfPinnedObject(),
+                    pixelFormat, pixelType,
+                    width, height, depth,
+                    xOffset, yOffset, zOffset,
+                    level
+                );
+            }
+            finally
+            {
+                arrayHandle.Free();
+            }
+        }
+
+        public abstract void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level);
 
         protected override void OnInitialize()
         {
@@ -56,9 +86,9 @@ namespace LightClaw.Engine.Graphics
     {
         public Texture3DBaseContracts() : base(new TextureDescription()) { }
 
-        public override void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
+        public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
         {
-            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
             Contract.Requires<ArgumentOutOfRangeException>(depth > 0);

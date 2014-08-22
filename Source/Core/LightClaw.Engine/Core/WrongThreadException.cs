@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -74,6 +75,8 @@ namespace LightClaw.Engine.Core
         protected WrongThreadException(SerializationInfo info, StreamingContext context)
             : base(info, context) 
         {
+            Contract.Requires<ArgumentNullException>(info != null);
+
             this.CurrentThreadId = info.GetInt32("CurrentThreadId");
             this.TargetThreadId = info.GetInt32("TargetThreadId");
         }

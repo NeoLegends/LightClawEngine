@@ -129,8 +129,6 @@ namespace LightClaw.Engine.Graphics
 
         public RangedBuffer GetBuffer(int length, Stage stage, object pipeline)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(length > 0);
-
             lock (bufferObtainLock)
             {
                 List<UboBinding> bindings;
@@ -161,8 +159,8 @@ namespace LightClaw.Engine.Graphics
                 int alignedOffset = MathF.RoundToMultiple(targetBuffer.Count, UboAlignment);
                 RangedBuffer rangedBuffer = new RangedBuffer(
                     targetBuffer,
-                    new BufferRange(alignedOffset, length), 
-                    bindingIndex, 
+                    new BufferRange(alignedOffset, length),
+                    bindingIndex,
                     BufferRangeTarget.UniformBuffer
                 );
                 bindings.Add(new UboBinding(rangedBuffer, bindingIndex, stage));

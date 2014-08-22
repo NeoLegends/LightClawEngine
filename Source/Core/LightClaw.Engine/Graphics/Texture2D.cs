@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics
     {
         public Texture2D(TextureDescription description) : base(description) { }
 
-        public override void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
+        public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
             this.Initialize();
             using (GLBinding texture2dBinding = new GLBinding(this))

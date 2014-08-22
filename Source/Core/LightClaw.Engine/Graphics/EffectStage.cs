@@ -176,5 +176,10 @@ namespace LightClaw.Engine.Graphics
             Contract.Invariant(this._UboPool != null);
             Contract.Invariant(this._Uniforms != null);
         }
+
+        public static implicit operator ShaderProgram(EffectStage stage)
+        {
+            return (stage != null) ? stage.ShaderProgram : null;
+        }
     }
 }
