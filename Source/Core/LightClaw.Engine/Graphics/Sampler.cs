@@ -49,6 +49,8 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
                 return _TextureUnit;
             }
             set
@@ -131,6 +133,12 @@ namespace LightClaw.Engine.Graphics
                 Logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
             }
             base.Dispose(disposing);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._TextureUnit >= 0);
         }
     }
 }

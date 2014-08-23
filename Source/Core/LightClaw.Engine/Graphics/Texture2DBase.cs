@@ -14,7 +14,11 @@ namespace LightClaw.Engine.Graphics
     [ContractClass(typeof(Texture2DBaseContracts))]
     public abstract class Texture2DBase : Texture
     {
-        protected Texture2DBase(TextureDescription description) : base(description) { }
+        protected Texture2DBase(TextureDescription description) 
+            : base(description) 
+        {
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget2d), description.Target));
+        }
 
         public void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
             where T : struct

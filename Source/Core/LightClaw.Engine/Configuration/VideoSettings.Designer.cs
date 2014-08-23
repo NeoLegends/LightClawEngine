@@ -134,12 +134,12 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public float LoDAggressivness {
+        public float LoDAggressiveness {
             get {
-                return ((float)(this["LoDAggressivness"]));
+                return ((float)(this["LoDAggressiveness"]));
             }
             set {
-                this["LoDAggressivness"] = value;
+                this["LoDAggressiveness"] = value;
             }
         }
     }

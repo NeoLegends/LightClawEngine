@@ -13,7 +13,10 @@ namespace LightClaw.Engine.Graphics
 {
     public class Texture1D : Texture
     {
-        public Texture1D(TextureDescription description) : base(description) { }
+        public Texture1D(TextureDescription description) 
+            : base(description) 
+        { 
+        }
 
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
             where T : struct
@@ -60,6 +63,13 @@ namespace LightClaw.Engine.Graphics
             {
                 GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }
+        }
+
+        public static bool IsTexture1DTarget(TextureTarget target)
+        {
+            Contract.Ensures(!Contract.Result<bool>() || Enum.IsDefined(typeof(TextureTarget1d), target));
+
+            return (target == TextureTarget.Texture1D) || (target == TextureTarget.ProxyTexture1D);
         }
     }
 }

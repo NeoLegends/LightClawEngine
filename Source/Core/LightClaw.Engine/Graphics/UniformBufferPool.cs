@@ -129,6 +129,8 @@ namespace LightClaw.Engine.Graphics
 
         public RangedBuffer GetBuffer(int length, Stage stage, object pipeline)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(length > 0);
+
             lock (bufferObtainLock)
             {
                 List<UboBinding> bindings;

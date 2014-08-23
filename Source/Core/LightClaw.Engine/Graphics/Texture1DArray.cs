@@ -12,7 +12,11 @@ namespace LightClaw.Engine.Graphics
 {
     public class Texture1DArray : Texture2DBase
     {
-        public Texture1DArray(TextureDescription description) : base(description) { }
+        public Texture1DArray(TextureDescription description)
+            : base(description) 
+        {
+            Contract.Requires<ArgumentException>(IsTexture1DArrayTarget(description.Target));
+        }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
@@ -21,6 +25,14 @@ namespace LightClaw.Engine.Graphics
             {
                 GL.TexSubImage2D(this.Target, level, 0, 0, width, height, pixelFormat, pixelType, data);
             }
+        }
+
+        [Pure]
+        public static bool IsTexture1DArrayTarget(TextureTarget target)
+        {
+            Contract.Ensures(!Contract.Result<bool>() || Enum.IsDefined(typeof(TextureTarget2d), target));
+
+            return (target == TextureTarget.Texture1DArray) || (target == TextureTarget.Texture1DArray);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                return this.Description.TextureLevels;
+                return this.Description.Levels;
             }
         }
 
@@ -128,7 +128,9 @@ namespace LightClaw.Engine.Graphics
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1D);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1DArray);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2DMultisample);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2DMultisampleArray);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture3D);
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMapArray);
@@ -136,16 +138,13 @@ namespace LightClaw.Engine.Graphics
 
         protected Texture(TextureDescription description)
         {
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget), description.Target));
+
             this.Description = description;
         }
 
         public virtual void Bind()
         {
-            int unit = this.TextureUnit;
-            if (unit < 0)
-            {
-                throw new InvalidOperationException("The texture unit to bind to ({0}) was smaller than zero.".FormatWith(unit));
-            }
             this.Bind(this.TextureUnit);
         }
 

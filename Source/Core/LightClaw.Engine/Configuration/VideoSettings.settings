@@ -29,7 +29,7 @@
     <Setting Name="LoDing" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="LoDAggressivness" Type="System.Single" Scope="User">
+    <Setting Name="LoDAggressiveness" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
