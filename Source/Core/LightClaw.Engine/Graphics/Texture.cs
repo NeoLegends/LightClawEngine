@@ -4,14 +4,18 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
+using log4net;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
     public abstract class Texture : GLObject, IBindable, IInitializable
     {
+        private static readonly ILog staticLogger = LogManager.GetLogger(typeof(Texture));
+
         private readonly object initializationLock = new object();
 
         private bool _IsInitialized;
@@ -116,14 +120,43 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        static Texture()
+        static Texture() // Assume GLContext is present
         {
-            // Assume GLContext is present
+            staticLogger.Info(() => "Initializing OpenGL Texturing system. Enabling textures...");
+
             GL.Enable(EnableCap.Texture1D);
             // Not sure whether bug still exists, but on http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states
             // that ATI cards had problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card,
             // I can't test that.
             GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.TextureCubeMap);
+            GL.Enable(EnableCap.TextureCubeMapSeamless);
+
+            staticLogger.Info(() => "Textures enabled, configuring mipmap generation...");
+
+            int linearMipmapLinear = (int)All.LinearMipmapLinear;
+            int linear = (int)All.Linear;
+
+            GL.TexParameterI(TextureTarget.Texture1D, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.Texture1D, TextureParameterName.TextureMagFilter, ref linear);
+            GL.TexParameterI(TextureTarget.Texture1DArray, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.Texture1DArray, TextureParameterName.TextureMagFilter, ref linear);
+
+            GL.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, ref linear);
+            GL.TexParameterI(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, ref linear);
+
+            GL.TexParameterI(TextureTarget.Texture3D, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.Texture3D, TextureParameterName.TextureMagFilter, ref linear);
+
+            GL.TexParameterI(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, ref linear);
+
+            GL.TexParameterI(TextureTarget.TextureRectangle, TextureParameterName.TextureMinFilter, ref linearMipmapLinear);
+            GL.TexParameterI(TextureTarget.TextureRectangle, TextureParameterName.TextureMagFilter, ref linear);
+
+            staticLogger.Info(() => "Mipmap generation configured, enabling generation itself...");
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1D);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture1DArray);
@@ -134,6 +167,34 @@ namespace LightClaw.Engine.Graphics
             GL.GenerateMipmap(GenerateMipmapTarget.Texture3D);
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMap);
             GL.GenerateMipmap(GenerateMipmapTarget.TextureCubeMapArray);
+
+            staticLogger.Info(() => "Mipmap generation settings set.");
+
+            if (VideoSettings.Default.AnisotropicFiltering && SupportsExtension("GL_EXT_texture_filter_anisotropic"))
+            {
+                staticLogger.Info(() => "Enabling anisotropic filtering...");
+
+                TextureParameterName anisoParameterName = (TextureParameterName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt;
+                float maxAnisoLevel = Math.Min(
+                    VideoSettings.Default.AnisotropicLevel, 
+                    GL.GetFloat((GetPName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.MaxTextureMaxAnisotropyExt)
+                );
+
+                GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.Texture1DArray, anisoParameterName, maxAnisoLevel);
+                
+                GL.TexParameter(TextureTarget.Texture2D, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.Texture2DArray, anisoParameterName, maxAnisoLevel);
+
+                GL.TexParameter(TextureTarget.Texture3D, anisoParameterName, maxAnisoLevel);
+
+                GL.TexParameter(TextureTarget.TextureCubeMap, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.TextureCubeMapArray, anisoParameterName, maxAnisoLevel);
+
+                staticLogger.Info(() => "Anisotropic filtering up to level {0} enabled.".FormatWith(maxAnisoLevel));
+            }
+
+            staticLogger.Info(() => "Texturing set up.");
         }
 
         protected Texture(TextureDescription description)

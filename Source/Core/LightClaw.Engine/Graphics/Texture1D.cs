@@ -15,7 +15,8 @@ namespace LightClaw.Engine.Graphics
     {
         public Texture1D(TextureDescription description) 
             : base(description) 
-        { 
+        {
+            Contract.Requires<ArgumentException>(IsTexture1DTarget(description.Target));
         }
 
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)

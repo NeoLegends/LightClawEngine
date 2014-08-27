@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -15,6 +16,16 @@ namespace LightClaw.Engine.Graphics
     [DataContract]
     public abstract class GLObject : Entity, IGLObject
     {
+        /// <summary>
+        /// A lock used to restrict access to the supported extensions-method.
+        /// </summary>
+        private static object extensionQueryLock = new object();
+
+        /// <summary>
+        /// Contains all supported OpenGL extensions.
+        /// </summary>
+        private static string[] supportedExtensions;
+
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -100,6 +111,29 @@ namespace LightClaw.Engine.Graphics
             }
             this.IsDisposed = true;
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Checks whether the specified OpenGL extension is supported.
+        /// </summary>
+        /// <param name="extensionName">The extension to check for.</param>
+        /// <returns><c>true</c> if the extension can be used, otherwise <c>false</c>.</returns>
+        public static bool SupportsExtension(string extensionName)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(extensionName));
+
+            if (supportedExtensions == null)
+            {
+                lock (extensionQueryLock)
+                {
+                    if (supportedExtensions == null)
+                    {
+                        supportedExtensions = GL.GetString(StringName.Extensions).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    }
+                }
+            }
+
+            return supportedExtensions.Contains(extensionName);
         }
 
         /// <summary>

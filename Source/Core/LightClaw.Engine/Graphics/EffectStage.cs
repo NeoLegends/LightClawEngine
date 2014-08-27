@@ -79,7 +79,29 @@ namespace LightClaw.Engine.Graphics
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
+                this._Samplers = null;
+                this._Values = null;
                 this.SetProperty(ref _Uniforms, value);
+            }
+        }
+
+        private ImmutableDictionary<string, SamplerEffectUniform> _Samplers;
+
+        public ImmutableDictionary<string, SamplerEffectUniform> Samplers
+        {
+            get
+            {
+                return _Samplers ?? (_Samplers = this.FilterUniforms<SamplerEffectUniform>(this.Uniforms));
+            }
+        }
+
+        private ImmutableDictionary<string, ValueEffectUniform> _Values;
+
+        public ImmutableDictionary<string, ValueEffectUniform> Values
+        {
+            get
+            {
+                return _Values ?? (_Values = this.FilterUniforms<ValueEffectUniform>(this.Uniforms));
             }
         }
 
@@ -105,7 +127,11 @@ namespace LightClaw.Engine.Graphics
                 IEnumerable<EffectUniform> values = this.Uniforms.Values;
                 if (values == null)
                 {
-                    throw new NullReferenceException("The collection containing the values of the dictionary containing the uniforms was null.");
+                    throw new NullReferenceException(
+                        "The collection containing the values of the dictionary containing the uniforms was null. This error is definetely NOT " +
+                        "supposed to happen (unlike other errors that might happen and should be expected), please contact the developers " +
+                        "at http://lightclaw.com/."
+                    );
                 }
                 return values.FilterNull().First(uniform => uniform.Location == location);
             }
@@ -169,6 +195,15 @@ namespace LightClaw.Engine.Graphics
             return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
         }
 
+        private ImmutableDictionary<string, T> FilterUniforms<T>(ImmutableDictionary<string, EffectUniform> uniforms)
+            where T : EffectUniform
+        {
+            return (from kvp in this.Uniforms
+                    let samplerUniform = kvp.Value as T
+                    where samplerUniform != null
+                    select new KeyValuePair<string, T>(kvp.Key, samplerUniform)).ToImmutableDictionary();
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
@@ -180,6 +215,13 @@ namespace LightClaw.Engine.Graphics
         public static implicit operator ShaderProgram(EffectStage stage)
         {
             return (stage != null) ? stage.ShaderProgram : null;
+        }
+
+        public static explicit operator EffectStage(ShaderProgram program)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+
+            return new EffectStage(program);
         }
     }
 }

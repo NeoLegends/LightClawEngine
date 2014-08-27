@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(msLevels > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget1d), target));
         }
 
@@ -56,7 +56,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(msLevels > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget2d), target));
         }
 
@@ -70,7 +70,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(msLevels > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), target));
 
             this.Width = width;
@@ -120,6 +120,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Invariant(!this.initializedViaParameterizedConstructor || this.Height >= 0);
             Contract.Invariant(!this.initializedViaParameterizedConstructor || this.Depth >= 0);
             Contract.Invariant(!this.initializedViaParameterizedConstructor || this.Levels > 0);
+            Contract.Invariant(!this.initializedViaParameterizedConstructor || this.MultisamplingLevels >= 0);
         }
 
         public static int GetMaxTextureLevels(int width)

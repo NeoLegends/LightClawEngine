@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
@@ -11,7 +12,7 @@ namespace LightClaw.Engine.Core
     /// Contains methods to compute the hash of multiple elements.
     /// </summary>
     /// <remarks>
-    /// Hashes will be computed using the following method:
+    /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
     /// <code>
     /// unchecked
     /// {
@@ -41,6 +42,7 @@ namespace LightClaw.Engine.Core
         /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
         /// <param name="item">The item to get the hash code of.</param>
         /// <returns>The <paramref name="item"/>'s hash code or <c>0</c>, if <paramref name="item"/> was null.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T item)
         {
             return (item != null) ? item.GetHashCode() : 0;
@@ -54,6 +56,7 @@ namespace LightClaw.Engine.Core
         /// <param name="first">The first element.</param>
         /// <param name="second">The second element.</param>
         /// <returns>The hash code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2>(T1 first, T2 second)
         {
             unchecked
@@ -74,6 +77,7 @@ namespace LightClaw.Engine.Core
         /// <param name="second">The second element.</param>
         /// <param name="third">The third element.</param>
         /// <returns>The hash code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2, T3>(T1 first, T2 second, T3 third)
         {
             unchecked
@@ -97,6 +101,7 @@ namespace LightClaw.Engine.Core
         /// <param name="third">The third element.</param>
         /// <param name="fourth">The fourth element.</param>
         /// <returns>The hash code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2, T3, T4>(T1 first, T2 second, T3 third, T4 fourth)
         {
             unchecked
@@ -123,6 +128,7 @@ namespace LightClaw.Engine.Core
         /// <param name="fourth">The fourth element.</param>
         /// <param name="fifth">The fifth element.</param>
         /// <returns>The hash code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2, T3, T4, T5>(T1 first, T2 second, T3 third, T4 fourth, T5 fifth)
         {
             unchecked
@@ -152,6 +158,7 @@ namespace LightClaw.Engine.Core
         /// <param name="fifth">The fifth element.</param>
         /// <param name="fifth">The sixth element.</param>
         /// <returns>The hash code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2, T3, T4, T5, T6>(T1 first, T2 second, T3 third, T4 fourth, T5 fifth, T6 sixth)
         {
             unchecked

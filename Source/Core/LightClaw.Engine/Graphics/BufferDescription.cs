@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The data buffer.
         /// </summary>
-        public Buffer Buffer { get; private set; }
+        public IBuffer Buffer { get; private set; }
 
         /// <summary>
         /// The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.
@@ -29,7 +29,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="vertexBuffer">The data buffer.</param>
         /// <param name="vertexAttributePointers">The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.</param>
-        public BufferDescription(Buffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers)
+        public BufferDescription(IBuffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers)
             : this()
         {
             Contract.Requires<ArgumentNullException>(vertexBuffer != null);

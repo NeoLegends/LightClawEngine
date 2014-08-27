@@ -13,16 +13,20 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object setLock = new object();
 
-        private int _TextureUnit = -1;
+        private int _TextureUnit = 0;
 
         public int TextureUnit
         {
             get
             {
+                Contract.Ensures(Contract.Result<int>() >= 0);
+
                 return _TextureUnit;
             }
             set
             {
+                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
+
                 this.SetProperty(ref _TextureUnit, value);
             }
         }
@@ -40,29 +44,31 @@ namespace LightClaw.Engine.Graphics
         public void Set(Texture texture, Sampler sampler)
         {
             Contract.Requires<ArgumentNullException>(texture != null);
-            Contract.Requires<ArgumentNullException>(sampler != null);
 
-            int unit = this.TextureUnit;
-            if (unit < 0)
-            {
-                throw new InvalidOperationException("The TextureUnit to bind to is invalid. It needs to be greater than zero and is {0}.".FormatWith(unit));
-            }
-            this.Set(unit, texture, sampler);
+            this.Set(this.TextureUnit, texture, sampler);
         }
 
         public void Set(int textureUnit, Texture texture, Sampler sampler)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(texture != null);
-            Contract.Requires<ArgumentNullException>(sampler != null);
 
             lock (this.setLock)
             {
                 this.TextureUnit = textureUnit;
                 GL.ProgramUniform1(this.Stage.ShaderProgram, this.Location, textureUnit);
                 texture.Bind(textureUnit);
-                sampler.Bind(textureUnit);
+                if (sampler != null)
+                {
+                    sampler.Bind(textureUnit);
+                }
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._TextureUnit >= 0);
         }
     }
 }
