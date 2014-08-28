@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private UniformBufferPool _UboPool = UniformBufferPool.Default;
+        private UniformBufferPool _UboPool;
 
         public UniformBufferPool UboPool
         {
@@ -113,6 +113,7 @@ namespace LightClaw.Engine.Graphics
         }
 
         public EffectPass(ShaderPipeline pipeline) 
+            : this(pipeline, UniformBufferPool.Default)
         {
             Contract.Requires<ArgumentNullException>(pipeline != null);
 
@@ -120,11 +121,11 @@ namespace LightClaw.Engine.Graphics
         }
 
         public EffectPass(ShaderPipeline pipeline, UniformBufferPool uboPool)
-            : this(pipeline)
         {
             Contract.Requires<ArgumentNullException>(pipeline != null);
             Contract.Requires<ArgumentNullException>(uboPool != null);
 
+            this.ShaderPipeline = pipeline;
             this.UboPool = uboPool;
         }
 
@@ -147,11 +148,14 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        this.Stages = this.ShaderPipeline.Programs.FilterNull().Select(program => new EffectStage(program)).ToImmutableList();
-                        foreach (EffectStage stage in this.Stages)
-                        {
-                            stage.Initialize();
-                        }
+                        this.Stages = this.ShaderPipeline.Programs.FilterNull()
+                                                                  .Select(program => 
+                                                                   {
+                                                                       EffectStage stage = new EffectStage(this, program);
+                                                                       stage.Initialize();
+                                                                       return stage;
+                                                                   })
+                                                                  .ToImmutableList();
                         this.IsInitialized = true;
                     }
                 }

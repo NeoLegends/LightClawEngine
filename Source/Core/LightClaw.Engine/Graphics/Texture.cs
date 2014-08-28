@@ -175,23 +175,30 @@ namespace LightClaw.Engine.Graphics
                 staticLogger.Info(() => "Enabling anisotropic filtering...");
 
                 TextureParameterName anisoParameterName = (TextureParameterName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt;
-                float maxAnisoLevel = Math.Min(
-                    VideoSettings.Default.AnisotropicLevel, 
-                    GL.GetFloat((GetPName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.MaxTextureMaxAnisotropyExt)
+                float requestedAnisoLevel = VideoSettings.Default.AnisotropicLevel;
+                float maxSupportedAnisoLevel = GL.GetFloat((GetPName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.MaxTextureMaxAnisotropyExt);
+                float anisoLevel = Math.Min(requestedAnisoLevel, maxSupportedAnisoLevel);
+
+                staticLogger.Info(
+                    () => "Anisotropic level will be {0} (maximum supported by hardware: {1}, requested through settings: {2}).".FormatWith(anisoLevel, maxSupportedAnisoLevel, requestedAnisoLevel)
                 );
 
-                GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, maxAnisoLevel);
-                GL.TexParameter(TextureTarget.Texture1DArray, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, anisoLevel);
+                GL.TexParameter(TextureTarget.Texture1DArray, anisoParameterName, anisoLevel);
                 
-                GL.TexParameter(TextureTarget.Texture2D, anisoParameterName, maxAnisoLevel);
-                GL.TexParameter(TextureTarget.Texture2DArray, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.Texture2D, anisoParameterName, anisoLevel);
+                GL.TexParameter(TextureTarget.Texture2DArray, anisoParameterName, anisoLevel);
 
-                GL.TexParameter(TextureTarget.Texture3D, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.Texture3D, anisoParameterName, anisoLevel);
 
-                GL.TexParameter(TextureTarget.TextureCubeMap, anisoParameterName, maxAnisoLevel);
-                GL.TexParameter(TextureTarget.TextureCubeMapArray, anisoParameterName, maxAnisoLevel);
+                GL.TexParameter(TextureTarget.TextureCubeMap, anisoParameterName, anisoLevel);
+                GL.TexParameter(TextureTarget.TextureCubeMapArray, anisoParameterName, anisoLevel);
 
-                staticLogger.Info(() => "Anisotropic filtering up to level {0} enabled.".FormatWith(maxAnisoLevel));
+                staticLogger.Info(() => "Anisotropic filtering up to level {0} enabled.".FormatWith(anisoLevel));
+            }
+            else
+            {
+                staticLogger.Info(() => "Anisotropic filtering will not be enabled. It's either turned off in settings or the extension is not supported.");
             }
 
             staticLogger.Info(() => "Texturing set up.");

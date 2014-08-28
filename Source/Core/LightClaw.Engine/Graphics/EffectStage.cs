@@ -29,6 +29,24 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        private EffectPass _Pass;
+
+        public EffectPass Pass
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<EffectPass>() != null);
+
+                return _Pass;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Pass, value);
+            }
+        }
+
         private ShaderProgram _ShaderProgram;
 
         public ShaderProgram ShaderProgram
@@ -91,7 +109,9 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                return _Samplers ?? (_Samplers = this.FilterUniforms<SamplerEffectUniform>(this.Uniforms));
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, SamplerEffectUniform>>() != null);
+
+                return _Samplers ?? (_Samplers = this.GetUniformsOfType<SamplerEffectUniform>(this.Uniforms));
             }
         }
 
@@ -101,7 +121,9 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                return _Values ?? (_Values = this.FilterUniforms<ValueEffectUniform>(this.Uniforms));
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, ValueEffectUniform>>() != null);
+
+                return _Values ?? (_Values = this.GetUniformsOfType<ValueEffectUniform>(this.Uniforms));
             }
         }
 
@@ -118,36 +140,29 @@ namespace LightClaw.Engine.Graphics
 
         public EffectUniform this[int location]
         {
-            [ContractVerification(false)]
             get
             {
                 Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
 
                 this.Initialize();
-                IEnumerable<EffectUniform> values = this.Uniforms.Values;
-                if (values == null)
-                {
-                    throw new NullReferenceException(
-                        "The collection containing the values of the dictionary containing the uniforms was null. This error is definetely NOT " +
-                        "supposed to happen (unlike other errors that might happen and should be expected), please contact the developers " +
-                        "at http://lightclaw.com/."
-                    );
-                }
-                return values.FilterNull().First(uniform => uniform.Location == location);
+                return this.Uniforms.Values.EnsureNonNull().FilterNull().First(uniform => uniform.Location == location);
             }
         }
 
-        public EffectStage(ShaderProgram program)
-            : this(program, UniformBufferPool.Default)
+        public EffectStage(EffectPass pass, ShaderProgram program)
+            : this(pass, program, UniformBufferPool.Default)
         {
+            Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(program != null);
         }
 
-        public EffectStage(ShaderProgram program, UniformBufferPool uboPool)
+        public EffectStage(EffectPass pass, ShaderProgram program, UniformBufferPool uboPool)
         {
+            Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentNullException>(uboPool != null);
 
+            this.Pass = pass;
             this.ShaderProgram = program;
             this.UboPool = uboPool;
         }
@@ -160,17 +175,28 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        throw new NotImplementedException();
+                        throw new NotImplementedException("Texture unit assignment is not implemented.");
 
                         int uniformCount = 0;
                         GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out uniformCount);
+                        ImmutableDictionary<string, EffectUniform>.Builder builder = this.Uniforms.ToBuilder();
+                        int currentTextureUnit = 0;
+
                         for (int i = 0; i < uniformCount; i++)
                         {
                             int nameLength;
                             ActiveUniformType uniformType;
                             string uniformName = GL.GetActiveUniform(this.ShaderProgram, i, out nameLength, out uniformType);
+
+                            builder.Add(
+                                uniformName, 
+                                uniformType.IsSamplerUniform() ? 
+                                    (EffectUniform)new SamplerEffectUniform(this, uniformName, currentTextureUnit++) :
+                                    (EffectUniform)new ValueEffectUniform(this, this.UboPool, uniformName)
+                            );
                         }
 
+                        this.Uniforms = builder.ToImmutable();
                         this.IsInitialized = true;
                     }
                 }
@@ -195,7 +221,7 @@ namespace LightClaw.Engine.Graphics
             return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
         }
 
-        private ImmutableDictionary<string, T> FilterUniforms<T>(ImmutableDictionary<string, EffectUniform> uniforms)
+        private ImmutableDictionary<string, T> GetUniformsOfType<T>(ImmutableDictionary<string, EffectUniform> uniforms)
             where T : EffectUniform
         {
             return (from kvp in this.Uniforms
@@ -207,6 +233,7 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            Contract.Invariant(this._Pass != null);
             Contract.Invariant(this._ShaderProgram != null);
             Contract.Invariant(this._UboPool != null);
             Contract.Invariant(this._Uniforms != null);
@@ -215,13 +242,6 @@ namespace LightClaw.Engine.Graphics
         public static implicit operator ShaderProgram(EffectStage stage)
         {
             return (stage != null) ? stage.ShaderProgram : null;
-        }
-
-        public static explicit operator EffectStage(ShaderProgram program)
-        {
-            Contract.Requires<ArgumentNullException>(program != null);
-
-            return new EffectStage(program);
         }
     }
 }

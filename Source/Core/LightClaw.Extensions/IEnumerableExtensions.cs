@@ -25,6 +25,7 @@ namespace LightClaw.Extensions
         /// <param name="source">Source sequence.</param>
         /// <param name="selector">Projection for determining "distinctness".</param>
         /// <returns>A sequence consisting of distinct elements from the source sequence, comparing them by the specified key projection.</returns>
+        [Pure]
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector)
         {
             Contract.Requires<ArgumentNullException>(source != null);
@@ -50,6 +51,7 @@ namespace LightClaw.Extensions
         /// If null, the default equality comparer for <c>TSource</c> is used.
         /// </param>
         /// <returns>A sequence consisting of distinct elements from the source sequence, comparing them by the specified key projection.</returns>
+        [Pure]
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer)
         {
             Contract.Requires<ArgumentNullException>(source != null);
@@ -88,6 +90,7 @@ namespace LightClaw.Extensions
         /// <typeparam name="T">The <see cref="Type"/> of values inside the <paramref name="source"/>.</typeparam>
         /// <param name="source">The source.</param>
         /// <returns><paramref name="source"/> or an empty enumerable if <paramref name="source"/> was null.</returns>
+        [Pure]
         public static IEnumerable<T> EnsureNonNull<T>(this IEnumerable<T> source)
         {
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
@@ -196,6 +199,7 @@ namespace LightClaw.Extensions
         /// <param name="subset">The subset.</param>
         /// <param name="superset">The superset.</param>
         /// <returns><c>true</c> if <paramref name="subset"/> is a subset of <paramref name="superset"/>.</returns>
+        [Pure]
         public static bool IsSubsetOf<T>(IEnumerable<T> subset, IEnumerable<T> superset)
         {
             Contract.Requires<ArgumentNullException>(subset != null);

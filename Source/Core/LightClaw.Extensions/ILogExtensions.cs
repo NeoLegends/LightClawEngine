@@ -26,7 +26,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsDebugEnabled)
             {
                 log.Debug(message());
             }
@@ -46,7 +46,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsDebugEnabled)
             {
                 log.Debug(message(), ex);
             }
@@ -104,7 +104,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsWarnEnabled)
             {
                 log.Warn(message());
             }
@@ -124,7 +124,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsWarnEnabled)
             {
                 log.Warn(message(), ex);
             }
@@ -143,7 +143,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsErrorEnabled)
             {
                 log.Error(message());
             }
@@ -163,7 +163,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsErrorEnabled)
             {
                 log.Error(message(), ex);
             }
@@ -182,7 +182,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsFatalEnabled)
             {
                 log.Fatal(message());
             }
@@ -202,7 +202,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
+            if (log.IsFatalEnabled)
             {
                 log.Fatal(message(), ex);
             }

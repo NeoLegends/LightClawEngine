@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
@@ -13,21 +14,7 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object initializationLock = new object();
 
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
-
-        private int _Length;
+        private int _Length = 0;
 
         public int Length
         {
@@ -38,6 +25,20 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 this.SetProperty(ref _Length, value);
+            }
+        }
+
+        private Type _ValueType;
+
+        public Type ValueType
+        {
+            get
+            {
+                return _ValueType;
+            }
+            private set
+            {
+                this.SetProperty(ref _ValueType, value);
             }
         }
 
@@ -82,28 +83,40 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public ValueEffectUniform(EffectStage stage, UniformBufferPool pool, string name, int length)
+        public ValueEffectUniform(EffectStage stage, UniformBufferPool pool, string name)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
             Contract.Requires<ArgumentNullException>(pool != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires<ArgumentOutOfRangeException>(length > 0);
 
-            this.Length = length;
             this.UboPool = pool;
         }
 
-        public void Initialize()
+        public void Initialize<T>()
+            where T : struct
         {
-            if (!this.IsInitialized)
+            this.Initialize<T>(1);
+        }
+
+        public void Initialize<T>(int count)
+            where T : struct
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
+
+            int allocationSize = Marshal.SizeOf(typeof(T)) * count;
+            if (this.Length != allocationSize)
             {
                 lock (this.initializationLock)
                 {
-                    if (!this.IsInitialized)
+                    if (this.Length != allocationSize)
                     {
-                        throw new NotImplementedException();
-                        this.Ubo = this.UboPool.GetBuffer(this.Length, GetStage(this.Stage.ShaderProgram.Type), this.Stage);
+                        this.Length = allocationSize;
+                        this.Ubo = this.UboPool.GetBuffer(
+                            allocationSize, 
+                            GetStage(this.Stage.ShaderProgram.Type), 
+                            this.Stage.Pass
+                        );
                     }
                 }
             }
@@ -130,7 +143,7 @@ namespace LightClaw.Engine.Graphics
         public bool TrySet<T>(T value)
             where T : struct
         {
-            this.Initialize();
+            this.Initialize<T>();
             try
             {
                 RangedBuffer buffer = this.Ubo;
@@ -148,16 +161,16 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public bool TrySet<T>(T[] value)
+        public bool TrySet<T>(T[] values)
             where T : struct
         {
-            this.Initialize();
+            this.Initialize<T>(values.Length);
             try
             {
                 RangedBuffer buffer = this.Ubo;
                 if (buffer != null)
                 {
-                    buffer.Set(value);
+                    buffer.Set(values);
                     return true;
                 }
                 return false;
