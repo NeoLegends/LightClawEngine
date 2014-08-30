@@ -11,7 +11,7 @@ using ProtoBuf;
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
-    /// Represents a range inside a UBO.
+    /// Represents a range inside a <see cref="IBuffer"/>.
     /// </summary>
     [DataContract, ProtoContract]
     public struct BufferRange : IEquatable<BufferRange>

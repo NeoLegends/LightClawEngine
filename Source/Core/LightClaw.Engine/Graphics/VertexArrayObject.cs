@@ -21,10 +21,14 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<IBuffer>() != null);
+
                 return _IndexBuffer;
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _IndexBuffer, value);
             }
         }
@@ -57,10 +61,14 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
+                Contract.Ensures(Contract.Result<ImmutableList<BufferDescription>>() != null);
+
                 return _VertexBuffers;
             }
             private set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _VertexBuffers, value);
             }
         }
@@ -118,6 +126,7 @@ namespace LightClaw.Engine.Graphics
                             this.IndexBuffer.Bind();
                         }
                         this.IndexBuffer.Unbind();
+
                         this.IsInitialized = true;
                     }
                 }
@@ -140,8 +149,8 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this.IndexBuffer != null);
-            Contract.Invariant(this.VertexBuffers != null);
+            Contract.Invariant(this._IndexBuffer != null);
+            Contract.Invariant(this._VertexBuffers != null);
         }
     }
 }

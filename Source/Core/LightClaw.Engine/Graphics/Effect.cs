@@ -11,7 +11,7 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class Effect : GLObject, IEnumerable<EffectPass>, IUpdateable, ILateUpdateable
+    public abstract class Effect : DisposableEntity, IEnumerable<EffectPass>, IUpdateable, ILateUpdateable
     {
         public event EventHandler<ParameterEventArgs> Updating;
 
@@ -20,6 +20,8 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
+
+        protected readonly bool OwnsPasses;
 
         private ImmutableList<EffectPass> _Passes = ImmutableList<EffectPass>.Empty;
 
@@ -40,9 +42,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Effect() { }
+        protected Effect(bool ownsPasses = true) 
+        {
+            this.OwnsPasses = ownsPasses;
+        }
 
-        protected Effect(IEnumerable<EffectPass> techniques)
+        protected Effect(IEnumerable<EffectPass> techniques, bool ownsPasses = true)
+            : this(ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(techniques != null);
 
@@ -98,6 +104,21 @@ namespace LightClaw.Engine.Graphics
             else
             {
                 return false;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                if (this.OwnsPasses)
+                {
+                    foreach (EffectPass pass in this.Passes)
+                    {
+                        pass.Dispose();
+                    }
+                }
+                base.Dispose(disposing);
             }
         }
 

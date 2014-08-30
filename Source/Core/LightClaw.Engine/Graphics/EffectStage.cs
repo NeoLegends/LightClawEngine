@@ -11,9 +11,30 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectStage : Entity, IInitializable
+    public class EffectStage : DisposableEntity, IInitializable
     {
         private readonly object initializationLock = new object();
+
+        private readonly bool ownsShaderProgram;
+
+        private ImmutableDictionary<string, EffectAttribute> _Attributes = ImmutableDictionary<string, EffectAttribute>.Empty;
+
+        public ImmutableDictionary<string, EffectAttribute> Attributes
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, EffectAttribute>>() != null);
+
+                return _Attributes;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Values.All(attribute => attribute != null));
+
+                this.SetProperty(ref _Attributes, value);
+            }
+        }
 
         private bool _IsInitialized = false;
 
@@ -65,24 +86,6 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private UniformBufferPool _UboPool;
-
-        public UniformBufferPool UboPool
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
-
-                return _UboPool;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _UboPool, value);
-            }
-        }
-
         private ImmutableDictionary<string, EffectUniform> _Uniforms = ImmutableDictionary<string, EffectUniform>.Empty;
 
         public ImmutableDictionary<string, EffectUniform> Uniforms
@@ -96,6 +99,7 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.Values.All(uniform => uniform != null));
 
                 this._Samplers = null;
                 this._Values = null;
@@ -127,6 +131,22 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        private VertexArrayObject _VertexData;
+
+        public VertexArrayObject VertexData
+        {
+            get
+            {
+                return _VertexData;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _VertexData, value);
+            }
+        }
+
         public EffectUniform this[string uniformName]
         {
             get
@@ -149,22 +169,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectStage(EffectPass pass, ShaderProgram program)
-            : this(pass, program, UniformBufferPool.Default)
+        public EffectStage(EffectPass pass, ShaderProgram program, bool ownsProgram = false)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(program != null);
-        }
 
-        public EffectStage(EffectPass pass, ShaderProgram program, UniformBufferPool uboPool)
-        {
-            Contract.Requires<ArgumentNullException>(pass != null);
-            Contract.Requires<ArgumentNullException>(program != null);
-            Contract.Requires<ArgumentNullException>(uboPool != null);
-
+            this.ownsShaderProgram = ownsProgram;
             this.Pass = pass;
             this.ShaderProgram = program;
-            this.UboPool = uboPool;
         }
 
         public void Initialize()
@@ -175,28 +187,49 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        throw new NotImplementedException("Texture unit assignment is not implemented.");
-
-                        int uniformCount = 0;
-                        GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out uniformCount);
-                        ImmutableDictionary<string, EffectUniform>.Builder builder = this.Uniforms.ToBuilder();
-                        int currentTextureUnit = 0;
-
-                        for (int i = 0; i < uniformCount; i++)
+                        // Attributes
+                        if (this.ShaderProgram.Type == ShaderType.VertexShader)
                         {
-                            int nameLength;
-                            ActiveUniformType uniformType;
-                            string uniformName = GL.GetActiveUniform(this.ShaderProgram, i, out nameLength, out uniformType);
+                            int activeAttributeCount = 0;
+                            GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveAttributes, out activeAttributeCount);
 
-                            builder.Add(
-                                uniformName, 
-                                uniformType.IsSamplerUniform() ? 
-                                    (EffectUniform)new SamplerEffectUniform(this, uniformName, currentTextureUnit++) :
-                                    (EffectUniform)new ValueEffectUniform(this, this.UboPool, uniformName)
-                            );
+                            this.Attributes = Enumerable.Range(0, activeAttributeCount).Select(i =>
+                            {
+                                int nameLength;
+                                int size;
+                                ActiveAttribType attributeType;
+                                StringBuilder sbName = new StringBuilder(32);
+                                GL.GetActiveAttrib(this.ShaderProgram, i, int.MaxValue, out nameLength, out size, out attributeType, sbName);
+                                string attributeName = sbName.ToString();
+
+                                return new KeyValuePair<string, EffectAttribute>(
+                                    attributeName,
+                                    new EffectAttribute(this, attributeName, size)
+                                );
+                            }).ToImmutableDictionary();
+
+                            throw new NotImplementedException("Vertex array objects still need to be generated after the attributes have been filled out.");
                         }
 
-                        this.Uniforms = builder.ToImmutable();
+                        {   // Uniforms
+                            int activeUniformCount = 0;
+                            GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out activeUniformCount);
+
+                            this.Uniforms = Enumerable.Range(0, activeUniformCount).Select(i =>
+                            {
+                                int nameLength;
+                                ActiveUniformType uniformType;
+                                string uniformName = GL.GetActiveUniform(this.ShaderProgram, i, out nameLength, out uniformType);
+
+                                return new KeyValuePair<string, EffectUniform>(
+                                    uniformName,
+                                    uniformType.IsSamplerUniform() ?
+                                        (EffectUniform)new SamplerEffectUniform(this, uniformName, this.Pass.TextureUnitManager.GetTextureUnit()) :
+                                        (EffectUniform)new ValueEffectUniform(this, uniformName)
+                                );
+                            }).ToImmutableDictionary();
+                        }
+
                         this.IsInitialized = true;
                     }
                 }
@@ -221,6 +254,23 @@ namespace LightClaw.Engine.Graphics
             return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                foreach (EffectUniform uniform in this.Uniforms.Values.FilterNull())
+                {
+                    uniform.Dispose();
+                }
+                if (this.ownsShaderProgram)
+                {
+                    this.ShaderProgram.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
+        }
+
         private ImmutableDictionary<string, T> GetUniformsOfType<T>(ImmutableDictionary<string, EffectUniform> uniforms)
             where T : EffectUniform
         {
@@ -235,7 +285,6 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Invariant(this._Pass != null);
             Contract.Invariant(this._ShaderProgram != null);
-            Contract.Invariant(this._UboPool != null);
             Contract.Invariant(this._Uniforms != null);
         }
 

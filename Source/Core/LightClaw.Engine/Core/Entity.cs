@@ -22,15 +22,15 @@ namespace LightClaw.Engine.Core
     public abstract class Entity : INameable, INotifyPropertyChanged
     {
         /// <summary>
+        /// Notifies about changes in a specified property.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
         /// An instance of <see cref="ILog"/> used to track application events.
         /// </summary>
         [IgnoreDataMember]
         protected ILog Logger { get; set; }
-
-        /// <summary>
-        /// Notifies about changes in a specified property.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Backing field.

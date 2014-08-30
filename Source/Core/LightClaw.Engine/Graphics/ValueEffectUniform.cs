@@ -10,9 +10,23 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class ValueEffectUniform : EffectUniform
+    public class ValueEffectUniform : EffectUniform, IBindable
     {
         private readonly object initializationLock = new object();
+
+        private bool _IsInitialized;
+
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
 
         private int _Length = 0;
 
@@ -24,21 +38,9 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
+                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
+
                 this.SetProperty(ref _Length, value);
-            }
-        }
-
-        private Type _ValueType;
-
-        public Type ValueType
-        {
-            get
-            {
-                return _ValueType;
-            }
-            private set
-            {
-                this.SetProperty(ref _ValueType, value);
             }
         }
 
@@ -65,32 +67,20 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private UniformBufferPool _UboPool;
-
-        public UniformBufferPool UboPool
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
-
-                return _UboPool;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _UboPool, value);
-            }
-        }
-
-        public ValueEffectUniform(EffectStage stage, UniformBufferPool pool, string name)
+        public ValueEffectUniform(EffectStage stage, string name)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
-            Contract.Requires<ArgumentNullException>(pool != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+        }
 
-            this.UboPool = pool;
+        public void Bind()
+        {
+            RangedBuffer buffer = this.Ubo;
+            if (buffer != null)
+            {
+                buffer.Bind();
+            }
         }
 
         public void Initialize<T>()
@@ -105,18 +95,19 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentOutOfRangeException>(count > 0);
 
             int allocationSize = Marshal.SizeOf(typeof(T)) * count;
-            if (this.Length != allocationSize)
+            if (!this.IsInitialized || this.Length != allocationSize)
             {
                 lock (this.initializationLock)
                 {
                     if (this.Length != allocationSize)
                     {
                         this.Length = allocationSize;
-                        this.Ubo = this.UboPool.GetBuffer(
-                            allocationSize, 
-                            GetStage(this.Stage.ShaderProgram.Type), 
-                            this.Stage.Pass
-                        );
+                        this.Ubo = this.Stage.Pass.UniformBufferManager.GetBuffer(allocationSize);
+                    }
+                    if (!this.IsInitialized)
+                    {
+                        this.Location = GL.GetUniformBlockIndex(this.Stage.ShaderProgram, this.Name);
+                        GL.UniformBlockBinding(this.Stage.ShaderProgram, this.Location, this.Ubo.Index);
                     }
                 }
             }
@@ -131,10 +122,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public void Set<T>(T[] value)
+        public void Set<T>(T[] values)
             where T : struct
         {
-            if (!this.TrySet(value))
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentException>(values.Length > 0);
+
+            if (!this.TrySet(values))
             {
                 throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
             }
@@ -164,6 +158,9 @@ namespace LightClaw.Engine.Graphics
         public bool TrySet<T>(T[] values)
             where T : struct
         {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentException>(values.Length > 0);
+
             this.Initialize<T>(values.Length);
             try
             {
@@ -182,24 +179,22 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
+        public void Unbind()
         {
-            Contract.Invariant(this._UboPool != null);
+            RangedBuffer buffer = this.Ubo;
+            if (buffer != null)
+            {
+                buffer.Unbind();
+            }
         }
 
-        private static UniformBufferPool.Stage GetStage(ShaderType type)
+        protected override void Dispose(bool disposing)
         {
-            switch (type)
+            if (!this.IsDisposed)
             {
-                case ShaderType.FragmentShader:
-                    return UniformBufferPool.Stage.Fragment;
-                case ShaderType.GeometryShader:
-                    return UniformBufferPool.Stage.Geometry;
-                case ShaderType.VertexShader:
-                    return UniformBufferPool.Stage.Vertex;
-                default:
-                    throw new NotSupportedException("Only fragment, geometry and vertex shader are supported.");
+                this.Ubo.Dispose();
+
+                base.Dispose(disposing);
             }
         }
     }

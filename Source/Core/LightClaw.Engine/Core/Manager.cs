@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Core
     /// Reference implementation of <see cref="IControllable"/> and <see cref="IDrawable"/>.
     /// </summary>
     [DataContract(IsReference = true)]
-    public abstract class Manager : Entity, IDrawable, IControllable, INameable
+    public abstract class Manager : DisposableEntity, IDrawable, IControllable, INameable
     {
         /// <summary>
         /// Object used to synchronize access to the state-mutating methods.
@@ -155,14 +155,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="name">The instance's name.</param>
         protected Manager(string name) : base(name) { }
-
-        /// <summary>
-        /// Finalizes the <see cref="Manager"/> releasing all allocated resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~Manager()
-        {
-            this.Dispose(false);
-        }
 
         /// <summary>
         /// Enables the instance.
@@ -309,14 +301,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Disposes the instace freeing all managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        /// <summary>
         /// Converts the <see cref="Manager"/> into a <see cref="String"/>.
         /// </summary>
         /// <returns>The <see cref="Manager"/> as <see cref="String"/>.</returns>
@@ -329,11 +313,15 @@ namespace LightClaw.Engine.Core
         /// Disposes the instance releasing all unmanaged and optionally managed resources.
         /// </summary>
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            this.IsEnabled = false;
-            this.IsLoaded = false;
-            GC.SuppressFinalize(this);
+            if (!this.IsDisposed)
+            {
+                this.IsEnabled = false;
+                this.IsLoaded = false;
+
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>

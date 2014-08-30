@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics
     /// Represents the base class for all OpenGL-wrapper-objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : Entity, IGLObject
+    public abstract class GLObject : DisposableEntity, IGLObject
     {
         /// <summary>
         /// A lock used to restrict access to the supported extensions-method.
@@ -48,27 +48,6 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private bool _IsDisposed;
-
-        /// <summary>
-        /// Indicates whether the instance has already been disposed or not.
-        /// </summary>
-        [IgnoreDataMember]
-        public bool IsDisposed
-        {
-            get
-            {
-                return _IsDisposed;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsDisposed, value);
-            }
-        }
-
-        /// <summary>
         /// Initializes a new <see cref="GLObject"/>.
         /// </summary>
         protected GLObject() { }
@@ -84,33 +63,20 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Finalizes the object and frees all unmanaged resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~GLObject()
-	    {
-            this.Dispose(false);
-	    }
-
-        /// <summary>
-        /// Disposes the <see cref="GLObject"/> freeing all unmanaged and managed resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        /// <summary>
         /// Protected dispose-callback freeing all unmanaged and optionally managed resources as well.
         /// </summary>
         /// <param name="disposing">Indicates whether to free managed resources as well.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!this.IsDisposed)
             {
-                this.Handle = 0;
+                if (disposing)
+                {
+                    this.Handle = 0;
+                }
+
+                base.Dispose(disposing);
             }
-            this.IsDisposed = true;
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

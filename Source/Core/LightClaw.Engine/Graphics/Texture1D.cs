@@ -66,6 +66,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        [Pure]
         public static bool IsTexture1DTarget(TextureTarget target)
         {
             Contract.Ensures(!Contract.Result<bool>() || Enum.IsDefined(typeof(TextureTarget1d), target));

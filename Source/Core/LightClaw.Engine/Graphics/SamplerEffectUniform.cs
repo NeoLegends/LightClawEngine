@@ -9,21 +9,49 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class SamplerEffectUniform : EffectUniform
+    public class SamplerEffectUniform : EffectUniform, IBindable
     {
-        private readonly object setLock = new object();
+        private Sampler _Sampler;
 
-        private int _TextureUnit = 0;
-
-        public int TextureUnit
+        public Sampler Sampler
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                return _Sampler;
+            }
+            set
+            {
+                this.SetProperty(ref _Sampler, value);
+            }
+        }
+
+        private Texture _Texture;
+
+        public Texture Texture
+        {
+            get
+            {
+                return _Texture;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Texture, value);
+            }
+        }
+
+        private TextureUnit _TextureUnit = 0;
+
+        public TextureUnit TextureUnit
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<TextureUnit>() >= 0);
 
                 return _TextureUnit;
             }
-            set
+            private set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
 
@@ -31,7 +59,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public SamplerEffectUniform(EffectStage stage, string name, int textureUnit)
+        public SamplerEffectUniform(EffectStage stage, string name, TextureUnit textureUnit)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
@@ -41,27 +69,47 @@ namespace LightClaw.Engine.Graphics
             this.TextureUnit = textureUnit;
         }
 
-        public void Set(Texture texture, Sampler sampler)
+        public void Bind()
         {
-            Contract.Requires<ArgumentNullException>(texture != null);
-
-            this.Set(this.TextureUnit, texture, sampler);
-        }
-
-        public void Set(int textureUnit, Texture texture, Sampler sampler)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
-            Contract.Requires<ArgumentNullException>(texture != null);
-
-            lock (this.setLock)
+            Texture texture = this.Texture;
+            if (texture != null)
             {
-                this.TextureUnit = textureUnit;
-                GL.ProgramUniform1(this.Stage.ShaderProgram, this.Location, textureUnit);
-                texture.Bind(textureUnit);
+                GL.ProgramUniform1(this.Stage.ShaderProgram, this.Location, this.TextureUnit);
+                texture.Bind();
+
+                Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
-                    sampler.Bind(textureUnit);
+                    sampler.Bind();
                 }
+            }
+            else
+            {
+                Logger.Warn(() => "Texture to bind to the sampler in the shader was null and thus will not be bound. This is presumably unwanted behaviour!");
+            }
+        }
+
+        public void Unbind()
+        {
+            Texture texture = this.Texture;
+            if (texture != null)
+            {
+                texture.Unbind();
+            }
+            Sampler sampler = this.Sampler;
+            if (sampler != null)
+            {
+                sampler.Unbind();
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                this.TextureUnit.Dispose();
+
+                base.Dispose(disposing);
             }
         }
 

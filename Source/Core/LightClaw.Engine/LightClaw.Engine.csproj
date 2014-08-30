@@ -31,6 +31,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>18a80fc3</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -101,6 +102,7 @@
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -171,6 +173,7 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
+    <Compile Include="Core\DisposableEntity.cs" />
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
@@ -210,6 +213,7 @@
     <Compile Include="Graphics\CompilationFailedException.cs" />
     <Compile Include="Graphics\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
+    <Compile Include="Graphics\EffectAttribute.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
     <Compile Include="Graphics\EffectStage.cs" />
@@ -217,17 +221,17 @@
     <Compile Include="Graphics\IBuffer.cs" />
     <Compile Include="Graphics\IGLObject.cs" />
     <Compile Include="Core\IInitializable.cs" />
-    <Compile Include="Graphics\OutOfUniformBufferSpaceException.cs" />
     <Compile Include="Graphics\RangedBuffer.cs" />
-    <Compile Include="Graphics\RangedBufferDisposedEventArgs.cs" />
     <Compile Include="Graphics\Sampler.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\SamplerParameterDescription.cs" />
     <Compile Include="Graphics\ShaderPipeline.cs" />
     <Compile Include="Graphics\ShaderProgram.cs" />
     <Compile Include="Graphics\TextureDescription.cs" />
-    <Compile Include="Graphics\UniformBufferPool.cs" />
     <Compile Include="Graphics\BufferRange.cs" />
+    <Compile Include="Graphics\TextureUnit.cs" />
+    <Compile Include="Graphics\TextureUnitManager.cs" />
+    <Compile Include="Graphics\UniformBufferManager.cs" />
     <Compile Include="Graphics\ValueEffectUniform.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
@@ -254,7 +258,6 @@
     <Compile Include="Graphics\Texture3D.cs" />
     <Compile Include="Graphics\Texture3DBase.cs" />
     <Compile Include="Graphics\Texture2DBase.cs" />
-    <Compile Include="Graphics\TextureGLBinding.cs" />
     <Compile Include="Graphics\VertexArrayObject.cs" />
     <Compile Include="Graphics\Color.cs" />
     <Compile Include="Graphics\GLObject.cs" />

@@ -85,9 +85,10 @@ namespace LightClaw.Engine.Graphics
                         GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
                         if (result == 0)
                         {
-                            string message = "{0} creation failed. Error code: {1}; Info Log: {2}.".FormatWith(typeof(ShaderProgram).Name, result, GL.GetProgramInfoLog(this));
-                            Logger.Warn(() => message);
-                            throw new CompilationFailedException(message);
+                            string infoLog = GL.GetProgramInfoLog(this);
+                            string message = "{0} creation failed. Error code: {1}; Info Log: {2}.".FormatWith(typeof(ShaderProgram).Name, result, infoLog);
+                            Logger.Warn(message); // Message already created, so use direct logging call instead of lambda
+                            throw new CompilationFailedException(message, infoLog, result);
                         }
 
                         this.IsInitialized = true;

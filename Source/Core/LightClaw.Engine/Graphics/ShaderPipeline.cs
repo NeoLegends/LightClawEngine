@@ -55,8 +55,9 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(programs != null);
             Contract.Requires<ArgumentException>(programs.Any(program => program.Type == ShaderType.FragmentShader));
             Contract.Requires<ArgumentException>(programs.Any(program => program.Type == ShaderType.VertexShader));
+            Contract.Requires<ArgumentException>(!programs.ContainsDuplicates(program => program.Type));
 
-            this.Programs = programs.FilterNull().DistinctBy(program => program.Type).ToImmutableList();
+            this.Programs = programs.FilterNull().ToImmutableList();
         }
 
         public void Bind()
@@ -90,12 +91,30 @@ namespace LightClaw.Engine.Graphics
             GL.BindProgramPipeline(0);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                try
+                {
+                    GL.UseProgramStages(this, ProgramStageMask.AllShaderBits, 0);
+                    GL.DeleteProgramPipeline(this);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(() => "An exception of type '{0}' happened while disposing the {1}'s underlying shader program.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ShaderPipeline).Name));
+                }
+                base.Dispose(disposing);
+            }
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Programs != null);
         }
 
+        [ContractVerification(false)] // Spills out some obscure warning about "shaderType != 36313" always leading to the same result
         private static ProgramStageMask GetProgramStageMask(ShaderType shaderType)
         {
             switch (shaderType)

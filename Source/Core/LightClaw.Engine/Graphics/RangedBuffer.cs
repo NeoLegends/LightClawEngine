@@ -13,8 +13,6 @@ namespace LightClaw.Engine.Graphics
 {
     public class RangedBuffer : GLObject, IBuffer
     {
-        public event EventHandler<RangedBufferDisposedEventArgs> Disposed;
-
         private IBuffer _BaseBuffer;
 
         public IBuffer BaseBuffer
@@ -59,7 +57,7 @@ namespace LightClaw.Engine.Graphics
 
                 return _Index;
             }
-            set
+            private set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
 
@@ -117,14 +115,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public RangedBuffer(IBuffer baseBuffer, BufferRange range, int index, BufferRangeTarget rangeTarget)
-            : this(baseBuffer, range, index, rangeTarget, false)
-        {
-            Contract.Requires<ArgumentNullException>(baseBuffer != null);
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-        }
-
-        public RangedBuffer(IBuffer baseBuffer, BufferRange range, int index, BufferRangeTarget rangeTarget, bool ownsBaseBuffer)
+        public RangedBuffer(IBuffer baseBuffer, BufferRange range, int index, BufferRangeTarget rangeTarget, bool ownsBaseBuffer = false)
             : base(baseBuffer.Handle)
         {
             Contract.Requires<ArgumentNullException>(baseBuffer != null);
@@ -139,26 +130,12 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
-            this.Bind(this.Index);
-        }
-
-        public void Bind(int index)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
             GL.BindBufferRange(this.RangeTarget, this.Index, this.BaseBuffer.Handle, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
         public void Unbind()
         {
-            this.Unbind(this.Index);
-        }
-
-        public void Unbind(int index)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            GL.BindBufferBase(this.RangeTarget, index, this.BaseBuffer.Handle);
+            GL.BindBufferBase(this.RangeTarget, this.Index, this.BaseBuffer.Handle);
         }
 
         public void Set<T>(T data)
@@ -245,25 +222,35 @@ namespace LightClaw.Engine.Graphics
             this.BaseBuffer.SetRange(data, this.Range.Start + offset, sizeInBytes);
         }
 
+        public RangedBuffer Zeroed()
+        {
+            byte[] zeros = new byte[this.Range.Length];
+            zeros.Initialize();
+            this.Set(zeros);
+
+            return this;
+        }
+
         protected override void Dispose(bool disposing)
         {
-            if (this.OwnsBaseBuffer)
+            if (!this.IsDisposed)
             {
-                IBuffer buffer = this.BaseBuffer;
-                if (buffer != null)
+                if (this.OwnsBaseBuffer)
                 {
-                    buffer.Dispose();
+                    IBuffer buffer = this.BaseBuffer;
+                    if (buffer != null)
+                    {
+                        buffer.Dispose();
+                    }
                 }
+                
+                base.Dispose(disposing);
             }
-            if (disposing)
-            {
-                EventHandler<RangedBufferDisposedEventArgs> handler = this.Disposed;
-                if (handler != null)
-                {
-                    handler(this, new RangedBufferDisposedEventArgs(this.Range, this.RangeTarget));
-                }
-            }
-            base.Dispose(disposing);
+        }
+
+        protected override object GetDisposedArgument()
+        {
+            return this.Range;
         }
 
         [ContractInvariantMethod]

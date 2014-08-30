@@ -77,7 +77,7 @@ namespace LightClaw.Extensions
         /// <param name="selector">A transformation function that is applied to the <paramref name="collection"/> before it is checked for duplicates.</param>
         /// <returns></returns>
         [Pure]
-        public static bool Duplicates<T1, T2>(this IEnumerable<T1> collection, Func<T1, T2> selector)
+        public static bool ContainsDuplicates<T1, T2>(this IEnumerable<T1> collection, Func<T1, T2> selector)
         {
             Contract.Requires<ArgumentNullException>(selector != null);
 

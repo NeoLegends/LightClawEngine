@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class EffectUniform : Entity
+    public abstract class EffectUniform : DisposableEntity
     {
         private int _Location;
 

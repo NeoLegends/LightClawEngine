@@ -43,17 +43,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _TextureUnit;
+        private TextureUnit _TextureUnit;
 
-        public int TextureUnit
+        public TextureUnit TextureUnit
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Contract.Ensures(Contract.Result<TextureUnit>() >= 0);
 
                 return _TextureUnit;
             }
-            set
+            private set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
 
@@ -61,7 +61,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public Sampler(int textureUnit, IEnumerable<SamplerParameterDescription> parameters)
+        public Sampler(TextureUnit textureUnit, IEnumerable<SamplerParameterDescription> parameters)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(parameters != null);
@@ -92,42 +92,29 @@ namespace LightClaw.Engine.Graphics
 
         public void Bind()
         {
-            this.Bind(this.TextureUnit);
-        }
-
-        public void Bind(int textureUnit)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
-
             this.Initialize();
-            this.TextureUnit = textureUnit;
-            GL.BindSampler(textureUnit, this);
+            GL.BindSampler(this.TextureUnit, this);
         }
 
         public void Unbind()
         {
-            this.Unbind(this.TextureUnit);
-        }
-
-        public void Unbind(int textureUnit)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
-
-            ThreadF.AssertMainThread();
-            GL.BindSampler(textureUnit, 0);
+            GL.BindSampler(this.TextureUnit, 0);
         }
 
         protected override void Dispose(bool disposing)
         {
-            try
+            if (!this.IsDisposed)
             {
-                GL.DeleteSampler(this);
+                try
+                {
+                    GL.DeleteSampler(this);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
+                }
+                base.Dispose(disposing);
             }
-            catch (Exception ex)
-            {
-                Logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
-            }
-            base.Dispose(disposing);
         }
 
         [ContractInvariantMethod]

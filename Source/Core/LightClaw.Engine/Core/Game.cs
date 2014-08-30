@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a game.
     /// </summary>
-    public class Game : Entity, IGame
+    public class Game : DisposableEntity, IGame
     {
         /// <summary>
         /// Backing field.
@@ -156,14 +156,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Finalizes the instance before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~Game()
-        {
-            this.Dispose(false);
-        }
-
-        /// <summary>
         /// Runs the game.
         /// </summary>
         public void Run()
@@ -181,21 +173,15 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Disposes the <see cref="Game"/> freeing all managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        /// <summary>
         /// Disposes the <see cref="Game"/> and optionally releases managed resources as well.
         /// </summary>
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             this.GameWindow.Dispose();
             this.SceneManager.Dispose();
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

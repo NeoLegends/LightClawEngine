@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Graphics
 {
+    [Serializable]
     public class CompilationFailedException : InvalidOperationException
     {
-        public string InfoLog { get; private set; }
-
         public int ErrorCode { get; private set; }
+
+        public string InfoLog { get; private set; }
 
         public CompilationFailedException() { }
 
@@ -33,5 +35,7 @@ namespace LightClaw.Engine.Graphics
         {
             this.ErrorCode = errorCode;
         }
+
+        protected CompilationFailedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

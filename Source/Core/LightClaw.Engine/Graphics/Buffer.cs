@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a data store on GPU memory.
     /// </summary>
-    public class Buffer : GLObject, IBuffer
+    public class Buffer : GLObject, IBuffer, IInitializable
     {
         /// <summary>
         /// Used for restricting access to the name generation process.
@@ -118,6 +118,15 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public void Bind()
         {
+            this.Initialize();
+            GL.BindBuffer(this.Target, this);
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="Buffer"/>.
+        /// </summary>
+        public void Initialize()
+        {
             if (!this.IsInitialized) // Buffer name will be generated lazily in order to allow for multithreaded content loading
             {
                 lock (this.nameGenerationLock)
@@ -129,7 +138,6 @@ namespace LightClaw.Engine.Graphics
                     }
                 }
             }
-            GL.BindBuffer(this.Target, this);
         }
 
         /// <summary>
@@ -225,6 +233,7 @@ namespace LightClaw.Engine.Graphics
         /// <param name="sizeInBytes">The size of the data in bytes.</param>
         public virtual void Set(IntPtr data, int sizeInBytes)
         {
+            this.Initialize();
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
@@ -240,7 +249,8 @@ namespace LightClaw.Engine.Graphics
         /// <param name="offset">The offset in bytes to start applying the new data at.</param>
         public virtual void SetRange(IntPtr data, int offset, int sizeInBytes)
         {
-            using (GLBinding bufferBindg = new GLBinding(this))
+            this.Initialize();
+            using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
                 this.CalculateCount((int)sizeInBytes, (int)offset);

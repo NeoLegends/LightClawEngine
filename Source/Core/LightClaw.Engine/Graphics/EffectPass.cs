@@ -13,9 +13,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectPass : Entity, IBindable, IInitializable
+    public class EffectPass : DisposableEntity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
+
+        private readonly bool ownsPipeline;
 
         private bool _IsInitialized = false;
 
@@ -94,50 +96,54 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private UniformBufferPool _UboPool;
+        private TextureUnitManager _TextureUnitManager = new TextureUnitManager();
 
-        public UniformBufferPool UboPool
+        public TextureUnitManager TextureUnitManager
         {
             get
             {
-                Contract.Ensures(Contract.Result<UniformBufferPool>() != null);
+                Contract.Ensures(Contract.Result<TextureUnitManager>() != null);
 
-                return _UboPool;
+                return _TextureUnitManager;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
-                this.SetProperty(ref _UboPool, value);
+                this.SetProperty(ref _TextureUnitManager, value);
             }
         }
 
-        public EffectPass(ShaderPipeline pipeline) 
-            : this(pipeline, UniformBufferPool.Default)
-        {
-            Contract.Requires<ArgumentNullException>(pipeline != null);
+        private UniformBufferManager _UniformBufferManager = new UniformBufferManager();
 
-            this.ShaderPipeline = pipeline;
+        public UniformBufferManager UniformBufferManager
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<UniformBufferManager>() != null);
+
+                return _UniformBufferManager;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _UniformBufferManager, value);
+            }
         }
 
-        public EffectPass(ShaderPipeline pipeline, UniformBufferPool uboPool)
+        public EffectPass(ShaderPipeline pipeline, bool ownsPipeline = false) 
         {
             Contract.Requires<ArgumentNullException>(pipeline != null);
-            Contract.Requires<ArgumentNullException>(uboPool != null);
 
+            this.ownsPipeline = ownsPipeline;
             this.ShaderPipeline = pipeline;
-            this.UboPool = uboPool;
         }
 
         public void Bind()
         {
             this.Initialize();
             GL.BindProgramPipeline(this.ShaderPipeline);
-        }
-
-        public void Unbind()
-        {
-            GL.BindProgramPipeline(0);
         }
 
         public void Initialize()
@@ -162,12 +168,39 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public void Unbind()
+        {
+            GL.BindProgramPipeline(0);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                if (ownsPipeline)
+                {
+                    ShaderPipeline pipeline = this.ShaderPipeline;
+                    if (pipeline != null)
+                    {
+                        pipeline.Dispose();
+                    }
+                }
+                foreach (EffectStage stage in this.Stages.FilterNull())
+                {
+                    stage.Dispose();
+                }
+                this.UniformBufferManager.Dispose();
+
+                base.Dispose(disposing);
+            }
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(this._ShaderPipeline != null);
             Contract.Invariant(this._Stages != null);
-            Contract.Invariant(this._UboPool != null);
+            Contract.Invariant(this._TextureUnitManager != null);
         }
 
         public static implicit operator ShaderPipeline(EffectPass pass)

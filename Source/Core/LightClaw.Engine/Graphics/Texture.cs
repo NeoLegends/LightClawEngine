@@ -70,13 +70,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _TextureUnit = 0;
+        private TextureUnit _TextureUnit = 0;
 
-        public int TextureUnit
+        public TextureUnit TextureUnit
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
+                Contract.Ensures(Contract.Result<TextureUnit>() >= 0);
 
                 return _TextureUnit;
             }
@@ -216,7 +216,7 @@ namespace LightClaw.Engine.Graphics
             this.Bind(this.TextureUnit);
         }
 
-        public virtual void Bind(int textureUnit)
+        public virtual void Bind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
@@ -244,7 +244,7 @@ namespace LightClaw.Engine.Graphics
             this.Unbind(this.TextureUnit);
         }
 
-        public void Unbind(int textureUnit)
+        public virtual void Unbind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
