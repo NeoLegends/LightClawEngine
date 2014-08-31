@@ -9,7 +9,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     public class RangedBuffer : GLObject, IBuffer
     {
@@ -138,6 +138,18 @@ namespace LightClaw.Engine.Graphics
             GL.BindBufferBase(this.RangeTarget, this.Index, this.BaseBuffer.Handle);
         }
 
+        public T[] Get<T>()
+            where T : struct
+        {
+            return this.GetRange<T>(0, this.Range.Length);
+        }
+
+        public T[] GetRange<T>(int offset, int count)
+            where T : struct
+        {
+            return this.BaseBuffer.GetRange<T>(this.Range.Start + offset, count);
+        }
+
         public void Set<T>(T data)
             where T : struct
         {
@@ -224,7 +236,7 @@ namespace LightClaw.Engine.Graphics
 
         public RangedBuffer Zeroed()
         {
-            byte[] zeros = new byte[this.Range.Length];
+            byte[] zeros = new byte[Math.Max(this.Range.Length, 0)];
             zeros.Initialize();
             this.Set(zeros);
 

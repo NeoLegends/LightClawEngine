@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,24 @@ namespace LightClaw.Engine.UI
             }
         }
 
-        public Console() { }
+        public Console() : this(true) { }
+
+        public Console(bool registerDefaultCommands)
+        {
+            if (registerDefaultCommands)
+            {
+                foreach (MethodInfo defaultCommand in typeof(DefaultCommands).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                                                                             .FilterNull()
+                                                                             .Where(mInfo => 
+                                                                             {
+                                                                                 ParameterInfo[] pInfo = mInfo.GetParameters();
+                                                                                 return (pInfo.Length == 1) && (pInfo[0].ParameterType == typeof(string[]));
+                                                                             }))
+                {
+                    this.Register((Action<string[]>)defaultCommand.CreateDelegate(typeof(Action<string[]>)));
+                }
+            }
+        }
 
         public void Register(Action<string[]> command)
         {
@@ -106,6 +124,26 @@ namespace LightClaw.Engine.UI
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Commands != null);
+        }
+
+        private static string[] ParseArguments(string commandLine)
+        {
+            Contract.Requires<ArgumentNullException>(commandLine != null);
+
+            char[] paramChars = commandLine.ToCharArray();
+            bool insideQuote = false;
+            for (int index = 0; index < paramChars.Length; index++)
+            {
+                if (paramChars[index] == '"')
+                {
+                    insideQuote = !insideQuote;
+                }
+                if (!insideQuote && paramChars[index] == ' ')
+                {
+                    paramChars[index] = '\n';
+                }
+            }
+            return (new string(paramChars)).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

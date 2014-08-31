@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL4;
+
+using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -13,7 +16,7 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly bool[] allocatedBufferBindings = new bool[GL.GetInteger(GetPName.MaxUniformBufferBindings)];
 
-        private readonly IBuffer buffer = new Buffer(BufferTarget.UniformBuffer, BufferUsageHint.DynamicDraw);
+        private readonly IBuffer buffer = new LCBuffer(BufferTarget.UniformBuffer, BufferUsageHint.DynamicDraw);
 
         public UniformBufferManager() { }
 

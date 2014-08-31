@@ -9,7 +9,7 @@ using LightClaw.Engine.Core;
 using OpenTK.Graphics.OpenGL4;
 using ProtoBuf;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a <see cref="SamplerParameterName"/>-value association.

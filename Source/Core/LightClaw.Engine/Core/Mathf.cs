@@ -596,6 +596,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [Pure]
+        [ContractVerification(false)]
         public static float SmoothStep(float amount)
         {
             return (amount <= 0) ?
@@ -613,6 +614,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [Pure]
+        [ContractVerification(false)]
         public static double SmoothStep(double amount)
         {
             return (amount <= 0) ?
@@ -630,6 +632,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [Pure]
+        [ContractVerification(false)]
         public static float SmootherStep(float amount)
         {
             return (amount <= 0) ?
@@ -647,6 +650,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [Pure]
+        [ContractVerification(false)]
         public static double SmootherStep(double amount)
         {
             return (amount <= 0) ?

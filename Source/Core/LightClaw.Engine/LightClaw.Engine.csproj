@@ -211,28 +211,29 @@
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
-    <Compile Include="Graphics\DataTooLargeException.cs" />
+    <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\EffectAttribute.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
     <Compile Include="Graphics\EffectStage.cs" />
     <Compile Include="Graphics\EnumExtensions.cs" />
-    <Compile Include="Graphics\IBuffer.cs" />
-    <Compile Include="Graphics\IGLObject.cs" />
+    <Compile Include="Graphics\OpenGL\IBuffer.cs" />
+    <Compile Include="Graphics\OpenGL\IGLObject.cs" />
     <Compile Include="Core\IInitializable.cs" />
-    <Compile Include="Graphics\RangedBuffer.cs" />
-    <Compile Include="Graphics\Sampler.cs" />
+    <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
+    <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
-    <Compile Include="Graphics\SamplerParameterDescription.cs" />
-    <Compile Include="Graphics\ShaderPipeline.cs" />
-    <Compile Include="Graphics\ShaderProgram.cs" />
-    <Compile Include="Graphics\TextureDescription.cs" />
-    <Compile Include="Graphics\BufferRange.cs" />
+    <Compile Include="Graphics\OpenGL\SamplerParameterDescription.cs" />
+    <Compile Include="Graphics\OpenGL\ShaderPipeline.cs" />
+    <Compile Include="Graphics\OpenGL\ShaderProgram.cs" />
+    <Compile Include="Graphics\OpenGL\TextureDescription.cs" />
+    <Compile Include="Graphics\OpenGL\BufferRange.cs" />
     <Compile Include="Graphics\TextureUnit.cs" />
     <Compile Include="Graphics\TextureUnitManager.cs" />
     <Compile Include="Graphics\UniformBufferManager.cs" />
     <Compile Include="Graphics\ValueEffectUniform.cs" />
+    <Compile Include="Graphics\VertexDataLayout.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
     <Compile Include="Logging\LoggingEventInfo.cs" />
@@ -246,27 +247,27 @@
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
     <Compile Include="Graphics\GLBinding.cs" />
-    <Compile Include="Graphics\BufferDescription.cs" />
+    <Compile Include="Graphics\OpenGL\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
     <Compile Include="Graphics\Model.cs" />
     <Compile Include="Graphics\ModelPart.cs" />
-    <Compile Include="Graphics\Texture.cs" />
-    <Compile Include="Graphics\Texture1D.cs" />
-    <Compile Include="Graphics\Texture1DArray.cs" />
-    <Compile Include="Graphics\Texture2DArray.cs" />
-    <Compile Include="Graphics\Texture3D.cs" />
-    <Compile Include="Graphics\Texture3DBase.cs" />
-    <Compile Include="Graphics\Texture2DBase.cs" />
-    <Compile Include="Graphics\VertexArrayObject.cs" />
+    <Compile Include="Graphics\OpenGL\Texture.cs" />
+    <Compile Include="Graphics\OpenGL\Texture1D.cs" />
+    <Compile Include="Graphics\OpenGL\Texture1DArray.cs" />
+    <Compile Include="Graphics\OpenGL\Texture2DArray.cs" />
+    <Compile Include="Graphics\OpenGL\Texture3D.cs" />
+    <Compile Include="Graphics\OpenGL\Texture3DBase.cs" />
+    <Compile Include="Graphics\OpenGL\Texture2DBase.cs" />
+    <Compile Include="Graphics\OpenGL\VertexArrayObject.cs" />
     <Compile Include="Graphics\Color.cs" />
-    <Compile Include="Graphics\GLObject.cs" />
+    <Compile Include="Graphics\OpenGL\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
     <Compile Include="Graphics\VertexPositionNormalTexCoord.cs" />
-    <Compile Include="Graphics\Buffer.cs" />
-    <Compile Include="Graphics\Texture2D.cs" />
-    <Compile Include="Graphics\VertexAttributePointer.cs" />
+    <Compile Include="Graphics\OpenGL\Buffer.cs" />
+    <Compile Include="Graphics\OpenGL\Texture2D.cs" />
+    <Compile Include="Graphics\OpenGL\VertexAttributePointer.cs" />
     <Compile Include="Input\InputInterface.cs" />
     <Compile Include="IO\ContentManager.cs" />
     <Compile Include="IO\ContentManagerExtensions.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\InternalsVisibleToDryIocFactoryCompilerDynamicAssembly.cs" />
     <Compile Include="UI\Console.cs" />
+    <Compile Include="UI\DefaultCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DryIoc">
@@ -354,5 +356,6 @@
       <Name>LightClaw.Extensions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

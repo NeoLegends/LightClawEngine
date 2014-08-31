@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -47,14 +48,10 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                Contract.Ensures(Contract.Result<TextureUnit>() >= 0);
-
                 return _TextureUnit;
             }
             private set
             {
-                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
-
                 this.SetProperty(ref _TextureUnit, value);
             }
         }
@@ -64,7 +61,6 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(stage != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
             this.TextureUnit = textureUnit;
         }
@@ -112,6 +108,8 @@ namespace LightClaw.Engine.Graphics
                 base.Dispose(disposing);
             }
         }
+
+        protected override void OnInitialize() { }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

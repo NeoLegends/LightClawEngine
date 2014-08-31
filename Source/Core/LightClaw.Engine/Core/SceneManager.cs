@@ -62,7 +62,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
             Logger.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
-            this.Load(0, startScene).Wait();
+            this.Load(1, startScene).Wait(); // Load into slot one to prevent instant-overdraw by a newly loaded scene
         }
 
         /// <summary>
@@ -124,9 +124,10 @@ namespace LightClaw.Engine.Core
         /// <param name="s">The existing <see cref="Scene"/> to load.</param>
         /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
         /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done until a free
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below until a free
         /// slot is found. However, moving the scene into a lower layer during rendering (final image is a composition of all scenes drawing 
-        /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it.
+        /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it. So make sure
+        /// to check on the return value and move the scene accordingly, if required.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
         public int Load(int slot, Scene s)
@@ -139,7 +140,7 @@ namespace LightClaw.Engine.Core
             }
             lock (this.scenes)
             {
-                for (int i = slot; i < int.MinValue; i--)
+                for (int i = slot; i >= 0; i--)
                 {
                     try
                     {
@@ -166,16 +167,15 @@ namespace LightClaw.Engine.Core
         /// <param name="slot">The slot of the old scene.</param>
         /// <param name="newSlot">The new slot.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="Scene"/> was moved, otherwise <c>false</c>. <c>false</c> will also be returned if there
-        /// was no <see cref="Scene"/> at <paramref name="slot"/>.
+        /// The slot the <see cref="Scene"/> was moved to. If the move was impossible, the return value will be equal to <paramref name="slot"/>.
         /// </returns>
         /// <remarks>
         /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done until a free
         /// slot is found. However, moving the scene into a lower layer during rendering (final image is a composition of all scenes drawing 
         /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it.
         /// </remarks>
-        /// <exception cref="InvalidOperationException">All slots below taken, scene could not be moved.</exception>
-        public void Move(int slot, int newSlot)
+        [ContractVerification(false)] // Contracts show some obscure warning about a constant value. If sb is smarter than me and knows how to properly get rid of the warning, please do.
+        public int Move(int slot, int newSlot)
         {
             Logger.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
 
@@ -184,14 +184,14 @@ namespace LightClaw.Engine.Core
                 Scene scene;
                 if (this.scenes.TryGetValue(slot, out scene) && this.scenes.Remove(slot))
                 {
-                    for (int i = newSlot; i > int.MinValue; i--)
+                    for (int i = newSlot; i >= 0; i--)
                     {
                         try
                         {
                             Logger.Debug(() => "Trying to move scene to {0}.".FormatWith(i));
                             this.scenes.Add(i, scene);
                             Logger.Debug(() => "Scene moved.");
-                            return;
+                            return i;
                         }
                         catch (ArgumentException)
                         {
@@ -199,11 +199,10 @@ namespace LightClaw.Engine.Core
                         }
                     }
 
-                    // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its already taken ;)
                     Logger.Warn(() => "All slots below taken, scene could not be moved. Reinserting into old position.");
                     this.scenes[slot] = scene;
-                    throw new InvalidOperationException("All slots below taken, scene could not be moved. Reinserting into old position.");
                 }
+                return slot;
             }
         }
 

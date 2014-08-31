@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     [ContractClass(typeof(IBufferContracts))]
     public interface IBuffer : IBindable, IGLObject
@@ -16,6 +16,10 @@ namespace LightClaw.Engine.Graphics
         BufferUsageHint Hint { get; }
 
         BufferTarget Target { get; }
+
+        T[] Get<T>() where T : struct;
+
+        T[] GetRange<T>(int offset, int count) where T : struct;
 
         void Set<T>(T data) where T : struct;
 
@@ -65,6 +69,22 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        T[] IBuffer.Get<T>() 
+        {
+            Contract.Ensures(Contract.Result<T[]>() != null);
+
+            return null;
+        }
+
+        T[] IBuffer.GetRange<T>(int offset, int count)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
+            Contract.Ensures(Contract.Result<T[]>() != null);
+
+            return null;
+        }
+
         void IBuffer.Set<T>(T data) { }
 
         void IBuffer.Set<T>(T[] data)
@@ -104,5 +124,4 @@ namespace LightClaw.Engine.Graphics
 
         void IDisposable.Dispose() { }
     }
-
 }

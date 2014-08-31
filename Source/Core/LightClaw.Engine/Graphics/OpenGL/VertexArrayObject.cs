@@ -9,7 +9,7 @@ using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     public class VertexArrayObject : GLObject, IBindable
     {
@@ -116,7 +116,7 @@ namespace LightClaw.Engine.Graphics
                                             vertexPointer.Index,
                                             vertexPointer.Size,
                                             vertexPointer.Type,
-                                            vertexPointer.IsNormalized,
+                                            vertexPointer.Normalize,
                                             vertexPointer.Stride,
                                             vertexPointer.Offset
                                         );

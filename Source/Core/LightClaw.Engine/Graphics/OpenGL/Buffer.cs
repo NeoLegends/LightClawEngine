@@ -10,7 +10,7 @@ using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a data store on GPU memory.
@@ -120,6 +120,35 @@ namespace LightClaw.Engine.Graphics
         {
             this.Initialize();
             GL.BindBuffer(this.Target, this);
+        }
+
+        /// <summary>
+        /// Gets all of the <see cref="Buffer"/>s data.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
+        /// <returns>The <see cref="Buffer"/>s data.</returns>
+        public T[] Get<T>()
+            where T : struct
+        {
+            return GetRange<T>(0, this.Count);
+        }
+
+        /// <summary>
+        /// Gets a range of the <see cref="Buffer"/>s data.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
+        /// <param name="offset">The starting index.</param>
+        /// <param name="count">The amount of bytes to read.</param>
+        /// <returns>The <see cref="Buffer"/>s data.</returns>
+        public T[] GetRange<T>(int offset, int count)
+            where T : struct
+        {
+            T[] results = new T[count];
+            using (GLBinding bufferBinding = new GLBinding(this))
+            {
+                GL.GetBufferSubData(this.Target, (IntPtr)offset, (IntPtr)count, results);
+            }
+            return results;
         }
 
         /// <summary>
@@ -237,8 +266,8 @@ namespace LightClaw.Engine.Graphics
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
-                this.CalculateCount((int)sizeInBytes, 0);
             }
+            this.CalculateCount(sizeInBytes, 0);
         }
 
         /// <summary>
@@ -253,8 +282,8 @@ namespace LightClaw.Engine.Graphics
             using (GLBinding bufferBinding = new GLBinding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
-                this.CalculateCount((int)sizeInBytes, (int)offset);
             }
+            this.CalculateCount(sizeInBytes, offset);
         }
 
         /// <summary>
@@ -263,15 +292,18 @@ namespace LightClaw.Engine.Graphics
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            try
+            if (!this.IsDisposed)
             {
-                GL.DeleteBuffer(this);
+                try
+                {
+                    GL.DeleteBuffer(this);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(() => "An exception of type '{0}' occured while disposing the {1}'s underlying OpenGL Buffer.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Buffer).Name), ex);
+                }
+                base.Dispose(disposing);
             }
-            catch (AccessViolationException)
-            {
-                throw; // Log and swallow in the future!
-            }
-            base.Dispose(disposing);
         }
 
         /// <summary>

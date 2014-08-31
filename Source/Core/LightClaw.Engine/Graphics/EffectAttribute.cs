@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
+using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -32,7 +35,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private IBuffer _Buffer = new Buffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+        private IBuffer _Buffer = new LCBuffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
 
         public IBuffer Buffer
         {
@@ -70,14 +73,10 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-
                 return _Location;
             }
             private set
             {
-                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
-
                 this.SetProperty(ref _Location, value);
             }
         }
@@ -91,24 +90,6 @@ namespace LightClaw.Engine.Graphics
             set
             {
                 throw new NotSupportedException("An {0}'s name cannot be set. It is hardcoded in the shader.".FormatWith(typeof(EffectAttribute).Name));
-            }
-        }
-
-        private int _Size;
-
-        public int Size
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() > 0);
-
-                return _Size;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
-
-                this.SetProperty(ref _Size, value);
             }
         }
 
@@ -130,13 +111,40 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectAttribute(EffectStage stage, string name, int size)
+        private VertexAttribType _Type;
+
+        public VertexAttribType Type
+        {
+            get
+            {
+                return _Type;
+            }
+            private set
+            {
+                this.SetProperty(ref _Type, value);
+            }
+        }
+
+        private VertexAttributePointer _VertexAttibutePointer;
+
+        public VertexAttributePointer VertexAttibutePointer
+        {
+            get
+            {
+                return _VertexAttibutePointer;
+            }
+            private set
+            {
+                this.SetProperty(ref _VertexAttibutePointer, value);
+            }
+        }
+
+        public EffectAttribute(EffectStage stage, string name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires<ArgumentOutOfRangeException>(size > 0);
 
-            this.Name = name;
+            this.AttributeName = name;
             this.Stage = stage;
         }
 
@@ -156,39 +164,47 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public void Set<T>(T[] data)
+        public void Set<T>(T[] data, VertexDataLayout layout)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentException>(data.Length > 0);
 
+            this.Initialize();
+            this.VerifyDataLayout(layout);
             this.Buffer.Set(data);
         }
 
-        public void SetRange<T>(T[] data, int offset)
+        public void SetRange<T>(T[] data, int offset, VertexDataLayout layout)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentException>(data.Length > 0);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
 
+            this.Initialize();
+            this.VerifyDataLayout(layout);
             this.Buffer.SetRange(data, offset);
         }
 
-        public void Set(IntPtr data, int sizeInBytes)
+        public void Set(IntPtr data, int sizeInBytes, VertexDataLayout layout)
         {
             Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
 
+            this.Initialize();
+            this.VerifyDataLayout(layout);
             this.Buffer.Set(data, sizeInBytes);
         }
 
-        public void SetRange(IntPtr data, int offset, int sizeInBytes)
+        public void SetRange(IntPtr data, int offset, int sizeInBytes, VertexDataLayout layout)
         {
             Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
 
+            this.Initialize();
+            this.VerifyDataLayout(layout);
             this.Buffer.SetRange(data, offset, sizeInBytes);
         }
 
@@ -196,17 +212,35 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.IsDisposed)
             {
+                this.Buffer.Dispose();
+
                 base.Dispose(disposing);
+            }
+        }
+
+        private void VerifyDataLayout(VertexDataLayout layout)
+        {
+            VertexAttributePointer vap = this.VertexAttibutePointer;
+            if (vap != default(VertexAttributePointer))
+            {
+                if ((layout.Normalize != vap.Normalize) || (layout.Size != vap.Size) || (layout.Type != vap.Type))
+                {
+                    throw new InvalidOperationException("Once the layout has been set, it cannot be changed. Use the same layout as when it was set.");
+                }
+            }
+            else
+            {
+                this.VertexAttibutePointer = new VertexAttributePointer(this.Location, layout.Size, layout.Type, layout.Normalize, 0, IntPtr.Zero);
             }
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(!string.IsNullOrWhiteSpace(this.AttributeName));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(this._AttributeName));
+            Contract.Invariant(this._Buffer != null);
             Contract.Invariant(this._Location >= 0);
-            Contract.Invariant(this._Size > 0);
-            Contract.Invariant(this.Stage != null);
+            Contract.Invariant(this._Stage != null);
         }
     }
 }

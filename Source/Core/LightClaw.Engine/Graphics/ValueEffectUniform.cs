@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -12,35 +13,21 @@ namespace LightClaw.Engine.Graphics
 {
     public class ValueEffectUniform : EffectUniform, IBindable
     {
-        private readonly object initializationLock = new object();
+        private int _Size;
 
-        private bool _IsInitialized;
-
-        public bool IsInitialized
+        public int Size
         {
             get
             {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
+                Contract.Ensures(Contract.Result<int>() > 0);
 
-        private int _Length = 0;
-
-        public int Length
-        {
-            get
-            {
-                return _Length;
+                return _Size;
             }
             private set
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value > 0);
 
-                this.SetProperty(ref _Length, value);
+                this.SetProperty(ref _Size, value);
             }
         }
 
@@ -67,11 +54,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public ValueEffectUniform(EffectStage stage, string name)
+        public ValueEffectUniform(EffectStage stage, string name, int size)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires<ArgumentOutOfRangeException>(size > 0);
+
+            this.Size = size;
         }
 
         public void Bind()
@@ -81,35 +71,9 @@ namespace LightClaw.Engine.Graphics
             {
                 buffer.Bind();
             }
-        }
-
-        public void Initialize<T>()
-            where T : struct
-        {
-            this.Initialize<T>(1);
-        }
-
-        public void Initialize<T>(int count)
-            where T : struct
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
-
-            int allocationSize = Marshal.SizeOf(typeof(T)) * count;
-            if (!this.IsInitialized || this.Length != allocationSize)
+            else
             {
-                lock (this.initializationLock)
-                {
-                    if (this.Length != allocationSize)
-                    {
-                        this.Length = allocationSize;
-                        this.Ubo = this.Stage.Pass.UniformBufferManager.GetBuffer(allocationSize);
-                    }
-                    if (!this.IsInitialized)
-                    {
-                        this.Location = GL.GetUniformBlockIndex(this.Stage.ShaderProgram, this.Name);
-                        GL.UniformBlockBinding(this.Stage.ShaderProgram, this.Location, this.Ubo.Index);
-                    }
-                }
+                Logger.Warn(() => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(this.UniformName));
             }
         }
 
@@ -137,7 +101,7 @@ namespace LightClaw.Engine.Graphics
         public bool TrySet<T>(T value)
             where T : struct
         {
-            this.Initialize<T>();
+            this.Initialize();
             try
             {
                 RangedBuffer buffer = this.Ubo;
@@ -161,7 +125,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(values != null);
             Contract.Requires<ArgumentException>(values.Length > 0);
 
-            this.Initialize<T>(values.Length);
+            this.Initialize();
             try
             {
                 RangedBuffer buffer = this.Ubo;
@@ -196,6 +160,19 @@ namespace LightClaw.Engine.Graphics
 
                 base.Dispose(disposing);
             }
+        }
+
+        protected override void OnInitialize()
+        {
+            this.Ubo = this.Stage.Pass.UniformBufferManager.GetBuffer(this.Size);
+            this.Location = GL.GetUniformBlockIndex(this.Stage.ShaderProgram, this.Name);
+            GL.UniformBlockBinding(this.Stage.ShaderProgram, this.Location, this.Ubo.Index);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this._Size > 0);
         }
     }
 }

@@ -10,7 +10,7 @@ using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     public abstract class Texture : GLObject, IBindable, IInitializable
     {

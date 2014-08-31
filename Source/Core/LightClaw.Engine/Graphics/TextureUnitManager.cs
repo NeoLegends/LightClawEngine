@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
@@ -35,8 +36,19 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Assume(sender is TextureUnit);
 
-            this.allocatedTextureUnits[(int)e.Parameter] = false;
-            ((TextureUnit)sender).Disposed -= TextureUnitDisposed;
+            if (e.Parameter != null)
+            {
+                int allocatedTextureUnit = (int)e.Parameter;
+                if (allocatedTextureUnit >= 0 && allocatedTextureUnit < allocatedTextureUnits.Length)
+                {
+                    this.allocatedTextureUnits[allocatedTextureUnit] = false;
+                    ((TextureUnit)sender).Disposed -= TextureUnitDisposed;
+                }
+                else
+                {
+                    Logger.Warn(() => "The texture unit to release ({0}) was outside of the boundaries (0 to {1}, inclusive).".FormatWith(allocatedTextureUnit, allocatedTextureUnits.Length - 1));
+                }
+            }
         }
     }
 }

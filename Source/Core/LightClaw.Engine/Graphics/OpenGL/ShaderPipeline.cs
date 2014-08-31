@@ -11,7 +11,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     public class ShaderPipeline : GLObject, IBindable, IInitializable
     {
@@ -102,7 +102,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn(() => "An exception of type '{0}' happened while disposing the {1}'s underlying shader program.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ShaderPipeline).Name));
+                    Logger.Warn(() => "An exception of type '{0}' happened while disposing the {1}'s underlying shader program.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ShaderPipeline).Name), ex);
                 }
                 base.Dispose(disposing);
             }

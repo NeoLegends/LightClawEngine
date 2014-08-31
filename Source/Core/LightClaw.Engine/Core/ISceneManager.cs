@@ -15,45 +15,47 @@ namespace LightClaw.Engine.Core
     public interface ISceneManager : IControllable, IEnumerable<Scene>, IDrawable
     {
         /// <summary>
-        /// Gets the <see cref="Scene"/> at the specified <paramref name="index"/>.
+        /// Gets the <see cref="Scene"/> at the specified <paramref name="slot"/>.
         /// </summary>
-        /// <param name="index">The index of the <see cref="Scene"/> to get.</param>
+        /// <param name="slot">The index of the <see cref="Scene"/> to get.</param>
         /// <returns>The <see cref="Scene"/> at the specified index.</returns>
-        Scene this[int index] { get; }
+        Scene this[int slot] { get; }
 
         /// <summary>
         /// Asynchronously loads a <see cref="Scene"/> from the specified resource string into the specified position.
         /// </summary>
-        /// <param name="index">The index to load the <see cref="Scene"/> into.</param>
+        /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c>.</returns>
-        Task<int> Load(int index, string resourceString);
+        Task<int> Load(int slot, string resourceString);
 
         /// <summary>
         /// Loads the specified <see cref="Scene"/> into the specified position.
         /// </summary>
-        /// <param name="index">The index to load the <see cref="Scene"/> into.</param>
+        /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="s">The <see cref="Scene"/> to load.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted, otherwise <c>false</c>.</returns>
-        int Load(int index, Scene s);
+        int Load(int slot, Scene s);
 
         /// <summary>
         /// Moves the <see cref="Scene"/> from the specified index to the new index.
         /// </summary>
-        /// <param name="index">The old index of the <see cref="Scene"/> to move.</param>
-        /// <param name="newIndex">The index to move the <see cref="Scene"/> to.</param>
-        /// <returns><c>true</c> if the <see cref="Scene"/> could be moved, otherwise <c>false</c>.</returns>
-        void Move(int index, int newIndex);
+        /// <param name="slot">The old index of the <see cref="Scene"/> to move.</param>
+        /// <param name="newSlot">The index to move the <see cref="Scene"/> to.</param>
+        /// <returns>
+        /// The slot the <see cref="Scene"/> was moved to. If the move was impossible, the return value will be equal to <paramref name="slot"/>.
+        /// </returns>
+        int Move(int slot, int newSlot);
 
         /// <summary>
         /// Unloads the <see cref="Scene"/> at the specified index.
         /// </summary>
-        /// <param name="index">The index of the <see cref="Scene"/> to unload.</param>
+        /// <param name="slot">The index of the <see cref="Scene"/> to unload.</param>
         /// <returns>
         /// <c>true</c> if the <see cref="Scene"/> was unloaded, otherwise <c>false</c>. If the <see cref="Scene"/>
         /// could not be found, <c>false</c> will also be returned.
         /// </returns>
-        bool Unload(int index);
+        bool Unload(int slot);
     }
 
     [ContractClassFor(typeof(ISceneManager))]
@@ -123,32 +125,36 @@ namespace LightClaw.Engine.Core
             return null;
         }
 
-        Task<int> ISceneManager.Load(int index, string resourceString)
+        Task<int> ISceneManager.Load(int slot, string resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);
             Contract.Ensures(Contract.Result<Task<int>>() != null);
 
             return null;
         }
 
-        int ISceneManager.Load(int index, Scene s)
+        int ISceneManager.Load(int slot, Scene s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);
+            Contract.Ensures(Contract.Result<int>() >= 0);
 
             return 0;
         }
 
-        void ISceneManager.Move(int index, int newIndex)
+        int ISceneManager.Move(int slot, int newSlot)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(newIndex >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(newSlot >= 0);
+            Contract.Ensures(Contract.Result<int>() >= 0);
+
+            return 0;
         }
 
-        bool ISceneManager.Unload(int index)
+        bool ISceneManager.Unload(int slot)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);
 
             return false;
         }

@@ -8,14 +8,14 @@ using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
-    public class Texture2DArray : Texture3DBase
+    public class Texture3D : Texture3DBase
     {
-        public Texture2DArray(TextureDescription description) 
+        public Texture3D(TextureDescription description)
             : base(description) 
         {
-            Contract.Requires<ArgumentException>(IsTexture2DArrayTarget(description.Target));
+            Contract.Requires<ArgumentException>(IsTexture3DTarget(description.Target));
         }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
@@ -28,12 +28,12 @@ namespace LightClaw.Engine.Graphics
         }
 
         [Pure]
-        public static bool IsTexture2DArrayTarget(TextureTarget target)
+        public static bool IsTexture3DTarget(TextureTarget target)
         {
             Contract.Ensures(!Contract.Result<bool>() || Enum.IsDefined(typeof(TextureTarget3d), target));
 
-            return (target == TextureTarget.Texture2DArray) || (target == TextureTarget.Texture2DMultisampleArray) ||
-                   (target == TextureTarget.ProxyTexture2DArray) || (target == TextureTarget.ProxyTexture2DMultisampleArray);
+            return (target == TextureTarget.Texture3D) || (target == TextureTarget.ProxyTexture3D) ||
+                   (target == TextureTarget.TextureCubeMap) || (target == TextureTarget.ProxyTextureCubeMap);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -204,7 +205,7 @@ namespace LightClaw.Engine.Graphics
 
                                 return new KeyValuePair<string, EffectAttribute>(
                                     attributeName,
-                                    new EffectAttribute(this, attributeName, size)
+                                    new EffectAttribute(this, attributeName)
                                 );
                             }).ToImmutableDictionary();
 
@@ -218,14 +219,17 @@ namespace LightClaw.Engine.Graphics
                             this.Uniforms = Enumerable.Range(0, activeUniformCount).Select(i =>
                             {
                                 int nameLength;
+                                int size;
+                                StringBuilder sbName = new StringBuilder(32);
                                 ActiveUniformType uniformType;
-                                string uniformName = GL.GetActiveUniform(this.ShaderProgram, i, out nameLength, out uniformType);
+                                GL.GetActiveUniform(this.ShaderProgram, i, int.MaxValue, out nameLength, out size, out uniformType, sbName);
+                                string uniformName = sbName.ToString();
 
                                 return new KeyValuePair<string, EffectUniform>(
                                     uniformName,
                                     uniformType.IsSamplerUniform() ?
                                         (EffectUniform)new SamplerEffectUniform(this, uniformName, this.Pass.TextureUnitManager.GetTextureUnit()) :
-                                        (EffectUniform)new ValueEffectUniform(this, uniformName)
+                                        (EffectUniform)new ValueEffectUniform(this, uniformName, size)
                                 );
                             }).ToImmutableDictionary();
                         }

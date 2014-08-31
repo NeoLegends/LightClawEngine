@@ -10,7 +10,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     [ContractClass(typeof(Texture3DBaseContracts))]
     public abstract class Texture3DBase : Texture

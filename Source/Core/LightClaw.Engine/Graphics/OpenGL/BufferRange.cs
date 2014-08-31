@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using ProtoBuf;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a range inside a <see cref="IBuffer"/>.

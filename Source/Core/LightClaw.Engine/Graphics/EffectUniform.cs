@@ -10,8 +10,24 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class EffectUniform : DisposableEntity
+    public abstract class EffectUniform : DisposableEntity, IInitializable
     {
+        private readonly object initializationLock = new object();
+
+        private bool _IsInitialized;
+
+        public bool IsInitialized
+        {
+            get
+            {
+                return _IsInitialized;
+            }
+            private set
+            {
+                this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
         private int _Location;
 
         public int Location
@@ -87,6 +103,23 @@ namespace LightClaw.Engine.Graphics
             this.Stage = stage;
             this.UniformName = name;
         }
+
+        public void Initialize()
+        {
+            if (!this.IsInitialized)
+            {
+                lock (this.initializationLock)
+                {
+                    if (!this.IsInitialized)
+                    {
+                        this.OnInitialize();
+                        this.IsInitialized = true;
+                    }
+                }
+            }
+        }
+
+        protected abstract void OnInitialize();
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

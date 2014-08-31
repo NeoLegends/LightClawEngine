@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a <see cref="Buffer"/>-<see cref="VertexAttributePointer"/>-association.
