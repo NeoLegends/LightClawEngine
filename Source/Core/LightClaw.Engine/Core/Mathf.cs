@@ -599,10 +599,10 @@ namespace LightClaw.Engine.Core
         [ContractVerification(false)]
         public static float SmoothStep(float amount)
         {
-            return (amount <= 0) ?
-                0 :
-                (amount >= 1) ?
-                    1 :
+            return (amount <= 0.0f) ?
+                0.0f :
+                (amount >= 1.0f) ?
+                    1.0f :
                     amount * amount * (3 - (2 * amount));
         }
 
@@ -617,10 +617,10 @@ namespace LightClaw.Engine.Core
         [ContractVerification(false)]
         public static double SmoothStep(double amount)
         {
-            return (amount <= 0) ?
-                0 :
-                (amount >= 1) ?
-                    1 :
+            return (amount <= 0.0) ?
+                0.0 :
+                (amount >= 1.0) ?
+                    1.0 :
                     amount * amount * (3 - (2 * amount));
         }
 
@@ -635,10 +635,10 @@ namespace LightClaw.Engine.Core
         [ContractVerification(false)]
         public static float SmootherStep(float amount)
         {
-            return (amount <= 0) ?
-                0 :
-                (amount >= 1) ?
-                    1 :
+            return (amount <= 0.0f) ?
+                0.0f :
+                (amount >= 1.0f) ?
+                    1.0f :
                     amount * amount * amount * (amount * ((amount * 6) - 15) + 10);
         }
 
@@ -653,10 +653,10 @@ namespace LightClaw.Engine.Core
         [ContractVerification(false)]
         public static double SmootherStep(double amount)
         {
-            return (amount <= 0) ?
-                0 :
-                (amount >= 1) ?
-                    1 :
+            return (amount <= 0.0) ?
+                0.0 :
+                (amount >= 1.0) ?
+                    1.0 :
                     amount * amount * amount * (amount * ((amount * 6) - 15) + 10);
         }
 
