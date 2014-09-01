@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using log4net.Core;
 
 namespace LightClaw.Extensions
 {
@@ -26,10 +27,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsDebugEnabled)
-            {
-                log.Debug(message());
-            }
+            Debug(log, message, null);
         }
 
         /// <summary>
@@ -46,10 +44,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsDebugEnabled)
-            {
-                log.Debug(message(), ex);
-            }
+            Log(log.Logger, Level.Debug, message, ex);
         }
 
         /// <summary>
@@ -65,10 +60,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
-            {
-                log.Info(message());
-            }
+            Info(log, message, null);
         }
 
         /// <summary>
@@ -85,10 +77,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsInfoEnabled)
-            {
-                log.Info(message(), ex);
-            }
+            Log(log.Logger, Level.Info, message, ex);
         }
 
         /// <summary>
@@ -104,10 +93,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsWarnEnabled)
-            {
-                log.Warn(message());
-            }
+            Warn(log, message, null);
         }
 
         /// <summary>
@@ -124,10 +110,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsWarnEnabled)
-            {
-                log.Warn(message(), ex);
-            }
+            Log(log.Logger, Level.Warn, message, ex);
         }
 
         /// <summary>
@@ -143,10 +126,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsErrorEnabled)
-            {
-                log.Error(message());
-            }
+            Error(log, message, null);
         }
 
         /// <summary>
@@ -163,10 +143,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsErrorEnabled)
-            {
-                log.Error(message(), ex);
-            }
+            Log(log.Logger, Level.Error, message, ex);
         }
 
         /// <summary>
@@ -182,10 +159,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsFatalEnabled)
-            {
-                log.Fatal(message());
-            }
+            Fatal(log, message, null);
         }
 
         /// <summary>
@@ -202,9 +176,23 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(log != null);
 
-            if (log.IsFatalEnabled)
+            Log(log.Logger, Level.Fatal, message, ex);
+        }
+
+        /// <summary>
+        /// Writes the specified message into the <paramref name="logger"/>.
+        /// </summary>
+        /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The message to write into the <paramref name="logger"/>.</param>
+        /// <param name="ex">An exception that might have caused the log entry.</param>
+        private static void Log(ILogger logger, Level level, Func<object> message, Exception ex)
+        {
+            Contract.Requires<ArgumentNullException>(level != null);
+
+            if ((logger != null) && logger.IsEnabledFor(level))
             {
-                log.Fatal(message(), ex);
+                logger.Log(typeof(ILogExtensions), level, message(), ex);
             }
         }
     }

@@ -389,9 +389,9 @@ namespace LightClaw.Engine.Core
         public override string ToString()
         {
             return 
-                ("[M11:{0} M12:{1}] " +
-                "[M21:{2} M22:{3}] " +
-                "[M31:{4} M32:{5}]").FormatWith(M11, M12, M21, M22, M31, M32);
+                ("[{0}, {1}] " +
+                "[{2}, {3}] " +
+                "[{4}, {5}]").FormatWith(M11, M12, M21, M22, M31, M32);
         }
 
         /// <summary>

@@ -110,8 +110,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         private Game()
         {
-            Logger.Info(() => "Initializing a new game instance.");
-
             this.Name = GeneralSettings.Default.GameName;
 
             this.GameWindow.Closed += (s, e) => this.OnClosed();
@@ -120,9 +118,20 @@ namespace LightClaw.Engine.Core
             this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
             this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
 
-            this.IocC.Resolve<IContentManager>()
-                     .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath)
-                     .ContinueWith(t => this.GameWindow.Icon = t.Result, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
+            Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
+                                                              .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
+            iconLoadTask.ContinueWith(
+                t =>
+                {
+                    this.GameWindow.Icon = t.Result;
+                    Logger.Debug(() => "Icon '{0}' loaded successfully.".FormatWith(GeneralSettings.Default.IconPath));
+                },
+                TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
+            );
+            iconLoadTask.ContinueWith(
+                t => Logger.Warn(() => "Icon loading failed."),
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.OnlyOnCanceled
+            );
         }
         
         /// <summary>
@@ -187,7 +196,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.Closed"/>.
         /// </summary>
-        protected virtual void OnClosed()
+        protected void OnClosed()
         {
             Logger.Info(() => "Closing game window.");
 
@@ -197,7 +206,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.Load"/>.
         /// </summary>
-        protected virtual void OnLoad()
+        protected void OnLoad()
         {
             Logger.Info(() => "OnLoad callback called. Loading SceneManager and enabling depth testing.");
 
@@ -214,7 +223,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.RenderFrame"/>.
         /// </summary>
-        protected virtual void OnRender()
+        protected void OnRender()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
@@ -226,7 +235,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="width">The <see cref="IGameWindow"/>s new width.</param>
         /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
-        protected virtual void OnResize(int width, int height)
+        protected void OnResize(int width, int height)
         {
             Logger.Info(() => "Resizing window to {0}x{1}.".FormatWith(width, height));
 

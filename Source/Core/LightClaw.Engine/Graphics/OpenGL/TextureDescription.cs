@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public struct TextureDescription : ICloneable, IEquatable<TextureDescription>
     {
         [DataMember, ProtoMember(1)]
-        private bool initializedViaParameterizedConstructor;
+        private readonly bool initializedViaParameterizedConstructor;
 
         [DataMember, ProtoMember(2)]
         public int Width { get; private set; }
@@ -71,7 +71,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), target));
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), target) || Enum.IsDefined(typeof(TextureTarget2d), target) || Enum.IsDefined(typeof(TextureTarget1d), target));
 
             this.Width = width;
             this.Height = height;

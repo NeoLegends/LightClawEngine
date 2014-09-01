@@ -270,7 +270,7 @@
     <Compile Include="Graphics\OpenGL\VertexAttributePointer.cs" />
     <Compile Include="Input\InputInterface.cs" />
     <Compile Include="IO\ContentManager.cs" />
-    <Compile Include="IO\ContentManagerExtensions.cs" />
+    <Compile Include="IO\IContentManagerExtensions.cs" />
     <Compile Include="IO\FileSystemContentResolver.cs" />
     <Compile Include="IO\IconReader.cs" />
     <Compile Include="IO\IContentManager.cs" />

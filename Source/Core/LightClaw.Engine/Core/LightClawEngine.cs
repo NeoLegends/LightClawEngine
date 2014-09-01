@@ -55,7 +55,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         static LightClawEngine()
         {
-            DefaultIocContainer.Register<IContentManager, ContentManager>(Reuse.Singleton);
+            DefaultIocContainer.Register<IContentManager, ContentManager>(
+                Reuse.Singleton,
+                contentManagerType => contentManagerType.GetConstructor(Type.EmptyTypes)
+            );
         }
 
         /// <summary>

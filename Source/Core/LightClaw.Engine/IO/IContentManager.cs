@@ -86,6 +86,10 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Registers a new <see cref="IContentReader"/>.
         /// </summary>
+        /// <remarks>
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case it implements IDisposable)
+        /// on its disposal.
+        /// </remarks>
         /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
         /// <seealso cref="IContentReader"/>
         void Register(IContentReader reader);
@@ -93,6 +97,10 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Registers a new <see cref="IContentResolver"/>.
         /// </summary>
+        /// <remarks>
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case it implements IDisposable)
+        /// on its disposal.
+        /// </remarks>
         /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
         /// <seealso cref="IContentResolver"/>
         void Register(IContentResolver resolver);

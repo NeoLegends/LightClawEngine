@@ -10,9 +10,9 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Contains extension methods to <see cref="IContentManager"/> extending the default behaviour.
+    /// Contains extension methods to <see cref="IContentManager"/> extending the default behaviour on all instances.
     /// </summary>
-    public static class ContentManagerExtensions
+    public static class IContentManagerExtensions
     {
         /// <summary>
         /// Asynchronously loads the asset with the specified resource string.
@@ -49,6 +49,10 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Registers a bunch of <see cref="IContentReader"/>s in the <see cref="IContentManager"/>.
         /// </summary>
+        /// <remarks>
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case it implements IDisposable)
+        /// on its disposal.
+        /// </remarks>
         /// <param name="contentManager">The <see cref="IContentManager"/> to register the <paramref name="readers"/> in.</param>
         /// <param name="readers">The <see cref="IContentReader"/>s to register.</param>
         public static void Register(this IContentManager contentManager, IEnumerable<IContentReader> readers)
@@ -65,6 +69,10 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Registers a bunch of <see cref="IContentResolver"/>s in the <see cref="IContentManager"/>.
         /// </summary>
+        /// <remarks>
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case it implements IDisposable)
+        /// on its disposal.
+        /// </remarks>
         /// <param name="contentManager">The <see cref="IContentManager"/> to register the <paramref name="resolvers"/> in.</param>
         /// <param name="readers">The <see cref="IContentResolver"/>s to register.</param>
         public static void Register(this IContentManager contentManager, IEnumerable<IContentResolver> resolvers)

@@ -16,36 +16,8 @@ namespace LightClaw.Engine.IO
     /// <summary>
     /// Represents a caching <see cref="IContentManager"/>.
     /// </summary>
-    public class ContentManager : Entity, IContentManager
+    public class ContentManager : DisposableEntity, IContentManager
     {
-        /// <summary>
-        /// A list of all <see cref="IContentReader"/>s contained in the main assembly.
-        /// </summary>
-        private static readonly IEnumerable<IContentReader> defaultReaders = Assembly.GetExecutingAssembly()
-                                                                                     .GetTypesByBase<IContentReader>(true)
-                                                                                     .Select(t =>
-                                                                                     {
-                                                                                         try
-                                                                                         {
-                                                                                             return (IContentReader)Activator.CreateInstance(t);
-                                                                                         }
-                                                                                         catch { return null; }
-                                                                                     }).FilterNull();
-
-        /// <summary>
-        /// A list of all <see cref="IContentResolver"/>s contained in the main assembly.
-        /// </summary>
-        private static readonly IEnumerable<IContentResolver> defaultResolvers = Assembly.GetExecutingAssembly()
-                                                                                         .GetTypesByBase<IContentResolver>(true)
-                                                                                         .Select(t =>
-                                                                                         {
-                                                                                             try
-                                                                                             {
-                                                                                                 return (IContentResolver)Activator.CreateInstance(t);
-                                                                                             }
-                                                                                             catch { return null; }
-                                                                                         }).FilterNull();
-
         /// <summary>
         /// Contains <see cref="AsyncLock"/>s used to lock access to a specific asset while it is being loaded.
         /// </summary>
@@ -78,7 +50,7 @@ namespace LightClaw.Engine.IO
 
         public event EventHandler<ParameterEventArgs> StreamObtained;
 
-        public ContentManager() : this(defaultReaders, defaultResolvers) { }
+        public ContentManager() : this(GetDefaultReaders(), GetDefaultResolvers()) { }
 
         public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {
@@ -122,7 +94,7 @@ namespace LightClaw.Engine.IO
 
         public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
-            Logger.Debug(() => "Loading an asset of type '{0}' from resource '{0}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
+            Logger.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
@@ -135,7 +107,9 @@ namespace LightClaw.Engine.IO
                     !cachedAsset.TryGetTarget(out asset) ||                            // weak reference to cached asset collected or
                     !(assetType.IsAssignableFrom(asset.GetType())))                    // types mismatch.
                 {
-                    Logger.Debug(() => "No cached version of '{0}' available or reload forced, obtaining stream...".FormatWith(resourceString));
+                    Logger.Debug(
+                        () => ((forceReload ? "No cached version of '{0}' available" : "Reload of '{0}' forced") + ", obtaining stream...").FormatWith(resourceString)
+                    );
                     try
                     {
                         using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
@@ -189,11 +163,73 @@ namespace LightClaw.Engine.IO
             this.Raise(this.ContentResolverRegistered, resolver);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (!this.IsDisposed)
+            {
+                IContentResolver resolver;
+                while (this.resolvers.TryTake(out resolver))
+                {
+                    IDisposable disposableResolver = resolver as IDisposable;
+                    if (disposableResolver != null)
+                    {
+                        disposableResolver.Dispose();
+                    }
+                }
+
+                IContentReader reader;
+                while (this.readers.TryTake(out reader))
+                {
+                    IDisposable disposableReader = reader as IDisposable;
+                    if (disposableReader != null)
+                    {
+                        disposableReader.Dispose();
+                    }
+                }
+
+                base.Dispose(disposing);
+            }
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(this.readers.All(reader => reader != null));
             Contract.Invariant(this.resolvers.All(resolver => resolver != null));
+        }
+
+        private static IEnumerable<IContentReader> GetDefaultReaders()
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<IContentReader>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IContentReader>>().All(reader => reader != null));
+
+            return Assembly.GetExecutingAssembly()
+                           .GetTypesByBase<IContentReader>(true)
+                           .Select(t =>
+                           {
+                               try
+                               {
+                                   return (IContentReader)Activator.CreateInstance(t);
+                               }
+                               catch { return null; }
+                           }).FilterNull();
+        }
+
+        private static IEnumerable<IContentResolver> GetDefaultResolvers()
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<IContentResolver>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IContentResolver>>().All(resolver => resolver != null));
+
+            return Assembly.GetExecutingAssembly()
+                           .GetTypesByBase<IContentResolver>(true)
+                           .Select(t =>
+                           {
+                               try
+                               {
+                                   return (IContentResolver)Activator.CreateInstance(t);
+                               }
+                               catch { return null; }
+                           }).FilterNull();
         }
     }
 }

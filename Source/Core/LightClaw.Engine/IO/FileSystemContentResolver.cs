@@ -36,6 +36,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(rootPath != null);
 
             this.RootPath = rootPath;
+            Logger.Debug(() => "Initialized a new {0}. Root path will be {1}.".FormatWith(typeof(FileSystemContentResolver).Name, this.RootPath));
         }
 
         /// <summary>
