@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
@@ -22,6 +23,50 @@ namespace LightClaw.Engine.Graphics
         /// Gets the size in bytes of the structure.
         /// </summary>
         public static readonly int SizeInBytes = Marshal.SizeOf(typeof(VertexPositionNormalTexCoord));
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private static readonly VertexAttributePointer[] vertexAttributePointers = new[] 
+        { 
+            new VertexAttributePointer(0, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
+            new VertexAttributePointer(1, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 12),
+            new VertexAttributePointer(2, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 24),
+        };
+
+        /// <summary>
+        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="VertexPositionNormalTexCoord"/>.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Attribute location in GLSL will be assumed as follows:
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>
+        ///             Vertex Position: 0
+        ///         </description>
+        ///     </item>
+        ///         <description>
+        ///             Vertex Normal: 1
+        ///         </description>
+        ///     </item>
+        ///         <description>
+        ///             Texture Coordinates: 2
+        ///         </description>
+        ///     </item>
+        /// </list>
+        /// </para>
+        /// </remarks>
+        public static readonly VertexAttributePointer[] VertexAttributePointers
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
+                Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
+
+                return vertexAttributePointers.ToArray();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the <see cref="VertexPositionNormalTexCoord"/>s components as array.

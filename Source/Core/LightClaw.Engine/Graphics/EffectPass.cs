@@ -144,6 +144,10 @@ namespace LightClaw.Engine.Graphics
         public void Bind()
         {
             this.Initialize();
+            foreach (EffectStage stage in this.Stages)
+            {
+                stage.Bind();
+            }
             GL.BindProgramPipeline(this.ShaderPipeline);
         }
 
@@ -171,6 +175,10 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind()
         {
+            foreach (EffectStage stage in this.Stages)
+            {
+                stage.Unbind();
+            }
             GL.BindProgramPipeline(0);
         }
 

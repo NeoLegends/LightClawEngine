@@ -213,7 +213,6 @@
     <Compile Include="Graphics\CompilationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
-    <Compile Include="Graphics\EffectAttribute.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
     <Compile Include="Graphics\EffectStage.cs" />
@@ -233,7 +232,6 @@
     <Compile Include="Graphics\TextureUnitManager.cs" />
     <Compile Include="Graphics\UniformBufferManager.cs" />
     <Compile Include="Graphics\ValueEffectUniform.cs" />
-    <Compile Include="Graphics\VertexDataLayout.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
     <Compile Include="Logging\LoggingEventInfo.cs" />

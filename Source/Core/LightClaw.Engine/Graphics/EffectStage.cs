@@ -12,30 +12,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectStage : DisposableEntity, IInitializable
+    public class EffectStage : DisposableEntity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
 
         private readonly bool ownsShaderProgram;
-
-        private ImmutableDictionary<string, EffectAttribute> _Attributes = ImmutableDictionary<string, EffectAttribute>.Empty;
-
-        public ImmutableDictionary<string, EffectAttribute> Attributes
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ImmutableDictionary<string, EffectAttribute>>() != null);
-
-                return _Attributes;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.Values.All(attribute => attribute != null));
-
-                this.SetProperty(ref _Attributes, value);
-            }
-        }
 
         private bool _IsInitialized = false;
 
@@ -132,22 +113,6 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private VertexArrayObject _VertexData;
-
-        public VertexArrayObject VertexData
-        {
-            get
-            {
-                return _VertexData;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _VertexData, value);
-            }
-        }
-
         public EffectUniform this[string uniformName]
         {
             get
@@ -180,6 +145,14 @@ namespace LightClaw.Engine.Graphics
             this.ShaderProgram = program;
         }
 
+        public void Bind()
+        {
+            foreach (EffectUniform uniform in this.Uniforms.Values)
+            {
+                uniform.Bind();
+            }
+        }
+
         public void Initialize()
         {
             if (!this.IsInitialized) // Double check to avoid lock acquiring, if possible
@@ -188,54 +161,28 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        // Attributes
-                        if (this.ShaderProgram.Type == ShaderType.VertexShader)
+                        int activeUniformCount = 0;
+                        GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out activeUniformCount);
+
+                        this.Uniforms = Enumerable.Range(0, activeUniformCount).Select(i =>
                         {
-                            int activeAttributeCount = 0;
-                            GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveAttributes, out activeAttributeCount);
+                            int nameLength;
+                            int size;
+                            StringBuilder sbName = new StringBuilder(32);
+                            ActiveUniformType uniformType;
+                            GL.GetActiveUniform(this.ShaderProgram, i, int.MaxValue, out nameLength, out size, out uniformType, sbName);
+                            string uniformName = sbName.ToString();
 
-                            this.Attributes = Enumerable.Range(0, activeAttributeCount).Select(i =>
-                            {
-                                int nameLength;
-                                int size;
-                                ActiveAttribType attributeType;
-                                StringBuilder sbName = new StringBuilder(32);
-                                GL.GetActiveAttrib(this.ShaderProgram, i, int.MaxValue, out nameLength, out size, out attributeType, sbName);
-                                string attributeName = sbName.ToString();
-
-                                return new KeyValuePair<string, EffectAttribute>(
-                                    attributeName,
-                                    new EffectAttribute(this, attributeName)
-                                );
-                            }).ToImmutableDictionary();
-
-                            throw new NotImplementedException("Vertex array objects still need to be generated after the attributes have been filled out.");
-                        }
-
-                        {   // Uniforms
-                            int activeUniformCount = 0;
-                            GL.GetProgram(this.ShaderProgram, GetProgramParameterName.ActiveUniforms, out activeUniformCount);
-
-                            this.Uniforms = Enumerable.Range(0, activeUniformCount).Select(i =>
-                            {
-                                int nameLength;
-                                int size;
-                                StringBuilder sbName = new StringBuilder(32);
-                                ActiveUniformType uniformType;
-                                GL.GetActiveUniform(this.ShaderProgram, i, int.MaxValue, out nameLength, out size, out uniformType, sbName);
-                                string uniformName = sbName.ToString();
-
-                                return new KeyValuePair<string, EffectUniform>(
-                                    uniformName,
-                                    uniformType.IsSamplerUniform() ?
-                                        (EffectUniform)new SamplerEffectUniform(this, uniformName, this.Pass.TextureUnitManager.GetTextureUnit()) :
-                                        (EffectUniform)new ValueEffectUniform(this, uniformName, size)
-                                );
-                            }).ToImmutableDictionary();
-                        }
-
-                        this.IsInitialized = true;
+                            return new KeyValuePair<string, EffectUniform>(
+                                uniformName,
+                                uniformType.IsSamplerUniform() ?
+                                    (EffectUniform)new SamplerEffectUniform(this, uniformName, this.Pass.TextureUnitManager.GetTextureUnit()) :
+                                    (EffectUniform)new ValueEffectUniform(this, uniformName, size)
+                            );
+                        }).ToImmutableDictionary();
                     }
+
+                    this.IsInitialized = true;
                 }
             }
         }
@@ -256,6 +203,14 @@ namespace LightClaw.Engine.Graphics
 
             this.Initialize();
             return (uniform = this.Uniforms.Values.EnsureNonNull().FilterNull().FirstOrDefault(u => u.Location == location)) != null;
+        }
+
+        public void Unbind()
+        {
+            foreach (EffectUniform uniform in this.Uniforms.Values)
+            {
+                uniform.Unbind();
+            }
         }
 
         protected override void Dispose(bool disposing)

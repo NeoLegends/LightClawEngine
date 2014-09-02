@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class EffectUniform : DisposableEntity, IInitializable
+    public abstract class EffectUniform : DisposableEntity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
 
@@ -104,6 +104,8 @@ namespace LightClaw.Engine.Graphics
             this.UniformName = name;
         }
 
+        public abstract void Bind();
+
         public void Initialize()
         {
             if (!this.IsInitialized)
@@ -118,6 +120,8 @@ namespace LightClaw.Engine.Graphics
                 }
             }
         }
+
+        public abstract void Unbind();
 
         protected abstract void OnInitialize();
 

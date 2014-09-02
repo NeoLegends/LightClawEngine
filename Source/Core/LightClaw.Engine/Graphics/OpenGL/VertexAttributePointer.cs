@@ -30,8 +30,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         [DataMember, ProtoMember(6)]
         public VertexAttribPointerType Type { get; private set; }
-
-        public VertexAttributePointer(int size, VertexAttribPointerType type, bool normalize) : this(0, size, type, normalize, 0, IntPtr.Zero) { }
+        
+        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool normalize, int stride, int offset)
+            : this(index, size, type, normalize, stride, (IntPtr)offset) { }
 
         public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool normalize, int stride, IntPtr offset)
             : this()

@@ -65,7 +65,7 @@ namespace LightClaw.Engine.Graphics
             this.TextureUnit = textureUnit;
         }
 
-        public void Bind()
+        public override void Bind()
         {
             Texture texture = this.Texture;
             if (texture != null)
@@ -85,7 +85,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public void Unbind()
+        public override void Unbind()
         {
             Texture texture = this.Texture;
             if (texture != null)

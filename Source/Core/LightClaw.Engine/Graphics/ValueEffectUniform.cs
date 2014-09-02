@@ -64,7 +64,7 @@ namespace LightClaw.Engine.Graphics
             this.Size = size;
         }
 
-        public void Bind()
+        public override void Bind()
         {
             RangedBuffer buffer = this.Ubo;
             if (buffer != null)
@@ -143,7 +143,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public void Unbind()
+        public override void Unbind()
         {
             RangedBuffer buffer = this.Ubo;
             if (buffer != null)

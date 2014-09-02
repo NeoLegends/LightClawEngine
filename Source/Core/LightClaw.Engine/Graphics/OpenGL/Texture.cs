@@ -70,7 +70,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private TextureUnit _TextureUnit = 0;
+        private TextureUnit _TextureUnit = TextureUnit.Texture0;
 
         public TextureUnit TextureUnit
         {
