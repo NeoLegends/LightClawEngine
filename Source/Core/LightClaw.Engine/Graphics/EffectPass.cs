@@ -175,6 +175,7 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind()
         {
+            this.Initialize();
             foreach (EffectStage stage in this.Stages)
             {
                 stage.Unbind();

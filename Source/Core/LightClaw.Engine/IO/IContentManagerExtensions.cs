@@ -14,6 +14,10 @@ namespace LightClaw.Engine.IO
     /// </summary>
     public static class IContentManagerExtensions
     {
+        // We provide additional, commonly needed content manager functionality through
+        // extension methods to free custom interface implementers of implementing those
+        // methods.
+
         /// <summary>
         /// Asynchronously loads the asset with the specified resource string.
         /// </summary>
@@ -33,9 +37,9 @@ namespace LightClaw.Engine.IO
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
         public static async Task<T> LoadAsync<T>(
-                this IContentManager contentManager, 
-                string resourceString, 
-                object parameter = null, 
+                this IContentManager contentManager,
+                string resourceString,
+                object parameter = null,
                 bool forceReload = false
             )
         {
@@ -59,7 +63,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(readers != null);
-
+            
             foreach (IContentReader reader in readers.FilterNull())
             {
                 contentManager.Register(reader);

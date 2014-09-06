@@ -135,7 +135,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public void Unbind()
         {
-            GL.BindBufferBase(this.RangeTarget, this.Index, this.BaseBuffer.Handle);
+            GL.BindBufferRange(this.RangeTarget, this.Index, 0, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
         public T[] Get<T>()

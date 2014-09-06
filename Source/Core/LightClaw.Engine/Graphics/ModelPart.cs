@@ -27,10 +27,10 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>Raised after any binding / drawing operations.</remarks>
         public event EventHandler<ParameterEventArgs> Drawn;
 
-        ///// <summary>
-        ///// Notifies about changes in the <see cref="Material"/>.
-        ///// </summary>
-        //public event EventHandler<ValueChangedEventArgs<Material>> MaterialChanged;
+        /// <summary>
+        /// Notifies about a change in the <see cref="P:Effect"/>.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<ModelEffect>> EffectChanged;
 
         /// <summary>
         /// Notifies about changes in the parent <see cref="Model"/>.
@@ -66,32 +66,34 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<VertexArrayObject>> VaoChanged;
 
-        ///// <summary>
-        ///// Backing field.
-        ///// </summary>
-        //private Material _Material;
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private ModelEffect _Effect;
 
-        ///// <summary>
-        ///// The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.
-        ///// </summary>
-        //public Material Material
-        //{
-        //    get
-        //    {
-        //        return _Material;
-        //    }
-        //    set
-        //    {
-        //        Model model = this.Model;
-        //        if (value != null && model != null)
-        //        {
-        //            value.Component = this.Model.Component;
-        //        }
-        //        Material previous = this.Material;
-        //        this.SetProperty(ref _Material, value);
-        //        this.Raise(this.MaterialChanged, value, previous);
-        //    }
-        //}
+        /// <summary>
+        /// Gets the <see cref="ModelEffect"/> used to render the <see cref="ModelPart"/>.
+        /// </summary>
+        public ModelEffect Effect
+        {
+            get
+            {
+                return _Effect;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                ModelEffect oldValue = _Effect;
+                if (oldValue != null)
+                {
+                    oldValue.ModelPart = null;
+                }
+                this.SetProperty(ref _Effect, value);
+                value.ModelPart = this;
+                this.Raise(this.EffectChanged, value, oldValue);
+            }
+        }
 
         /// <summary>
         /// Backing field.
@@ -142,19 +144,19 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public ModelPart() { }
 
-        ///// <summary>
-        ///// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
-        ///// </summary>
-        ///// <param name="material">The <see cref="Material"/> acting as interface to the <see cref="Shader"/>.</param>
-        ///// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
-        //public ModelPart(Material material, VertexArrayObject vao)
-        //{
-        //    Contract.Requires<ArgumentNullException>(material != null);
-        //    Contract.Requires<ArgumentNullException>(vao != null);
+        /// <summary>
+        /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
+        /// </summary>
+        /// <param name="effect">The <see cref="ModelEffect"/> used to shade the <see cref="ModelPart"/>.</param>
+        /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
+        public ModelPart(ModelEffect effect, VertexArrayObject vao)
+        {
+            Contract.Requires<ArgumentNullException>(effect != null);
+            Contract.Requires<ArgumentNullException>(vao != null);
 
-        //    this.Material = material;
-        //    this.Vao = vao;
-        //}
+            this.Effect = effect;
+            this.Vao = vao;
+        }
 
         /// <summary>
         /// Draws the <see cref="ModelPart"/> to the screen.
@@ -163,16 +165,19 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                //Material mat = this.Material;
-                //VertexArrayObject vao = this.Vao;
-                //if ((vao != null) && (mat != null))
-                //{
-                //    using (GLBinding materialBinding = new GLBinding(mat))
-                //    using (GLBinding vaoBinding = new GLBinding(vao))
-                //    {
-                //        GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
-                //    }
-                //}
+                Effect effect = this.Effect;
+                VertexArrayObject vao = this.Vao;
+                if ((effect != null) && (vao != null))
+                {
+                    using (GLBinding vaoBinding = new GLBinding(vao))
+                    {
+                        for (int i = 0; i < effect.Passes.Count; i++)
+                        {
+                            effect.Apply(i);
+                            GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
+                        }
+                    }
+                }
             }
         }
 
@@ -184,11 +189,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
             {
-                //Material mat = this.Material;
-                //if (mat != null)
-                //{
-                //    mat.Update(gameTime);
-                //}
+                Effect effect = this.Effect;
+                if (effect != null)
+                {
+                    effect.Update(gameTime);
+                }
             }
         }
 
@@ -199,11 +204,11 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                //Material mat = this.Material;
-                //if (mat != null)
-                //{
-                //    mat.LateUpdate();
-                //}
+                Effect effect = this.Effect;
+                if (effect != null)
+                {
+                    effect.LateUpdate();
+                }
             }
         }
     }

@@ -211,12 +211,13 @@
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
+    <Compile Include="Graphics\ModelEffect.cs" />
     <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
     <Compile Include="Graphics\EffectStage.cs" />
-    <Compile Include="Graphics\EnumExtensions.cs" />
+    <Compile Include="Graphics\OpenGL\EnumExtensions.cs" />
     <Compile Include="Graphics\OpenGL\IBuffer.cs" />
     <Compile Include="Graphics\OpenGL\IGLObject.cs" />
     <Compile Include="Core\IInitializable.cs" />

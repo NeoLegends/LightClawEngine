@@ -200,7 +200,7 @@ namespace LightClaw.Engine.IO
                     }
                     catch (ObjectDisposedException)
                     {
-                        // Although it shouldn't, Stream might throw ODE when disposed two times -> catch that.
+                        // Although it shouldn't, Stream might throw ODE when disposed multiple times (i.e. by a StreamReader) -> catch that.
                     }
                 }
                 else

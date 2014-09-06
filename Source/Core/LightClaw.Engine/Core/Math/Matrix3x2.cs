@@ -330,7 +330,7 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override int GetHashCode()
         {
-            return HashF.GetHashCode(HashF.GetHashCode(this.M11, this.M12, this.M21, this.M22, this.M31), this.M32);
+            return HashF.GetHashCode(this.M11, this.M12, this.M21, this.M22, this.M31, this.M32);
         }
 
         /// <summary>
@@ -507,6 +507,32 @@ namespace LightClaw.Engine.Core
         public static Matrix3x2 Multiply(Matrix3x2 left, Matrix3x2 right)
         {
             Matrix3x2 result;
+            Multiply(ref left, ref right, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix3x2"/> with a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x2"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector4"/> to multiply with.</param>
+        /// <param name="result">The multiplication result.</param>
+        public static void Multiply(ref Matrix3x2 left, ref Vector2 right, out Vector3 result)
+        {
+            result.X = (left.M11 * right.X) + (left.M12 * right.Y);
+            result.Y = (left.M21 * right.X) + (left.M22 * right.Y);
+            result.Z = (left.M31 * right.X) + (left.M32 * right.Y);
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix3x2"/> with a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x2"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector4"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3 Multiply(Matrix3x2 left, Vector2 right)
+        {
+            Vector3 result;
             Multiply(ref left, ref right, out result);
             return result;
         }
@@ -1052,6 +1078,19 @@ namespace LightClaw.Engine.Core
         {
             Matrix3x2 result;
             Multiply(ref left, right, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix3x2"/> with a <see cref="Vector2"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x2"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector2"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3 operator *(Matrix3x2 left, Vector2 right)
+        {
+            Vector3 result;
+            Multiply(ref left, ref right, out result);
             return result;
         }
 

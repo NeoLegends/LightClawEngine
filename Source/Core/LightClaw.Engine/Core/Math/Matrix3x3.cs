@@ -798,6 +798,32 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Multiplies the <see cref="Matrix3x3"/> with a <see cref="Vector3"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x3"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector3"/> to multiply with.</param>
+        /// <param name="result">The multiplication result.</param>
+        public static void Multiply(ref Matrix3x3 left, ref Vector3 right, out Vector3 result)
+        {
+            result.X = (left.M11 * right.X) + (left.M12 * right.Y) + (left.M13 * right.Z);
+            result.Y = (left.M21 * right.X) + (left.M22 * right.Y) + (left.M23 * right.Z);
+            result.Z = (left.M31 * right.X) + (left.M32 * right.Y) + (left.M33 * right.Z);
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix3x3"/> with a <see cref="Vector3"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x3"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector3"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3 Multiply(Matrix3x3 left, Vector3 right)
+        {
+            Vector3 result;
+            Multiply(ref left, ref right, out result);
+            return result;
+        }
+
+        /// <summary>
         /// Determines the product of two matrices.
         /// </summary>
         /// <param name="left">The first Matrix3x3 to multiply.</param>
@@ -2017,6 +2043,19 @@ namespace LightClaw.Engine.Core
         {
             Matrix3x3 result;
             Multiply(ref left, right, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix3x3"/> with a <see cref="Vector3"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix3x3"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector3"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector3 operator *(Matrix3x3 left, Vector3 right)
+        {
+            Vector3 result;
+            Multiply(ref left, ref right, out result);
             return result;
         }
 

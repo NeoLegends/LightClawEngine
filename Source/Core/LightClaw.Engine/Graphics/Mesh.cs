@@ -70,7 +70,7 @@ namespace LightClaw.Engine.Graphics
         }
     
         /// <summary>
-        /// Initializes a new <see cref="Mesh"/>.
+        /// Initializes a new <see cref="Mesh"/>. Constructor required for serialization.
         /// </summary>
         private Mesh() { }
 
@@ -105,18 +105,22 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Asynchronously loads the <see cref="Model"/> into the <see cref="Mesh"/>.
         /// </summary>
+        /// <remarks>
+        /// Drawing and updating will be performed when the mesh is loaded successfully.
+        /// </remarks>
         protected override void OnLoad()
         {
             Logger.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
 
-            IContentManager contentManager = this.IocC.Resolve<IContentManager>();
+            IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
             if (contentManager == null)
             {
                 Logger.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
                 return;
             }
 
-            Task<Model> meshTask = (this.Model != null) ? Task.FromResult(this.Model) : contentManager.LoadAsync<Model>(this.ResourceString, true);
+            Model model = this.Model;
+            Task<Model> meshTask = (model != null) ? Task.FromResult(model) : contentManager.LoadAsync<Model>(this.ResourceString, true);
             meshTask.ContinueWith(t =>
             {
                 this.Model = t.Result;

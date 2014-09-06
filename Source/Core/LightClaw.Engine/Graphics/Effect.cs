@@ -30,6 +30,7 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 Contract.Ensures(Contract.Result<ImmutableList<EffectPass>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableList<EffectPass>>().All(pass => pass != null));
 
                 return _Passes;
             }
@@ -42,17 +43,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Effect(bool ownsPasses = true) 
+        protected Effect(bool ownsPasses = false) 
         {
             this.OwnsPasses = ownsPasses;
         }
 
-        protected Effect(IEnumerable<EffectPass> techniques, bool ownsPasses = true)
+        protected Effect(IEnumerable<EffectPass> passes, bool ownsPasses = false)
             : this(ownsPasses)
         {
-            Contract.Requires<ArgumentNullException>(techniques != null);
+            Contract.Requires<ArgumentNullException>(passes != null);
 
-            this.Passes = techniques.ToImmutableList();
+            this.Passes = passes.ToImmutableList();
         }
 
         public void Apply(int index)
@@ -130,6 +131,7 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Passes != null);
+            Contract.Invariant(this._Passes.All(pass => pass != null));
         }
     }
 }

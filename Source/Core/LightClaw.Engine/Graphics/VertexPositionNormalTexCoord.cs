@@ -57,7 +57,7 @@ namespace LightClaw.Engine.Graphics
         /// </list>
         /// </para>
         /// </remarks>
-        public static readonly VertexAttributePointer[] VertexAttributePointers
+        public static VertexAttributePointer[] VertexAttributePointers
         {
             get
             {
@@ -148,8 +148,8 @@ namespace LightClaw.Engine.Graphics
         public VertexPositionNormalTexCoord(float[] data, int offset)
         {
             Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(offset + 8 <= data.Length);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentException>(data.Length > offset + 8);
 
             this.Position.X = data[offset];
             this.Position.Y = data[offset + 1];

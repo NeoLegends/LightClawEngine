@@ -26,11 +26,7 @@ namespace LightClaw.Engine.Logging
         /// <summary>
         /// Initializes a new <see cref="XmlLayout"/>.
         /// </summary>
-        public XmlLayout()
-        {
-            this.Header = "<Entries>";
-            this.Footer = "</Entries>";
-        }
+        public XmlLayout() { }
 
         /// <summary>
         /// Converts the specified <see cref="LoggingEvent"/> into XML and writes it into the <paramref name="writer"/>.

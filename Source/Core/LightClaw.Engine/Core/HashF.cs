@@ -12,6 +12,23 @@ namespace LightClaw.Engine.Core
     /// Contains methods to compute the hash of multiple elements.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// This implementation uses fixed parameter counts / "fixed overloads" to focus on speed which might decrease if
+    /// parameter arrays are used instead.
+    /// </para>
+    /// <para>
+    /// If you need to compute the hash code of more than six (= max amount per call) elements just nest the calls like so:
+    /// <code>
+    /// HashF.GetHashCode(
+    ///     HashF.GetHashCode(this.M11, this.M12, this.M13, this.M14),
+    ///     HashF.GetHashCode(this.M21, this.M22, this.M23, this.M24),
+    ///     HashF.GetHashCode(this.M31, this.M32, this.M33, this.M34),
+    ///     HashF.GetHashCode(this.M41, this.M42, this.M43, this.M44)
+    /// );
+    /// </code>
+    /// Calls will be inlined, so there really is no performance penalty in calling the method multiple times.
+    /// </para>
+    /// <para>
     /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
     /// <code>
     /// unchecked
@@ -23,9 +40,14 @@ namespace LightClaw.Engine.Core
     ///     return hash;
     /// }
     /// </code>
+    /// </para>
     /// </remarks>
     public static class HashF
     {
+        // AggressiveInlining everywhere to allow inlining even with value types. See http://blogs.msdn.com/b/davidnotario/archive/2004/11/01/250398.aspx.
+        // Also, we really want to make sure the methods are inlined to make sure they are blazing fast as GetHashCode is supposed to be, especially for
+        // larger structs (Matrix, for example).
+
         /// <summary>
         /// The factor a hash value will be multiplied before applying the next hash code.
         /// </summary>

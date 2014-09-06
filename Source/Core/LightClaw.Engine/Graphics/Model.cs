@@ -13,12 +13,12 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a three-dimensional polygon model.
     /// </summary>
-    public class Model : Entity, IDrawable, IUpdateable, ILateUpdateable
+    public class Model : Entity, IDrawable, IEnumerable<ModelPart>, IUpdateable, ILateUpdateable
     {
-        ///// <summary>
-        ///// A cache of the <see cref="ModelPart"/>s grouped by their shader.
-        ///// </summary>
-        //private IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts;
+        /// <summary>
+        /// Notifies about a change in the <see cref="P:Component"/>.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<Component>> ComponentChanged;
 
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -33,18 +33,13 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> Drawn;
 
         /// <summary>
-        /// Notifies about a change in the <see cref="P:Component"/>.
-        /// </summary>
-        public event EventHandler<ValueChangedEventArgs<Component>> ComponentChanged;
-
-        /// <summary>
         /// Notifies about the start of the updating process.
         /// </summary>
         /// <remarks>Raised before any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updating;
 
         /// <summary>
-        /// Notifies about the finsih of the updating process.
+        /// Notifies about the finish of the updating process.
         /// </summary>
         /// <remarks>Raised after any updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> Updated;
@@ -56,7 +51,7 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> LateUpdating;
 
         /// <summary>
-        /// Notifies about the finsih of the late updating process.
+        /// Notifies about the finish of the late updating process.
         /// </summary>
         /// <remarks>Raised after any late updating operations.</remarks>
         public event EventHandler<ParameterEventArgs> LateUpdated;
@@ -112,7 +107,6 @@ namespace LightClaw.Engine.Graphics
         {
             this.ModelParts.CollectionChanged += (s, e) =>
             {
-                //this.groupedModelParts = null;
                 foreach (ModelPart modelMesh in e.OldItems)
                 {
                     if (modelMesh != null)
@@ -133,13 +127,13 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
         /// </summary>
-        /// <param name="modelMeshes"></param>
-        public Model(IEnumerable<ModelPart> modelMeshes)
+        /// <param name="modelParts"></param>
+        public Model(IEnumerable<ModelPart> modelParts)
             : this()
         {
-            Contract.Requires<ArgumentNullException>(modelMeshes != null);
+            Contract.Requires<ArgumentNullException>(modelParts != null);
 
-            this.ModelParts.AddRange(modelMeshes);
+            this.ModelParts.AddRange(modelParts);
         }
 
         /// <summary>
@@ -149,25 +143,32 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                //IEnumerable<IGrouping<Shader, ModelPart>> groupedModelParts = this.groupedModelParts;
-                //if (groupedModelParts != null)
-                //{
-                //    foreach (IGrouping<Shader, ModelPart> grouping in groupedModelParts)
-                //    {
-                //        using (GLBinding shaderBinding = new GLBinding(grouping.Key))
-                //        {
-                //            foreach (ModelPart modelMeshPart in grouping)
-                //            {
-                //                if (modelMeshPart != null)
-                //                {
-                //                    modelMeshPart.Material.Bind();
-                //                    modelMeshPart.Draw();
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
+                foreach (ModelPart modelPart in this)
+                {
+                    if (modelPart != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
+                    {
+                        modelPart.Draw();
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IEnumerator{T}"/>.
+        /// </summary>
+        /// <returns>The <see cref="IEnumerator{T}"/>.</returns>
+        public IEnumerator<ModelPart> GetEnumerator()
+        {
+            return this.ModelParts.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Gets the <see cref="IEnumerator"/>.
+        /// </summary>
+        /// <returns>The <see cref="IEnumerator"/>.</returns>
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
 
         /// <summary>
@@ -180,17 +181,11 @@ namespace LightClaw.Engine.Graphics
             {
                 foreach (ModelPart part in this.ModelParts)
                 {
-                    if (part != null)
+                    if (part != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
                     {
                         part.Update(gameTime);
                     }
                 }
-                //if (this.groupedModelParts == null) // Rebuild grouping cache if it's null
-                //{
-                //    this.groupedModelParts = this.ModelParts.Where(modelPart => modelPart.Material != null)
-                //                                            .GroupBy(modelPart => modelPart.Material.Shader)
-                //                                            .Where(grouping => grouping.Key != null);
-                //}
             }
         }
 
@@ -203,7 +198,7 @@ namespace LightClaw.Engine.Graphics
             {
                 foreach (ModelPart part in this.ModelParts)
                 {
-                    if (part != null)
+                    if (part != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
                     {
                         part.LateUpdate();
                     }

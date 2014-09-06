@@ -601,29 +601,12 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = HashF.HashStart * HashF.HashFactor + this.M11.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M12.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M13.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M14.GetHashCode();
-
-                hash = hash * HashF.HashFactor + this.M21.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M22.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M23.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M24.GetHashCode();
-
-                hash = hash * HashF.HashFactor + this.M31.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M32.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M33.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M34.GetHashCode();
-
-                hash = hash * HashF.HashFactor + this.M41.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M42.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M43.GetHashCode();
-                hash = hash * HashF.HashFactor + this.M44.GetHashCode();
-                return hash;
-            }
+            return HashF.GetHashCode(
+                HashF.GetHashCode(this.M11, this.M12, this.M13, this.M14),
+                HashF.GetHashCode(this.M21, this.M22, this.M23, this.M24),
+                HashF.GetHashCode(this.M31, this.M32, this.M33, this.M34),
+                HashF.GetHashCode(this.M41, this.M42, this.M43, this.M44)
+            );
         }
 
         /// <summary>
@@ -1097,6 +1080,33 @@ namespace LightClaw.Engine.Core
         {
             Matrix result;
             Multiply(ref left, right, out result);
+            return result;
+        }
+        
+        /// <summary>
+        /// Multiplies the <see cref="Matrix"/> with a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector4"/> to multiply with.</param>
+        /// <param name="result">The multiplication result.</param>
+        public static void Multiply(ref Matrix left, ref Vector4 right, out Vector4 result)
+        {
+            result.X = (left.M11 * right.X) + (left.M12 * right.Y) + (left.M13 * right.Z) + (left.M14 * right.W);
+            result.Y = (left.M21 * right.X) + (left.M22 * right.Y) + (left.M23 * right.Z) + (left.M24 * right.W);
+            result.Z = (left.M31 * right.X) + (left.M32 * right.Y) + (left.M33 * right.Z) + (left.M34 * right.W);
+            result.W = (left.M41 * right.X) + (left.M42 * right.Y) + (left.M43 * right.Z) + (left.M44 * right.W);
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix"/> with a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector4"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector4 Multiply(Matrix left, Vector4 right)
+        {
+            Vector4 result;
+            Multiply(ref left, ref right, out result);
             return result;
         }
 
@@ -3186,6 +3196,19 @@ namespace LightClaw.Engine.Core
         {
             Matrix result;
             Multiply(ref left, right, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Multiplies the <see cref="Matrix"/> with a <see cref="Vector4"/>.
+        /// </summary>
+        /// <param name="left">The <see cref="Matrix"/> to multiply.</param>
+        /// <param name="right">The <see cref="Vector4"/> to multiply with.</param>
+        /// <returns>The multiplication result.</returns>
+        public static Vector4 operator *(Matrix left, Vector4 right)
+        {
+            Vector4 result;
+            Multiply(ref left, ref right, out result);
             return result;
         }
 
