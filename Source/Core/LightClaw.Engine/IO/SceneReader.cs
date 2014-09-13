@@ -31,7 +31,8 @@ namespace LightClaw.Engine.IO
         /// </returns>
         public async Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
         {
-            return (assetType == typeof(Scene)) ? await Scene.Load(assetStream) : await Task.FromResult((Scene)null);
+            // Await for covariance
+            return await ((assetType == typeof(Scene)) ? Scene.Load(assetStream) : Task.FromResult((Scene)null));
         }
     }
 }

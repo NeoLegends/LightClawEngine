@@ -18,6 +18,22 @@ namespace LightClaw.Engine.Core
     public class Transform : Component, INotifyCollectionChanged
     {
         /// <summary>
+        /// Gets a <see cref="Transform"/> with default values.
+        /// </summary>
+        public static Transform Null
+        {
+            get
+            {
+                return new Transform();
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
+        /// </summary>
+        private bool isDirty = true; // Transform values need to be calculated on start, even if we're not technically dirty.
+
+        /// <summary>
         /// Notifies about changes in the children collection.
         /// </summary>
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
@@ -103,6 +119,7 @@ namespace LightClaw.Engine.Core
                 Transform previous = this.Parent;
                 this.SetProperty(ref _Parent, value);
                 this.Raise(this.ParentChanged, value, previous);
+                this.isDirty = true;
             }
         }
 
@@ -126,6 +143,7 @@ namespace LightClaw.Engine.Core
                 Vector3 previous = this.LocalPosition;
                 this.SetProperty(ref _LocalPosition, value);
                 this.Raise(this.LocalPositionChanged, value, previous);
+                this.isDirty = true;
             }
         }
 
@@ -150,13 +168,18 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Matrix _PositionMatrix;
+
+        /// <summary>
         /// The absolute position as translation <see cref="Matrix"/>.
         /// </summary>
         public Matrix PositionMatrix
         {
             get
             {
-                return Matrix.Translation(this.Position);
+                return (this.isDirty) ? (_PositionMatrix = Matrix.Translation(this.Position)) : _PositionMatrix;
             }
         }
 
@@ -180,6 +203,7 @@ namespace LightClaw.Engine.Core
                 Quaternion previous = this.LocalRotation;
                 this.SetProperty(ref _LocalRotation, value);
                 this.Raise(this.LocalRotationChanged, value, previous);
+                this.isDirty = true;
             }
         }
 
@@ -204,13 +228,18 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Matrix _RotationMatrix;
+
+        /// <summary>
         /// The absolute rotation in world space as rotation <see cref="Matrix"/>.
         /// </summary>
         public Matrix RotationMatrix
         {
             get
             {
-                return Matrix.RotationQuaternion(this.Rotation);
+                return (this.isDirty) ? (_RotationMatrix = Matrix.RotationQuaternion(this.Rotation)) : _RotationMatrix; ;
             }
         }
 
@@ -234,6 +263,7 @@ namespace LightClaw.Engine.Core
                 Vector3 previous = this.LocalScaling;
                 this.SetProperty(ref _LocalScaling, value);
                 this.Raise(this.LocalScalingChanged, previous, previous);
+                this.isDirty = true;
             }
         }
 
@@ -258,15 +288,25 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Matrix _ScalingMatrix;
+
+        /// <summary>
         /// The absolute scaling in world space as scaling <see cref="Matrix"/>.
         /// </summary>
         public Matrix ScalingMatrix
         {
             get
             {
-                return Matrix.Scaling(this.Scaling);
+                return (this.isDirty) ? (_ScalingMatrix = Matrix.Scaling(this.Scaling)) : _ScalingMatrix;
             }
         }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Matrix _ModelMatrix;
 
         /// <summary>
         /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/> (up to you how you call it ;)).
@@ -292,7 +332,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix;
+                return (this.isDirty) ? (_ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix) : _ModelMatrix;
             }
         }
 
@@ -303,6 +343,18 @@ namespace LightClaw.Engine.Core
         {
             this.Childs.CollectionChanged += (s, e) =>
             {
+                if (e.Action != NotifyCollectionChangedAction.Move)
+                {
+                    foreach (Transform t in e.OldItems)
+                    {
+                        t.Parent = null;
+                    }
+                    foreach (Transform t in e.NewItems)
+                    {
+                        t.Parent = this;
+                    }
+                }
+
                 NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;
                 if (handler != null)
                 {

@@ -23,9 +23,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected ModelEffect(bool ownsPasses = false) : base(ownsPasses) { }
+        protected ModelEffect() : this(false) { }
 
-        protected ModelEffect(ModelPart modelPart, bool ownsPasses = false)
+        protected ModelEffect(bool ownsPasses) : base(ownsPasses) { }
+
+        protected ModelEffect(ModelPart modelPart)
+            : this(modelPart, false)
+        {
+            Contract.Requires<ArgumentNullException>(modelPart != null);
+        }
+
+        protected ModelEffect(ModelPart modelPart, bool ownsPasses)
             : this(ownsPasses) 
         {
             Contract.Requires<ArgumentNullException>(modelPart != null);
@@ -33,13 +41,28 @@ namespace LightClaw.Engine.Graphics
             this.ModelPart = modelPart;
         }
 
-        protected ModelEffect(IEnumerable<EffectPass> passes, bool ownsPasses = false)
+        protected ModelEffect(IEnumerable<EffectPass> passes)
+            : this(passes, false)
+        {
+            Contract.Requires<ArgumentNullException>(passes != null);
+        }
+
+        protected ModelEffect(IEnumerable<EffectPass> passes, bool ownsPasses)
             : base(passes, ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(passes != null);
         }
 
-        protected ModelEffect(ModelPart modelPart, IEnumerable<EffectPass> passes, bool ownsPasses = false)
+        protected ModelEffect(ModelPart modelPart, IEnumerable<EffectPass> passes)
+            : this(modelPart, passes, false)
+        {
+            Contract.Requires<ArgumentNullException>(modelPart != null);
+            Contract.Requires<ArgumentNullException>(passes != null);
+
+            this.ModelPart = modelPart;
+        }
+
+        protected ModelEffect(ModelPart modelPart, IEnumerable<EffectPass> passes, bool ownsPasses)
             : base(passes, ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(modelPart != null);

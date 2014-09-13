@@ -133,7 +133,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectPass(ShaderPipeline pipeline, bool ownsPipeline = false) 
+        public EffectPass(ShaderPipeline pipeline)
+            : this(pipeline, false)
+        {
+            Contract.Requires<ArgumentNullException>(pipeline != null);
+        }
+
+        public EffectPass(ShaderPipeline pipeline, bool ownsPipeline) 
         {
             Contract.Requires<ArgumentNullException>(pipeline != null);
 

@@ -1,6 +1,5 @@
 ﻿#version 400
 
-uniform mat4 modelViewProjectionMatrix;
 uniform sampler2D texture;
 
 in vec2 passTextureCoordinates;

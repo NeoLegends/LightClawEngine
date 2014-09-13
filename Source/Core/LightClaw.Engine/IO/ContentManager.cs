@@ -102,7 +102,7 @@ namespace LightClaw.Engine.IO
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
-                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).FirstOrDefaultAsync(t => t.Result);
+                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).AnyAsync(b => b);
             }
         }
 
@@ -124,7 +124,7 @@ namespace LightClaw.Engine.IO
                 try
                 {
                     return await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
-                                               .FirstAsync(t => (t.Result != null) && t.Result.CanRead && t.Result.CanWrite);
+                                               .FirstAsync(s => (s != null) && s.CanRead && s.CanWrite);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -175,7 +175,7 @@ namespace LightClaw.Engine.IO
                     try
                     {
                         using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString))
-                                                                        .FirstOrDefaultAsync(t => (t.Result != null) && t.Result.CanRead))
+                                                                        .FirstOrDefaultAsync(s => (s != null) && s.CanRead))
                         {
                             if (assetStream == null)
                             {
@@ -186,7 +186,7 @@ namespace LightClaw.Engine.IO
                             Logger.Debug(() => "Stream around '{0}' obtained, deserializing...".FormatWith(resourceString));
 
                             asset = await this.readers.Select(reader => reader.ReadAsync(this, resourceString, assetStream, assetType, parameter))
-                                                      .FirstOrDefaultAsync(t => t.Result != null);
+                                                      .FirstOrDefaultAsync(reader => reader != null);
                             if (asset == null)
                             {
                                 string message = "Asset '{0}' could not be deserialized.".FormatWith(assetStream);

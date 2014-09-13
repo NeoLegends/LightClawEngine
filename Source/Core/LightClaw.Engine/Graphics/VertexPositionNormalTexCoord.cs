@@ -149,7 +149,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-            Contract.Requires<ArgumentException>(data.Length > offset + 8);
+            Contract.Requires<ArgumentException>(data.Length >= offset + 8);
 
             this.Position.X = data[offset];
             this.Position.Y = data[offset + 1];

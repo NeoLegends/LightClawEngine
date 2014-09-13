@@ -44,9 +44,19 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Synchronously takes the lock.
+        /// </summary>
+        /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
+        public AsyncLockReleaser Lock()
+        {
+            this.semaphore.Wait();
+            return new AsyncLockReleaser(this.semaphore);
+        }
+
+        /// <summary>
         /// Asynchronously takes the lock.
         /// </summary>
-        /// <returns>A <see cref="Task{T}"/> representing the asynchronous waiting and lock-releasing operation.</returns>
+        /// <returns>A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free the lock.</returns>
         public Task<AsyncLockReleaser> LockAsync()
         {
             return this.semaphore.WaitAsync().ContinueWith(t => new AsyncLockReleaser(this.semaphore), TaskContinuationOptions.ExecuteSynchronously);

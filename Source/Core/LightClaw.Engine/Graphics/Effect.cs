@@ -43,6 +43,8 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        protected Effect() : this(false) { }
+
         protected Effect(bool ownsPasses = false) 
         {
             this.OwnsPasses = ownsPasses;

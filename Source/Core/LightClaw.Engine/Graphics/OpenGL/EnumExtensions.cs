@@ -52,9 +52,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 case ActiveUniformType.UnsignedIntSamplerCube:
                 case ActiveUniformType.UnsignedIntSamplerCubeMapArray:
                     return true;
+                default:
+                    return false;
             }
-
-            return false;
         }
     }
 }

@@ -189,7 +189,7 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
             {
-                Effect effect = this.Effect;
+                ModelEffect effect = this.Effect;
                 if (effect != null)
                 {
                     effect.Update(gameTime);
@@ -204,7 +204,7 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
             {
-                Effect effect = this.Effect;
+                ModelEffect effect = this.Effect;
                 if (effect != null)
                 {
                     effect.LateUpdate();

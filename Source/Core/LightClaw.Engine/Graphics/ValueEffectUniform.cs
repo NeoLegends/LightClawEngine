@@ -86,6 +86,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public void Set<T>(T value, int index)
+            where T : struct
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            if (!this.TrySet(value, index))
+            {
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+            }
+        }
+
         public void Set<T>(T[] values)
             where T : struct
         {
@@ -93,6 +104,19 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentException>(values.Length > 0);
 
             if (!this.TrySet(values))
+            {
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+            }
+        }
+
+        public void Set<T>(T[] values, int index)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentException>(values.Length > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            if (!this.TrySet(values, index))
             {
                 throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
             }
@@ -119,6 +143,29 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public bool TrySet<T>(T value, int index)
+            where T : struct
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            this.Initialize();
+            try
+            {
+                RangedBuffer buffer = this.Ubo;
+                if (buffer != null)
+                {
+                    buffer.SetRange(value, Marshal.SizeOf(typeof(T)) * index);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                return false;
+            }
+        }
+
         public bool TrySet<T>(T[] values)
             where T : struct
         {
@@ -132,6 +179,31 @@ namespace LightClaw.Engine.Graphics
                 if (buffer != null)
                 {
                     buffer.Set(values);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                return false;
+            }
+        }
+
+        public bool TrySet<T>(T[] values, int index)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(values != null);
+            Contract.Requires<ArgumentException>(values.Length > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+
+            this.Initialize();
+            try
+            {
+                RangedBuffer buffer = this.Ubo;
+                if (buffer != null)
+                {
+                    buffer.SetRange(values, Marshal.SizeOf(typeof(T)) * index);
                     return true;
                 }
                 return false;

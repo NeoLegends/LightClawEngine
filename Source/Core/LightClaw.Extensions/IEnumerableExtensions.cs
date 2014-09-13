@@ -13,6 +13,22 @@ namespace LightClaw.Extensions
     public static class IEnumerableExtensions
     {
         /// <summary>
+        /// Determines whether there are any duplicates in the specified <paramref name="collection"/>.
+        /// </summary>
+        /// <typeparam name="T1">The <see cref="Type"/> of collection.</typeparam>
+        /// <typeparam name="T2">The <see cref="Type"/> of the element in the collection to check for duplicates.</typeparam>
+        /// <param name="collection">The collection to check for duplicates.</param>
+        /// <param name="selector">A transformation function that is applied to the <paramref name="collection"/> before it is checked for duplicates.</param>
+        /// <returns></returns>
+        [Pure]
+        public static bool ContainsDuplicates<T1, T2>(this IEnumerable<T1> collection, Func<T1, T2> selector)
+        {
+            Contract.Requires<ArgumentNullException>(selector != null);
+
+            return (collection != null) ? collection.GroupBy(selector).Where(x => x.Skip(1).Any()).Any() : false;
+        }
+
+        /// <summary>
         /// Returns all distinct elements of the given source, where "distinctness" is determined via a projection and 
         /// the default comparer for the projected type.
         /// </summary>
@@ -30,7 +46,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(source != null);
             Contract.Requires<ArgumentNullException>(selector != null);
-            
+
             return DistinctBy(source, selector, EqualityComparer<TKey>.Default);
         }
 
@@ -68,22 +84,6 @@ namespace LightClaw.Extensions
             }
         }
 
-        /// <summary>
-        /// Determines whether there are any duplicates in the specified <paramref name="collection"/>.
-        /// </summary>
-        /// <typeparam name="T1">The <see cref="Type"/> of collection.</typeparam>
-        /// <typeparam name="T2">The <see cref="Type"/> of the element in the collection to check for duplicates.</typeparam>
-        /// <param name="collection">The collection to check for duplicates.</param>
-        /// <param name="selector">A transformation function that is applied to the <paramref name="collection"/> before it is checked for duplicates.</param>
-        /// <returns></returns>
-        [Pure]
-        public static bool ContainsDuplicates<T1, T2>(this IEnumerable<T1> collection, Func<T1, T2> selector)
-        {
-            Contract.Requires<ArgumentNullException>(selector != null);
-
-            return (collection != null) ? collection.GroupBy(selector).Where(x => x.Skip(1).Any()).Any() : false;
-        }
-        
         /// <summary>
         /// Makes sure that the return value is not null and returns an empty enumerable if <paramref name="source"/> was null.
         /// </summary>
@@ -126,70 +126,9 @@ namespace LightClaw.Extensions
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>().All(item => item != null));
 
-            return (collection != null) ? 
-                collection.Where(item => item != null) ?? Enumerable.Empty<T>() : // Enumerable.Empty<T>() required to fulfill contract
+            return (collection != null) ?
+                collection.Where(item => item != null) :
                 Enumerable.Empty<T>();
-        }
-
-        /// <summary>
-        /// An asynchronous version of .First().
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the collection.</typeparam>
-        /// <param name="collection">The collection to filter.</param>
-        /// <param name="predicate">The predicate used to select the element.</param>
-        /// <returns>The first element that passed the <paramref name="predicate"/>.</returns>
-        /// <exception cref="InvalidOperationException">No task fulfilled the predicate.</exception>
-        public static async Task<T> FirstAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
-        {
-            Contract.Requires<ArgumentNullException>(collection != null);
-            Contract.Requires<ArgumentNullException>(predicate != null);
-
-            List<Task<T>> workingCopy = collection.ToList();
-
-            while (workingCopy.Count > 0)
-            {
-                Task<T> finishedTask = await Task.WhenAny(workingCopy);
-                if (predicate(finishedTask))
-                {
-                    return finishedTask.Result;
-                }
-                else
-                {
-                    workingCopy.Remove(finishedTask);
-                }
-            }
-
-            throw new InvalidOperationException("No task fulfilled the predicate.");
-        }
-
-        /// <summary>
-        /// An asynchronous version of .FirstOrDefault().
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the collection.</typeparam>
-        /// <param name="collection">The collection to filter.</param>
-        /// <param name="predicate">The predicate used to select the element.</param>
-        /// <returns>The first element that passed the <paramref name="predicate"/> or <c>default(T)</c> if no element passed the test.</returns>
-        public static async Task<T> FirstOrDefaultAsync<T>(this IEnumerable<Task<T>> collection, Predicate<Task<T>> predicate)
-        {
-            Contract.Requires<ArgumentNullException>(collection != null);
-            Contract.Requires<ArgumentNullException>(predicate != null);
-
-            List<Task<T>> workingCopy = collection.ToList();
-
-            while (workingCopy.Count > 0)
-            {
-                Task<T> finishedTask = await Task.WhenAny(workingCopy);
-                if (predicate(finishedTask))
-                {
-                    return finishedTask.Result;
-                }
-                else
-                {
-                    workingCopy.Remove(finishedTask);
-                }
-            }
-
-            return default(T);
         }
 
         /// <summary>
@@ -204,7 +143,7 @@ namespace LightClaw.Extensions
         {
             Contract.Requires<ArgumentNullException>(subset != null);
             Contract.Requires<ArgumentNullException>(superset != null);
-            
+
             HashSet<T> hashSet = new HashSet<T>(subset);
             return hashSet.IsSubsetOf(superset);
         }

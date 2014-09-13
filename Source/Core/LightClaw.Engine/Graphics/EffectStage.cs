@@ -135,6 +135,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public EffectStage(EffectPass pass, ShaderProgram program)
+            : this(pass, program, false)
+        {
+            Contract.Requires<ArgumentNullException>(pass != null);
+            Contract.Requires<ArgumentNullException>(program != null);
+        }
+
         public EffectStage(EffectPass pass, ShaderProgram program, bool ownsProgram = false)
         {
             Contract.Requires<ArgumentNullException>(pass != null);

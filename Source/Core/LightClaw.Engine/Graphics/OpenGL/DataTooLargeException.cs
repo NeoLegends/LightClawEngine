@@ -20,13 +20,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public DataTooLargeException(int sizeInBytes, int offset, BufferRange range) : this(null, sizeInBytes, offset, range) { }
 
-        public DataTooLargeException(string message, int sizeInBytes, int offset, BufferRange range)
-            : this(message)
-        {
-            this.SizeInBytes = sizeInBytes;
-            this.Offset = offset;
-            this.Range = range;
-        }
+        public DataTooLargeException(string message, int sizeInBytes, int offset, BufferRange range) : this(message, null, sizeInBytes, offset, range) { }
 
         public DataTooLargeException(string message, Exception inner) : base(message, inner) { }
 

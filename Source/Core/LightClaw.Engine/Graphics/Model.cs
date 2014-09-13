@@ -107,18 +107,21 @@ namespace LightClaw.Engine.Graphics
         {
             this.ModelParts.CollectionChanged += (s, e) =>
             {
-                foreach (ModelPart modelMesh in e.OldItems)
+                if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Move)
                 {
-                    if (modelMesh != null)
+                    foreach (ModelPart modelMesh in e.OldItems)
                     {
-                        modelMesh.Model = null;
+                        if (modelMesh != null)
+                        {
+                            modelMesh.Model = null;
+                        }
                     }
-                }
-                foreach (ModelPart modelMesh in e.NewItems)
-                {
-                    if (modelMesh != null)
+                    foreach (ModelPart modelMesh in e.NewItems)
                     {
-                        modelMesh.Model = this;
+                        if (modelMesh != null)
+                        {
+                            modelMesh.Model = this;
+                        }
                     }
                 }
             };

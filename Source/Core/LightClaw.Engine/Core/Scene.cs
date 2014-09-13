@@ -257,6 +257,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(CompressionLevel), level));
 
             return Task.Run(() =>
             {
