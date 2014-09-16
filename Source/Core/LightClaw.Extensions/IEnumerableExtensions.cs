@@ -19,7 +19,7 @@ namespace LightClaw.Extensions
         /// <typeparam name="T2">The <see cref="Type"/> of the element in the collection to check for duplicates.</typeparam>
         /// <param name="collection">The collection to check for duplicates.</param>
         /// <param name="selector">A transformation function that is applied to the <paramref name="collection"/> before it is checked for duplicates.</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the input sequence contains duplicates, otherwise <c>false</c>.</returns>
         [Pure]
         public static bool ContainsDuplicates<T1, T2>(this IEnumerable<T1> collection, Func<T1, T2> selector)
         {

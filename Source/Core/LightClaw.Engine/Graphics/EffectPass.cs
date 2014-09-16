@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -18,7 +16,7 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly object initializationLock = new object();
 
-        private readonly bool ownsPipeline;
+        private readonly bool ownsProgram;
 
         private bool _IsInitialized = false;
 
@@ -60,40 +58,21 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private ShaderPipeline _ShaderPipeline;
+        private ShaderProgram _ShaderProgram;
 
-        public ShaderPipeline ShaderPipeline
+        public ShaderProgram ShaderProgram
         {
             get
             {
-                Contract.Ensures(Contract.Result<ShaderPipeline>() != null);
+                Contract.Ensures(Contract.Result<ShaderProgram>() != null);
 
-                return _ShaderPipeline;
+                return _ShaderProgram;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
-                this.SetProperty(ref _ShaderPipeline, value);
-            }
-        }
-
-        private ImmutableList<EffectStage> _Stages = ImmutableList<EffectStage>.Empty;
-
-        public ImmutableList<EffectStage> Stages
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ImmutableList<EffectStage>>() != null);
-
-                return _Stages;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(stage => stage != null));
-
-                this.SetProperty(ref _Stages, value);
+                this.SetProperty(ref _ShaderProgram, value);
             }
         }
 
@@ -133,28 +112,24 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public EffectPass(ShaderPipeline pipeline)
-            : this(pipeline, false)
+        public EffectPass(ShaderProgram program)
+            : this(program, false)
         {
-            Contract.Requires<ArgumentNullException>(pipeline != null);
+            Contract.Requires<ArgumentNullException>(program != null);
         }
 
-        public EffectPass(ShaderPipeline pipeline, bool ownsPipeline) 
+        public EffectPass(ShaderProgram program, bool ownsProgram) 
         {
-            Contract.Requires<ArgumentNullException>(pipeline != null);
+            Contract.Requires<ArgumentNullException>(program != null);
 
-            this.ownsPipeline = ownsPipeline;
-            this.ShaderPipeline = pipeline;
+            this.ownsProgram = ownsProgram;
+            this.ShaderProgram = program;
         }
 
         public void Bind()
         {
             this.Initialize();
-            foreach (EffectStage stage in this.Stages)
-            {
-                stage.Bind();
-            }
-            GL.BindProgramPipeline(this.ShaderPipeline);
+            GL.UseProgram(this.ShaderProgram);
         }
 
         public void Initialize()
@@ -165,14 +140,14 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        this.Stages = this.ShaderPipeline.Programs.FilterNull()
-                                                                  .Select(program => 
-                                                                   {
-                                                                       EffectStage stage = new EffectStage(this, program);
-                                                                       stage.Initialize();
-                                                                       return stage;
-                                                                   })
-                                                                  .ToImmutableList();
+                        //this.Stages = this.ShaderPipeline.Programs.FilterNull()
+                        //                                          .Select(program => 
+                        //                                           {
+                        //                                               EffectStage stage = new EffectStage(this, program);
+                        //                                               stage.Initialize();
+                        //                                               return stage;
+                        //                                           })
+                        //                                          .ToImmutableList();
                         this.IsInitialized = true;
                     }
                 }
@@ -181,25 +156,16 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind()
         {
-            this.Initialize();
-            foreach (EffectStage stage in this.Stages)
-            {
-                stage.Unbind();
-            }
-            GL.BindProgramPipeline(0);
+            GL.UseProgram(0);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (!this.IsDisposed)
             {
-                if (ownsPipeline)
+                if (ownsProgram)
                 {
-                    this.ShaderPipeline.Dispose();
-                }
-                foreach (EffectStage stage in this.Stages.FilterNull())
-                {
-                    stage.Dispose();
+                    this.ShaderProgram.Dispose();
                 }
                 this.UniformBufferManager.Dispose();
 
@@ -210,14 +176,13 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this._ShaderPipeline != null);
-            Contract.Invariant(this._Stages != null);
+            Contract.Invariant(this._ShaderProgram != null);
             Contract.Invariant(this._TextureUnitManager != null);
         }
 
-        public static implicit operator ShaderPipeline(EffectPass pass)
+        public static implicit operator ShaderProgram(EffectPass pass)
         {
-            return (pass != null) ? pass.ShaderPipeline : null;
+            return (pass != null) ? pass.ShaderProgram : null;
         }
     }
 }

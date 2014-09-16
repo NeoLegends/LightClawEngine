@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
@@ -11,6 +11,7 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
+    [DataContract]
     public abstract class Effect : DisposableEntity, IEnumerable<EffectPass>, IUpdateable, ILateUpdateable
     {
         public event EventHandler<ParameterEventArgs> Updating;
@@ -45,12 +46,20 @@ namespace LightClaw.Engine.Graphics
 
         protected Effect() : this(false) { }
 
-        protected Effect(bool ownsPasses = false) 
+        protected Effect(bool ownsPasses) 
         {
             this.OwnsPasses = ownsPasses;
         }
 
-        protected Effect(IEnumerable<EffectPass> passes, bool ownsPasses = false)
+        protected Effect(IEnumerable<EffectPass> passes)
+            : this(passes, false)
+        {
+            Contract.Requires<ArgumentNullException>(passes != null);
+
+            this.Passes = passes.ToImmutableList();
+        }
+
+        protected Effect(IEnumerable<EffectPass> passes, bool ownsPasses)
             : this(ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(passes != null);

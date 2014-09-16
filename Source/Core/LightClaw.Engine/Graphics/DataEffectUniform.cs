@@ -11,7 +11,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class ValueEffectUniform : EffectUniform, IBindable
+    public class DataEffectUniform : EffectUniform, IBindable
     {
         private int _Size;
 
@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public ValueEffectUniform(EffectStage stage, string name, int size)
+        public DataEffectUniform(EffectStage stage, string name, int size)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
@@ -82,7 +82,7 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.TrySet(value))
             {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
             }
         }
 
@@ -93,7 +93,7 @@ namespace LightClaw.Engine.Graphics
 
             if (!this.TrySet(value, index))
             {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
             }
         }
 
@@ -105,7 +105,7 @@ namespace LightClaw.Engine.Graphics
 
             if (!this.TrySet(values))
             {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
             }
         }
 
@@ -118,7 +118,7 @@ namespace LightClaw.Engine.Graphics
 
             if (!this.TrySet(values, index))
             {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(ValueEffectUniform).Name));
+                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
             }
         }
 
@@ -138,7 +138,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -161,7 +161,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -185,7 +185,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -210,7 +210,7 @@ namespace LightClaw.Engine.Graphics
             }
             catch (Exception ex)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ValueEffectUniform).Name), ex);
+                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }

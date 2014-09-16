@@ -20,20 +20,20 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
-        Task<bool> ExistsAsync(string resourceString);
+        Task<bool> ExistsAsync(ResourceString resourceString);
 
         /// <summary>
         /// Gets a <see cref="Stream"/> around the specified asset.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to obtain a <see cref="Stream"/> around.</param>
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
-        Task<Stream> GetStreamAsync(string resourceString);
+        Task<Stream> GetStreamAsync(ResourceString resourceString);
     }
 
     [ContractClassFor(typeof(IContentResolver))]
     abstract class IContentResolverContracts : IContentResolver
     {
-        Task<bool> IContentResolver.ExistsAsync(string resourceString)
+        Task<bool> IContentResolver.ExistsAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<Stream> IContentResolver.GetStreamAsync(string resourceString)
+        Task<Stream> IContentResolver.GetStreamAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);

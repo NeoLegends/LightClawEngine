@@ -27,8 +27,8 @@ namespace LightClaw.GameCode
             this.Passes = new EffectPass(
                 new ShaderPipeline(
                     new[] { 
-                        new ShaderProgram(contentManager.LoadAsync<string>(".\\Basic.frag").Result.YieldArray(), ShaderType.FragmentShader),
-                        new ShaderProgram(contentManager.LoadAsync<string>(".\\Basic.vert").Result.YieldArray(), ShaderType.VertexShader)
+                        new ShaderProgram(contentManager.LoadAsync<string>("Shaders/Basic.frag").Result.YieldArray(), ShaderType.FragmentShader),
+                        new ShaderProgram(contentManager.LoadAsync<string>("Shaders/Basic.vert").Result.YieldArray(), ShaderType.VertexShader)
                     }
                 )
             ).YieldArray().ToImmutableList();

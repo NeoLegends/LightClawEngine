@@ -28,13 +28,13 @@ namespace LightClaw.Engine.IO
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
         /// cannot be read.
         /// </returns>
-        Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter);
+        Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter);
     }
 
     [ContractClassFor(typeof(IContentReader))]
     abstract class IContentReaderContracts : IContentReader
     {
-        Task<object> IContentReader.ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
+        Task<object> IContentReader.ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));

@@ -216,23 +216,24 @@
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
     <Compile Include="Graphics\EffectUniform.cs" />
-    <Compile Include="Graphics\EffectStage.cs" />
     <Compile Include="Graphics\OpenGL\EnumExtensions.cs" />
     <Compile Include="Graphics\OpenGL\IBuffer.cs" />
     <Compile Include="Graphics\OpenGL\IGLObject.cs" />
     <Compile Include="Core\IInitializable.cs" />
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
+    <Compile Include="Graphics\OpenGL\Shader.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\OpenGL\SamplerParameterDescription.cs" />
-    <Compile Include="Graphics\OpenGL\ShaderPipeline.cs" />
     <Compile Include="Graphics\OpenGL\ShaderProgram.cs" />
     <Compile Include="Graphics\OpenGL\TextureDescription.cs" />
     <Compile Include="Graphics\OpenGL\BufferRange.cs" />
     <Compile Include="Graphics\TextureUnit.cs" />
     <Compile Include="Graphics\TextureUnitManager.cs" />
     <Compile Include="Graphics\UniformBufferManager.cs" />
-    <Compile Include="Graphics\ValueEffectUniform.cs" />
+    <Compile Include="Graphics\DataEffectUniform.cs" />
+    <Compile Include="IO\EffectPassReader.cs" />
+    <Compile Include="IO\ResourceString.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
     <Compile Include="Logging\LocationInfo.cs" />
     <Compile Include="Logging\LoggingEventInfo.cs" />
@@ -298,9 +299,9 @@
     <Reference Include="protobuf-net">
       <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.1.22.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Collections.Immutable, Version=1.1.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.1.22-beta\lib\portable-net45+win8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.1.29-beta\lib\portable-net45+win8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />

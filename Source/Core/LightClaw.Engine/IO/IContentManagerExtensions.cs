@@ -38,7 +38,7 @@ namespace LightClaw.Engine.IO
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
         public static async Task<T> LoadAsync<T>(
                 this IContentManager contentManager,
-                string resourceString,
+                ResourceString resourceString,
                 object parameter = null,
                 bool forceReload = false
             )

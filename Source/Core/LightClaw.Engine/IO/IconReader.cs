@@ -24,7 +24,7 @@ namespace LightClaw.Engine.IO
         /// <returns>
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/> is not an icon.
         /// </returns>
-        public Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             return (assetType == typeof(Icon)) ?
                 Task.FromResult<object>(new Icon(assetStream)) :

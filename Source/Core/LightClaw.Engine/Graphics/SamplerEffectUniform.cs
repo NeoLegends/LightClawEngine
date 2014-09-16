@@ -56,10 +56,10 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public SamplerEffectUniform(EffectStage stage, string name, TextureUnit textureUnit)
-            : base(stage, name)
+        public SamplerEffectUniform(EffectPass pass, string name, TextureUnit textureUnit)
+            : base(pass, name)
         {
-            Contract.Requires<ArgumentNullException>(stage != null);
+            Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
 
             this.TextureUnit = textureUnit;
@@ -70,13 +70,20 @@ namespace LightClaw.Engine.Graphics
             Texture texture = this.Texture;
             if (texture != null)
             {
-                GL.ProgramUniform1(this.Stage.ShaderProgram, this.Location, this.TextureUnit);
+                GL.ProgramUniform1(this.Pass.ShaderProgram, this.Location, this.TextureUnit);
                 texture.Bind();
 
                 Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
-                    sampler.Bind();
+                    if (sampler.TextureUnit == texture.TextureUnit)
+                    {
+                        sampler.Bind();
+                    }
+                    else
+                    {
+                        Logger.Warn(() => "The texture unit of the sampler to bind ({0}) didn't match the texture unit of the texture ({1}). The sampler will not be bound.".FormatWith(sampler.TextureUnit, texture.TextureUnit));
+                    }
                 }
             }
             else

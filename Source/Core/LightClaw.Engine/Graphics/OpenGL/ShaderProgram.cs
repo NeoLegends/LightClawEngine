@@ -29,46 +29,32 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private ImmutableList<string> _Sources;
+        private ImmutableList<Shader> _Shaders;
 
-        public ImmutableList<string> Sources
+        public ImmutableList<Shader> Shaders
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableList<string>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableList<Shader>>() != null);
 
-                return _Sources;
+                return _Shaders;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(source => source != null)); // No IsNullOrEmpty here as the compiler will just ignore it, no need for beef
+                Contract.Requires<ArgumentException>(value.All(shader => shader != null));
 
-                this.SetProperty(ref _Sources, value);
+                this.SetProperty(ref _Shaders, value);
             }
         }
 
-        private ShaderType _Type;
-
-        public ShaderType Type
+        public ShaderProgram(params Shader[] shaders)
         {
-            get
-            {
-                return _Type;
-            }
-            private set
-            {
-                this.SetProperty(ref _Type, value);
-            }
-        }
+            Contract.Requires<ArgumentNullException>(shaders != null);
+            Contract.Requires<ArgumentException>(shaders.Any());
+            Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
 
-        public ShaderProgram(string[] sources, ShaderType type)
-        {
-            Contract.Requires<ArgumentNullException>(sources != null);
-            Contract.Requires<ArgumentException>(sources.Any(source => !string.IsNullOrWhiteSpace(source)));
-
-            this.Sources = sources.ToImmutableList();
-            this.Type = type;
+            this.Shaders = shaders.ToImmutableList();
         }
 
         public void Initialize()
@@ -79,16 +65,33 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
-                        this.Handle = GL.CreateShaderProgram(this.Type, this.Sources.Count, this.Sources.ToArray());
-
-                        int result;
-                        GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
-                        if (result == 0)
+                        this.Handle = GL.CreateProgram();
+                        try
                         {
-                            string infoLog = GL.GetProgramInfoLog(this);
-                            string message = "{0} creation failed. Error code: {1}; Info Log: {2}.".FormatWith(typeof(ShaderProgram).Name, result, infoLog);
-                            Logger.Warn(message); // Message already created, so use direct logging call instead of lambda
-                            throw new CompilationFailedException(message, infoLog, result);
+                            foreach (Shader s in this.Shaders)
+                            {
+                                s.AttachTo(this);
+                            }
+                            GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
+                            GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
+
+                            GL.LinkProgram(this);
+
+                            int result;
+                            GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
+                            if (result == 0)
+                            {
+                                string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, GL.GetProgramInfoLog(this));
+                                Logger.Warn(message);
+                                throw new InvalidOperationException(message);
+                            }
+                        }
+                        finally
+                        {
+                            foreach (Shader s in this.Shaders)
+                            {
+                                s.DetachFrom(this);
+                            }
                         }
 
                         this.IsInitialized = true;
@@ -124,7 +127,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this._Sources != null);
+            Contract.Invariant(this._Shaders != null);
         }
     }
 }

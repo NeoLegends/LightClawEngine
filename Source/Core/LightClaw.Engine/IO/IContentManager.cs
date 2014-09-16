@@ -52,7 +52,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
-        Task<bool> ExistsAsync(string resourceString);
+        Task<bool> ExistsAsync(ResourceString resourceString);
 
         /// <summary>
         /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no
@@ -62,7 +62,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
         /// <seealso cref="Stream"/>
-        Task<Stream> GetStreamAsync(string resourceString);
+        Task<Stream> GetStreamAsync(ResourceString resourceString);
 
         /// <summary>
         /// Asynchronously loads the asset with the specified resource string.
@@ -81,7 +81,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
-        Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false);
+        Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false);
 
         /// <summary>
         /// Registers a new <see cref="IContentReader"/>.
@@ -121,7 +121,7 @@ namespace LightClaw.Engine.IO
 
         event EventHandler<ParameterEventArgs> IContentManager.StreamObtained { add { } remove { } }
 
-        Task<bool> IContentManager.ExistsAsync(string resourceString)
+        Task<bool> IContentManager.ExistsAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
@@ -129,7 +129,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<Stream> IContentManager.GetStreamAsync(string resourceString)
+        Task<Stream> IContentManager.GetStreamAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
@@ -139,7 +139,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<object> IContentManager.LoadAsync(string resourceString, Type assetType, object parameter, bool forceReload)
+        Task<object> IContentManager.LoadAsync(ResourceString resourceString, Type assetType, object parameter, bool forceReload)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);

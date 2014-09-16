@@ -17,7 +17,7 @@ namespace LightClaw.Engine.IO
 {
     public class ModelReader : IContentReader
     {
-        public Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             throw new NotImplementedException();
         }

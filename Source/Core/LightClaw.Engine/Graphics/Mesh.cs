@@ -78,7 +78,7 @@ namespace LightClaw.Engine.Graphics
         /// Initializes a new <see cref="Mesh"/> and sets the resource string of the model to load.
         /// </summary>
         /// <param name="resourceString">The resource string of the model to be drawn.</param>
-        public Mesh(string resourceString)
+        public Mesh(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 

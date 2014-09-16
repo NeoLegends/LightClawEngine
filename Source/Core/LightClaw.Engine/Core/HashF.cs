@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,7 +10,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// Contains methods to compute the hash of multiple elements.
+    /// Contains methods to compute the hash code of multiple elements.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -26,7 +27,7 @@ namespace LightClaw.Engine.Core
     ///     HashF.GetHashCode(this.M41, this.M42, this.M43, this.M44)
     /// );
     /// </code>
-    /// Calls will be inlined, so there really is no performance penalty in calling the method multiple times.
+    /// All calls will be inlined, so there really is no performance penalty in calling the method multiple times.
     /// </para>
     /// <para>
     /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
@@ -40,6 +41,15 @@ namespace LightClaw.Engine.Core
     ///     return hash;
     /// }
     /// </code>
+    /// Where the call to GetHashCode for a single element results in:
+    /// <code>
+    /// return (item != null) ? item.GetHashCode() : 0;
+    /// </code>
+    /// </para>
+    /// <para>
+    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>, there
+    /// is an overload for that. Just make sure the elements inside the collection do not change as this would render the previously
+    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you just broke the universe. :)
     /// </para>
     /// </remarks>
     public static class HashF
@@ -49,7 +59,7 @@ namespace LightClaw.Engine.Core
         // larger structs (Matrix, for example).
 
         /// <summary>
-        /// The factor a hash value will be multiplied before applying the next hash code.
+        /// The factor a hash value will be multiplied before adding the next hash code.
         /// </summary>
         public const int HashFactor = 486187739;
 
@@ -57,6 +67,72 @@ namespace LightClaw.Engine.Core
         /// The starting value of a hash code.
         /// </summary>
         public const int HashStart = 397;
+
+        /// <summary>
+        /// Combines all hash codes contained in <paramref name="hashes"/>.
+        /// </summary>
+        /// <param name="hashes">The hash codes to combine.</param>
+        /// <returns>The combined hash code.</returns>
+        public static int CombineHashCodes(IEnumerable<int> hashes)
+        {
+            Contract.Requires<ArgumentNullException>(hashes != null);
+
+            unchecked
+            {
+                int finalHash = HashStart;
+                foreach (int hash in hashes)
+                {
+                    finalHash = finalHash * HashFactor + hash;
+                }
+                return finalHash;
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash codes of all elements inside the <paramref name="collection"/>.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
+        /// <param name="array">The collection to get the hash codes from.</param>
+        /// <returns>The combined hash code.</returns>
+        public static int GetHashCode<T>(IEnumerable<T> collection)
+        {
+            if (collection != null)
+            {
+                int finalHash = HashStart;
+                foreach (T item in collection)
+                {
+                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(item));
+                }
+                return finalHash;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash codes of all elements inside the <paramref name="array"/>.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
+        /// <param name="array">The array to get the hash codes from.</param>
+        /// <returns>The combined hash code.</returns>
+        public static int GetHashCode<T>(T[] array)
+        {
+            if (array != null)
+            {
+                int finalHash = HashStart;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(array[i]));
+                }
+                return finalHash;
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
         /// <summary>
         /// Safely gets the hash code of the specified item.

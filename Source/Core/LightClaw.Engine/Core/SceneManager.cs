@@ -112,7 +112,7 @@ namespace LightClaw.Engine.Core
         /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
-        public async Task<int> Load(int slot, string resourceString)
+        public async Task<int> Load(int slot, ResourceString resourceString)
         {
             return this.Load(slot, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString));
         }

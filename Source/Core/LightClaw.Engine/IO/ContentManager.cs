@@ -98,7 +98,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
-        public async Task<bool> ExistsAsync(string resourceString)
+        public async Task<bool> ExistsAsync(ResourceString resourceString)
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             {
@@ -114,7 +114,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
         /// <seealso cref="Stream"/>
-        public async Task<Stream> GetStreamAsync(string resourceString)
+        public async Task<Stream> GetStreamAsync(ResourceString resourceString)
         {
             Logger.Debug(() => "Obtaining stream around '{0}'.".FormatWith(resourceString));
 
@@ -154,7 +154,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
-        public async Task<object> LoadAsync(string resourceString, Type assetType, object parameter = null, bool forceReload = false)
+        public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
             Logger.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 

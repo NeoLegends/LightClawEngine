@@ -29,7 +29,7 @@ namespace LightClaw.Engine.IO
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
         /// cannot be read.
         /// </returns>
-        public async Task<object> ReadAsync(IContentManager contentManager, string resourceString, Stream assetStream, Type assetType, object parameter)
+        public async Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             // Await for covariance
             return await ((assetType == typeof(Scene)) ? Scene.Load(assetStream) : Task.FromResult((Scene)null));

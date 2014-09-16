@@ -133,6 +133,28 @@ namespace LightClaw.Engine.Graphics
             return this.Unit.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return this.Unit.ToString();
+        }
+
+        public static TextureUnit Parse(string s)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(s));
+
+            return new TextureUnit(int.Parse(s));
+        }
+
+        public static bool TryParse(string s, out TextureUnit textureUnit)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(s));
+
+            int unit;
+            bool result = int.TryParse(s, out unit);
+            textureUnit = result ? new TextureUnit(unit) : default(TextureUnit);
+            return result;
+        }
+
         public static TextureUnit operator +(TextureUnit left, TextureUnit right)
         {
             return new TextureUnit(left.Unit + right.Unit);

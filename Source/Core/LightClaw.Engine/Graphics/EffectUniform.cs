@@ -58,21 +58,17 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private EffectStage _Stage;
+        private EffectPass _Pass;
 
-        public EffectStage Stage
+        public EffectPass Pass
         {
             get
             {
-                Contract.Ensures(Contract.Result<EffectStage>() != null);
-
-                return _Stage;
+                return _Pass;
             }
             protected set
             {
-                Contract.Requires(value != null);
-
-                this.SetProperty(ref _Stage, value);
+                this.SetProperty(ref _Pass, value);
             }
         }
 
@@ -94,13 +90,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected EffectUniform(EffectStage stage, string name)
+        protected EffectUniform(EffectPass pass, string name)
         {
-            Contract.Requires<ArgumentNullException>(stage != null);
+            Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
 
-            this.Location = GL.GetUniformLocation(stage.ShaderProgram, name);
-            this.Stage = stage;
+            this.Location = GL.GetUniformLocation(pass.ShaderProgram, name);
+            this.Pass = pass;
             this.UniformName = name;
         }
 
@@ -129,7 +125,7 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Location >= 0);
-            Contract.Invariant(this._Stage != null);
+            Contract.Invariant(this._Pass != null);
             Contract.Invariant(!string.IsNullOrWhiteSpace(this._UniformName));
         }
     }

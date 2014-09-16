@@ -70,6 +70,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Parameters = parameters.ToImmutableList();
         }
 
+        public void Bind()
+        {
+            this.Initialize();
+            GL.BindSampler(this.TextureUnit, this);
+        }
+
         public void Initialize()
         {
             if (!this.IsInitialized)
@@ -88,12 +94,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     }
                 }
             }
-        }
-
-        public void Bind()
-        {
-            this.Initialize();
-            GL.BindSampler(this.TextureUnit, this);
         }
 
         public void Unbind()

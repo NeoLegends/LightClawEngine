@@ -44,7 +44,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
-        public Task<bool> ExistsAsync(string resourceString)
+        public Task<bool> ExistsAsync(ResourceString resourceString)
         {
             return Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString)));
         }
@@ -54,7 +54,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to obtain a <see cref="Stream"/> around.</param>
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
-        public Task<Stream> GetStreamAsync(string resourceString)
+        public Task<Stream> GetStreamAsync(ResourceString resourceString)
         {
             Stream result;
             try

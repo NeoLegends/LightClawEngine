@@ -223,7 +223,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="resourceString">The resource string to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task Save(string resourceString)
+        public async Task Save(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
@@ -278,7 +278,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="resourceString">The resource string to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task SaveXml(string resourceString)
+        public async Task SaveXml(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 

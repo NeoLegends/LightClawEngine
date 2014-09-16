@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.IO;
 
 namespace LightClaw.Engine.Core
 {
@@ -27,7 +28,7 @@ namespace LightClaw.Engine.Core
         /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
         /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c>.</returns>
-        Task<int> Load(int slot, string resourceString);
+        Task<int> Load(int slot, ResourceString resourceString);
 
         /// <summary>
         /// Loads the specified <see cref="Scene"/> into the specified position.
@@ -125,7 +126,7 @@ namespace LightClaw.Engine.Core
             return null;
         }
 
-        Task<int> ISceneManager.Load(int slot, string resourceString)
+        Task<int> ISceneManager.Load(int slot, ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);
