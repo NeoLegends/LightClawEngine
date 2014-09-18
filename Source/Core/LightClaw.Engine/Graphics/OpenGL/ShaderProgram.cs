@@ -29,13 +29,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private ImmutableList<Shader> _Shaders;
+        private ImmutableArray<Shader> _Shaders;
 
-        public ImmutableList<Shader> Shaders
+        public ImmutableArray<Shader> Shaders
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableList<Shader>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableArray<Shader>>() != null);
 
                 return _Shaders;
             }
@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(shaders.Any());
             Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
 
-            this.Shaders = shaders.ToImmutableList();
+            this.Shaders = shaders.ToImmutableArray();
         }
 
         public void Initialize()

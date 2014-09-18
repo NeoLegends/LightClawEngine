@@ -171,7 +171,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     using (GLBinding vaoBinding = new GLBinding(vao))
                     {
-                        for (int i = 0; i < effect.Passes.Count; i++)
+                        for (int i = 0; i < effect.Passes.Length; i++)
                         {
                             effect.Apply(i);
                             GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);

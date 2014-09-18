@@ -24,14 +24,14 @@ namespace LightClaw.Engine.Graphics
 
         protected readonly bool OwnsPasses;
 
-        private ImmutableList<EffectPass> _Passes = ImmutableList<EffectPass>.Empty;
+        private ImmutableArray<EffectPass> _Passes = ImmutableArray<EffectPass>.Empty;
 
-        public ImmutableList<EffectPass> Passes
+        public ImmutableArray<EffectPass> Passes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableList<EffectPass>>() != null);
-                Contract.Ensures(Contract.Result<ImmutableList<EffectPass>>().All(pass => pass != null));
+                Contract.Ensures(Contract.Result<ImmutableArray<EffectPass>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableArray<EffectPass>>().All(pass => pass != null));
 
                 return _Passes;
             }
@@ -56,7 +56,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(passes != null);
 
-            this.Passes = passes.ToImmutableList();
+            this.Passes = passes.ToImmutableArray();
         }
 
         protected Effect(IEnumerable<EffectPass> passes, bool ownsPasses)
@@ -64,7 +64,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(passes != null);
 
-            this.Passes = passes.ToImmutableList();
+            this.Passes = passes.ToImmutableArray();
         }
 
         public void Apply(int index)
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.Graphics
 
         public IEnumerator<EffectPass> GetEnumerator()
         {   
-            return this.Passes.GetEnumerator();
+            return ((IEnumerable<EffectPass>)this.Passes).GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -107,8 +107,8 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
-            ImmutableList<EffectPass> passes = this.Passes;
-            if (passes.Count > index)
+            ImmutableArray<EffectPass> passes = this.Passes;
+            if (passes.Length > index)
             {
                 passes[index].Bind();
                 return true;

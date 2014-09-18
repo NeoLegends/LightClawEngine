@@ -29,9 +29,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private ImmutableList<SamplerParameterDescription> _Parameters;
+        private ImmutableArray<SamplerParameterDescription> _Parameters;
 
-        public ImmutableList<SamplerParameterDescription> Parameters
+        public ImmutableArray<SamplerParameterDescription> Parameters
         {
             get
             {
@@ -67,7 +67,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentNullException>(parameters != null);
 
             this.TextureUnit = textureUnit;
-            this.Parameters = parameters.ToImmutableList();
+            this.Parameters = parameters.ToImmutableArray();
         }
 
         public void Bind()

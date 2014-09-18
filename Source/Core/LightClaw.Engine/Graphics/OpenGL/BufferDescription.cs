@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.
         /// </summary>
-        public ImmutableList<VertexAttributePointer> VertexAttributePointers { get; private set; }
+        public ImmutableArray<VertexAttributePointer> VertexAttributePointers { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="BufferDescription"/> setting the buffer and the attribute pointers.
@@ -36,7 +36,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
 
             this.Buffer = vertexBuffer;
-            this.VertexAttributePointers = vertexAttributePointers.FilterNull().ToImmutableList();
+            this.VertexAttributePointers = vertexAttributePointers.FilterNull().ToImmutableArray();
         }
     }
 }

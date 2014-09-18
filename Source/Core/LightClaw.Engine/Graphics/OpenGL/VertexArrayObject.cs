@@ -55,13 +55,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private ImmutableList<BufferDescription> _VertexBuffers;
+        private ImmutableArray<BufferDescription> _VertexBuffers;
 
-        public ImmutableList<BufferDescription> VertexBuffers
+        public ImmutableArray<BufferDescription> VertexBuffers
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableList<BufferDescription>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableArray<BufferDescription>>() != null);
 
                 return _VertexBuffers;
             }
@@ -81,7 +81,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.Buffer.Target == BufferTarget.ElementArrayBuffer));
 
             this.IndexBuffer = indexBuffer;
-            this.VertexBuffers = buffers.ToImmutableList();
+            this.VertexBuffers = buffers.ToImmutableArray();
         }
 
         public void Bind()
