@@ -7,26 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a <see cref="SamplerParameterName"/>-value association.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct SamplerParameterDescription : IEquatable<SamplerParameterDescription>
     {
         /// <summary>
         /// The sampler parameter to set.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public SamplerParameterName ParameterName { get; private set; }
 
         /// <summary>
         /// The value.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float Value { get; private set; }
 
         /// <summary>

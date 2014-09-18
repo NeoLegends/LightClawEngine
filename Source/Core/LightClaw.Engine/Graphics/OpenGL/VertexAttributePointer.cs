@@ -6,29 +6,28 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct VertexAttributePointer : ICloneable, IEquatable<VertexAttributePointer>
     {
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public int Index { get; private set; }
 
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public bool Normalize { get; private set; }
 
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public IntPtr Offset { get; private set; }
 
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public int Size { get; private set; }
 
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public int Stride { get; private set; }
 
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public VertexAttribPointerType Type { get; private set; }
         
         public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool normalize, int stride, int offset)

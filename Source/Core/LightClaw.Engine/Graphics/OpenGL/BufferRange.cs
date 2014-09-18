@@ -6,26 +6,25 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
     /// Represents a range inside a <see cref="IBuffer"/>.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct BufferRange : IEquatable<BufferRange>
     {
         /// <summary>
         /// The starting location (in bytes).
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public int Start { get; private set; }
 
         /// <summary>
         /// The length of the range (in bytes).
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public int Length { get; private set; }
 
         /// <summary>

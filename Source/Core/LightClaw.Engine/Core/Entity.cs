@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
 using log4net;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
@@ -168,15 +167,6 @@ namespace LightClaw.Engine.Core
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         [OnDeserializing]
         private void OnDeserializing(StreamingContext context)
-        {
-            this.Initialize();
-        }
-
-        /// <summary>
-        /// Callback called during deserialization with protobuf-net.
-        /// </summary>
-        [ProtoBeforeDeserialization]
-        private void ProtoBeforeDeserialization()
         {
             this.Initialize();
         }

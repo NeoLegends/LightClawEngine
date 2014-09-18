@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
 {
@@ -19,19 +18,19 @@ namespace LightClaw.Engine.Coroutines
     /// a <see cref="CoroutineController"/> calling <see cref="M:ICoroutineContext.Step"/> (which results in
     /// <see cref="M:CanExecute"/> being called) every frame.
     /// </remarks>
-    [DataContract, ProtoContract]
+    [DataContract]
     public sealed class UpdateCountBlockRequest : IExecutionBlockRequest // Class because this is instance is mutable
     {
         /// <summary>
         /// The amount of tries.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         private int tries;
 
         /// <summary>
         /// The required amount of tries to unblock execution again.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public int RequiredTries { get; private set; }
 
         /// <summary>

@@ -266,7 +266,7 @@ namespace LightClaw.Engine.Core
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
                 using (DeflateStream deflateStream = new DeflateStream(s, level, true))
                 {
-                    new NetDataContractSerializer().WriteObject(deflateStream, this);
+                    new NetDataContractSerializer().WriteObject(deflateStream, this); // Check whether we can switch to Json.NET here
                 }
 
                 Logger.Info(() => "Scene saved.");
@@ -278,13 +278,13 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="resourceString">The resource string to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task SaveXml(ResourceString resourceString)
+        public async Task SaveRaw(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
             using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
             {
-                await this.SaveXml(s);
+                await this.SaveRaw(s);
             }
         }
 
@@ -293,7 +293,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public Task SaveXml(Stream s)
+        public Task SaveRaw(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
@@ -304,7 +304,7 @@ namespace LightClaw.Engine.Core
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
                 {
-                    new NetDataContractSerializer().WriteObject(s, this);
+                    new NetDataContractSerializer().WriteObject(s, this); // Check whether we can switch to Json.NET here
                 }
 
                 Logger.Info(() => "Scene saved.");
@@ -436,7 +436,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to load from.</param>
         /// <returns>The loaded <see cref="Scene"/>.</returns>
-        public static Task<Scene> LoadXml(Stream s)
+        public static Task<Scene> LoadRaw(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanRead);

@@ -9,7 +9,6 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
 
 using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 

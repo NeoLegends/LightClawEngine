@@ -5,14 +5,13 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents the game's time in fixed- or variable-step game loops.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct GameTime : ICloneable, IEquatable<GameTime>
     {
         /// <summary>
@@ -29,13 +28,13 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The time in seconds that passed since the last call to <see cref="IUpdateable.Update"/>.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public double ElapsedSinceLastUpdate { get; private set; }
 
         /// <summary>
         /// The game's total running time in seconds.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public double TotalGameTime { get; private set; }
 
         /// <summary>

@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
+using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class EffectPass : DisposableEntity, IBindable, IInitializable
+    public sealed class EffectPass : DisposableEntity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
 
@@ -129,7 +131,7 @@ namespace LightClaw.Engine.Graphics
         public void Bind()
         {
             this.Initialize();
-            GL.UseProgram(this.ShaderProgram);
+            this.ShaderProgram.Bind();
         }
 
         public void Initialize()
@@ -140,14 +142,6 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        //this.Stages = this.ShaderPipeline.Programs.FilterNull()
-                        //                                          .Select(program => 
-                        //                                           {
-                        //                                               EffectStage stage = new EffectStage(this, program);
-                        //                                               stage.Initialize();
-                        //                                               return stage;
-                        //                                           })
-                        //                                          .ToImmutableList();
                         this.IsInitialized = true;
                     }
                 }
@@ -156,7 +150,7 @@ namespace LightClaw.Engine.Graphics
 
         public void Unbind()
         {
-            GL.UseProgram(0);
+            this.ShaderProgram.Unbind();
         }
 
         protected override void Dispose(bool disposing)

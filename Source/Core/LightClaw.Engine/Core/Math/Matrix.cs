@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 4x4 mathematical matrix.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct Matrix : IEquatable<Matrix>
     {
         /// <summary>
@@ -60,97 +59,97 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M13;
 
         /// <summary>
         /// Value at row 1 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M14;
 
         /// <summary>
         /// Value at row 2 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public float M23;
 
         /// <summary>
         /// Value at row 2 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public float M24;
 
         /// <summary>
         /// Value at row 3 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(9)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(10)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(11)]
+        [DataMember]
         public float M33;
 
         /// <summary>
         /// Value at row 3 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(12)]
+        [DataMember]
         public float M34;
 
         /// <summary>
         /// Value at row 4 column 1 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(13)]
+        [DataMember]
         public float M41;
 
         /// <summary>
         /// Value at row 4 column 2 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(14)]
+        [DataMember]
         public float M42;
 
         /// <summary>
         /// Value at row 4 column 3 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(15)]
+        [DataMember]
         public float M43;
 
         /// <summary>
         /// Value at row 4 column 4 of the matrix.
         /// </summary>
-        [DataMember, ProtoMember(16)]
+        [DataMember]
         public float M44;
 
         /// <summary>

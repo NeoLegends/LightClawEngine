@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
     /// Class that represents a color with RGBA data.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct Color : ICloneable,
 #if SYSTEMDRAWING_INTEROP
                           IEquatable<System.Drawing.Color>,
@@ -754,25 +753,25 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The red <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public byte R { get; private set; }
 
         /// <summary>
         /// The green <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public byte G { get; private set; }
 
         /// <summary>
         /// The blue <see cref="Color"/> value.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public byte B { get; private set; }
 
         /// <summary>
         /// Represents the alpha value of the color.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public byte A { get; private set; }
 
         #region Calculated Properties

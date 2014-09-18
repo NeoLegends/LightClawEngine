@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Direct2D Matrix3x2. Supports implicit cast from <see cref="Matrix"/>.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct Matrix3x2
     {
         /// <summary>
@@ -54,37 +53,37 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Element (1,1)
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Element (1,2)
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Element (2,1)
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Element (2,2)
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Element (3,1)
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Element (3,2)
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M32;
 
         /// <summary>

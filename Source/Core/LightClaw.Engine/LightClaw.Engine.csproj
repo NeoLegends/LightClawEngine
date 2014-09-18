@@ -211,6 +211,9 @@
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
+    <Compile Include="Graphics\EffectPassData.cs" />
+    <Compile Include="Graphics\EffectStageData.cs" />
+    <Compile Include="Graphics\EffectStageSources.cs" />
     <Compile Include="Graphics\ModelEffect.cs" />
     <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
@@ -232,6 +235,7 @@
     <Compile Include="Graphics\TextureUnitManager.cs" />
     <Compile Include="Graphics\UniformBufferManager.cs" />
     <Compile Include="Graphics\DataEffectUniform.cs" />
+    <Compile Include="Graphics\VertexAttributeLocation.cs" />
     <Compile Include="IO\EffectPassReader.cs" />
     <Compile Include="IO\ResourceString.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />
@@ -264,7 +268,7 @@
     <Compile Include="Graphics\OpenGL\GLObject.cs" />
     <Compile Include="Graphics\IDrawable.cs" />
     <Compile Include="Graphics\Mesh.cs" />
-    <Compile Include="Graphics\VertexPositionNormalTexCoord.cs" />
+    <Compile Include="Graphics\Vertex.cs" />
     <Compile Include="Graphics\OpenGL\Buffer.cs" />
     <Compile Include="Graphics\OpenGL\Texture2D.cs" />
     <Compile Include="Graphics\OpenGL\VertexAttributePointer.cs" />
@@ -295,10 +299,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NeoLegends.AsyncLinq.1.1.0.0\lib\net45\NeoLegends.AsyncLinq.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="System.Collections.Immutable, Version=1.1.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.1.29-beta\lib\portable-net45+win8+wpa81\System.Collections.Immutable.dll</HintPath>

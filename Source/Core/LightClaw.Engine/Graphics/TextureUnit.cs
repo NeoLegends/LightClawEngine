@@ -6,13 +6,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 using GLTextureUnit = OpenTK.Graphics.OpenGL4.TextureUnit;
 
 namespace LightClaw.Engine.Graphics
 {
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct TextureUnit : ICloneable, IDisposable, IEquatable<TextureUnit>, IEquatable<int>
     {
         public static readonly TextureUnit Texture0 = new TextureUnit(0);
@@ -81,7 +80,7 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> Disposed;
 
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public int Unit { get; private set; }
 
         public TextureUnit(int unit)
@@ -158,6 +157,26 @@ namespace LightClaw.Engine.Graphics
         public static TextureUnit operator +(TextureUnit left, TextureUnit right)
         {
             return new TextureUnit(left.Unit + right.Unit);
+        }
+
+        public static bool operator <(TextureUnit left, TextureUnit right)
+        {
+            return (left.Unit < right.Unit);
+        }
+
+        public static bool operator >(TextureUnit left, TextureUnit right)
+        {
+            return (left.Unit > right.Unit);
+        }
+
+        public static bool operator <=(TextureUnit left, TextureUnit right)
+        {
+            return (left.Unit <= right.Unit);
+        }
+
+        public static bool operator >=(TextureUnit left, TextureUnit right)
+        {
+            return (left.Unit >= right.Unit);
         }
 
         public static bool operator ==(TextureUnit left, TextureUnit right)

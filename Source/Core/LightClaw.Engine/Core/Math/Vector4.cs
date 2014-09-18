@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a four dimensional mathematical vector.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct Vector4 : IEquatable<Vector4>
     {
         /// <summary>
@@ -106,25 +105,25 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The X component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float X;
 
         /// <summary>
         /// The Y component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float Y;
 
         /// <summary>
         /// The Z component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float Z;
 
         /// <summary>
         /// The W component of the vector.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float W;
 
         /// <summary>

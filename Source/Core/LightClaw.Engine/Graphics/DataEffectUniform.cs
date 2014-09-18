@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public DataEffectUniform(EffectStage stage, string name, int size)
+        public DataEffectUniform(EffectPass stage, string name, int size)
             : base(stage, name)
         {
             Contract.Requires<ArgumentNullException>(stage != null);
@@ -236,9 +236,7 @@ namespace LightClaw.Engine.Graphics
 
         protected override void OnInitialize()
         {
-            this.Ubo = this.Stage.Pass.UniformBufferManager.GetBuffer(this.Size);
-            this.Location = GL.GetUniformBlockIndex(this.Stage.ShaderProgram, this.Name);
-            GL.UniformBlockBinding(this.Stage.ShaderProgram, this.Location, this.Ubo.Index);
+            throw new NotImplementedException();
         }
 
         [ContractInvariantMethod]

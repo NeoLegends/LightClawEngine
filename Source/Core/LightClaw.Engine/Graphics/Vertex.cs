@@ -8,30 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
     /// Represents a vertex storing position, normal and texture coordinates.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     [StructLayout(LayoutKind.Sequential)] // Even though sequential is default, specify for clarity
-    public struct VertexPositionNormalTexCoord
+    public struct Vertex
     {
         /// <summary>
         /// Gets the size in bytes of the structure.
         /// </summary>
-        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(VertexPositionNormalTexCoord));
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vertex));
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private static readonly VertexAttributePointer[] vertexAttributePointers = new[] 
+        private static readonly VertexAttributePointer[] _VAPInterleaved = new[] 
         { 
-            new VertexAttributePointer(0, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
-            new VertexAttributePointer(1, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 12),
-            new VertexAttributePointer(2, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 24),
+            new VertexAttributePointer(VertexAttributeLocation.Vertex, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
+            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 12),
+            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 24),
         };
 
         /// <summary>
@@ -43,33 +42,33 @@ namespace LightClaw.Engine.Graphics
         /// <list type="bullet">
         ///     <item>
         ///         <description>
-        ///             Vertex Position: 0
+        ///             Vertex Position: <see cref="VertexAttributeLocation.Vertex"/>
         ///         </description>
         ///     </item>
         ///         <description>
-        ///             Vertex Normal: 1
+        ///             Vertex Normal: <see cref="VertexAttributeLocation.Normals"/>
         ///         </description>
         ///     </item>
         ///         <description>
-        ///             Texture Coordinates: 2
+        ///             Texture Coordinates: <see cref="VertexAttributeLocation.TexCoords"/>
         ///         </description>
         ///     </item>
         /// </list>
         /// </para>
         /// </remarks>
-        public static VertexAttributePointer[] VertexAttributePointers
+        public static VertexAttributePointer[] VAPInterleaved
         {
             get
             {
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
 
-                return vertexAttributePointers.ToArray();
+                return _VAPInterleaved.ToArray();
             }
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="VertexPositionNormalTexCoord"/>s components as array.
+        /// Gets or sets the <see cref="Vertex"/>s components as array.
         /// </summary>
         public float[] Array
         {
@@ -99,30 +98,30 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// The <see cref="VertexPositionNormalTexCoord"/>'s position.
+        /// The <see cref="Vertex"/>'s position.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public Vector3 Position;
 
         /// <summary>
-        /// The <see cref="VertexPositionNormalTexCoord"/>'s normal.
+        /// The <see cref="Vertex"/>'s normal.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public Vector3 Normal;
 
         /// <summary>
-        /// The <see cref="VertexPositionNormalTexCoord"/>'s texture coordinates.
+        /// The <see cref="Vertex"/>'s texture coordinates.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public Vector2 TexCoord;
 
         /// <summary>
-        /// Initializes a new <see cref="VertexPositionNormalTexCoord"/> from a position, a normal and a texture coordinate.
+        /// Initializes a new <see cref="Vertex"/> from a position, a normal and a texture coordinate.
         /// </summary>
-        /// <param name="position">The <see cref="VertexPositionNormalTexCoord"/>'s position.</param>
-        /// <param name="normal">The <see cref="VertexPositionNormalTexCoord"/>'s normal.</param>
-        /// <param name="texCoord">The <see cref="VertexPositionNormalTexCoord"/>'s texture coordinates.</param>
-        public VertexPositionNormalTexCoord(Vector3 position, Vector3 normal, Vector2 texCoord)
+        /// <param name="position">The <see cref="Vertex"/>'s position.</param>
+        /// <param name="normal">The <see cref="Vertex"/>'s normal.</param>
+        /// <param name="texCoord">The <see cref="Vertex"/>'s texture coordinates.</param>
+        public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord)
         {
             this.Normal = normal;
             this.Position = position;
@@ -130,10 +129,10 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Initializes a new <see cref="VertexPositionNormalTexCoord"/> from an array containing the data.
+        /// Initializes a new <see cref="Vertex"/> from an array containing the data.
         /// </summary>
         /// <param name="data">The data to load from.</param>
-        public VertexPositionNormalTexCoord(float[] data)
+        public Vertex(float[] data)
             : this(data, 0)
         {
             Contract.Requires<ArgumentNullException>(data != null);
@@ -141,11 +140,11 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Initializes a new <see cref="VertexPositionNormalTexCoord"/> from an array containing the data and an offset inside the array.
+        /// Initializes a new <see cref="Vertex"/> from an array containing the data and an offset inside the array.
         /// </summary>
         /// <param name="data">The data to load from.</param>
         /// <param name="offset">The offset inside the array to start reading from.</param>
-        public VertexPositionNormalTexCoord(float[] data, int offset)
+        public Vertex(float[] data, int offset)
         {
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
@@ -162,7 +161,7 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Checks whether the <see cref="VertexPositionNormalTexCoord"/> equals the specified object.
+        /// Checks whether the <see cref="Vertex"/> equals the specified object.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
         /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
@@ -171,46 +170,46 @@ namespace LightClaw.Engine.Graphics
             if (ReferenceEquals(obj, null))
                 return false;
 
-            return (obj is VertexPositionNormalTexCoord) ? this.Equals((VertexPositionNormalTexCoord)obj) : false;
+            return (obj is Vertex) ? this.Equals((Vertex)obj) : false;
         }
 
         /// <summary>
-        /// Checks whether the current instance is equal to the specified <see cref="VertexPositionNormalTexCoord"/>.
+        /// Checks whether the current instance is equal to the specified <see cref="Vertex"/>.
         /// </summary>
-        /// <param name="other">The <see cref="VertexPositionNormalTexCoord"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="VertexPositionNormalTexCoord"/>s are equal, otherwise <c>false</c>.</returns>
-        public bool Equals(VertexPositionNormalTexCoord other)
+        /// <param name="other">The <see cref="Vertex"/> to test against.</param>
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are equal, otherwise <c>false</c>.</returns>
+        public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) && (this.TexCoord == other.TexCoord);
         }
 
         /// <summary>
-        /// Gets the <see cref="VertexPositionNormalTexCoord"/>'s hash code.
+        /// Gets the <see cref="Vertex"/>'s hash code.
         /// </summary>
-        /// <returns>The <see cref="VertexPositionNormalTexCoord"/>'s hash code.</returns>
+        /// <returns>The <see cref="Vertex"/>'s hash code.</returns>
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="VertexPositionNormalTexCoord"/>s are equal.
+        /// Checks whether two <see cref="Vertex"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="VertexPositionNormalTexCoord"/>s are equal, otherwise <c>false</c>.</returns>
-        public static bool operator ==(VertexPositionNormalTexCoord left, VertexPositionNormalTexCoord right)
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are equal, otherwise <c>false</c>.</returns>
+        public static bool operator ==(Vertex left, Vertex right)
         {
             return left.Equals(right);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="VertexPositionNormalTexCoord"/>s are inequal.
+        /// Checks whether two <see cref="Vertex"/>s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="VertexPositionNormalTexCoord"/>s are inequal, otherwise <c>false</c>.</returns>
-        public static bool operator !=(VertexPositionNormalTexCoord left, VertexPositionNormalTexCoord right)
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are inequal, otherwise <c>false</c>.</returns>
+        public static bool operator !=(Vertex left, Vertex right)
         {
             return !(left == right);
         }

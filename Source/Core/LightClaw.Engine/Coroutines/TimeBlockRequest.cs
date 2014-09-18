@@ -6,26 +6,25 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Coroutines
 {
     /// <summary>
     /// Represents a request of a coroutine to wait for the next step until the specified time has passed.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct TimeBlockRequest : IEquatable<TimeBlockRequest>, IExecutionBlockRequest
     {
         /// <summary>
         /// The elapsed time when the <see cref="TimeBlockRequest"/> was created.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         private readonly long startTicks;
 
         /// <summary>
         /// The time (in ticks) that should pass until the coroutine can be executed again.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public long BlockingTicks { get; private set; }
 
         /// <summary>

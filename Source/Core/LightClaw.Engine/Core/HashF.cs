@@ -49,7 +49,7 @@ namespace LightClaw.Engine.Core
     /// <para>
     /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>, there
     /// is an overload for that. Just make sure the elements inside the collection do not change as this would render the previously
-    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you just broke the universe. :)
+    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you will break the universe. :)
     /// </para>
     /// </remarks>
     public static class HashF
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.Core
 
             unchecked
             {
-                int finalHash = HashStart;
+                int finalHash = 0;
                 foreach (int hash in hashes)
                 {
                     finalHash = finalHash * HashFactor + hash;
@@ -93,7 +93,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
         /// <param name="array">The collection to get the hash codes from.</param>
-        /// <returns>The combined hash code.</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
         public static int GetHashCode<T>(IEnumerable<T> collection)
         {
             if (collection != null)
@@ -116,7 +116,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
         /// <param name="array">The array to get the hash codes from.</param>
-        /// <returns>The combined hash code.</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
         public static int GetHashCode<T>(T[] array)
         {
             if (array != null)

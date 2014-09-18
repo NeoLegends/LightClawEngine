@@ -6,21 +6,28 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.IO
 {
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct ResourceString : ICloneable, IEquatable<ResourceString>
     {
-        [DataMember, ProtoMember(1)]
+        [IgnoreDataMember]
+        public bool IsValid
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(this.Path);
+            }
+        }
+
+        [DataMember]
         public string Path { get; private set; }
 
         public ResourceString(string path)
             : this()
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(path));
-
             this.Path = path;
         }
 
@@ -37,7 +44,7 @@ namespace LightClaw.Engine.IO
             return (obj is ResourceString) ? this.Equals((ResourceString)obj) : false;
         }
 
-        public override bool Equals(ResourceString other)
+        public bool Equals(ResourceString other)
         {
             return (this.Path == other.Path);
         }
@@ -54,8 +61,6 @@ namespace LightClaw.Engine.IO
 
         public static implicit operator ResourceString(string resourceString)
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
-
             return new ResourceString(resourceString);
         }
 
@@ -67,6 +72,24 @@ namespace LightClaw.Engine.IO
         public static bool operator !=(ResourceString left, ResourceString right)
         {
             return !(left == right);
+        }
+    }
+
+    public class ResourceStringConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return (objectType == typeof(ResourceString));
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return serializer.Deserialize<string>(reader);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, ((ResourceString)value).Path);
         }
     }
 }

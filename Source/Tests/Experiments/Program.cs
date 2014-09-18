@@ -1,22 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using LightClaw.Engine.IO;
-using LightClaw.Extensions;
-using log4net;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
+using LightClaw.Engine.Graphics;
+using Newtonsoft.Json;
 
 namespace Experiments
 {
@@ -24,17 +12,23 @@ namespace Experiments
     {
         static void Main(string[] args)
         {
-            EffectPassReader.PassData pd = new EffectPassReader.PassData(
-                "TestPass",
-                new EffectPassReader.EffectSource("Effects/Basic.frag", "Effects/Basic.vert"),
-                new[] { new EffectPassReader.DataEffectUniformDescription("modelViewProjectionMatrix", 1) },
-                new EffectPassReader.SamplerEffectUniformDescription[] { }
-            );
+            EffectPassData epd = new EffectPassData("BasicEffect", new EffectStageSources(
+                    new EffectStageData("Game/Effects/BasicEffect.vert", "vPosition", "vTexCoords", "vNormal", "vBinormal", "vTanget", "vColor"),
+                    new EffectStageData("Game/Effects/BasicEffect.frag")
+                ), new[] { "mat_MVP" });
 
-            using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PassData.xml")))
-            {
-                new DataContractSerializer(typeof(EffectPassReader.PassData)).WriteObject(fs, pd);
-            }
+            JsonSerializerSettings settings = new JsonSerializerSettings() 
+            { 
+                Formatting = Formatting.Indented, 
+                NullValueHandling = NullValueHandling.Ignore 
+            };
+            settings.Converters.Add(new LightClaw.Engine.IO.ResourceStringConverter());
+            
+            string json = JsonConvert.SerializeObject(epd, settings);
+            Console.WriteLine(json);
+
+            EffectPassData epdDeser = JsonConvert.DeserializeObject<EffectPassData>(json);
+            Console.WriteLine(JsonConvert.SerializeObject(epdDeser, settings));
 
             Console.WriteLine("Finished.");
             Console.ReadLine();

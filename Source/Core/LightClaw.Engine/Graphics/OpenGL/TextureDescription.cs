@@ -7,35 +7,34 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using OpenTK.Graphics.OpenGL4;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct TextureDescription : ICloneable, IEquatable<TextureDescription>
     {
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         private readonly bool initializedViaParameterizedConstructor;
 
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public int Width { get; private set; }
 
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public int Height { get; private set; }
 
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public int Depth { get; private set; }
         
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public int Levels { get; private set; }
 
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public int MultisamplingLevels { get; private set; }
 
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public PixelInternalFormat PixelInternalFormat { get; private set; }
 
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public TextureTarget Target { get; private set; }
 
         public TextureDescription(int width, int texLevels, int msLevels, TextureTarget target, PixelInternalFormat pixelInternalFormat)

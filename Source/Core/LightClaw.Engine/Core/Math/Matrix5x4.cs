@@ -7,14 +7,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Extensions;
-using ProtoBuf;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a 4x4 mathematical Matrix5x4.
     /// </summary>
-    [DataContract, ProtoContract]
+    [DataContract]
     public struct Matrix5x4 : IEquatable<Matrix5x4>
     {
         /// <summary>
@@ -58,121 +57,121 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Value at row 1 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(1)]
+        [DataMember]
         public float M11;
 
         /// <summary>
         /// Value at row 1 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(2)]
+        [DataMember]
         public float M12;
 
         /// <summary>
         /// Value at row 1 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(3)]
+        [DataMember]
         public float M13;
 
         /// <summary>
         /// Value at row 1 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(4)]
+        [DataMember]
         public float M14;
 
         /// <summary>
         /// Value at row 2 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(5)]
+        [DataMember]
         public float M21;
 
         /// <summary>
         /// Value at row 2 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(6)]
+        [DataMember]
         public float M22;
 
         /// <summary>
         /// Value at row 2 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(7)]
+        [DataMember]
         public float M23;
 
         /// <summary>
         /// Value at row 2 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(8)]
+        [DataMember]
         public float M24;
 
         /// <summary>
         /// Value at row 3 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(9)]
+        [DataMember]
         public float M31;
 
         /// <summary>
         /// Value at row 3 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(10)]
+        [DataMember]
         public float M32;
 
         /// <summary>
         /// Value at row 3 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(11)]
+        [DataMember]
         public float M33;
 
         /// <summary>
         /// Value at row 3 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(12)]
+        [DataMember]
         public float M34;
 
         /// <summary>
         /// Value at row 4 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(13)]
+        [DataMember]
         public float M41;
 
         /// <summary>
         /// Value at row 4 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(14)]
+        [DataMember]
         public float M42;
 
         /// <summary>
         /// Value at row 4 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(15)]
+        [DataMember]
         public float M43;
 
         /// <summary>
         /// Value at row 4 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(16)]
+        [DataMember]
         public float M44;
 
         /// <summary>
         /// Value at row 5 column 1 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(17)]
+        [DataMember]
         public float M51;
 
         /// <summary>
         /// Value at row 5 column 2 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(18)]
+        [DataMember]
         public float M52;
 
         /// <summary>
         /// Value at row 5 column 3 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(19)]
+        [DataMember]
         public float M53;
 
         /// <summary>
         /// Value at row 5 column 4 of the Matrix5x4.
         /// </summary>
-        [DataMember, ProtoMember(20)]
+        [DataMember]
         public float M54;
 
         /// <summary>
