@@ -103,11 +103,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
-                        using (GLBinding vaoBinding = new GLBinding(this))
+                        using (Binding vaoBinding = new Binding(this))
                         {
                             foreach (BufferDescription bufferConfig in this.VertexBuffers)
                             {
-                                using (GLBinding vboBinding = new GLBinding(bufferConfig.Buffer))
+                                using (Binding vboBinding = new Binding(bufferConfig.Buffer))
                                 {
                                     foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
                                     {

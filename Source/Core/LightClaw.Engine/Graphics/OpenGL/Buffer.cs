@@ -144,7 +144,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             where T : struct
         {
             T[] results = new T[count];
-            using (GLBinding bufferBinding = new GLBinding(this))
+            using (Binding bufferBinding = new Binding(this))
             {
                 GL.GetBufferSubData(this.Target, (IntPtr)offset, (IntPtr)count, results);
             }
@@ -263,7 +263,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public virtual void Set(IntPtr data, int sizeInBytes)
         {
             this.Initialize();
-            using (GLBinding bufferBinding = new GLBinding(this))
+            using (Binding bufferBinding = new Binding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
             }
@@ -279,7 +279,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public virtual void SetRange(IntPtr data, int offset, int sizeInBytes)
         {
             this.Initialize();
-            using (GLBinding bufferBinding = new GLBinding(this))
+            using (Binding bufferBinding = new Binding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
             }

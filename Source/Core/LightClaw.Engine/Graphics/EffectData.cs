@@ -7,31 +7,32 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
 
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
-    public sealed class EffectPassData : ICloneable, IEquatable<EffectPassData>
+    public sealed partial class EffectData : ICloneable, IEquatable<EffectData>
     {
         [DataMember]
         public string Name { get; private set; }
 
         [DataMember]
-        public EffectStageSources Sources { get; private set; }
+        public StageSources Sources { get; private set; }
 
         [DataMember]
         public ImmutableArray<string> Uniforms { get; private set; }
 
-        private EffectPassData() { }
+        private EffectData() { }
 
-        public EffectPassData(EffectStageSources sources, IEnumerable<string> uniforms)
+        public EffectData(StageSources sources, IEnumerable<string> uniforms)
             : this(null, sources, uniforms)
         {
             Contract.Requires<ArgumentNullException>(sources != null);
             Contract.Requires<ArgumentNullException>(uniforms != null);
         }
 
-        public EffectPassData(string name, EffectStageSources sources, IEnumerable<string> uniforms)
+        public EffectData(string name, StageSources sources, IEnumerable<string> uniforms)
         {
             Contract.Requires<ArgumentNullException>(sources != null);
             Contract.Requires<ArgumentNullException>(uniforms != null);
@@ -43,7 +44,7 @@ namespace LightClaw.Engine.Graphics
 
         public object Clone()
         {
-            return new EffectPassData(this.Name, this.Sources, this.Uniforms);
+            return new EffectData(this.Name, this.Sources, this.Uniforms);
         }
 
         public override bool Equals(object obj)
@@ -53,11 +54,11 @@ namespace LightClaw.Engine.Graphics
             if (ReferenceEquals(obj, this))
                 return true;
 
-            EffectPassData data = obj as EffectPassData;
+            EffectData data = obj as EffectData;
             return (data != null) ? this.Equals(data) : false;
         }
 
-        public bool Equals(EffectPassData other)
+        public bool Equals(EffectData other)
         {
             if (ReferenceEquals(other, null))
                 return false;
@@ -76,7 +77,7 @@ namespace LightClaw.Engine.Graphics
             );
         }
 
-        public static bool operator ==(EffectPassData left, EffectPassData right)
+        public static bool operator ==(EffectData left, EffectData right)
         {
             if (ReferenceEquals(left, right))
                 return true;
@@ -86,7 +87,7 @@ namespace LightClaw.Engine.Graphics
             return left.Equals(right);
         }
 
-        public static bool operator !=(EffectPassData left, EffectPassData right)
+        public static bool operator !=(EffectData left, EffectData right)
         {
             return !(left == right);
         }

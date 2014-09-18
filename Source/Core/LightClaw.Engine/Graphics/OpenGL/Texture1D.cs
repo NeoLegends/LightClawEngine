@@ -52,7 +52,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
 
             this.Initialize();
-            using (GLBinding textureBinding = new GLBinding(this))
+            using (Binding textureBinding = new Binding(this))
             {
                 GL.TexSubImage1D(this.Target, level, xOffset, width, pixelFormat, pixelType, data);
             }
@@ -60,7 +60,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void OnInitialize()
         {
-            using (GLBinding textureBinding = new GLBinding(this))
+            using (Binding textureBinding = new Binding(this))
             {
                 GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }

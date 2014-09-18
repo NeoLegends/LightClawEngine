@@ -169,7 +169,7 @@ namespace LightClaw.Engine.Graphics
                 VertexArrayObject vao = this.Vao;
                 if ((effect != null) && (vao != null))
                 {
-                    using (GLBinding vaoBinding = new GLBinding(vao))
+                    using (Binding vaoBinding = new Binding(vao))
                     {
                         for (int i = 0; i < effect.Passes.Length; i++)
                         {

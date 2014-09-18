@@ -96,7 +96,7 @@
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
@@ -211,9 +211,8 @@
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
-    <Compile Include="Graphics\EffectPassData.cs" />
-    <Compile Include="Graphics\EffectStageData.cs" />
-    <Compile Include="Graphics\EffectStageSources.cs" />
+    <Compile Include="Graphics\OpenGL\VertexAttributeDescription.cs" />
+    <Compile Include="Graphics\EffectData.cs" />
     <Compile Include="Graphics\ModelEffect.cs" />
     <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
@@ -226,6 +225,8 @@
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
+    <Compile Include="Graphics\EffectData.StageSources.cs" />
+    <Compile Include="Graphics\OpenGL\Uniform.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\OpenGL\SamplerParameterDescription.cs" />
     <Compile Include="Graphics\OpenGL\ShaderProgram.cs" />
@@ -250,7 +251,7 @@
     <Compile Include="Coroutines\ICoroutineContext.cs" />
     <Compile Include="Coroutines\SteppedEventArgs.cs" />
     <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
-    <Compile Include="Graphics\GLBinding.cs" />
+    <Compile Include="Graphics\Binding.cs" />
     <Compile Include="Graphics\OpenGL\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
     <Compile Include="Graphics\IBindable.cs" />
@@ -345,6 +346,7 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>VideoSettings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Graphics\EffectData.StageData.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,10 +12,13 @@ namespace Experiments
     {
         static void Main(string[] args)
         {
-            EffectPassData epd = new EffectPassData("BasicEffect", new EffectStageSources(
-                    new EffectStageData("Game/Effects/BasicEffect.vert", "vPosition", "vTexCoords", "vNormal", "vBinormal", "vTanget", "vColor"),
-                    new EffectStageData("Game/Effects/BasicEffect.frag")
-                ), new[] { "mat_MVP" });
+            EffectData epd = new EffectData("BasicEffect", 
+                new EffectData.StageSources(
+                    new EffectData.StageData("Game/Effects/BasicEffect.vert", "vPosition", "vTexCoords", "vNormal", "vBinormal", "vTanget", "vColor"),
+                    new EffectData.StageData("Game/Effects/BasicEffect.frag")
+                ), 
+                new[] { "mat_MVP" }
+            );
 
             JsonSerializerSettings settings = new JsonSerializerSettings() 
             { 
@@ -27,7 +30,7 @@ namespace Experiments
             string json = JsonConvert.SerializeObject(epd, settings);
             Console.WriteLine(json);
 
-            EffectPassData epdDeser = JsonConvert.DeserializeObject<EffectPassData>(json);
+            EffectData epdDeser = JsonConvert.DeserializeObject<EffectData>(json);
             Console.WriteLine(JsonConvert.SerializeObject(epdDeser, settings));
 
             Console.WriteLine("Finished.");

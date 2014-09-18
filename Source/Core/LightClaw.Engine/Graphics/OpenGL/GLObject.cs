@@ -80,6 +80,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
+        /// Gets the last OpenGL error.
+        /// </summary>
+        /// <returns>The last error.</returns>
+        public static ErrorCode GetError()
+        {
+            return GL.GetError();
+        }
+
+        /// <summary>
         /// Checks whether the specified OpenGL extension is supported.
         /// </summary>
         /// <param name="extensionName">The extension to check for.</param>

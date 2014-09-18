@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
                 return _Source;
             }
             private set
@@ -58,13 +61,40 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        private ImmutableArray<VertexAttributeDescription> _VertexAttributeDescriptions;
+
+        public ImmutableArray<VertexAttributeDescription> VertexAttributeDescriptions
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableArray<VertexAttributeDescription>>() != null);
+
+                return _VertexAttributeDescriptions;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _VertexAttributeDescriptions, value);
+            }
+        }
+
         public Shader(string source, ShaderType type)
+            : this(source, type, VertexAttributeDescription.Empty)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
+        }
+
+        public Shader(string source, ShaderType type, IEnumerable<VertexAttributeDescription> vad)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
+            Contract.Requires<ArgumentNullException>(vad != null);
 
             this.Source = source;
             this.Type = type;
+            this.VertexAttributeDescriptions = vad.ToImmutableArray();
         }
 
         public void AttachTo(ShaderProgram program)
@@ -117,6 +147,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 base.Dispose(disposing);
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!string.IsNullOrWhiteSpace(this._Source));
+            Contract.Invariant(this._VertexAttributeDescriptions != null);
         }
     }
 }

@@ -57,7 +57,7 @@
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
@@ -144,8 +144,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)CodeContracts\$(TargetName).Contracts.dll $(SolutionDir)Core\LightClaw.Engine\bin\$(ConfigurationName)\CodeContracts\
-copy $(TargetDir)CodeContracts\$(TargetName).Contracts.pdb $(SolutionDir)Core\LightClaw.Engine\bin\$(ConfigurationName)\CodeContracts\</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release copy $(TargetDir)CodeContracts\$(TargetName).Contracts.dll $(SolutionDir)Core\LightClaw.Engine\bin\$(ConfigurationName)\CodeContracts\</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

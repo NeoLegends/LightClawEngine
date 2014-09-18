@@ -21,7 +21,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
             this.Initialize();
-            using (GLBinding texture2dBinding = new GLBinding(this))
+            using (Binding texture2dBinding = new Binding(this))
             {
                 GL.TexSubImage2D(this.Target, level, xOffset, yOffset, width, height, pixelFormat, pixelType, data);
             }

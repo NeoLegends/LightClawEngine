@@ -19,7 +19,7 @@ namespace LightClaw.Engine.Graphics
     /// }
     /// </code>
     /// </example>
-    public struct GLBinding : IDisposable, IBindable
+    public struct Binding : IDisposable, IBindable
     {
         /// <summary>
         /// The <see cref="IBindable"/> to (un)bind.
@@ -27,11 +27,11 @@ namespace LightClaw.Engine.Graphics
         private readonly IBindable bindable;
 
         /// <summary>
-        /// Initializes a new <see cref="GLBinding"/>.
+        /// Initializes a new <see cref="Binding"/>.
         /// </summary>
         /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
         /// <param name="bindImmediately">Indicates whether to bind the element upon creation of this struct. Defaults to true.</param>
-        public GLBinding(IBindable bindable, bool bindImmediately = true)
+        public Binding(IBindable bindable, bool bindImmediately = true)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);
 
@@ -59,7 +59,7 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Disposes the <see cref="GLBinding"/> unbinding the <see cref="IBindable"/>.
+        /// Disposes the <see cref="Binding"/> unbinding the <see cref="IBindable"/>.
         /// </summary>
         void IDisposable.Dispose()
         {

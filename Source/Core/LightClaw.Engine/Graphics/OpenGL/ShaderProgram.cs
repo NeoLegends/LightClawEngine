@@ -48,6 +48,25 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        private ImmutableArray<Uniform> _Uniforms;
+
+        public ImmutableArray<Uniform> Uniforms
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableArray<Uniform>>() != null);
+
+                return _Uniforms;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+                Contract.Requires<ArgumentException>(value.All(uniform => uniform != null));
+
+                this.SetProperty(ref _Uniforms, value);
+            }
+        }
+
         public ShaderProgram(params Shader[] shaders)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
@@ -65,6 +84,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
+                        Logger.Info("Initializing shader program.");
+
                         this.Handle = GL.CreateProgram();
                         try
                         {
@@ -72,9 +93,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
                             {
                                 s.AttachTo(this);
                             }
+
+                            foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
+                            {
+                                GL.BindAttribLocation(this, desc.Location, desc.Name);
+                            }
                             GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
                             GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
-
                             GL.LinkProgram(this);
 
                             int result;
@@ -85,6 +110,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
                                 Logger.Warn(message);
                                 throw new InvalidOperationException(message);
                             }
+
+                            int uniformCount = 0;
+                            GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
+                            this.Uniforms = Enumerable.Range(0, uniformCount).Select(uniformIndex => new Uniform(this, uniformIndex)).ToImmutableArray();
                         }
                         finally
                         {
@@ -128,6 +157,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Shaders != null);
+            Contract.Invariant(this._Uniforms != null);
         }
     }
 }

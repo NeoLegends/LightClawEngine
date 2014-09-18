@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void OnInitialize()
         {
-            using (GLBinding textureBinding = new GLBinding(this))
+            using (Binding textureBinding = new Binding(this))
             {
                 switch (this.Target)
                 {
