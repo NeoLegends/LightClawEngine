@@ -148,6 +148,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 GL.GetBufferSubData(this.Target, (IntPtr)offset, (IntPtr)count, results);
             }
+
             return results;
         }
 
@@ -201,6 +202,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
+        public virtual void Set<T>(IEnumerable<T> data)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentException>(data.Any());
+
+            this.Set(data.ToArray());
+        }
+
+        /// <summary>
+        /// Updates the <see cref="Buffer"/>'s contents.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
+        /// <param name="data">The data itself.</param>
         public virtual void Set<T>(T[] data)
             where T : struct
         {
@@ -233,6 +248,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 dataHandle.Free();
             }
+        }
+
+        /// <summary>
+        /// Updates a range of the <see cref="Buffer"/>'s contents.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
+        /// <param name="data">The data itself.</param>
+        /// <param name="offset">The offset in bytes to start applying the new data at.</param>
+        public virtual void SetRange<T>(IEnumerable<T> data, int offset)
+            where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentException>(data.Any());
+
+            this.SetRange(data.ToArray(), offset);
         }
 
         /// <summary>

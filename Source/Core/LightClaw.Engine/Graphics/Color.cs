@@ -988,6 +988,16 @@ namespace LightClaw.Engine.Graphics
         public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
 
         /// <summary>
+        /// Initializes a new <see cref="Color"/> from the specified hex string.
+        /// </summary>
+        /// <param name="hexValue">The color value as hex data.</param>
+        public Color(string hexValue)
+            : this(Convert.ToInt32(hexValue, 16))
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(hexValue));
+        }
+
+        /// <summary>
         /// Creates a new <see cref="Color"/> from the given packed RGBA <see cref="Int32"/>.
         /// </summary>
         /// <param name="packedValue">The <see cref="System.Int32"/> containing the packed color values.</param>
@@ -1135,28 +1145,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Ensures(Contract.Result<string>() != null);
 
-            return this.ToString(FormatOrder.Rgba);
-        }
-
-        /// <summary>
-        /// Converts this <see cref="Color"/> into the representative hex <see cref="string"/>.
-        /// </summary>
-        /// <param name="order">The order in which to format the output.</param>
-        /// <returns>A <see cref="string"/> value representing the color values in this <see cref="Color"/>.</returns>
-        public string ToString(FormatOrder order)
-        {
-            Contract.Ensures(Contract.Result<string>() != null);
-
-            switch (order)
-            {
-                case FormatOrder.Argb:
-                    return MathF.HexTable.GetHexData(this.A) + MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.B);
-                case FormatOrder.Bgra:
-                    return MathF.HexTable.GetHexData(this.B) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.A);
-                default:
-                case FormatOrder.Rgba:
-                    return MathF.HexTable.GetHexData(this.R) + MathF.HexTable.GetHexData(this.G) + MathF.HexTable.GetHexData(this.B) + MathF.HexTable.GetHexData(this.A);
-            }
+            return this.PackedRgba.ToString("X");
         }
 
         /// <summary>
@@ -1379,14 +1368,5 @@ namespace LightClaw.Engine.Graphics
         }
 
 #endif
-
-        public enum FormatOrder : byte
-        {
-            Rgba,
-
-            Argb,
-
-            Bgra
-        }
     }
 }

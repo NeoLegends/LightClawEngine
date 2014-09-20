@@ -147,7 +147,7 @@
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -210,6 +210,7 @@
     <Compile Include="Core\ThreadF.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
+    <Compile Include="Graphics\VertexArrayObjectManager.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\VertexAttributeDescription.cs" />
     <Compile Include="Graphics\EffectData.cs" />
@@ -221,7 +222,7 @@
     <Compile Include="Graphics\OpenGL\EnumExtensions.cs" />
     <Compile Include="Graphics\OpenGL\IBuffer.cs" />
     <Compile Include="Graphics\OpenGL\IGLObject.cs" />
-    <Compile Include="Core\IInitializable.cs" />
+    <Compile Include="Graphics\IInitializable.cs" />
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
@@ -233,8 +234,6 @@
     <Compile Include="Graphics\OpenGL\TextureDescription.cs" />
     <Compile Include="Graphics\OpenGL\BufferRange.cs" />
     <Compile Include="Graphics\TextureUnit.cs" />
-    <Compile Include="Graphics\TextureUnitManager.cs" />
-    <Compile Include="Graphics\UniformBufferManager.cs" />
     <Compile Include="Graphics\DataEffectUniform.cs" />
     <Compile Include="Graphics\VertexAttributeLocation.cs" />
     <Compile Include="IO\EffectPassReader.cs" />

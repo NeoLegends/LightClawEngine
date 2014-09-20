@@ -6,10 +6,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
+    [JsonConverter(typeof(VertexAttributeLocationConverter))]
     public struct VertexAttributeLocation : ICloneable, IEquatable<VertexAttributeLocation>
     {
         public static readonly VertexAttributeLocation Vertex = new VertexAttributeLocation(0);
@@ -98,6 +100,24 @@ namespace LightClaw.Engine.Graphics
         public static bool operator !=(VertexAttributeLocation left, VertexAttributeLocation right)
         {
             return !(left == right);
+        }
+
+        public class VertexAttributeLocationConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return (objectType == typeof(VertexAttributeLocation));
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                return serializer.Deserialize<int>(reader);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                serializer.Serialize(writer, ((VertexAttributeLocation)value).Location);
+            }
         }
     }
 }

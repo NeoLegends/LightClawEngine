@@ -13,6 +13,7 @@ using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Core
 {
@@ -22,6 +23,11 @@ namespace LightClaw.Engine.Core
     [DataContract(IsReference = true)]
     public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
     {
+        /// <summary>
+        /// A common <see cref="JsonSerializer"/> used to save / load the <see cref="Scene"/>.
+        /// </summary>
+        private static readonly JsonSerializer serializer = new JsonSerializer();
+
         /// <summary>
         /// Occurs before the <see cref="Scene"/> is saved.
         /// </summary>
@@ -253,24 +259,19 @@ namespace LightClaw.Engine.Core
         /// <param name="s">The <see cref="Stream"/> to save to.</param>
         /// <param name="level">A <see cref="CompressionLevel"/> indicating how strong to compress the <see cref="Scene"/>-file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public Task Save(Stream s, CompressionLevel level)
+        public async Task Save(Stream s, CompressionLevel level)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(CompressionLevel), level));
 
-            return Task.Run(() =>
+            Logger.Info(() => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(level));
+
+            using (DeflateStream deflateStream = new DeflateStream(s, level, true))
             {
-                Logger.Info(() => "Saving compressed scene (level '{0}') to a stream.".FormatWith(level));
-
-                using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
-                using (DeflateStream deflateStream = new DeflateStream(s, level, true))
-                {
-                    new NetDataContractSerializer().WriteObject(deflateStream, this); // Check whether we can switch to Json.NET here
-                }
-
-                Logger.Info(() => "Scene saved.");
-            });
+                await this.SaveRaw(deflateStream);
+                //new NetDataContractSerializer().WriteObject(deflateStream, this); // Check whether we can switch to Json.NET here
+            }
         }
 
         /// <summary>
@@ -300,11 +301,13 @@ namespace LightClaw.Engine.Core
 
             return Task.Run(() =>
             {
-                Logger.Info(() => "Saving scene as uncompressed XML to a stream.");
+                Logger.Info(() => "Saving scene to a stream.");
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
+                using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 1024 * 1024, true))
                 {
-                    new NetDataContractSerializer().WriteObject(s, this); // Check whether we can switch to Json.NET here
+                    serializer.Serialize(sw, this);
+                    //new NetDataContractSerializer().WriteObject(s, this); // Check whether we can switch to Json.NET here
                 }
 
                 Logger.Info(() => "Scene saved.");
@@ -422,13 +425,10 @@ namespace LightClaw.Engine.Core
         /// <returns>The loaded <see cref="Scene"/>.</returns>
         public static Task<Scene> Load(Stream s)
         {
-            return Task.Run(() =>
+            using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
             {
-                using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
-                {
-                    return (Scene)new NetDataContractSerializer().ReadObject(deflateStream);
-                }
-            });
+                return LoadRaw(deflateStream);
+            }
         }
 
         /// <summary>
@@ -441,7 +441,14 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanRead);
 
-            return Task.Run(() => (Scene)new NetDataContractSerializer().ReadObject(s));
+            return Task.Run(() =>
+            {
+                using (StreamReader sr = new StreamReader(s, Encoding.UTF8, false, 1024 * 1024, true))
+                using (JsonTextReader jtr = new JsonTextReader(sr))
+                {
+                    return serializer.Deserialize<Scene>(jtr);
+                }
+            });
         }
     }
 }

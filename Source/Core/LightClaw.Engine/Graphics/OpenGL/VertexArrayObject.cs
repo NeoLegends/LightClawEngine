@@ -5,15 +5,34 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    public class VertexArrayObject : GLObject, IBindable
+    public class VertexArrayObject : GLObject, IBindable, IDrawable
     {
         private readonly object initializationLock = new object();
+
+        public event EventHandler<ParameterEventArgs> Drawing;
+
+        public event EventHandler<ParameterEventArgs> Drawn;
+
+        private DrawElementsType _IndexBufferType;
+
+        public DrawElementsType IndexBufferType
+        {
+            get
+            {
+                return _IndexBufferType;
+            }
+            private set
+            {
+                this.SetProperty(ref _IndexBufferType, value);
+            }
+        }
 
         private IBuffer _IndexBuffer;
 
@@ -73,14 +92,22 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public VertexArrayObject(IEnumerable<BufferDescription> buffers, Buffer indexBuffer)
-            : base(GL.GenVertexArray())
+        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer)
+            : this(buffers, indexBuffer, DrawElementsType.UnsignedShort)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
-            Contract.Requires<ArgumentException>(!buffers.Any(buffer => buffer.Buffer.Target == BufferTarget.ElementArrayBuffer));
+            Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
+        }
+
+        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer, DrawElementsType indexBufferType)
+        {
+            Contract.Requires<ArgumentNullException>(buffers != null);
+            Contract.Requires<ArgumentNullException>(indexBuffer != null);
+            Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
 
             this.IndexBuffer = indexBuffer;
+            this.IndexBufferType = indexBufferType;
             this.VertexBuffers = buffers.ToImmutableArray();
         }
 
@@ -88,6 +115,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.Initialize();
             GL.BindVertexArray(this);
+        }
+
+        void IDrawable.Draw()
+        {
+            this.DrawIndexed();
+        }
+
+        public void DrawIndexed()
+        {
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, this.IndexCount, this.IndexCount))
+            using (Binding vaoBinding = new Binding(this))
+            {
+                GL.DrawElements(BeginMode.Triangles, this.IndexCount, this.IndexBufferType, 0);
+            }
         }
 
         public void Unbind()
@@ -103,6 +144,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
+                        this.Handle = GL.GenVertexArray();
                         using (Binding vaoBinding = new Binding(this))
                         {
                             foreach (BufferDescription bufferConfig in this.VertexBuffers)
@@ -120,6 +162,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                                             vertexPointer.Stride,
                                             vertexPointer.Offset
                                         );
+                                        GL.DisableVertexAttribArray(vertexPointer.Index);
                                     }
                                 }
                             }

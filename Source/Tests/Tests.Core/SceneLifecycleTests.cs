@@ -8,13 +8,13 @@ using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CoreTests
+namespace Tests.Core
 {
     [TestClass]
     public class SceneLifecycleTests
     {
         [TestMethod]
-        public async Task TestSceneSaving()
+        public async Task SceneSave()
         {
             Scene s = this.GetScene();
 
@@ -30,6 +30,10 @@ namespace CoreTests
                 {
                     await s.Save(fs);
                 }
+                using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SceneRaw.lcs")))
+                {
+                    await s.SaveRaw(fs);
+                }
             }
             catch (Exception ex)
             {
@@ -38,7 +42,7 @@ namespace CoreTests
         }
 
         [TestMethod]
-        public async Task TestSceneLoading()
+        public async Task SceneLoad()
         {
             Scene s = this.GetScene();
             using (MemoryStream ms = new MemoryStream())

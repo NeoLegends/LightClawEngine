@@ -78,42 +78,6 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private TextureUnitManager _TextureUnitManager = new TextureUnitManager();
-
-        public TextureUnitManager TextureUnitManager
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<TextureUnitManager>() != null);
-
-                return _TextureUnitManager;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _TextureUnitManager, value);
-            }
-        }
-
-        private UniformBufferManager _UniformBufferManager = new UniformBufferManager();
-
-        public UniformBufferManager UniformBufferManager
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<UniformBufferManager>() != null);
-
-                return _UniformBufferManager;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _UniformBufferManager, value);
-            }
-        }
-
         public EffectPass(ShaderProgram program)
             : this(program, false)
         {
@@ -142,6 +106,16 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
+                        this.ShaderProgram.Uniforms.Select(uniform =>
+                        {
+                            if (uniform.Type.IsSamplerUniform())
+                            {
+
+                            }
+
+                            return 0;
+                        });
+                        
                         this.IsInitialized = true;
                     }
                 }
@@ -161,7 +135,6 @@ namespace LightClaw.Engine.Graphics
                 {
                     this.ShaderProgram.Dispose();
                 }
-                this.UniformBufferManager.Dispose();
 
                 base.Dispose(disposing);
             }
@@ -171,7 +144,6 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._ShaderProgram != null);
-            Contract.Invariant(this._TextureUnitManager != null);
         }
 
         public static implicit operator ShaderProgram(EffectPass pass)

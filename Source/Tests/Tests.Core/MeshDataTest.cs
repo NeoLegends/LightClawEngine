@@ -6,7 +6,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CoreTests
+namespace Tests.Core
 {
     [TestClass]
     public class MeshDataTest

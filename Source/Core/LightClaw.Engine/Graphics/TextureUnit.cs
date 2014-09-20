@@ -6,12 +6,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-
+using Newtonsoft.Json;
 using GLTextureUnit = OpenTK.Graphics.OpenGL4.TextureUnit;
 
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
+    [JsonConverter(typeof(TextureUnitConverter))]
     public struct TextureUnit : ICloneable, IDisposable, IEquatable<TextureUnit>, IEquatable<int>
     {
         public static readonly TextureUnit Texture0 = new TextureUnit(0);
@@ -209,6 +210,24 @@ namespace LightClaw.Engine.Graphics
         public static implicit operator TextureUnit(GLTextureUnit unit)
         {
             return new TextureUnit(unit - GLTextureUnit.Texture0);
+        }
+
+        public class TextureUnitConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return (objectType == typeof(TextureUnit));
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                return serializer.Deserialize<int>(reader);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                serializer.Serialize(writer, ((TextureUnit)value).Unit);
+            }
         }
     }
 }

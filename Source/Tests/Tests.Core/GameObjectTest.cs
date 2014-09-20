@@ -4,13 +4,13 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.Coroutines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CoreTests
+namespace Tests.Core
 {
     [TestClass]
     public class GameObjectTest
     {
         [TestMethod]
-        public void TestAttachment()
+        public void GameObjectComponentAttachment()
         {
             GameObject gameObject = new GameObject(new Transform());
             gameObject.Add(new CoroutineController());
@@ -20,7 +20,7 @@ namespace CoreTests
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void TestAttachmentValidators()
+        public void GameObjectComponentAttachmentValidators()
         {
             GameObject gameObject = new GameObject(new Transform());
             gameObject.Add(new Transform());
@@ -29,18 +29,7 @@ namespace CoreTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void TestRemovalValidators()
-        {
-            Transform t = new Transform();
-            GameObject gameObject = new GameObject(t);
-            gameObject.Remove(t);
-
-            Assert.AreEqual(1, gameObject.Count, "Count was not one, as it should've been as removing a transform shouldn't be possible.");
-        }
-
-        [TestMethod]
-        public void TestRemoval()
+        public void GameObjectComponentRemoval()
         {
             CoroutineController controller = new CoroutineController();
             GameObject gameObject = new GameObject(controller);
@@ -50,6 +39,17 @@ namespace CoreTests
             gameObject.Remove(controller);
 
             Assert.AreEqual(gameObject.Count, 1, "Count after removal wasn't one, as it should've been (as only the Transform should be left attached).");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void GameObjectComponentRemovalValidators()
+        {
+            Transform t = new Transform();
+            GameObject gameObject = new GameObject(t);
+            gameObject.Remove(t);
+
+            Assert.AreEqual(1, gameObject.Count, "Count was not one, as it should've been as removing a transform shouldn't be possible.");
         }
     }
 }

@@ -111,7 +111,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     if (!this.IsInitialized)
                     {
                         int nameLength;
-                        base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out _Type);
+                        ActiveUniformType uniformType;
+                        base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
+                        this.Type = uniformType; // Set indirectly to fire event
 
                         this.IsInitialized = true;
                     }
@@ -213,6 +215,26 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.Initialize();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
+        }
+
+        public void Set(Vector2 value)
+        {
+            this.Set(value.X, value.Y);
+        }
+
+        public void Set(Vector3 value)
+        {
+            this.Set(value.X, value.Y, value.Z);
+        }
+
+        public void Set(Vector4 value)
+        {
+            this.Set(value.X, value.Y, value.Z, value.W);
+        }
+
+        public void Set(Quaternion value)
+        {
+            this.Set(value.X, value.Y, value.Z, value.W);
         }
 
         public void Set(Matrix value)
