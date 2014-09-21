@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ using LightClaw.Engine.Coroutines;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
+using Tests.Utilities;
 
 namespace Tests.Core
 {
@@ -19,25 +23,45 @@ namespace Tests.Core
             Scene s = this.GetScene();
 
             using (MemoryStream ms = new MemoryStream())
+            using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Scene.lcs")))
             {
-                await s.Save(ms);
+                Console.WriteLine("Time to save the scene with compression: " + await TestUtilities.DoMeasuredAction(() => s.Save(ms)));
                 Assert.IsTrue(ms.Length > 0);
+
+                ms.Position = 0;
+                ms.CopyTo(fs);
             }
 
-            try
+            GC.Collect();
+
+            using (MemoryStream ms = new MemoryStream())
+            using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SceneRaw.lcs")))
             {
-                using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Scene.lcs")))
-                {
-                    await s.Save(fs);
-                }
-                using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SceneRaw.lcs")))
-                {
-                    await s.SaveRaw(fs);
-                }
+                Console.WriteLine("Time to save the scene without compression: " + await TestUtilities.DoMeasuredAction(() => s.SaveRaw(ms)));
+
+                ms.Position = 0;
+                ms.CopyTo(fs);
             }
-            catch (Exception ex)
+
+            GC.Collect();
+
+            using (MemoryStream ms = new MemoryStream())
+            using (BsonWriter bw = new BsonWriter(ms))
+            using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SceneBson.lcs")))
             {
-                Console.Error.WriteLine(ex.ToString());
+                JsonSerializer ser = JsonSerializer.CreateDefault(
+                    new JsonSerializerSettings()
+                    {
+                        DefaultValueHandling = DefaultValueHandling.Populate,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        PreserveReferencesHandling = PreserveReferencesHandling.All,
+                        TypeNameHandling = TypeNameHandling.Auto
+                    }
+                );
+                Console.WriteLine("Time to save the scene as BSON: " + TestUtilities.DoMeasuredAction(() => ser.Serialize(bw, s)));
+
+                ms.Position = 0;
+                ms.CopyTo(fs);
             }
         }
 

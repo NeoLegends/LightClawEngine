@@ -91,5 +91,12 @@ namespace LightClaw.Engine.Graphics
         {
             return !(left == right);
         }
+        
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Sources != null);
+            Contract.Invariant(this.Uniforms != null);
+        }
     }
 }

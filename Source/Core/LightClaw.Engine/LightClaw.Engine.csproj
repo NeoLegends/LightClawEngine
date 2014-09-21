@@ -236,6 +236,7 @@
     <Compile Include="Graphics\TextureUnit.cs" />
     <Compile Include="Graphics\DataEffectUniform.cs" />
     <Compile Include="Graphics\VertexAttributeLocation.cs" />
+    <Compile Include="IO\ContentReaderAttribute.cs" />
     <Compile Include="IO\EffectPassReader.cs" />
     <Compile Include="IO\ResourceString.cs" />
     <Compile Include="Logging\ExceptionInfo.cs" />

@@ -15,7 +15,7 @@ using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class VertexArrayObjectManager<TVertex> : DisposableEntity, IInitializable
+    public class VertexArrayObjectManager<TVertex> : DisposableEntity
         where TVertex : struct
     {
         private IBuffer indexBuffer;
@@ -23,20 +23,6 @@ namespace LightClaw.Engine.Graphics
         private IBuffer vertexBuffer;
 
         private VertexArrayObject vertexArrayObject;
-
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized && (vertexArrayObject != null);
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         private ImmutableArray<VertexAttributePointer> _VertexAttributePointers;
 
@@ -94,15 +80,15 @@ namespace LightClaw.Engine.Graphics
             VertexArrayObject vao = this.vertexArrayObject;
             if (vao == null)
             {
-                IBuffer vertexBuffer = this.vertexBuffer;
-                if (vertexBuffer == null)
-                {
-                    throw new InvalidOperationException("The vertex buffer was null. Set the vertex data before drawing.");
-                }
                 IBuffer indexBuffer = this.indexBuffer;
                 if (indexBuffer == null)
                 {
-                    throw new InvalidOperationException("The index buffer was null. Set the indices before drawing.");
+                    throw new InvalidOperationException("The index buffer was null. Set it before drawing.");
+                }
+                IBuffer vertexBuffer = this.vertexBuffer;
+                if (vertexBuffer == null)
+                {
+                    throw new InvalidOperationException("The vertex buffer was null. Set it before drawing.");
                 }
 
                 this.vertexArrayObject = vao = new VertexArrayObject(

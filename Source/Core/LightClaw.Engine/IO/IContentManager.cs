@@ -26,16 +26,6 @@ namespace LightClaw.Engine.IO
         event EventHandler<ParameterEventArgs> AssetLoaded;
 
         /// <summary>
-        /// Occurs when a new <see cref="IContentResolver"/> was registered.
-        /// </summary>
-        event EventHandler<ParameterEventArgs> ContentReaderRegistered;
-
-        /// <summary>
-        /// Occurs when a new <see cref="IContentResolver"/> was registered.
-        /// </summary>
-        event EventHandler<ParameterEventArgs> ContentResolverRegistered;
-
-        /// <summary>
         /// Notifies about the start of <see cref="GetStreamAsync"/>.
         /// </summary>
         /// <seealso cref="GetStreamAsync"/>
@@ -112,10 +102,6 @@ namespace LightClaw.Engine.IO
         event EventHandler<ParameterEventArgs> IContentManager.AssetLoading { add { } remove { } }
 
         event EventHandler<ParameterEventArgs> IContentManager.AssetLoaded { add { } remove { } }
-
-        event EventHandler<ParameterEventArgs> IContentManager.ContentReaderRegistered { add { } remove { } }
-
-        event EventHandler<ParameterEventArgs> IContentManager.ContentResolverRegistered { add { } remove { } }
 
         event EventHandler<ParameterEventArgs> IContentManager.StreamObtaining { add { } remove { } }
 

@@ -14,6 +14,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
+    [ContentReader(typeof(EffectPassReader))]
     public sealed class EffectPass : DisposableEntity, IBindable, IInitializable
     {
         private readonly object initializationLock = new object();
@@ -31,18 +32,6 @@ namespace LightClaw.Engine.Graphics
             private set
             {
                 this.SetProperty(ref _IsInitialized, value);
-            }
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return this.PassName;
-            }
-            set
-            {
-                throw new NotSupportedException("{0}'s name cannot be set.".FormatWith(typeof(EffectPass).Name));
             }
         }
 
@@ -106,6 +95,7 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
+                        throw new NotImplementedException();
                         this.ShaderProgram.Uniforms.Select(uniform =>
                         {
                             if (uniform.Type.IsSamplerUniform())

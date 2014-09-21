@@ -26,8 +26,9 @@ namespace LightClaw.Engine.IO
         /// Gets a <see cref="Stream"/> around the specified asset.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to obtain a <see cref="Stream"/> around.</param>
+        /// <param name="writable">Indicates whether the <see cref="Stream"/> has to be writable.</param>
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
-        Task<Stream> GetStreamAsync(ResourceString resourceString);
+        Task<Stream> GetStreamAsync(ResourceString resourceString, bool writable);
     }
 
     [ContractClassFor(typeof(IContentResolver))]
@@ -41,10 +42,14 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<Stream> IContentResolver.GetStreamAsync(ResourceString resourceString)
+        Task<Stream> IContentResolver.GetStreamAsync(ResourceString resourceString, bool writable)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
+            Contract.Ensures(
+                (!writable && Contract.Result<Task<Stream>>().Result.CanRead) ||
+                (writable && (Contract.Result<Task<Stream>>().Result.CanRead && Contract.Result<Task<Stream>>().Result.CanWrite))
+            );
 
             return null;
         }

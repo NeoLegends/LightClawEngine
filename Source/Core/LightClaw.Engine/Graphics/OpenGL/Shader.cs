@@ -109,6 +109,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(program != null);
 
+            this.Initialize();
             GL.DetachShader(program, this);
         }
 

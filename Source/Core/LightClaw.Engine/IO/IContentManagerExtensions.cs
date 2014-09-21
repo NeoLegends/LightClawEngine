@@ -63,7 +63,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(readers != null);
-            
+
             foreach (IContentReader reader in readers.FilterNull())
             {
                 contentManager.Register(reader);

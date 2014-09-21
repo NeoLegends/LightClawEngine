@@ -53,13 +53,14 @@ namespace LightClaw.Engine.IO
         /// Gets a <see cref="Stream"/> around the specified asset.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to obtain a <see cref="Stream"/> around.</param>
+        /// <param name="writable">Indicates whether the <see cref="Stream"/> needs to be writable.</param>
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
-        public Task<Stream> GetStreamAsync(ResourceString resourceString)
+        public Task<Stream> GetStreamAsync(ResourceString resourceString, bool writable)
         {
             Stream result;
             try
             {
-                result = File.Open(Path.Combine(this.RootPath, resourceString), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                result = File.Open(Path.Combine(this.RootPath, resourceString), FileMode.OpenOrCreate, writable ? FileAccess.ReadWrite : FileAccess.Read);
             }
             catch (Exception ex)
             {

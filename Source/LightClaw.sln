@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Core", "Tests\Tests.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Graphics", "Tests\Tests.Graphics\Tests.Graphics.csproj", "{454B4C1F-C0B9-466C-BED6-814721082300}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Utilities", "Tests\Tests.Utilities\Tests.Utilities.csproj", "{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -146,6 +148,16 @@ Global
 		{454B4C1F-C0B9-466C-BED6-814721082300}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{454B4C1F-C0B9-466C-BED6-814721082300}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{454B4C1F-C0B9-466C-BED6-814721082300}.Release|Win32.ActiveCfg = Release|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,5 +173,6 @@ Global
 		{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3} = {90BDBAC5-FCD4-4725-8543-0C8E42892A7C}
 		{BC8D64A3-E2B8-47F0-B289-E58970DFC10C} = {F51A43E7-D24D-4F57-ACDF-19E91A2C98F1}
 		{454B4C1F-C0B9-466C-BED6-814721082300} = {F51A43E7-D24D-4F57-ACDF-19E91A2C98F1}
+		{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE} = {F51A43E7-D24D-4F57-ACDF-19E91A2C98F1}
 	EndGlobalSection
 EndGlobal

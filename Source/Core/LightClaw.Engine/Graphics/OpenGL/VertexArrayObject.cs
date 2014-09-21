@@ -20,6 +20,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public event EventHandler<ParameterEventArgs> Drawn;
 
+        private BeginMode _DrawMode;
+
+        public BeginMode DrawMode
+        {
+            get
+            {
+                return _DrawMode;
+            }
+            private set
+            {
+                this.SetProperty(ref _DrawMode, value);
+            }
+        }
+
         private DrawElementsType _IndexBufferType;
 
         public DrawElementsType IndexBufferType
@@ -93,19 +107,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer)
-            : this(buffers, indexBuffer, DrawElementsType.UnsignedShort)
+            : this(buffers, indexBuffer, BeginMode.Triangles, DrawElementsType.UnsignedShort)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
         }
 
-        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer, DrawElementsType indexBufferType)
+        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
 
+            this.DrawMode = drawMode;
             this.IndexBuffer = indexBuffer;
             this.IndexBufferType = indexBufferType;
             this.VertexBuffers = buffers.ToImmutableArray();
@@ -127,7 +142,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, this.IndexCount, this.IndexCount))
             using (Binding vaoBinding = new Binding(this))
             {
-                GL.DrawElements(BeginMode.Triangles, this.IndexCount, this.IndexBufferType, 0);
+                GL.DrawElements(this.DrawMode, this.IndexCount, this.IndexBufferType, 0);
             }
         }
 

@@ -18,6 +18,16 @@ namespace LightClaw.Engine.IO
     public class SceneReader : IContentReader
     {
         /// <summary>
+        /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
+        /// </summary>
+        /// <param name="assetType">The type of the asset that is about to be read.</param>
+        /// <returns><c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>, otherwise <c>false</c>.</returns>
+        public bool CanRead(Type assetType)
+        {
+            return (assetType == typeof(Scene));
+        }
+
+        /// <summary>
         /// Asynchronously reads the <see cref="Scene"/>.
         /// </summary>
         /// <param name="contentManager">The <see cref="IContentManager"/> that triggered the loading process.</param>
@@ -32,7 +42,7 @@ namespace LightClaw.Engine.IO
         public async Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             // Await for covariance
-            return await ((assetType == typeof(Scene)) ? Scene.Load(assetStream) : Task.FromResult((Scene)null));
+            return await Scene.Load(assetStream);
         }
     }
 }

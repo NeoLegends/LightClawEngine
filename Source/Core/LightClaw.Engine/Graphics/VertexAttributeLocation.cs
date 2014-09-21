@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics
     [JsonConverter(typeof(VertexAttributeLocationConverter))]
     public struct VertexAttributeLocation : ICloneable, IEquatable<VertexAttributeLocation>
     {
-        public static readonly VertexAttributeLocation Vertex = new VertexAttributeLocation(0);
+        public static readonly VertexAttributeLocation Position = new VertexAttributeLocation(0);
 
         public static readonly VertexAttributeLocation TexCoords = new VertexAttributeLocation(1);
 

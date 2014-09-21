@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LightClaw.Engine.IO
@@ -15,6 +16,13 @@ namespace LightClaw.Engine.IO
     [ContractClass(typeof(IContentReaderContracts))]
     public interface IContentReader
     {
+        /// <summary>
+        /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
+        /// </summary>
+        /// <param name="assetType">The type of the asset that is about to be read.</param>
+        /// <returns><c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>, otherwise <c>false</c>.</returns>
+        bool CanRead(Type assetType);
+
         /// <summary>
         /// Asynchronously converts from the specified <paramref name="assetStream"/> into a usable asset of
         /// type <paramref name="assetType"/>.
@@ -34,6 +42,13 @@ namespace LightClaw.Engine.IO
     [ContractClassFor(typeof(IContentReader))]
     abstract class IContentReaderContracts : IContentReader
     {
+        bool IContentReader.CanRead(Type assetType)
+        {
+            Contract.Requires<ArgumentNullException>(assetType != null);
+
+            return default(bool);
+        }
+
         Task<object> IContentReader.ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);

@@ -28,7 +28,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         private static readonly VertexAttributePointer[] _VAPInterleaved = new[] 
         { 
-            new VertexAttributePointer(VertexAttributeLocation.Vertex, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
+            new VertexAttributePointer(VertexAttributeLocation.Position, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
             new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 12),
             new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 24),
         };

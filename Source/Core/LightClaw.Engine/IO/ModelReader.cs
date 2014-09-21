@@ -16,6 +16,11 @@ namespace LightClaw.Engine.IO
 {
     public class ModelReader : IContentReader
     {
+        public bool CanRead(Type assetType)
+        {
+            return (assetType == typeof(Model));
+        }
+
         public Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
         {
             throw new NotImplementedException();

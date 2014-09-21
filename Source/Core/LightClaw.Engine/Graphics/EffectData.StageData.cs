@@ -19,7 +19,7 @@ namespace LightClaw.Engine.Graphics
             public ResourceString Source { get; private set; }
 
             [DataMember]
-            public string VertexAttribute { get; private set; }
+            public string PositionAttribute { get; private set; }
 
             [DataMember]
             public string TexCoordAttribute { get; private set; }
@@ -46,7 +46,7 @@ namespace LightClaw.Engine.Graphics
 
             public StageData(
                     ResourceString source,
-                    string vertexAttributeName,
+                    string positionAttributeName,
                     string texCoordAttributeName,
                     string normalAttributeName,
                     string binormalAttributeName,
@@ -57,7 +57,7 @@ namespace LightClaw.Engine.Graphics
                 Contract.Requires<ArgumentNullException>(source != null);
 
                 this.Source = source;
-                this.VertexAttribute = vertexAttributeName;
+                this.PositionAttribute = positionAttributeName;
                 this.TexCoordAttribute = texCoordAttributeName;
                 this.NormalAttribute = normalAttributeName;
                 this.TangentAttribute = tangentAttributeName;
@@ -69,7 +69,7 @@ namespace LightClaw.Engine.Graphics
             {
                 return new StageData(
                     this.Source,
-                    this.VertexAttribute,
+                    this.PositionAttribute,
                     this.TexCoordAttribute,
                     this.NormalAttribute,
                     this.BinormalAttribute,
@@ -96,7 +96,7 @@ namespace LightClaw.Engine.Graphics
                 if (ReferenceEquals(other, this))
                     return true;
 
-                return (this.Source == other.Source) && (this.VertexAttribute == other.VertexAttribute) &&
+                return (this.Source == other.Source) && (this.PositionAttribute == other.PositionAttribute) &&
                        (this.TexCoordAttribute == other.TexCoordAttribute) && (this.NormalAttribute == other.NormalAttribute) &&
                        (this.TangentAttribute == other.TangentAttribute) && (this.BinormalAttribute == other.BinormalAttribute) &&
                        (this.ColorAttribute == other.ColorAttribute);
@@ -107,7 +107,7 @@ namespace LightClaw.Engine.Graphics
                 return HashF.GetHashCode(
                     this.Source,
                     HashF.GetHashCode(
-                        this.VertexAttribute,
+                        this.PositionAttribute,
                         this.TexCoordAttribute,
                         this.NormalAttribute,
                         this.TangentAttribute,
@@ -130,6 +130,12 @@ namespace LightClaw.Engine.Graphics
             public static bool operator !=(StageData left, StageData right)
             {
                 return !(left == right);
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.Source != null);
             }
         }
     }

@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Graphics
     public sealed partial class EffectData
     {
         [DataContract]
-        public sealed class StageSources : ICloneable, IEquatable<StageSources>
+        public sealed class StageSources : ICloneable, IEnumerable<StageData>, IEquatable<StageSources>
         {
             [DataMember]
             public StageData Fragment { get; private set; }
@@ -82,6 +82,20 @@ namespace LightClaw.Engine.Graphics
                        (this.Geometry == other.Geometry);
             }
 
+            public IEnumerator<StageData> GetEnumerator()
+            {
+                yield return this.Vertex;
+                yield return this.TessControl;
+                yield return this.TessEval;
+                yield return this.Geometry;
+                yield return this.Fragment;
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+
             public override int GetHashCode()
             {
                 return HashF.GetHashCode(this.Fragment, this.Vertex, this.TessControl, this.TessEval, this.Geometry);
@@ -100,6 +114,13 @@ namespace LightClaw.Engine.Graphics
             public static bool operator !=(StageSources left, StageSources right)
             {
                 return !(left == right);
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.Vertex != null);
+                Contract.Invariant(this.Fragment != null);
             }
         }
     }

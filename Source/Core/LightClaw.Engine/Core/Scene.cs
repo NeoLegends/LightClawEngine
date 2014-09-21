@@ -22,11 +22,19 @@ namespace LightClaw.Engine.Core
     /// </summary>
     [DataContract(IsReference = true)]
     public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
-    {
+    { 
         /// <summary>
         /// A common <see cref="JsonSerializer"/> used to save / load the <see cref="Scene"/>.
         /// </summary>
-        private static readonly JsonSerializer serializer = new JsonSerializer();
+        private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault(
+            new JsonSerializerSettings()
+            {
+                DefaultValueHandling = DefaultValueHandling.Populate,
+                NullValueHandling = NullValueHandling.Ignore,
+                PreserveReferencesHandling = PreserveReferencesHandling.All,
+                TypeNameHandling = TypeNameHandling.Auto
+            }
+        );
 
         /// <summary>
         /// Occurs before the <see cref="Scene"/> is saved.
