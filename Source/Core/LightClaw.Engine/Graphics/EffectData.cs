@@ -23,6 +23,7 @@ namespace LightClaw.Engine.Graphics
         [DataMember]
         public ImmutableArray<string> Uniforms { get; private set; }
 
+        [ContractVerification(false)]
         private EffectData() { }
 
         public EffectData(StageSources sources, IEnumerable<string> uniforms)

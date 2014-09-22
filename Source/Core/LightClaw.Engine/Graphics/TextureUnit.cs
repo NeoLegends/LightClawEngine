@@ -214,6 +214,22 @@ namespace LightClaw.Engine.Graphics
 
         public class TextureUnitConverter : JsonConverter
         {
+            public override bool CanRead
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            public override bool CanWrite
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
             public override bool CanConvert(Type objectType)
             {
                 return (objectType == typeof(TextureUnit));

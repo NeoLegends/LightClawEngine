@@ -21,7 +21,7 @@ namespace LightClaw.Engine.IO
             return (assetType == typeof(Model));
         }
 
-        public Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
+        public Task<object> ReadAsync(ContentReadParameters parameters)
         {
             throw new NotImplementedException();
         }

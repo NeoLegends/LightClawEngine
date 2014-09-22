@@ -249,11 +249,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 if (this.OwnsBaseBuffer)
                 {
-                    IBuffer buffer = this.BaseBuffer;
-                    if (buffer != null)
-                    {
-                        buffer.Dispose();
-                    }
+                    this.BaseBuffer.Dispose();
                 }
                 
                 base.Dispose(disposing);

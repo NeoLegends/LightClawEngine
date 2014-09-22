@@ -37,18 +37,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [DataMember]
         public TextureTarget Target { get; private set; }
 
-        public TextureDescription(int width, int texLevels, int msLevels, TextureTarget target, PixelInternalFormat pixelInternalFormat)
-            : this(width, texLevels, 0, texLevels, msLevels, target, pixelInternalFormat)
+        public TextureDescription(int width, int texLevels, int msLevels, TextureTarget1d target, PixelInternalFormat pixelInternalFormat)
+            : this(width, 0, texLevels, msLevels, (TextureTarget2d)target, pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget1d), target));
         }
 
-        public TextureDescription(int width, int height, int texLevels, int msLevels, TextureTarget target, PixelInternalFormat pixelInternalFormat)
-            : this(width, height, 0, texLevels, msLevels, target, pixelInternalFormat) 
+        public TextureDescription(int width, int height, int texLevels, int msLevels, TextureTarget2d target, PixelInternalFormat pixelInternalFormat)
+            : this(width, height, 0, texLevels, msLevels, (TextureTarget3d)target, pixelInternalFormat) 
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
@@ -56,10 +55,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget2d), target));
         }
 
-        public TextureDescription(int width, int height, int depth, int texLevels, int msLevels, TextureTarget target, PixelInternalFormat pixelInternalFormat)
+        public TextureDescription(int width, int height, int depth, int texLevels, int msLevels, TextureTarget3d target, PixelInternalFormat pixelInternalFormat)
             : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
@@ -70,13 +68,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), target) || Enum.IsDefined(typeof(TextureTarget2d), target) || Enum.IsDefined(typeof(TextureTarget1d), target));
 
             this.Width = width;
             this.Height = height;
             this.Depth = depth;
             this.MultisamplingLevels = msLevels;
-            this.Target = target;
+            this.Target = (TextureTarget)target;
             this.Levels = texLevels;
             this.PixelInternalFormat = pixelInternalFormat;
 
@@ -85,7 +82,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public object Clone()
         {
-            return new TextureDescription(this.Width, this.Height, this.Depth, this.Levels, this.MultisamplingLevels, this.Target, this.PixelInternalFormat);
+            return this.initializedViaParameterizedConstructor ? 
+                new TextureDescription(
+                    this.Width, 
+                    this.Height, 
+                    this.Depth, 
+                    this.Levels, 
+                    this.MultisamplingLevels, 
+                    (TextureTarget3d)this.Target, 
+                    this.PixelInternalFormat
+                ) : default(TextureDescription);
         }
 
         public override bool Equals(object obj)

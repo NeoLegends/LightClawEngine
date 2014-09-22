@@ -12,173 +12,8 @@ namespace LightClaw.Extensions
     /// <summary>
     /// Contains extensions to <see cref="ILog"/>.
     /// </summary>
-    public static class ILogExtensions
+    public static partial class ILogExtensions
     {
-        /// <summary>
-        /// Logs a debug message.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the message into.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Debug(this ILog log, Func<object> message)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Debug(log, message, null);
-        }
-
-        /// <summary>
-        /// Logs a debug message.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the message into.</param>
-        /// <param name="ex">An <see cref="Exception"/> that will be logged with the entry.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Debug(this ILog log, Func<object> message, Exception ex)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Log(log.Logger, Level.Debug, message, ex);
-        }
-
-        /// <summary>
-        /// Logs an informational message.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the message into.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Info(this ILog log, Func<object> message)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Info(log, message, null);
-        }
-
-        /// <summary>
-        /// Logs an informational message.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the message into.</param>
-        /// <param name="ex">An <see cref="Exception"/> that will be logged with the entry.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Info(this ILog log, Func<object> message, Exception ex)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Log(log.Logger, Level.Info, message, ex);
-        }
-
-        /// <summary>
-        /// Logs a warning.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the warning into.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Warn(this ILog log, Func<object> message)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Warn(log, message, null);
-        }
-
-        /// <summary>
-        /// Logs a warning.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the warning into.</param>
-        /// <param name="ex">An <see cref="Exception"/> that will be logged with the entry.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Warn(this ILog log, Func<object> message, Exception ex)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Log(log.Logger, Level.Warn, message, ex);
-        }
-
-        /// <summary>
-        /// Logs an error.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the error into.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Error(this ILog log, Func<object> message)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Error(log, message, null);
-        }
-
-        /// <summary>
-        /// Logs an error.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the error into.</param>
-        /// <param name="ex">An <see cref="Exception"/> that will be logged with the entry.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Error(this ILog log, Func<object> message, Exception ex)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Log(log.Logger, Level.Error, message, ex);
-        }
-
-        /// <summary>
-        /// Logs a fatal error.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the error into.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Fatal(this ILog log, Func<object> message)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Fatal(log, message, null);
-        }
-
-        /// <summary>
-        /// Logs a fatal error.
-        /// </summary>
-        /// <param name="log">The <see cref="ILog"/> to log the error into.</param>
-        /// <param name="ex">An <see cref="Exception"/> that will be logged with the entry.</param>
-        /// <param name="message">The message to log.</param>
-        /// <remarks>
-        /// The extension method accepts a <see cref="Func{T}"/> instead of the message directly to avoid (a possibly expensive) 
-        /// creation of the log message if the targeted log level isn't even enabled.
-        /// </remarks>
-        public static void Fatal(this ILog log, Func<object> message, Exception ex)
-        {
-            Contract.Requires<ArgumentNullException>(log != null);
-
-            Log(log.Logger, Level.Fatal, message, ex);
-        }
-
         /// <summary>
         /// Writes the specified message into the <paramref name="logger"/>.
         /// </summary>
@@ -193,6 +28,95 @@ namespace LightClaw.Extensions
             if ((logger != null) && logger.IsEnabledFor(level))
             {
                 logger.Log(typeof(ILogExtensions), level, message(), ex);
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified message into the <paramref name="logger"/>.
+        /// </summary>
+        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
+        /// <param name="param1">The first parameter to pass to the message generator.</param>
+        /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The message to write into the <paramref name="logger"/>.</param>
+        /// <param name="ex">An exception that might have caused the log entry.</param>
+        private static void Log<TIn1>(ILogger logger, Level level, Func<TIn1, object> message, Exception ex, TIn1 param1)
+        {
+            Contract.Requires<ArgumentNullException>(level != null);
+
+            if ((logger != null) && logger.IsEnabledFor(level))
+            {
+                logger.Log(typeof(ILogExtensions), level, message(param1), ex);
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified message into the <paramref name="logger"/>.
+        /// </summary>
+        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
+        /// <typeparam name="TIn2">The <see cref="Type"/> of the second parameter.</typeparam>
+        /// <param name="param1">The first parameter to pass to the message generator.</param>
+        /// <param name="param2">The second parameter to pass to the message generator.</param>
+        /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The message to write into the <paramref name="logger"/>.</param>
+        /// <param name="ex">An exception that might have caused the log entry.</param>
+        private static void Log<TIn1, TIn2>(ILogger logger, Level level, Func<TIn1, TIn2, object> message, Exception ex, TIn1 param1, TIn2 param2)
+        {
+            Contract.Requires<ArgumentNullException>(level != null);
+
+            if ((logger != null) && logger.IsEnabledFor(level))
+            {
+                logger.Log(typeof(ILogExtensions), level, message(param1, param2), ex);
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified message into the <paramref name="logger"/>.
+        /// </summary>
+        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
+        /// <typeparam name="TIn2">The <see cref="Type"/> of the second parameter.</typeparam>
+        /// <typeparam name="TIn3">The <see cref="Type"/> of the third parameter.</typeparam>
+        /// <param name="param1">The first parameter to pass to the message generator.</param>
+        /// <param name="param2">The second parameter to pass to the message generator.</param>
+        /// <param name="param3">The third parameter to pass to the message generator.</param>
+        /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The message to write into the <paramref name="logger"/>.</param>
+        /// <param name="ex">An exception that might have caused the log entry.</param>
+        private static void Log<TIn1, TIn2, TIn3>(ILogger logger, Level level, Func<TIn1, TIn2, TIn3, object> message, Exception ex, TIn1 param1, TIn2 param2, TIn3 param3)
+        {
+            Contract.Requires<ArgumentNullException>(level != null);
+
+            if ((logger != null) && logger.IsEnabledFor(level))
+            {
+                logger.Log(typeof(ILogExtensions), level, message(param1, param2, param3), ex);
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified message into the <paramref name="logger"/>.
+        /// </summary>
+        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
+        /// <typeparam name="TIn2">The <see cref="Type"/> of the second parameter.</typeparam>
+        /// <typeparam name="TIn3">The <see cref="Type"/> of the third parameter.</typeparam>
+        /// <typeparam name="TIn4">The <see cref="Type"/> of the fourth parameter.</typeparam>
+        /// <param name="param1">The first parameter to pass to the message generator.</param>
+        /// <param name="param2">The second parameter to pass to the message generator.</param>
+        /// <param name="param3">The third parameter to pass to the message generator.</param>
+        /// <param name="param4">The fourth parameter to pass to the message generator.</param>
+        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
+        /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The message to write into the <paramref name="logger"/>.</param>
+        /// <param name="ex">An exception that might have caused the log entry.</param>
+        private static void Log<TIn1, TIn2, TIn3, TIn4>(ILogger logger, Level level, Func<TIn1, TIn2, TIn3, TIn4, object> message, Exception ex, TIn1 param1, TIn2 param2, TIn3 param3, TIn4 param4)
+        {
+            Contract.Requires<ArgumentNullException>(level != null);
+
+            if ((logger != null) && logger.IsEnabledFor(level))
+            {
+                logger.Log(typeof(ILogExtensions), level, message(param1, param2, param3, param4), ex);
             }
         }
     }

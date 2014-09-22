@@ -63,20 +63,23 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/>s and <see cref="IContentResolver"/>s.
         /// </summary>
-        public ContentManager() : this(GetDefaultResolvers()) { }
+        public ContentManager() : this(GetDefaultReaders(), GetDefaultResolvers()) { }
 
         /// <summary>
         /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/>s and <see cref="IContentResolver"/>s.
         /// </summary>
+        /// <param name="readers">The <see cref="IContentReader"/>s to use.</param>
         /// <param name="resolvers">The <see cref="IContentResolver"/>s to use.</param>
         /// <remarks>
         /// The <see cref="ContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/>s and
         /// <see cref="IContentResolver"/>s (in case it implements IDisposable) on its disposal.
         /// </remarks>
-        public ContentManager(IEnumerable<IContentResolver> resolvers)
+        public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {
+            Contract.Requires<ArgumentNullException>(readers != null);
             Contract.Requires<ArgumentNullException>(resolvers != null);
 
+            this.Register(readers.FilterNull());
             this.Register(resolvers.FilterNull());
         }
 
@@ -103,7 +106,7 @@ namespace LightClaw.Engine.IO
         /// <seealso cref="Stream"/>
         public async Task<Stream> GetStreamAsync(ResourceString resourceString)
         {
-            Logger.Debug(() => "Obtaining stream around '{0}'.".FormatWith(resourceString));
+            Logger.Debug(rs => "Obtaining stream around '{0}'.".FormatWith(rs), resourceString);
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.StreamObtaining, this.StreamObtained, resourceString, resourceString))
@@ -115,7 +118,7 @@ namespace LightClaw.Engine.IO
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Logger.Warn(() => "No writable stream around '{0}' found.".FormatWith(resourceString));
+                    Logger.Warn(rs => "No writable stream around '{0}' found.".FormatWith(rs), resourceString);
                     throw new FileNotFoundException(
                         "No writable stream was found. If reading is required only, consider registering an IContentReader in combination with LoadAsync.",
                         ex
@@ -143,7 +146,7 @@ namespace LightClaw.Engine.IO
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
         public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
-            Logger.Info(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
+            Logger.Info((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, s => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
@@ -156,7 +159,11 @@ namespace LightClaw.Engine.IO
                     !cachedAsset.TryGetTarget(out asset) ||                            // weak reference to cached asset collected or
                     !assetType.IsAssignableFrom(asset.GetType()))                      // types mismatch.
                 {
-                    Logger.Debug(() => ((forceReload ? "No cached version of '{0}' available" : "Reload of '{0}' forced") + ", obtaining stream...").FormatWith(resourceString));
+                    Logger.Debug(
+                        (reloadForced, rs) => ((reloadForced ? "No cached version of '{0}' available" : "Reload of '{0}' forced") + ", obtaining stream...").FormatWith(rs), 
+                        forceReload, 
+                        resourceString
+                    );
                     using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false))
                                                                     .FirstFinishedOrDefaultAsync(s => s != null))
                     {
@@ -169,27 +176,26 @@ namespace LightClaw.Engine.IO
                         }
 
                         // Try to get IContentReader that was specified via attribute and attempt deserialization
-                        Logger.Debug(() => "Stream around '{0}' obtained, retreiving {1}...".FormatWith(resourceString, typeof(IContentReader).Name));
-                        IContentReader reader = this.GetAttributeReader(assetType);
-                        if (reader != null)
-                        {
-                            Logger.Debug(() => "Designated reader obtained, deserializing...");
-                            asset = await reader.ReadAsync(this, resourceString, assetStream, assetType, parameter);
-                        }
+                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing {1}...".FormatWith(rs, typeof(IContentReader).Name), resourceString);
+                        asset = await this.readers.Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
+                                                  .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
 
-                        // If deserialization didn't work for some reason, try the rest of the readers to deserialize the asset.
+                        // If deserialization didn't work for some reason, see if there is a specialized IContentReader and try to use that.
                         if (asset == null)
                         {
-                            Logger.Debug(() => "Designated reader not found or it failed to deserialize, trying the rest of the readers.");
-                            asset = await this.readers.Select(rdr => rdr.ReadAsync(this, resourceString, assetStream, assetType, parameter))
-                                                      .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
+                            IContentReader reader = this.GetAttributeReader(assetType);
+                            if (reader != null)
+                            {
+                                Logger.Debug(() => "Registered {0}s failed to deserialize. Designated reader obtained, deserializing...".FormatWith(typeof(IContentReader).Name));
+                                asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter));
+                            }
                         }
 
                         // If no content reader was able to deserialize the asset, forget it and throw exception
                         if (asset == null)
                         {
-                            string message = "Asset '{0}' could not be deserialized.".FormatWith(assetStream);
-                            Logger.Warn(() => message);
+                            string message = "Asset '{0}' could not be deserialized.".FormatWith(resourceString);
+                            Logger.Warn(message);
                             throw new InvalidOperationException(message);
                         }
 
@@ -199,10 +205,10 @@ namespace LightClaw.Engine.IO
                 }
                 else
                 {
-                    Logger.Debug(() => "Cached version of '{0}' available, returning that instead.".FormatWith(resourceString));
+                    Logger.Debug(rs => "Cached version of '{0}' available, returning that instead.".FormatWith(rs), resourceString);
                 }
 
-                Logger.Debug(() => "Asset '{0}' loaded successfully.".FormatWith(resourceString));
+                Logger.Debug(rs => "Asset '{0}' loaded successfully.".FormatWith(rs), resourceString);
                 return asset;
             }
         }
@@ -306,6 +312,18 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
+        /// Gets all default <see cref="IContentReader"/>s.
+        /// </summary>
+        /// <returns>All default <see cref="IContentReader"/>s.</returns>
+        private static IEnumerable<IContentReader> GetDefaultReaders()
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<IContentReader>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IContentReader>>().All(reader => reader != null));
+
+            return new[] { new PrimitiveReader() };
+        }
+
+        /// <summary>
         /// Gets all default <see cref="IContentResolver"/>s.
         /// </summary>
         /// <returns>All default <see cref="IContentResolver"/>s.</returns>
@@ -314,17 +332,11 @@ namespace LightClaw.Engine.IO
             Contract.Ensures(Contract.Result<IEnumerable<IContentResolver>>() != null);
             Contract.Ensures(Contract.Result<IEnumerable<IContentResolver>>().All(resolver => resolver != null));
 
-            return Assembly.GetExecutingAssembly()
-                           .GetTypesByBase<IContentResolver>(true)
-                           .Where(t => !t.IsAbstract)
-                           .Select(t =>
-                           {
-                               try
-                               {
-                                   return (IContentResolver)Activator.CreateInstance(t);
-                               }
-                               catch { return null; }
-                           }).FilterNull();
+#if DESKTOP
+            return new[] { new FileSystemContentResolver() };
+#else
+            throw new NotImplementedException("There currently are no IContentResolvers for platforms other than desktop.");
+#endif
         }
     }
 }

@@ -77,6 +77,22 @@ namespace LightClaw.Engine.IO
 
         public class ResourceStringConverter : JsonConverter
         {
+            public override bool CanRead
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            public override bool CanWrite
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
             public override bool CanConvert(Type objectType)
             {
                 return (objectType == typeof(ResourceString));

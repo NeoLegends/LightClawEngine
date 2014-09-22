@@ -30,19 +30,15 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Asynchronously reads the <see cref="Scene"/>.
         /// </summary>
-        /// <param name="contentManager">The <see cref="IContentManager"/> that triggered the loading process.</param>
-        /// <param name="resourceString">The resource string of the asset to be loaded.</param>
-        /// <param name="assetStream">A <see cref="Stream"/> of the asset's data.</param>
-        /// <param name="assetType">The <see cref="Type"/> of asset to read.</param>
-        /// <param name="parameter">A parameter the client specifies when requesting an asset.</param>
+        /// <param name="parameters"><see cref="ContentReadParameters"/> containing information about the asset to be loaded.</param>
         /// <returns>
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
         /// cannot be read.
         /// </returns>
-        public async Task<object> ReadAsync(IContentManager contentManager, ResourceString resourceString, Stream assetStream, Type assetType, object parameter)
+        public async Task<object> ReadAsync(ContentReadParameters parameters)
         {
             // Await for covariance
-            return await Scene.Load(assetStream);
+            return await Scene.Load(parameters.AssetStream);
         }
     }
 }

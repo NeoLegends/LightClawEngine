@@ -17,6 +17,8 @@ namespace LightClaw.Engine.UI
     [DataContract]
     public class Console : Component
     {
+        public event EventHandler<ValueChangedEventArgs<bool>> IsShownChanged;
+
         private ConcurrentDictionary<string, Action<string[]>> _Commands = new ConcurrentDictionary<string, Action<string[]>>();
 
         [IgnoreDataMember]
@@ -38,6 +40,7 @@ namespace LightClaw.Engine.UI
 
         private bool _IsShown = false;
 
+        [DataMember]
         public bool IsShown
         {
             get
@@ -46,7 +49,23 @@ namespace LightClaw.Engine.UI
             }
             set
             {
+                bool previousValue = _IsShown;
                 this.SetProperty(ref _IsShown, value);
+                this.Raise(this.IsShownChanged, value, previousValue);
+            }
+        }
+
+        private ConsoleWriter _Writer;
+
+        public ConsoleWriter Writer
+        {
+            get
+            {
+                return _Writer;
+            }
+            private set
+            {
+                this.SetProperty(ref _Writer, value);
             }
         }
 
@@ -132,18 +151,18 @@ namespace LightClaw.Engine.UI
 
             char[] paramChars = commandLine.ToCharArray();
             bool insideQuote = false;
-            for (int index = 0; index < paramChars.Length; index++)
+            for (int i = 0; i < paramChars.Length; i++)
             {
-                if (paramChars[index] == '"')
+                if (paramChars[i] == '"')
                 {
                     insideQuote = !insideQuote;
                 }
-                if (!insideQuote && paramChars[index] == ' ')
+                if (!insideQuote && paramChars[i] == ' ')
                 {
-                    paramChars[index] = '\n';
+                    paramChars[i] = '\n';
                 }
             }
-            return (new string(paramChars)).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return new string(paramChars).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

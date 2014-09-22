@@ -260,6 +260,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
+            Contract.Requires<ArgumentNullException>(offset >= 0);
             Contract.Requires<ArgumentException>(data.Any());
 
             this.SetRange(data.ToArray(), offset);

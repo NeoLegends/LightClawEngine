@@ -36,7 +36,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(rootPath != null);
 
             this.RootPath = rootPath;
-            Logger.Debug(() => "Initialized a new {0}. Root path will be {1}.".FormatWith(typeof(FileSystemContentResolver).Name, this.RootPath));
+            Logger.Debug(path => "Initialized a new {0}. Root path will be {1}.".FormatWith(typeof(FileSystemContentResolver).Name), rootPath);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                Logger.Warn(() => "An error of type '{0}' occured while obtaining the stream to an asset. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName), ex);
+                Logger.Warn(exception => "An error of type '{0}' occured while obtaining the stream to an asset. Returning null.".FormatWith(exception.GetType().AssemblyQualifiedName), ex, ex);
                 result = null;
             }
             return Task.FromResult(result);

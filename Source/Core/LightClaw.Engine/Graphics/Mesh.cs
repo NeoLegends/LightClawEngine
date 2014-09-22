@@ -127,7 +127,7 @@ namespace LightClaw.Engine.Graphics
                 Logger.Debug(() => "Mesh '{0}' loaded successfully.");
             }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
             meshTask.ContinueWith(
-                t => Logger.Warn(() => "Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
+                t => Logger.Error(() => "Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );
 

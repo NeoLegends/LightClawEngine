@@ -124,7 +124,7 @@ namespace LightClaw.Engine.Core
                 t =>
                 {
                     this.GameWindow.Icon = t.Result;
-                    Logger.Debug(() => "Icon '{0}' loaded successfully.".FormatWith(GeneralSettings.Default.IconPath));
+                    Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
                 },
                 TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
             );
@@ -173,9 +173,10 @@ namespace LightClaw.Engine.Core
             double maxFrameRate = (double)VideoSettings.Default.FPSLimit;
 
             Logger.Info(
-                () => limitFps ? 
-                    "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate) :
-                    "Entering game loop with unlimited frame rate."
+                (fpsLimited, frameRate) => fpsLimited ?
+                    "Entering game loop. FPS will be limited to {0}.".FormatWith(frameRate) :
+                    "Entering game loop with unlimited frame rate.",
+                limitFps, maxFrameRate
             );
 
             this.GameWindow.Run(limitFps ? maxFrameRate : 0.0);
@@ -237,7 +238,7 @@ namespace LightClaw.Engine.Core
         /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
         protected void OnResize(int width, int height)
         {
-            Logger.Info(() => "Resizing window to {0}x{1}.".FormatWith(width, height));
+            Logger.Info((windowWidth, windowHeight) => "Resizing window to {0}x{1}.".FormatWith(windowWidth, windowHeight), width, height);
 
             GL.Viewport(0, 0, width, height);
         }

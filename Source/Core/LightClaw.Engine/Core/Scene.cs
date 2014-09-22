@@ -327,11 +327,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnEnable()
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.Enable());
-            }
+            Parallel.ForEach(this.Items, item => item.Enable());
         }
 
         /// <summary>
@@ -339,11 +335,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDisable()
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.Disable());
-            }
+            Parallel.ForEach(this.Items, item => item.Disable());
         }
 
         /// <summary>
@@ -362,11 +354,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.Load());
-            }
+            Parallel.ForEach(this.Items, item => item.Load());
         }
 
         /// <summary>
@@ -374,11 +362,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnReset()
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.Reset());
-            }
+            Parallel.ForEach(this.Items, item => item.Reset());
         }
 
         /// <summary>
@@ -386,11 +370,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnUpdate(GameTime gameTime)
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.Update(gameTime));
-            }
+            Parallel.ForEach(this.Items, item => item.Update(gameTime));
         }
 
         /// <summary>
@@ -398,11 +378,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLateUpdate()
         {
-            ObservableCollection<GameObject> items = this.Items;
-            if (items != null)
-            {
-                Parallel.ForEach(items, item => item.LateUpdate());
-            }
+            Parallel.ForEach(this.Items, item => item.LateUpdate());
         }
 
         /// <summary>

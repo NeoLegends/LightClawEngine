@@ -29,6 +29,7 @@ namespace LightClaw.Engine.Graphics
             [DataMember]
             public StageData Vertex { get; private set; }
 
+            [ContractVerification(false)]
             private StageSources() { }
 
             public StageSources(StageData vertex, StageData fragment)

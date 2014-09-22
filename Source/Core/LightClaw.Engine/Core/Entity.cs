@@ -84,7 +84,7 @@ namespace LightClaw.Engine.Core
         {
             Type entityType = this.GetType();
             this.Logger = LogManager.GetLogger(entityType);
-            Logger.Debug(() => "Initialized a new entity of type '{0}'.".FormatWith(entityType.AssemblyQualifiedName));
+            Logger.Debug(type => "Initialized a new entity of type '{0}'.".FormatWith(type.AssemblyQualifiedName), entityType);
         }
 
         /// <summary>
