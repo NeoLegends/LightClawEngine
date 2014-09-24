@@ -13,6 +13,24 @@ namespace LightClaw.Engine.Graphics
 {
     public class DataEffectUniform : EffectUniform, IBindable
     {
+        private UniformBufferGroup _BufferGroup;
+
+        public UniformBufferGroup BufferGroup
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<UniformBufferGroup>() != null);
+
+                return _BufferGroup;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _BufferGroup, value);
+            }
+        }
+
         private int _Size;
 
         public int Size
@@ -54,13 +72,23 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public DataEffectUniform(EffectPass stage, string name, int size)
-            : base(stage, name)
+        public DataEffectUniform(EffectPass pass, Uniform uniform, int size)
+            : this(pass, uniform, UniformBufferGroup.Default, size)
         {
-            Contract.Requires<ArgumentNullException>(stage != null);
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires<ArgumentNullException>(pass != null);
+            Contract.Requires<ArgumentNullException>(uniform != null);
+            Contract.Requires<ArgumentOutOfRangeException>(size > 0);
+        }
+
+        public DataEffectUniform(EffectPass pass, Uniform uniform, UniformBufferGroup group, int size)
+            : base(pass, uniform)
+        {
+            Contract.Requires<ArgumentNullException>(pass != null);
+            Contract.Requires<ArgumentNullException>(uniform != null);
+            Contract.Requires<ArgumentNullException>(group != null);
             Contract.Requires<ArgumentOutOfRangeException>(size > 0);
 
+            this.BufferGroup = group;
             this.Size = size;
         }
 
@@ -73,7 +101,7 @@ namespace LightClaw.Engine.Graphics
             }
             else
             {
-                Logger.Warn(() => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(this.UniformName));
+                Logger.Warn(un => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(un), this.Uniform.Name);
             }
         }
 
@@ -136,9 +164,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
+                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
                 return false;
             }
         }
@@ -159,9 +187,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
+                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
                 return false;
             }
         }
@@ -183,9 +211,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
+                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
                 return false;
             }
         }
@@ -208,9 +236,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
+                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
                 return false;
             }
         }
@@ -228,7 +256,11 @@ namespace LightClaw.Engine.Graphics
         {
             if (!this.IsDisposed)
             {
-                this.Ubo.Dispose();
+                RangedBuffer ubo = this.Ubo;
+                if (ubo != null)
+                {
+                    ubo.Dispose();
+                }
 
                 base.Dispose(disposing);
             }
@@ -242,6 +274,7 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            Contract.Invariant(this._BufferGroup != null);
             Contract.Invariant(this._Size > 0);
         }
     }

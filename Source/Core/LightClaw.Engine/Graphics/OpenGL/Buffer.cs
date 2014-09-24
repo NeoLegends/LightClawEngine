@@ -171,11 +171,49 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
+        /// Binds the buffer and maps it with <see cref="BufferAccess.ReadWrite"/>.
+        /// </summary>
+        /// <remarks>
+        /// Important, this method binds the buffer!
+        /// </remarks>
+        /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
+        public IntPtr Map()
+        {
+            return this.Map(BufferAccess.ReadWrite);
+        }
+
+        /// <summary>
+        /// Binds the buffer and maps it with the specified <paramref name="bufferAccess"/>.
+        /// </summary>
+        /// <remarks>
+        /// Important, this method binds the buffer!
+        /// </remarks>
+        /// <param name="bufferAccess">A <see cref="BufferAccess"/> enum describing the access capabilities.</param>
+        /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
+        public IntPtr Map(BufferAccess bufferAccess)
+        {
+            this.Bind();
+            return GL.MapBuffer(this.Target, bufferAccess);
+        }
+
+        /// <summary>
         /// Unbinds the buffer from the current <see cref="BufferTarget"/>.
         /// </summary>
         public void Unbind()
         {
             GL.BindBuffer(this.Target, 0);
+        }
+
+        /// <summary>
+        /// Unmaps the buffer.
+        /// </summary>
+        /// <remarks>
+        /// Important, this method expects the current buffer to be bound.
+        /// </remarks>
+        public void Unmap()
+        {
+            GL.UnmapBuffer(this.Target);
+            this.Unbind();
         }
 
         /// <summary>

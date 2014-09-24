@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -28,21 +29,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private int _Location;
-
         public int Location
         {
             get
             {
                 Contract.Ensures(Contract.Result<int>() >= 0);
 
-                return _Location;
-            }
-            protected set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
-
-                this.SetProperty(ref _Location, value);
+                return this.Uniform.Location;
             }
         }
 
@@ -50,7 +43,7 @@ namespace LightClaw.Engine.Graphics
         {
             get
             {
-                return this.UniformName;
+                return this.Uniform.Name;
             }
             set
             {
@@ -72,32 +65,31 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private string _UniformName;
+        private Uniform _Uniform;
 
-        public string UniformName
+        public Uniform Uniform
         {
             get
             {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                Contract.Ensures(Contract.Result<Uniform>() != null);
 
-                return _UniformName;
+                return _Uniform;
             }
-            protected set
+            private set
             {
-                Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(value));
+                Contract.Requires<ArgumentNullException>(value != null);
 
-                this.SetProperty(ref _UniformName, value);
+                this.SetProperty(ref _Uniform, value);
             }
         }
 
-        protected EffectUniform(EffectPass pass, string name)
+        protected EffectUniform(EffectPass pass, Uniform uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires<ArgumentNullException>(uniform != null);
 
-            this.Location = GL.GetUniformLocation(pass.ShaderProgram, name);
             this.Pass = pass;
-            this.UniformName = name;
+            this.Uniform = uniform;
         }
 
         public abstract void Bind();
@@ -124,9 +116,8 @@ namespace LightClaw.Engine.Graphics
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this._Location >= 0);
             Contract.Invariant(this._Pass != null);
-            Contract.Invariant(!string.IsNullOrWhiteSpace(this._UniformName));
+            Contract.Invariant(this._Uniform != null);
         }
     }
 }

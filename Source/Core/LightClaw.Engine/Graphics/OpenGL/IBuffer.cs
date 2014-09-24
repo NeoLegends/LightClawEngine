@@ -21,6 +21,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         T[] GetRange<T>(int offset, int count) where T : struct;
 
+        IntPtr Map(BufferAccess access);
+
+        void Unmap();
+
         void Set<T>(T data) where T : struct;
 
         void Set<T>(T[] data) where T : struct;
@@ -84,6 +88,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             return null;
         }
+
+        IntPtr IBuffer.Map(BufferAccess access)
+        {
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(BufferAccess), access));
+
+            return IntPtr.Zero;
+        }
+
+        void IBuffer.Unmap() { }
 
         void IBuffer.Set<T>(T data) { }
 

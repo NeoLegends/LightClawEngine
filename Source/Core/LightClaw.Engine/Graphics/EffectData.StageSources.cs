@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Graphics
     public sealed partial class EffectData
     {
         [DataContract]
-        public sealed class StageSources : ICloneable, IEnumerable<StageData>, IEquatable<StageSources>
+        public sealed class StageSources : ICloneable, IEquatable<StageSources>
         {
             [DataMember]
             public StageData Fragment { get; private set; }
@@ -81,20 +81,6 @@ namespace LightClaw.Engine.Graphics
                 return (this.Fragment == other.Fragment) && (this.Vertex == other.Vertex) &&
                        (this.TessControl == other.TessControl) && (this.TessEval == other.TessEval) &&
                        (this.Geometry == other.Geometry);
-            }
-
-            public IEnumerator<StageData> GetEnumerator()
-            {
-                yield return this.Vertex;
-                yield return this.TessControl;
-                yield return this.TessEval;
-                yield return this.Geometry;
-                yield return this.Fragment;
-            }
-
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                return this.GetEnumerator();
             }
 
             public override int GetHashCode()

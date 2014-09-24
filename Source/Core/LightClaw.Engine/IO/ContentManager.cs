@@ -177,7 +177,8 @@ namespace LightClaw.Engine.IO
 
                         // Try to get IContentReader that was specified via attribute and attempt deserialization
                         Logger.Debug(rs => "Stream around '{0}' obtained, deserializing {1}...".FormatWith(rs, typeof(IContentReader).Name), resourceString);
-                        asset = await this.readers.Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
+                        asset = await this.readers.Where(reader => reader.CanRead(assetType))
+                                                  .Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
                                                   .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
 
                         // If deserialization didn't work for some reason, see if there is a specialized IContentReader and try to use that.

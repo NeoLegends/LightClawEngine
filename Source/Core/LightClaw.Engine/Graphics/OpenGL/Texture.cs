@@ -180,7 +180,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 float anisoLevel = Math.Min(requestedAnisoLevel, maxSupportedAnisoLevel);
 
                 staticLogger.Info(
-                    () => "Anisotropic level will be {0} (maximum supported by hardware: {1}, requested through settings: {2}).".FormatWith(anisoLevel, maxSupportedAnisoLevel, requestedAnisoLevel)
+                    (al, msal, ral) => "Anisotropic level will be {0} (maximum supported by hardware: {1}, requested through settings: {2}).".FormatWith(al, msal, ral),
+                    anisoLevel, maxSupportedAnisoLevel, requestedAnisoLevel
                 );
 
                 GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, anisoLevel);
@@ -220,7 +221,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
-            GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
+            GL.ActiveTexture(textureUnit);
             GL.BindTexture(this.Target, this);
         }
 
@@ -248,7 +249,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
-            GL.ActiveTexture(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0 + textureUnit);
+            GL.ActiveTexture(textureUnit);
             GL.BindTexture(this.Target, 0);
         }
 

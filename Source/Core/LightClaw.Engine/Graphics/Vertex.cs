@@ -35,6 +35,7 @@ namespace LightClaw.Engine.Graphics
 
         /// <summary>
         /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="VertexPositionNormalTexCoord"/>.
+        /// The configuration can be used for interleaved vertex data.
         /// </summary>
         /// <remarks>
         /// <para>
@@ -64,6 +65,51 @@ namespace LightClaw.Engine.Graphics
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
 
                 return _VAPInterleaved.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private static readonly VertexAttributePointer[] _VAPMultipleBuffers = new VertexAttributePointer[]
+        {
+            new VertexAttributePointer(VertexAttributeLocation.Position, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
+            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
+            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0)
+        };
+
+        /// <summary>
+        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="VertexPositionNormalTexCoord"/>.
+        /// The configuration can be used together with multiple buffers storing the attributes.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Attribute location in GLSL will be assumed as follows:
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>
+        ///             Vertex Position: <see cref="VertexAttributeLocation.Vertex"/>
+        ///         </description>
+        ///     </item>
+        ///         <description>
+        ///             Vertex Normal: <see cref="VertexAttributeLocation.Normals"/>
+        ///         </description>
+        ///     </item>
+        ///         <description>
+        ///             Texture Coordinates: <see cref="VertexAttributeLocation.TexCoords"/>
+        ///         </description>
+        ///     </item>
+        /// </list>
+        /// </para>
+        /// </remarks>
+        public static VertexAttributePointer[] VAPMultipleBuffers
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
+                Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
+
+                return _VAPMultipleBuffers.ToArray();
             }
         }
 

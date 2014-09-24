@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using Newtonsoft.Json;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DataContract]
     [JsonConverter(typeof(VertexAttributeLocationConverter))]

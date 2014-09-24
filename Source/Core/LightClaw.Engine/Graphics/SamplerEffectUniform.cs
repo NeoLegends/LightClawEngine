@@ -9,6 +9,8 @@ using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
+using LCTextureUnit = LightClaw.Engine.Graphics.OpenGL.TextureUnit;
+
 namespace LightClaw.Engine.Graphics
 {
     public class SamplerEffectUniform : EffectUniform, IBindable
@@ -43,9 +45,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private TextureUnit _TextureUnit = 0;
+        private LCTextureUnit _TextureUnit = 0;
 
-        public TextureUnit TextureUnit
+        public LCTextureUnit TextureUnit
         {
             get
             {
@@ -57,11 +59,11 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        public SamplerEffectUniform(EffectPass pass, string name, TextureUnit textureUnit)
-            : base(pass, name)
+        public SamplerEffectUniform(EffectPass pass, Uniform uniform, LCTextureUnit textureUnit)
+            : base(pass, uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires<ArgumentNullException>(uniform != null);
 
             this.TextureUnit = textureUnit;
         }
@@ -71,7 +73,7 @@ namespace LightClaw.Engine.Graphics
             Texture texture = this.Texture;
             if (texture != null)
             {
-                GL.ProgramUniform1(this.Pass.ShaderProgram, this.Location, this.TextureUnit);
+                this.Uniform.Set(this.TextureUnit);
                 texture.Bind();
 
                 Sampler sampler = this.Sampler;

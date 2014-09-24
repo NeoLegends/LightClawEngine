@@ -57,7 +57,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
         public Task<Stream> GetStreamAsync(ResourceString resourceString, bool writable)
         {
-            Stream result;
+            Stream result = null;
             try
             {
                 result = File.Open(Path.Combine(this.RootPath, resourceString), FileMode.OpenOrCreate, writable ? FileAccess.ReadWrite : FileAccess.Read);
@@ -65,7 +65,6 @@ namespace LightClaw.Engine.IO
             catch (Exception ex)
             {
                 Logger.Warn(exception => "An error of type '{0}' occured while obtaining the stream to an asset. Returning null.".FormatWith(exception.GetType().AssemblyQualifiedName), ex, ex);
-                result = null;
             }
             return Task.FromResult(result);
         }

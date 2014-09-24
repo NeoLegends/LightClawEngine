@@ -41,7 +41,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             : this(width, 0, texLevels, msLevels, (TextureTarget2d)target, pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
+            Contract.Requires<ArgumentException>(width == 0 || MathF.IsPowerOfTwo((uint)width));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
         }
@@ -51,8 +51,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
+            Contract.Requires<ArgumentException>(width == 0 || MathF.IsPowerOfTwo((uint)width));
+            Contract.Requires<ArgumentException>(height == 0 || MathF.IsPowerOfTwo((uint)height));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
         }
@@ -63,9 +63,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(depth >= 0);
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)width));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)height));
-            Contract.Requires<ArgumentException>(MathF.IsPowerOfTwo((uint)depth));
+            Contract.Requires<ArgumentException>(width == 0 || MathF.IsPowerOfTwo((uint)width));
+            Contract.Requires<ArgumentException>(height == 0 || MathF.IsPowerOfTwo((uint)height));
+            Contract.Requires<ArgumentException>(depth == 0 || MathF.IsPowerOfTwo((uint)depth));
             Contract.Requires<ArgumentOutOfRangeException>(texLevels > 0);
             Contract.Requires<ArgumentOutOfRangeException>(msLevels >= 0);
 

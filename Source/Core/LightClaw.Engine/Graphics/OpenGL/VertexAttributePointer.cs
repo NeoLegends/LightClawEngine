@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -13,7 +14,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public struct VertexAttributePointer : ICloneable, IEquatable<VertexAttributePointer>
     {
         [DataMember]
-        public int Index { get; private set; }
+        public VertexAttributeLocation Index { get; private set; }
 
         [DataMember]
         public bool Normalize { get; private set; }
@@ -29,13 +30,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         [DataMember]
         public VertexAttribPointerType Type { get; private set; }
-        
-        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool normalize, int stride, int offset)
-            : this(index, size, type, normalize, stride, (IntPtr)offset) { }
 
-        public VertexAttributePointer(int index, int size, VertexAttribPointerType type, bool normalize, int stride, IntPtr offset)
+        public VertexAttributePointer(VertexAttributeLocation index, int size, VertexAttribPointerType type, bool normalize, int stride, int offset)
+            : this(index, size, type, normalize, stride, (IntPtr)offset)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(size >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(stride >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+        }
+
+        public VertexAttributePointer(VertexAttributeLocation index, int size, VertexAttribPointerType type, bool normalize, int stride, IntPtr offset)
             : this()
         {
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(size >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(stride >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>((int)offset >= 0);
+
             this.Index = index;
             this.Normalize = normalize;
             this.Offset = offset;

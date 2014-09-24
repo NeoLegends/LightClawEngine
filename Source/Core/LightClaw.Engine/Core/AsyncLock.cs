@@ -11,6 +11,10 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents an asynchronous lock built around a <see cref="SemaphoreSlim"/> for use with the 'using'-dispose-pattern.
     /// </summary>
+    /// <remarks>
+    /// Always make sure to release lock via <see cref="M:AsyncLockReleaser.Release"/> or <see cref="M:AsyncLockReleaser.Dispose"/>, otherwise
+    /// the lock will not be released and deadlocks will occur.
+    /// </remarks>
     /// <example>
     /// <code>
     /// using (AsyncLockReleaser releaser = await this.asyncLock.LockAsync())
@@ -46,6 +50,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Synchronously takes the lock.
         /// </summary>
+        /// <remarks>
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI responsiveness is of the essence.
+        /// </remarks>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
         public AsyncLockReleaser Lock()
         {
@@ -60,6 +67,15 @@ namespace LightClaw.Engine.Core
         public Task<AsyncLockReleaser> LockAsync()
         {
             return this.semaphore.WaitAsync().ContinueWith(t => new AsyncLockReleaser(this.semaphore), TaskContinuationOptions.ExecuteSynchronously);
+        }
+
+        /// <summary>
+        /// Contains Contract.Invariant definitions.
+        /// </summary>
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.semaphore != null);
         }
 
         /// <summary>

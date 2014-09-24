@@ -150,6 +150,22 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return this.BaseBuffer.GetRange<T>(this.Range.Start + offset, count);
         }
 
+        public IntPtr Map()
+        {
+            return this.Map(BufferAccess.ReadWrite);
+        }
+
+        public IntPtr Map(BufferAccess access)
+        {
+            this.Bind();
+            return GL.MapBufferRange(this.Target, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length, access.ToAccessMask());
+        }
+
+        public void Unmap()
+        {
+            GL.UnmapBuffer(this.Target);
+        }
+
         public void Set<T>(T data)
             where T : struct
         {
@@ -236,7 +252,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public RangedBuffer Zeroed()
         {
-            byte[] zeros = new byte[Math.Max(this.Range.Length, 0)];
+            byte[] zeros = new byte[Math.Max(this.Range.Length, 1)];
             zeros.Initialize();
             this.Set(zeros);
 

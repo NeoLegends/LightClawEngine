@@ -72,7 +72,7 @@
     <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
     <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
     <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
     <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
     <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
     <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
@@ -129,7 +129,7 @@
     <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
     <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
     <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
     <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
     <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
     <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
@@ -220,6 +220,7 @@
     <Compile Include="Core\ThreadF.cs" />
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
+    <Compile Include="Graphics\UniformBufferGroup.cs" />
     <Compile Include="Graphics\VertexArrayObjectManager.cs" />
     <Compile Include="Graphics\CompilationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\VertexAttributeDescription.cs" />
@@ -243,9 +244,9 @@
     <Compile Include="Graphics\OpenGL\ShaderProgram.cs" />
     <Compile Include="Graphics\OpenGL\TextureDescription.cs" />
     <Compile Include="Graphics\OpenGL\BufferRange.cs" />
-    <Compile Include="Graphics\TextureUnit.cs" />
+    <Compile Include="Graphics\OpenGL\TextureUnit.cs" />
     <Compile Include="Graphics\DataEffectUniform.cs" />
-    <Compile Include="Graphics\VertexAttributeLocation.cs" />
+    <Compile Include="Graphics\OpenGL\VertexAttributeLocation.cs" />
     <Compile Include="IO\ContentReadParameters.cs" />
     <Compile Include="IO\PrimitiveReader.cs" />
     <Compile Include="IO\ContentReaderAttribute.cs" />

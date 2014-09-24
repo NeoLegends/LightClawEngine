@@ -9,7 +9,7 @@ using LightClaw.Engine.Core;
 using Newtonsoft.Json;
 using GLTextureUnit = OpenTK.Graphics.OpenGL4.TextureUnit;
 
-namespace LightClaw.Engine.Graphics
+namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DataContract]
     [JsonConverter(typeof(TextureUnitConverter))]

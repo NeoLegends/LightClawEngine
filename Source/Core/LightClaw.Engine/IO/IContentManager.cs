@@ -130,6 +130,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);
             Contract.Ensures(Contract.Result<Task<object>>() != null);
+            Contract.Ensures(Contract.Result<Task<object>>().Result != null);
 
             return null;
         }

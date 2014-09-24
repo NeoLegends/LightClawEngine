@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             set
             {
-                throw new NotSupportedException("The {0}s name cannot be set.".FormatWith(typeof(Uniform).Name));
+                throw new NotSupportedException("The {0}s name cannot be set. It is hardcoded in the shader file.".FormatWith(typeof(Uniform).Name));
             }
         }
 
@@ -112,6 +112,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     {
                         int nameLength;
                         ActiveUniformType uniformType;
+                        this.Program.Initialize();
                         base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
                         this.Type = uniformType; // Set indirectly to fire event
 
