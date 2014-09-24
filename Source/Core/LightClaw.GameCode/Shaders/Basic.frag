@@ -1,12 +1,10 @@
 ﻿#version 400
 
-uniform sampler2D texture;
-
-in vec2 passTextureCoordinates;
+in vec4 vertexColor;
 
 out vec3 finalColor;
 
 void main(void)
 {
-	finalColor = texture(texture, passTextureCoordinates).rgb;
+	finalColor = vertexColor;
 }

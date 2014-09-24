@@ -8,8 +8,16 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Contains extension methods to various OpenGL enums.
+    /// </summary>
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Checks whether the specified <see cref="ActiveUniformType"/> is a matrix.
+        /// </summary>
+        /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
+        /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is matrix.</returns>
         public static bool IsMatrix(this ActiveUniformType type)
         {
             switch (type)
@@ -29,6 +37,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="ActiveUniformType"/> is a sampler.
+        /// </summary>
+        /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
+        /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is sampler.</returns>
         public static bool IsSampler(this ActiveUniformType aut)
         {
             switch (aut)
@@ -76,6 +89,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="ActiveUniformType"/> is a vector.
+        /// </summary>
+        /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
+        /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is vector.</returns>
         public static bool IsVector(this ActiveUniformType type)
         {
             switch (type)
@@ -101,6 +119,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Converts a <see cref="BufferAccess"/> into a <see cref="BufferAccessMask"/>.
+        /// </summary>
+        /// <param name="access">The <see cref="BufferAccess"/> to convert.</param>
+        /// <returns>The conversion result.</returns>
         public static BufferAccessMask ToAccessMask(this BufferAccess access)
         {
             switch (access)

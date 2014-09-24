@@ -49,7 +49,7 @@ namespace LightClaw.Engine.Core
         /// Gets or sets the <see cref="Component"/> at the specified <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index to get or set the <see cref="Component"/> at.</param>
-        /// <returns></returns>
+        /// <returns>The <see cref="Component"/> at the specified <paramref name="index"/>.</returns>
         public override Component this[int index]
         {
             get

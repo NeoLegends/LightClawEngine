@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -28,9 +29,10 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         private static readonly VertexAttributePointer[] _VAPInterleaved = new[] 
         { 
-            new VertexAttributePointer(VertexAttributeLocation.Position, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 0),
-            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 12),
-            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 32, 24),
+            new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, SizeInBytes, 0),
+            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, SizeInBytes, 12),
+            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, SizeInBytes, 24),
+            new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 32)
         };
 
         /// <summary>
@@ -54,6 +56,11 @@ namespace LightClaw.Engine.Graphics
         ///             Texture Coordinates: <see cref="VertexAttributeLocation.TexCoords"/>
         ///         </description>
         ///     </item>
+        ///     </item>
+        ///         <description>
+        ///             Color: <see cref="VertexAttributeLocation.Color"/>
+        ///         </description>
+        ///     </item>
         /// </list>
         /// </para>
         /// </remarks>
@@ -75,7 +82,8 @@ namespace LightClaw.Engine.Graphics
         {
             new VertexAttributePointer(VertexAttributeLocation.Position, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
             new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
-            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0)
+            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
+            new VertexAttributePointer(VertexAttributeLocation.Color, 4, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.UnsignedByte, false, 0, 0)
         };
 
         /// <summary>
@@ -99,6 +107,11 @@ namespace LightClaw.Engine.Graphics
         ///             Texture Coordinates: <see cref="VertexAttributeLocation.TexCoords"/>
         ///         </description>
         ///     </item>
+        ///     </item>
+        ///         <description>
+        ///             Color: <see cref="VertexAttributeLocation.Color"/>
+        ///         </description>
+        ///     </item>
         /// </list>
         /// </para>
         /// </remarks>
@@ -110,36 +123,6 @@ namespace LightClaw.Engine.Graphics
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
 
                 return _VAPMultipleBuffers.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Vertex"/>s components as array.
-        /// </summary>
-        public float[] Array
-        {
-            get
-            {
-                return new[]
-                {
-                    this.Position.X, this.Position.Y, this.Position.Z,
-                    this.Normal.X, this.Normal.Y, this.Normal.Z,
-                    this.TexCoord.X, this.TexCoord.Y
-                };
-            }
-            set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.Length >= 8);
-
-                this.Position.X = value[0];
-                this.Position.Y = value[1];
-                this.Position.Z = value[2];
-                this.Normal.X = value[3];
-                this.Normal.Y = value[4];
-                this.Normal.Z = value[5];
-                this.TexCoord.X = value[6];
-                this.TexCoord.Y = value[7];
             }
         }
 
@@ -162,48 +145,24 @@ namespace LightClaw.Engine.Graphics
         public Vector2 TexCoord;
 
         /// <summary>
-        /// Initializes a new <see cref="Vertex"/> from a position, a normal and a texture coordinate.
+        /// The <see cref="Vertex"/>'s color.
+        /// </summary>
+        [DataMember]
+        public Color Color;
+
+        /// <summary>
+        /// Initializes a new <see cref="Vertex"/> from a position, a normal, a color and a texture coordinate.
         /// </summary>
         /// <param name="position">The <see cref="Vertex"/>'s position.</param>
         /// <param name="normal">The <see cref="Vertex"/>'s normal.</param>
         /// <param name="texCoord">The <see cref="Vertex"/>'s texture coordinates.</param>
-        public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord)
+        /// <param name="color">The <see cref="Vertex"/>'s color.</param>
+        public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord, Color color)
         {
             this.Normal = normal;
             this.Position = position;
             this.TexCoord = texCoord;
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Vertex"/> from an array containing the data.
-        /// </summary>
-        /// <param name="data">The data to load from.</param>
-        public Vertex(float[] data)
-            : this(data, 0)
-        {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(data.Length >= 8);
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Vertex"/> from an array containing the data and an offset inside the array.
-        /// </summary>
-        /// <param name="data">The data to load from.</param>
-        /// <param name="offset">The offset inside the array to start reading from.</param>
-        public Vertex(float[] data, int offset)
-        {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-            Contract.Requires<ArgumentException>(data.Length >= offset + 8);
-
-            this.Position.X = data[offset];
-            this.Position.Y = data[offset + 1];
-            this.Position.Z = data[offset + 2];
-            this.Normal.X = data[offset + 3];
-            this.Normal.Y = data[offset + 4];
-            this.Normal.Z = data[offset + 5];
-            this.TexCoord.X = data[offset + 6];
-            this.TexCoord.Y = data[offset + 7];
+            this.Color = color;
         }
 
         /// <summary>
@@ -226,7 +185,8 @@ namespace LightClaw.Engine.Graphics
         /// <returns><c>true</c> if the <see cref="Vertex"/>s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(Vertex other)
         {
-            return (this.Position == other.Position) && (this.Normal == other.Normal) && (this.TexCoord == other.TexCoord);
+            return (this.Position == other.Position) && (this.Normal == other.Normal) && 
+                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color);
         }
 
         /// <summary>
@@ -235,7 +195,7 @@ namespace LightClaw.Engine.Graphics
         /// <returns>The <see cref="Vertex"/>'s hash code.</returns>
         public override int GetHashCode()
         {
-            return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord);
+            return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord, this.Color);
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                return this.IndexBuffer.Count;
+                return this.IndexBuffer.Length;
             }
         }
 

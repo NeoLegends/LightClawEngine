@@ -25,26 +25,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Backing field.
         /// </summary>
-        private int _Count;
-
-        /// <summary>
-        /// The length of the buffer in bytes.
-        /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _Count;
-            }
-            private set
-            {
-                this.SetProperty(ref _Count, value);
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private BufferUsageHint _Hint;
 
         /// <summary>
@@ -79,6 +59,26 @@ namespace LightClaw.Engine.Graphics.OpenGL
             private set
             {
                 this.SetProperty(ref _IsInitialized, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private int _Length;
+
+        /// <summary>
+        /// The length of the buffer in bytes.
+        /// </summary>
+        public int Length
+        {
+            get
+            {
+                return _Length;
+            }
+            private set
+            {
+                this.SetProperty(ref _Length, value);
             }
         }
 
@@ -130,7 +130,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public T[] Get<T>()
             where T : struct
         {
-            return GetRange<T>(0, this.Count);
+            return GetRange<T>(0, this.Length);
         }
 
         /// <summary>
@@ -385,8 +385,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(sizeOfNewData >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
 
-            int difference = (sizeOfNewData - (this.Count - offset));
-            this.Count = this.Count + ((difference >= 0) ? difference : 0);
+            int difference = (sizeOfNewData - (this.Length - offset));
+            this.Length = this.Length + ((difference >= 0) ? difference : 0);
         }
 
         /// <summary>

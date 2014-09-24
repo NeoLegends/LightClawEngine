@@ -36,7 +36,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// The OpenGL-handle.
         /// </summary>
         [IgnoreDataMember]
-        public int Handle
+        public virtual int Handle
         {
             get
             {

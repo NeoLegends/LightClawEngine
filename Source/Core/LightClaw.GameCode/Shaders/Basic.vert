@@ -3,18 +3,12 @@
 uniform mat4 modelViewProjectionMatrix;
 
 in vec3 inVertexPosition;
-in vec2 inTextureCoordinates;
+in vec4 inVertexColor;
 
-out gl_PerVertex // Required for Program Pipelines
-{
-	vec4 gl_Position;
-	float gl_PointSize;
-	float gl_ClipDistance[];
-};
-out vec2 passTextureCoordinates;
+out vec4 vertexColor
 
 void main(void)
 {
 	gl_Position = modelViewProjectionMatrix * inVertexPosition;
-	passTextureCoordinates = inTextureCoordinates;
+	vertexColor = inVertexColor;
 }

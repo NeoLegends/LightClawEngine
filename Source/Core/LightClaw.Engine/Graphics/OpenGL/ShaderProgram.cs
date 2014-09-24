@@ -11,12 +11,25 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Represents an OpenGL shader program.
+    /// </summary>
+    /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
     public class ShaderProgram : GLObject, IBindable, IInitializable
     {
+        /// <summary>
+        /// The object used to lock access to <see cref="M:Initialize"/>.
+        /// </summary>
         private readonly object initializationLock = new object();
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private bool _IsInitialized;
 
+        /// <summary>
+        /// Indicates whether the instance has already been initialized.
+        /// </summary>
         public bool IsInitialized
         {
             get
@@ -29,8 +42,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ImmutableArray<Shader> _Shaders;
 
+        /// <summary>
+        /// The <see cref="Shader"/>s the <see cref="ShaderProgram"/> consists of.
+        /// </summary>
         public ImmutableArray<Shader> Shaders
         {
             get
@@ -48,8 +67,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ImmutableArray<Uniform> _Uniforms;
 
+        /// <summary>
+        /// The <see cref="Uniform"/>s of the <see cref="ShaderProgram"/>.
+        /// </summary>
         public ImmutableArray<Uniform> Uniforms
         {
             get
@@ -67,6 +92,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="ShaderProgram"/> from a set of <see cref="Shader"/>s.
+        /// </summary>
+        /// <param name="shaders">The <see cref="Shader"/>s to initialize from.</param>
         public ShaderProgram(params Shader[] shaders)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
@@ -76,6 +105,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Shaders = shaders.ToImmutableArray();
         }
 
+        /// <summary>
+        /// Binds the <see cref="ShaderProgram"/> to the graphics context.
+        /// </summary>
+        public void Bind()
+        {
+            this.Initialize();
+            GL.UseProgram(this);
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="ShaderProgram"/> compiling and linking the <see cref="Shader"/>s.
+        /// </summary>
         public void Initialize()
         {
             if (!this.IsInitialized)
@@ -129,17 +170,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public void Bind()
-        {
-            this.Initialize();
-            GL.UseProgram(this);
-        }
-
+        /// <summary>
+        /// Unbinds the <see cref="ShaderProgram"/> from the graphics context.
+        /// </summary>
         public void Unbind()
         {
             GL.UseProgram(0);
         }
 
+        /// <summary>
+        /// Disposes the <see cref="ShaderProgram"/> freeing all OpenGL resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -153,6 +195,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Contains Contract.Invariant definitions.
+        /// </summary>
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
