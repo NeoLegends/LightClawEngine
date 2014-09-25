@@ -29,9 +29,6 @@ namespace LightClaw.Engine.Core
         private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault(
             new JsonSerializerSettings()
             {
-                DefaultValueHandling = DefaultValueHandling.Populate,
-                NullValueHandling = NullValueHandling.Ignore,
-                PreserveReferencesHandling = PreserveReferencesHandling.All,
                 TypeNameHandling = TypeNameHandling.Auto
             }
         );
@@ -97,7 +94,7 @@ namespace LightClaw.Engine.Core
         /// Initializes a new <see cref="Scene"/> from an initial set of <see cref="GameObject"/>s.
         /// </summary>
         /// <param name="gameObjects">A set of <see cref="GameObject"/>s to start with.</param>
-        public Scene(IEnumerable<GameObject> gameObjects)
+        public Scene(params GameObject[] gameObjects)
             : this(null, gameObjects)
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
@@ -108,7 +105,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="gameObjects">A set of <see cref="GameObject"/>s to start with.</param>
         /// <param name="name">The name of the <see cref="Scene"/>.</param>
-        public Scene(string name, IEnumerable<GameObject> gameObjects)
+        public Scene(string name, params GameObject[] gameObjects)
             : this(name)
         {
             Contract.Requires<ArgumentNullException>(gameObjects != null);
@@ -237,13 +234,13 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="resourceString">The resource string to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task Save(ResourceString resourceString)
+        public async Task SaveAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
             using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
             {
-                await this.Save(s);
+                await this.SaveAsync(s);
             }
         }
 
@@ -252,12 +249,12 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public Task Save(Stream s)
+        public Task SaveAsync(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
 
-            return this.Save(s, CompressionLevel.Optimal);
+            return this.SaveAsync(s, CompressionLevel.Optimal);
         }
 
         /// <summary>
@@ -267,7 +264,7 @@ namespace LightClaw.Engine.Core
         /// <param name="s">The <see cref="Stream"/> to save to.</param>
         /// <param name="level">A <see cref="CompressionLevel"/> indicating how strong to compress the <see cref="Scene"/>-file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task Save(Stream s, CompressionLevel level)
+        public async Task SaveAsync(Stream s, CompressionLevel level)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
@@ -277,7 +274,7 @@ namespace LightClaw.Engine.Core
 
             using (DeflateStream deflateStream = new DeflateStream(s, level, true))
             {
-                await this.SaveRaw(deflateStream);
+                await this.SaveRawAsync(deflateStream);
                 //new NetDataContractSerializer().WriteObject(deflateStream, this); // Check whether we can switch to Json.NET here
             }
         }
@@ -287,13 +284,13 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="resourceString">The resource string to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public async Task SaveRaw(ResourceString resourceString)
+        public async Task SaveRawAsync(ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
             using (Stream s = await this.IocC.Resolve<IContentManager>().GetStreamAsync(resourceString))
             {
-                await this.SaveRaw(s);
+                await this.SaveRawAsync(s);
             }
         }
 
@@ -302,7 +299,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to save to.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous saving process.</returns>
-        public Task SaveRaw(Stream s)
+        public Task SaveRawAsync(Stream s)
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);

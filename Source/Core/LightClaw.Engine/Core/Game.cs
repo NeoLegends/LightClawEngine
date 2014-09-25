@@ -20,6 +20,9 @@ namespace LightClaw.Engine.Core
     /// </summary>
     public class Game : DisposableEntity, IGame
     {
+        // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system.
+        //       New renderer should also allow for multiple render targets, respectively cameras rendering to textures.
+
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -110,6 +113,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         private Game()
         {
+            Logger.Info("Creating game.");
+
             this.Name = GeneralSettings.Default.GameName;
 
             this.GameWindow.Closed += (s, e) => this.OnClosed();
@@ -121,15 +126,14 @@ namespace LightClaw.Engine.Core
             Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
                                                               .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
             iconLoadTask.ContinueWith(
-                t =>
-                {
+                t => {
                     this.GameWindow.Icon = t.Result;
                     Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
                 },
                 TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
             );
             iconLoadTask.ContinueWith(
-                t => Logger.Warn(() => "Icon loading failed."),
+                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.", t.Exception, t.Exception),
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.OnlyOnCanceled
             );
         }
@@ -143,6 +147,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
+            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
@@ -158,6 +163,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
+            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s.Name), startScene);
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
@@ -209,12 +215,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected void OnLoad()
         {
-            Logger.Info(() => "OnLoad callback called. Loading SceneManager and enabling depth testing.");
-
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
-
-            Logger.Info(() => "Depth testing enabled.");
 
             GL.ClearColor(Color.CornflowerBlue);
 

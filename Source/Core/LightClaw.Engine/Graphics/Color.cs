@@ -832,7 +832,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// The hexadecimal color code representing this <see cref="Color"/>.
         /// </summary>
-        public string HexadecimalColorCode
+        public string HexCode
         {
             get
             {

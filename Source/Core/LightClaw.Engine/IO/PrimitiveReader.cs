@@ -8,13 +8,35 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.IO
 {
+    /// <summary>
+    /// Represents an <see cref="IContentReader"/> that can read all primitive types (<see cref="Type.IsPrimitive"/>),
+    /// <see cref="String"/>s and <see cref="Decimal"/>s.
+    /// </summary>
     public class PrimitiveReader : IContentReader
     {
+        /// <summary>
+        /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
+        /// </summary>
+        /// <param name="assetType">The type of the asset that is about to be read.</param>
+        /// <returns><c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>, otherwise <c>false</c>.</returns>
         public bool CanRead(Type assetType)
         {
             return assetType.IsPrimitive || (assetType == typeof(string)) || (assetType == typeof(decimal));
         }
 
+        /// <summary>
+        /// Asynchronously converts from the specified <paramref name="assetStream"/> into a usable asset of
+        /// type <paramref name="assetType"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method accepts an <see cref="Encoding"/> via <see cref="ContentReadParameters.Parameter"/>. If 
+        /// <see cref="ContentReadParameters.Parameter"/> is <c>null</c>, <see cref="PrimitiveReader"/> will fall back
+        /// to <see cref="Encoding.UTF8"/>.
+        /// </remarks>
+        /// <param name="parameters"><see cref="ContentReadParameters"/> containing information about the asset to be loaded.</param>
+        /// <returns>
+        /// The deserialized asset or <c>null</c> if an error occured or the specified type of asset cannot be read.
+        /// </returns>
         public Task<object> ReadAsync(ContentReadParameters parameters)
         {
             Encoding encoding = parameters.Parameter as Encoding;

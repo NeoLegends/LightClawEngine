@@ -33,7 +33,7 @@ namespace LightClaw.Engine.Core
         private static readonly Container _DefaultIocContainer = new Container();
 
         /// <summary>
-        /// A <see cref="IocContainer"/> used to resolve instances of certain interfaces at runtime.
+        /// A <see cref="Container"/> used to resolve instances of certain interfaces at runtime.
         /// </summary>
         public static Container DefaultIocContainer
         {
@@ -67,7 +67,11 @@ namespace LightClaw.Engine.Core
         /// <param name="args">Command line arguments.</param>
         static void Main(string[] args)
         {
+            logger.Info("LightClaw starting up.");
+
 #if DESKTOP
+            logger.Info("Initializing profile optimization.");
+
             ProfileOptimization.SetProfileRoot(
                 Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
@@ -75,10 +79,11 @@ namespace LightClaw.Engine.Core
                     "ProfileOptimization"
                 )
             );
-            ProfileOptimization.StartProfile(Assembly.GetExecutingAssembly().GetName().FullName);
-#endif
 
-            logger.Info(() => "Starting engine...");
+            string profile = Assembly.GetExecutingAssembly().GetName().FullName;
+            logger.Info(p => "Enabling profile '{0}'.".FormatWith(p), profile);
+            ProfileOptimization.StartProfile(profile);
+#endif
 
             try
             {
@@ -90,20 +95,23 @@ namespace LightClaw.Engine.Core
                     throw new NullReferenceException("Start scene settings entry was null.");
                 }
 
+                logger.Info(s => "Initializing Game with start scene '{0}'.".FormatWith(s), startScene);
                 using (IGame game = new Game(startScene) { Name = GeneralSettings.Default.GameName })
                 {
+                    logger.Info("Game created, starting up.");
                     DefaultIocContainer.RegisterInstance<IGame>(game);
                     game.Run();
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                logger.Fatal(() => "An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
+                logger.Fatal(ex => "An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), exception, exception);
                 throw;
             }
             finally
             {
                 LogManager.Shutdown();
+                logger.Info("Engine shut down.");
             }
         }
     }

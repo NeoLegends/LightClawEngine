@@ -11,10 +11,10 @@ namespace Tests.Graphics
         [TestMethod]
         public void ColorSaveAndLoadHexString()
         {
-            string colorAsHex = Color.Blue.HexadecimalColorCode;
+            string colorAsHex = Color.Blue.HexCode;
             Color loadedFromHex = new Color(colorAsHex);
 
-            Console.WriteLine("R: {0}, G: {1}, B: {2}, A: {3}".FormatWith(loadedFromHex.R, loadedFromHex.G, loadedFromHex.B, loadedFromHex.A));
+            Console.WriteLine("Values from hex - R: {0}, G: {1}, B: {2}, A: {3}".FormatWith(loadedFromHex.R, loadedFromHex.G, loadedFromHex.B, loadedFromHex.A));
             Assert.AreEqual(loadedFromHex.B, byte.MaxValue);
         }
 

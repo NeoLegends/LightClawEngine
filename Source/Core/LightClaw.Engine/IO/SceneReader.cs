@@ -35,10 +35,9 @@ namespace LightClaw.Engine.IO
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
         /// cannot be read.
         /// </returns>
-        public async Task<object> ReadAsync(ContentReadParameters parameters)
+        public Task<object> ReadAsync(ContentReadParameters parameters)
         {
-            // Await for covariance
-            return await Scene.Load(parameters.AssetStream);
+            return Scene.Load(parameters.AssetStream).Upcast<Scene, object>();
         }
     }
 }

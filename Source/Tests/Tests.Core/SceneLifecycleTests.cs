@@ -25,7 +25,7 @@ namespace Tests.Core
             using (MemoryStream ms = new MemoryStream())
             using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Scene.lcs")))
             {
-                Console.WriteLine("Time to save the scene with compression: " + await TestUtilities.DoMeasuredAction(() => s.Save(ms)));
+                Console.WriteLine("Time to save the scene with compression: " + await TestUtilities.DoMeasuredActionAsync(() => s.SaveAsync(ms)));
                 Assert.IsTrue(ms.Length > 0);
 
                 ms.Position = 0;
@@ -37,7 +37,7 @@ namespace Tests.Core
             using (MemoryStream ms = new MemoryStream())
             using (FileStream fs = File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SceneRaw.lcs")))
             {
-                Console.WriteLine("Time to save the scene without compression: " + await TestUtilities.DoMeasuredAction(() => s.SaveRaw(ms)));
+                Console.WriteLine("Time to save the scene without compression: " + await TestUtilities.DoMeasuredActionAsync(() => s.SaveRawAsync(ms)));
 
                 ms.Position = 0;
                 ms.CopyTo(fs);
@@ -71,7 +71,7 @@ namespace Tests.Core
             Scene s = this.GetScene();
             using (MemoryStream ms = new MemoryStream())
             {
-                await s.Save(ms);
+                await s.SaveAsync(ms);
                 ms.Position = 0;
                 Scene deser = await Scene.Load(ms);
 
