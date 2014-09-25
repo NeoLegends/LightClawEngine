@@ -25,12 +25,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         [DataMember]
-        public int Location { get; private set; }
+        public VertexAttributeLocation Location { get; private set; }
 
         [DataMember]
         public string Name { get; private set; }
 
-        public VertexAttributeDescription(string name, int location)
+        public VertexAttributeDescription(string name, VertexAttributeLocation location)
             : this()
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(name));

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
@@ -14,6 +15,7 @@ using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 
 namespace LightClaw.GameCode
 {
+    [DataContract]
     public class BasicMesh : Component
     {
         private readonly IBuffer indexBuffer = new LCBuffer(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
@@ -24,10 +26,7 @@ namespace LightClaw.GameCode
 
         private readonly IBuffer vertexBuffer = new LCBuffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
 
-        public BasicMesh()
-        {
-
-        }
+        public BasicMesh() { }
 
         protected override void OnLoad()
         {
@@ -46,7 +45,7 @@ namespace LightClaw.GameCode
                 new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, Vertex.SizeInBytes, 32),
             };
             BufferDescription desc = new BufferDescription(this.vertexBuffer, pointers);
-            this.vao = new VertexArrayObject(desc.Yield(), this.indexBuffer);
+            this.vao = new VertexArrayObject(this.indexBuffer, desc);
 
             IContentManager contentMgr = this.IocC.Resolve<IContentManager>();
             Task<string> vertexShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.vert");

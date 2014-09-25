@@ -21,12 +21,12 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Contains <see cref="AsyncLock"/>s used to lock access to a specific asset while it is being loaded.
         /// </summary>
-        private readonly ConcurrentDictionary<string, AsyncLock> assetLocks = new ConcurrentDictionary<string, AsyncLock>();
+        private readonly ConcurrentDictionary<ResourceString, AsyncLock> assetLocks = new ConcurrentDictionary<ResourceString, AsyncLock>();
 
         /// <summary>
         /// Represents the asset cache. Assets are cached using weak references to reduce memory pressure.
         /// </summary>
-        private readonly ConcurrentDictionary<string, WeakReference<object>> cachedAssets = new ConcurrentDictionary<string, WeakReference<object>>();
+        private readonly ConcurrentDictionary<ResourceKey, WeakReference<object>> cachedAssets = new ConcurrentDictionary<ResourceKey, WeakReference<object>>();
 
         /// <summary>
         /// A collection of all registered <see cref="IContentReader"/>s.
@@ -154,10 +154,9 @@ namespace LightClaw.Engine.IO
                 WeakReference<object> cachedAsset = null;
                 object asset = null;
 
-                if (forceReload ||                                                     // Load if reload forced,
-                    !this.cachedAssets.TryGetValue(resourceString, out cachedAsset) || // no cache available,
-                    !cachedAsset.TryGetTarget(out asset) ||                            // weak reference to cached asset collected or
-                    !assetType.IsAssignableFrom(asset.GetType()))                      // types mismatch.
+                if (forceReload || // Load if reload forced,
+                    !this.cachedAssets.TryGetValue(new ResourceKey(resourceString, assetType), out cachedAsset) || // no cache available or
+                    !cachedAsset.TryGetTarget(out asset)) // weak reference to cached asset collected.
                 {
                     Logger.Debug(
                         (reloadForced, rs) => ((reloadForced ? "No cached version of '{0}' available" : "Reload of '{0}' forced") + ", obtaining stream...").FormatWith(rs), 
@@ -201,7 +200,7 @@ namespace LightClaw.Engine.IO
                         }
 
                         cachedAsset = new WeakReference<object>(asset);
-                        this.cachedAssets.AddOrUpdate(resourceString, cachedAsset, (key, oldValue) => cachedAsset);
+                        this.cachedAssets.AddOrUpdate(new ResourceKey(resourceString, assetType), cachedAsset, (key, oldValue) => cachedAsset);
                     }
                 }
                 else
@@ -338,6 +337,97 @@ namespace LightClaw.Engine.IO
 #else
             throw new NotImplementedException("There currently are no IContentResolvers for platforms other than desktop.");
 #endif
+        }
+
+        /// <summary>
+        /// Represents a unique key of an asset including the path and its type.
+        /// </summary>
+        private struct ResourceKey : ICloneable, IEquatable<ResourceKey>
+        {
+            /// <summary>
+            /// The assets <see cref="ResourceString"/>.
+            /// </summary>
+            public ResourceString ResourceString { get; private set; }
+
+            /// <summary>
+            /// The assets <see cref="Type"/>.
+            /// </summary>
+            public Type Type { get; private set; }
+
+            /// <summary>
+            /// Initializes a new <see cref="ResourceKey"/>.
+            /// </summary>
+            /// <param name="resourceString">The assets <see cref="ResourceString"/>.</param>
+            /// <param name="type">The assets <see cref="Type"/>.</param>
+            public ResourceKey(ResourceString resourceString, Type type)
+                : this()
+            {
+                this.ResourceString = resourceString;
+                this.Type = type;
+            }
+
+            /// <summary>
+            /// Clones the <see cref="ResourceKey"/>.
+            /// </summary>
+            /// <returns>The cloned object.</returns>
+            public object Clone()
+            {
+                return new ResourceKey(this.ResourceString, this.Type);
+            }
+
+            /// <summary>
+            /// Checks whether the <see cref="ResourceKey"/> equals the specified object.
+            /// </summary>
+            /// <param name="obj">The object to test.</param>
+            /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(obj, null))
+                    return false;
+
+                return (obj is ResourceKey) ? this.Equals((ResourceKey)obj) : false;
+            }
+
+            /// <summary>
+            /// Checks whether the <see cref="ResourceKey"/> equals the specified <see cref="ResourceKey"/>.
+            /// </summary>
+            /// <param name="obj">The <see cref="ResourceKey"/> to test.</param>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
+            public bool Equals(ResourceKey other)
+            {
+                return (this.ResourceString == other.ResourceString) && (this.Type == other.Type);
+            }
+
+            /// <summary>
+            /// Gets the <see cref="ResourceKey"/>s hash code.
+            /// </summary>
+            /// <returns>The hash code.</returns>
+            public override int GetHashCode()
+            {
+                return HashF.GetHashCode(this.ResourceString, this.Type);
+            }
+
+            /// <summary>
+            /// Checks whether two <see cref="ResourceKey"/> are equal.
+            /// </summary>
+            /// <param name="left">The first operand.</param>
+            /// <param name="right">The second operand.</param>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
+            public static bool operator ==(ResourceKey left, ResourceKey right)
+            {
+                return left.Equals(right);
+            }
+
+            /// <summary>
+            /// Checks whether two <see cref="ResourceKey"/> are inequal.
+            /// </summary>
+            /// <param name="left">The first operand.</param>
+            /// <param name="right">The second operand.</param>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are inequal, otherwise <c>false</c>.</returns>
+            public static bool operator !=(ResourceKey left, ResourceKey right)
+            {
+                return !(left == right);
+            }
         }
     }
 }

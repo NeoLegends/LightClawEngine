@@ -106,15 +106,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer)
-            : this(buffers, indexBuffer, BeginMode.Triangles, DrawElementsType.UnsignedShort)
+        public VertexArrayObject(IBuffer indexBuffer, params BufferDescription[] buffers)
+            : this(indexBuffer, BeginMode.Triangles, DrawElementsType.UnsignedShort, buffers)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
         }
 
-        public VertexArrayObject(IEnumerable<BufferDescription> buffers, IBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType)
+        public VertexArrayObject(IBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType, params BufferDescription[] buffers)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);

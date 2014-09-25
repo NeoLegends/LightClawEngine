@@ -91,10 +91,7 @@ namespace LightClaw.Engine.Graphics
                     throw new InvalidOperationException("The vertex buffer was null. Set it before drawing.");
                 }
 
-                this.vertexArrayObject = vao = new VertexArrayObject(
-                    new BufferDescription(vertexBuffer, this.VertexAttributePointers).Yield(),
-                    indexBuffer
-                );
+                this.vertexArrayObject = vao = new VertexArrayObject(indexBuffer, new BufferDescription(vertexBuffer, this.VertexAttributePointers));
             }
 
             vao.DrawIndexed();
