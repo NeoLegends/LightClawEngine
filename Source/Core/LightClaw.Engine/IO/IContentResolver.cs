@@ -47,8 +47,8 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
             Contract.Ensures(
-                (!writable && Contract.Result<Task<Stream>>().Result.CanRead) ||
-                (writable && (Contract.Result<Task<Stream>>().Result.CanRead && Contract.Result<Task<Stream>>().Result.CanWrite))
+                Contract.Result<Task<Stream>>().Result == null ||
+                (Contract.Result<Task<Stream>>().Result.CanRead && (!writable || Contract.Result<Task<Stream>>().Result.CanWrite))
             );
 
             return null;

@@ -144,7 +144,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                GL.DeleteShader(this);
+                if (this.IsInitialized)
+                {
+                    GL.DeleteShader(this);
+                }
 
                 base.Dispose(disposing);
             }

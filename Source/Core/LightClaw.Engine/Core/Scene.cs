@@ -21,8 +21,14 @@ namespace LightClaw.Engine.Core
     /// Represents a layer on the final composed image that is presented to the screen.
     /// </summary>
     [DataContract(IsReference = true)]
+    [ContentReader(typeof(SceneReader))]
     public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
-    { 
+    {
+        /// <summary>
+        /// A static logger instance.
+        /// </summary>
+        private static readonly ILog staticLogger = LogManager.GetLogger(typeof(Scene));
+
         /// <summary>
         /// A common <see cref="JsonSerializer"/> used to save / load the <see cref="Scene"/>.
         /// </summary>
@@ -422,14 +428,28 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanRead);
 
-            return Task.Run(() =>
+            Task<Scene> sceneLoadingTask = Task.Run(() =>
             {
-                using (StreamReader sr = new StreamReader(s, Encoding.UTF8, false, 1024 * 1024, true))
+                staticLogger.Info("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
+
+                using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 1024, true))
                 using (JsonTextReader jtr = new JsonTextReader(sr))
                 {
                     return serializer.Deserialize<Scene>(jtr);
                 }
             });
+            sceneLoadingTask.ContinueWith(
+                t =>
+                {
+                    staticLogger.Info(scene => "Scene '{0}' loaded.".FormatWith((scene != null) ? scene.Name : "N/A"), t.Result);
+                    return t.Result;
+                }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
+            );
+            sceneLoadingTask.ContinueWith(
+                t => staticLogger.Warn(scene => "Scene loading failed.".FormatWith(scene.Name), t.Result), 
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
+            );
+            return sceneLoadingTask;
         }
     }
 }

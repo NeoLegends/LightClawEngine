@@ -60,7 +60,11 @@ namespace LightClaw.Engine.IO
             Stream result = null;
             try
             {
-                result = File.Open(Path.Combine(this.RootPath, resourceString), FileMode.OpenOrCreate, writable ? FileAccess.ReadWrite : FileAccess.Read);
+                result = new FileStream(
+                    Path.Combine(this.RootPath, resourceString), 
+                    FileMode.OpenOrCreate, 
+                    writable ? FileAccess.ReadWrite : FileAccess.Read
+                );
             }
             catch (Exception exception)
             {

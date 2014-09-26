@@ -85,6 +85,15 @@ namespace LightClaw.Engine.IO
         {
             return HashF.GetHashCode(this.Path);
         }
+
+        /// <summary>
+        /// Converts the <see cref="ResourceString"/> into a <see cref="String"/>.
+        /// </summary>
+        /// <returns>The <see cref="ResourceString"/> as <see cref="String"/>.</returns>
+        public override string ToString()
+        {
+            return this.Path;
+        }
         
         /// <summary>
         /// Implicitly converts the <see cref="ResourceString"/> into a <see cref="String"/>.
@@ -93,7 +102,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The conversion result.</returns>
         public static implicit operator string(ResourceString resourceString)
         {
-            return resourceString.Path;
+            return resourceString.ToString();
         }
 
         /// <summary>

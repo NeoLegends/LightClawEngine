@@ -60,6 +60,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return HashF.GetHashCode(this.Location);
         }
 
+        public override string ToString()
+        {
+            return this.Location.ToString();
+        }
+
         public static implicit operator VertexAttributeLocation(int location)
         {
             Contract.Requires<ArgumentOutOfRangeException>(location >= 0);

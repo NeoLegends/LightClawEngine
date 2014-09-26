@@ -363,13 +363,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                try
+                if (this.IsInitialized)
                 {
                     GL.DeleteBuffer(this);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(() => "An exception of type '{0}' occured while disposing the {1}'s underlying OpenGL Buffer.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Buffer).Name), ex);
                 }
                 base.Dispose(disposing);
             }

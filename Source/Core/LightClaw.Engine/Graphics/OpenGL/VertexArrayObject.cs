@@ -193,15 +193,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void Dispose(bool disposing)
         {
-            try
+            if (!this.IsDisposed)
             {
-                GL.DeleteVertexArray(this);
+                if (this.IsInitialized)
+                {
+                    GL.DeleteVertexArray(this);
+                }
+                base.Dispose(disposing);
             }
-            catch (Exception ex)
-            {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {1}'s underlying OpenGL vertex array object.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(VertexArrayObject).Name), ex);
-            }
-            base.Dispose(disposing);
         }
 
         [ContractInvariantMethod]

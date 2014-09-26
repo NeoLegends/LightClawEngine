@@ -146,7 +146,7 @@ namespace LightClaw.Engine.IO
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
         public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false)
         {
-            Logger.Info((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
+            Logger.Debug((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, s => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
@@ -175,7 +175,7 @@ namespace LightClaw.Engine.IO
                         }
 
                         // Try to get IContentReader that was specified via attribute and attempt deserialization
-                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing {1}...".FormatWith(rs, typeof(IContentReader).Name), resourceString);
+                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing...".FormatWith(rs), resourceString);
                         asset = await this.readers.Where(reader => reader.CanRead(assetType))
                                                   .Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
                                                   .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
@@ -283,19 +283,16 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(assetType != null);
 
+            Logger.Debug(t => "Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, t.FullName), assetType);
             IContentReader reader = null;
             ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
             if (attr != null)
             {
                 reader = this.readers.FirstOrDefault(rdr => rdr.GetType() == attr.ContentReaderType);
-                if (reader != null)
+                if (reader != null || (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
                 {
-                    try
-                    {
-                        reader = (IContentReader)Activator.CreateInstance(attr.ContentReaderType);
-                        this.readers.Add(reader);
-                    }
-                    catch { }
+                    Logger.Debug(t => "{0} of type '{1}' obtained.".FormatWith(typeof(IContentReader).Name, t.FullName), attr.ContentReaderType);
+                    this.readers.Add(reader);
                 }
             }
             return (reader != null && reader.CanRead(assetType)) ? reader : null;
@@ -309,6 +306,28 @@ namespace LightClaw.Engine.IO
         {
             Contract.Invariant(this.readers.All(reader => reader != null));
             Contract.Invariant(this.resolvers.All(resolver => resolver != null));
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified <see cref="Type"/> or returns null if a failure occurs.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to create an instance of.</typeparam>
+        /// <returns>The created instance or <c>null</c> if instance-creation failed.</returns>
+        public static T CreateInstanceOrDefault<T>()
+        {
+            object instance;
+            return TryCreateInstance(typeof(T), out instance) ? (T)instance : default(T);
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified <see cref="Type"/> or returns null if a failure occurs.
+        /// </summary>
+        /// <param name="t">The <see cref="Type"/> to create an instance of.</param>
+        /// <returns>The created instance or <c>null</c> if instance-creation failed.</returns>
+        public static object CreateInstanceOrDefault(Type t)
+        {
+            object instance;
+            return TryCreateInstance(t, out instance) ? instance : null;
         }
 
         /// <summary>
@@ -337,6 +356,28 @@ namespace LightClaw.Engine.IO
 #else
             throw new NotImplementedException("There currently are no IContentResolvers for platforms other than desktop.");
 #endif
+        }
+
+        /// <summary>
+        /// Tries to create an instance of the specified <see cref="Type"/>.
+        /// </summary>
+        /// <param name="t">The <see cref="Type"/> of object to create an instance from.</param>
+        /// <param name="instance">The newly created instance, if the method succeeds.</param>
+        /// <returns><c>true</c> if the instance could be created, otherwise <c>false</c>.</returns>
+        private static bool TryCreateInstance(Type t, out object instance)
+        {
+            Contract.Requires<ArgumentNullException>(t != null);
+
+            try
+            {
+                instance = Activator.CreateInstance(t);
+                return true;
+            }
+            catch 
+            {
+                instance = null;
+                return false;
+            }
         }
 
         /// <summary>

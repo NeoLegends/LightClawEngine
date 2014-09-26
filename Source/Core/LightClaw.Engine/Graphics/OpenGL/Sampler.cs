@@ -105,14 +105,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                try
+                if (this.IsInitialized)
                 {
                     GL.DeleteSampler(this);
                 }
-                catch (Exception ex)
-                {
-                    Logger.Warn(() => "An error of type '{0}' occured while disposing the {0}'s underlying OpenGL Sampler.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Sampler).Name), ex);
-                }
+
                 base.Dispose(disposing);
             }
         }

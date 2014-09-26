@@ -22,6 +22,7 @@ namespace LightClaw.Engine.Core
     {
         // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system.
         //       New renderer should also allow for multiple render targets, respectively cameras rendering to textures.
+        //       (which then can be rendered afterwards into the scene)
 
         /// <summary>
         /// Backing field.
@@ -133,8 +134,8 @@ namespace LightClaw.Engine.Core
                 TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
             );
             iconLoadTask.ContinueWith(
-                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.", t.Exception, t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.OnlyOnCanceled
+                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );
         }
         

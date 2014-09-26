@@ -255,16 +255,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void Dispose(bool disposing)
         {
-            try
+            if (this.IsDisposed)
             {
-                GL.DeleteTexture(this);
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {0}'s underlying OpenGL Texture.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(Texture).Name));
-            }
+                if (this.IsInitialized)
+                {
+                    GL.DeleteTexture(this);
+                }
 
-            base.Dispose(disposing);
+                base.Dispose(disposing);
+            }
         }
 
         protected abstract void OnInitialize();

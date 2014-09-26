@@ -184,15 +184,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            try
+            if (!this.IsDisposed)
             {
-                GL.DeleteProgram(this);
+                if (this.IsInitialized)
+                {
+                    GL.DeleteProgram(this);
+                }
+
+                base.Dispose(disposing);
             }
-            catch (Exception ex)
-            {
-                Logger.Warn(() => "An exception of type '{0}' was thrown while disposing the {1}'s underlying OpenGL Shader Program.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(ShaderProgram).Name), ex);
-            }
-            base.Dispose(disposing);
         }
 
         /// <summary>

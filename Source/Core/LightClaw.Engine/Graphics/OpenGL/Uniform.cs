@@ -82,14 +82,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                Contract.Ensures(Enum.IsDefined(typeof(ActiveUniformType), Contract.Result<ActiveUniformType>()));
-
                 return _Type;
             }
             private set
             {
-                Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ActiveUniformType), value));
-
                 this.SetProperty(ref _Type, value);
             }
         }
@@ -286,7 +282,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Invariant(this._Location >= 0);
             Contract.Invariant(this._Program != null);
-            Contract.Invariant(Enum.IsDefined(typeof(ActiveUniformType), _Type));
         }
     }
 }
