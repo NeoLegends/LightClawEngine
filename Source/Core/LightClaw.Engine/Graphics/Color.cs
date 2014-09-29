@@ -933,8 +933,9 @@ namespace LightClaw.Engine.Graphics
             get
             {
                 Contract.Ensures(Contract.Result<byte[]>() != null);
+                Contract.Ensures(Contract.Result<byte[]>().Length == 4);
 
-                return new byte[] { this.R, this.G, this.B, this.A };
+                return this.ToArray();
             }
         }
 
@@ -1135,6 +1136,18 @@ namespace LightClaw.Engine.Graphics
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.R, this.G, this.B, this.A);
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Color"/> into a bytearray containing the components.
+        /// </summary>
+        /// <returns>The color as byte array.</returns>
+        public byte[] ToArray()
+        {
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+            Contract.Ensures(Contract.Result<byte[]>().Length == 4);
+
+            return new[] { this.R, this.G, this.B, this.A };
         }
 
         /// <summary>

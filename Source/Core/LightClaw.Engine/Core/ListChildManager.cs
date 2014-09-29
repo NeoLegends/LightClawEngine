@@ -125,10 +125,6 @@ namespace LightClaw.Engine.Core
 
             lock (this.Items)
             {
-                //foreach (T item in items)
-                //{
-                //    this.Items.Add(item);
-                //}
                 this.Items.AddRange(items);
             }
         }
@@ -277,15 +273,15 @@ namespace LightClaw.Engine.Core
 
             lock (this.Items)
             {
-                try
+                if (this.Items.Count > index)
                 {
                     item = this.Items[index];
                     return true;
                 }
-                catch (ArgumentOutOfRangeException)
+                else
                 {
                     item = default(T);
-                    return false;   
+                    return false;
                 }
             }
         }

@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DataContract]
     [JsonConverter(typeof(TextureUnitConverter))]
-    public struct TextureUnit : ICloneable, IDisposable, IEquatable<TextureUnit>, IEquatable<int>
+    public struct TextureUnit : ICloneable, IDisposable, IEquatable<int>, IEquatable<TextureUnit>
     {
         public static readonly TextureUnit Texture0 = new TextureUnit(0);
 
@@ -130,7 +130,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public override int GetHashCode()
         {
-            return this.Unit.GetHashCode();
+            return HashF.GetHashCode(this.Unit);
         }
 
         public override string ToString()
@@ -142,7 +142,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(s));
 
-            return new TextureUnit(int.Parse(s));
+            int unit = int.Parse(s);
+            if (unit < 0)
+            {
+                throw new InvalidOperationException("The parsed number from the string was smaller than zero.");
+            }
+            return new TextureUnit(unit);
         }
 
         public static bool TryParse(string s, out TextureUnit textureUnit)
@@ -150,7 +155,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(s));
 
             int unit;
-            bool result = int.TryParse(s, out unit);
+            bool result = int.TryParse(s, out unit) && (unit >= 0);
             textureUnit = result ? new TextureUnit(unit) : default(TextureUnit);
             return result;
         }
@@ -212,6 +217,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return new TextureUnit(unit - GLTextureUnit.Texture0);
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Unit >= 0);
+        }
+
         public class TextureUnitConverter : JsonConverter
         {
             public override bool CanRead
@@ -237,7 +248,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                return serializer.Deserialize<int>(reader);
+                int unit = serializer.Deserialize<int>(reader);
+                if (unit >= 0)
+                {
+                    throw new InvalidOperationException("The value to deserialize into a TextureUnit was smaller than zero.");
+                }
+                return new TextureUnit(unit);
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

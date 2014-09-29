@@ -66,19 +66,5 @@ namespace LightClaw.Engine.Core
         /// <param name="message">A description of the error.</param>
         /// <param name="inner">The <see cref="Exception"/> that lead up to this <see cref="Exception"/>.</param>
         public WrongThreadException(string message, Exception inner) : base(message, inner) { }
-
-        /// <summary>
-        /// Initializes a new <see cref="WrongThreadException"/> from the specified <see cref="SerializationInfo"/> and <see cref="StreamingContext"/>.
-        /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/>.</param>
-        /// <param name="context"><see cref="StreamingContext"/></param>
-        protected WrongThreadException(SerializationInfo info, StreamingContext context)
-            : base(info, context) 
-        {
-            Contract.Requires<ArgumentNullException>(info != null);
-
-            this.CurrentThreadId = info.GetInt32("CurrentThreadId");
-            this.TargetThreadId = info.GetInt32("TargetThreadId");
-        }
     }
 }

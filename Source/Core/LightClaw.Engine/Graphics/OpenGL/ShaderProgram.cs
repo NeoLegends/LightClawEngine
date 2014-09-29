@@ -186,11 +186,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    GL.DeleteProgram(this);
+                    if (this.IsInitialized)
+                    {
+                        GL.DeleteProgram(this);
+                    }
                 }
-
                 base.Dispose(disposing);
             }
         }

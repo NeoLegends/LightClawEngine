@@ -70,17 +70,16 @@ namespace LightClaw.Engine.Core
             logger.Info("LightClaw starting up.");
 
 #if DESKTOP
-            logger.Info("Initializing profile optimization.");
-
-            ProfileOptimization.SetProfileRoot(
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                    "LightClaw",
-                    "ProfileOptimization"
-                )
+            string profileRoot = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "LightClaw",
+                "ProfileOptimization"
             );
 
-            string profile = Assembly.GetExecutingAssembly().GetName().FullName;
+            logger.Info(pr => "Initializing profile optimization. Profile root will be '{0}'.".FormatWith(pr), profileRoot);
+            ProfileOptimization.SetProfileRoot(profileRoot);
+
+            string profile = Assembly.GetExecutingAssembly().GetName().Name;
             logger.Info(p => "Enabling profile '{0}'.".FormatWith(p), profile);
             ProfileOptimization.StartProfile(profile);
 #endif
@@ -111,7 +110,6 @@ namespace LightClaw.Engine.Core
             finally
             {
                 LogManager.Shutdown();
-                logger.Info("Engine shut down.");
             }
         }
     }

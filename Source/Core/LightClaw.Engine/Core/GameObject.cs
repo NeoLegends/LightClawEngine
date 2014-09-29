@@ -8,13 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents a subdivison of a <see cref="Scene"/>. Hosts multiple <see cref="Component"/>s.
     /// </summary>
-    [DataContract(IsReference = true)]
+    [DataContract(IsReference = true), JsonObject]
     public sealed class GameObject : ListChildManager<Component>
     {
         /// <summary>
@@ -82,7 +83,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(components != null);
 
-            this.AddRange(components.FilterNull());
+            this.AddRange(components);
             if (!components.Any(component => component is Transform))
             {
                 this.Add(new Transform());
@@ -108,7 +109,7 @@ namespace LightClaw.Engine.Core
         /// <param name="items">The <see cref="Component"/>s to add.</param>
         public override void AddRange(IEnumerable<Component> items)
         {
-            if (!this.TryAddRange(items))
+            if (!this.TryAddRange(items.FilterNull()))
             {
                 throw new NotSupportedException("The items could not be added");
             }
@@ -142,21 +143,35 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Returns the <see cref="Component"/> with the specified name.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to look for.</typeparam>
+        /// <param name="name">The name of the <see cref="Component"/> to return.</param>
+        /// <returns>The <see cref="Component"/> with the specified name, or <c>null</c> if no <see cref="Component"/> was found.</returns>
+        public T Find<T>(string name)
+            where T : Component
+        {
+            return (T)this.FirstOrDefault(component => component is T && component.Name == name);
+        }
+
+        /// <summary>
         /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/>, if possible, and
-        /// sets <paramref name="result"/> to the first <see cref="Component"/> of typo <typeparamref name="T"/>, if
-        /// the attachment fails.
+        /// sets <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>, 
+        /// if attachment fails.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to add.</typeparam>
+        /// <param name="predicate">The condition an element has to fulfill to be returned if <paramref name="component"/> could not be added.</param>
         /// <param name="component">The <see cref="Component"/> to try to add.</param>
         /// <param name="result">The <see cref="Component"/> that was either retreived or added.</param>
         /// <returns>
-        /// <c>true</c> if the value in <paramref name="result"/> is not <c>null</c> (i.e. a <see cref="Component"/> could be fetched). 
-        /// Otherwise <c>false</c>.
+        /// <c>true</c> if the value in <paramref name="result"/> is not <c>null</c> (i.e. a <see cref="Component"/> could be fetched),
+        /// otherwise <c>false</c>.
         /// </returns>
-        public bool GetOrAdd<T>(T component, out T result)
+        public bool GetOrAdd<T>(T component, Func<Component, bool> predicate, out T result)
             where T : Component
         {
             Contract.Requires<ArgumentNullException>(component != null);
+            Contract.Requires<ArgumentNullException>(predicate != null);
             Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out result) != null);
 
             lock (this.Items)
@@ -169,7 +184,7 @@ namespace LightClaw.Engine.Core
                 }
                 else
                 {
-                    return (result = (T)this.FirstOrDefault(comp => comp is T)) != null;
+                    return (result = (T)this.FirstOrDefault(predicate)) != null;
                 }
             }
         }
@@ -511,6 +526,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         private void InitializeComponents()
         {
+            if (!this.Any(component => component is Transform))
+            {
+                this.Add(new Transform());
+            }
             foreach (Component component in this)
             {
                 component.GameObject = this;

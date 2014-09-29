@@ -136,13 +136,9 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            ObservableCollection<T> items = this.Items;
-            if (items != null)
+            foreach (T item in this.Items)
             {
-                foreach (T item in items)
-                {
-                    action(item);
-                }
+                action(item);
             }
         }
 

@@ -108,47 +108,17 @@ namespace LightClaw.Engine.Core
                 this.SetProperty(ref _SceneManager, value);
             }
         }
-
-        /// <summary>
-        /// Initializes a new <see cref="Game"/>.
-        /// </summary>
-        private Game()
-        {
-            Logger.Info("Creating game.");
-
-            this.Name = GeneralSettings.Default.GameName;
-
-            this.GameWindow.Closed += (s, e) => this.OnClosed();
-            this.GameWindow.Load += (s, e) => this.OnLoad();
-            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
-            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
-            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
-
-            Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
-                                                              .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
-            iconLoadTask.ContinueWith(
-                t => {
-                    this.GameWindow.Icon = t.Result;
-                    Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
-                },
-                TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
-            );
-            iconLoadTask.ContinueWith(
-                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
-            );
-        }
         
         /// <summary>
         /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
         /// </summary>
         /// <param name="startScene">The resource string of the <see cref="Scene"/> to be loaded at startup.</param>
         public Game(string startScene)
-            : this()
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
             Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
+            this.Initialize();
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
@@ -160,11 +130,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="startScene">The <see cref="Scene"/> that will be run at startup.</param>
         public Game(Scene startScene)
-            : this()
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s.Name), startScene);
+            this.Initialize();
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
@@ -261,6 +231,31 @@ namespace LightClaw.Engine.Core
             this.CurrentGameTime = currentGameTime;
             this.SceneManager.Update(currentGameTime);
             this.SceneManager.LateUpdate();
+        }
+
+        private void Initialize()
+        {
+            this.Name = GeneralSettings.Default.GameName;
+
+            this.GameWindow.Closed += (s, e) => this.OnClosed();
+            this.GameWindow.Load += (s, e) => this.OnLoad();
+            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
+            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
+            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
+
+            //Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
+            //                                                  .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
+            //iconLoadTask.ContinueWith(
+            //    t => {
+            //        this.GameWindow.Icon = t.Result;
+            //        Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
+            //    },
+            //    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
+            //);
+            //iconLoadTask.ContinueWith(
+            //    t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
+            //    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
+            //);
         }
 
         /// <summary>

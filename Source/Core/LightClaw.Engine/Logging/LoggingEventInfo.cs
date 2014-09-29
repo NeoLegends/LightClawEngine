@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Logging
     /// Contains information about a log entry.
     /// </summary>
     [DataContract]
-    public class LoggingEventInfo
+    public sealed class LoggingEventInfo
     {
         /// <summary>
         /// An exception that lead to the log entry being written.

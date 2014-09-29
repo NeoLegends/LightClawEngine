@@ -300,7 +300,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Unmaps the buffer.
         /// </summary>
         /// <remarks>
-        /// Expects the current <see cref="IBuffer"/> to be bound.
+        /// This method expects the current <see cref="IBuffer"/> to be bound.
         /// </remarks>
         public void Unmap()
         {

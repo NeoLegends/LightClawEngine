@@ -310,9 +310,9 @@
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="NeoLegends.AsyncLinq, Version=1.1.0.0, Culture=neutral, PublicKeyToken=4275efc3600d30d0, processorArchitecture=MSIL">
+    <Reference Include="NeoLegends.AsyncLinq, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4275efc3600d30d0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NeoLegends.AsyncLinq.1.1.0.0\lib\net45\NeoLegends.AsyncLinq.dll</HintPath>
+      <HintPath>..\..\packages\NeoLegends.AsyncLinq.1.2.1.0\lib\net45\NeoLegends.AsyncLinq.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

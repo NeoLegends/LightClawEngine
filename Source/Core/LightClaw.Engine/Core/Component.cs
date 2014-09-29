@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Core
 {
     /// <summary>
     /// Represents the base class of a class in the game hierarchy.
     /// </summary>
-    [DataContract(IsReference = true)]
+    [DataContract(IsReference = true), JsonObject]
     public abstract class Component : Manager
     {
         /// <summary>
@@ -41,14 +42,6 @@ namespace LightClaw.Engine.Core
                 this.SetProperty(ref _GameObject, value);
                 this.Raise(this.GameObjectChanged, value, previous);
             }
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Component"/>.
-        /// </summary>
-        protected Component() 
-        {
-            Logger.Debug(() => "Initializes a new Component of type '{0}'.".FormatWith(this.GetType().FullName));
         }
 
         /// <summary>

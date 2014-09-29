@@ -42,14 +42,11 @@ namespace Tests.Core
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void GameObjectComponentRemovalValidators()
         {
             Transform t = new Transform();
             GameObject gameObject = new GameObject(t);
-            gameObject.Remove(t);
-
-            Assert.AreEqual(1, gameObject.Count, "Count was not one, as it should've been as removing a transform shouldn't be possible.");
+            Assert.IsFalse(gameObject.Remove(t), "Component was successfully removed, this is not the expected behaviour.");
         }
     }
 }

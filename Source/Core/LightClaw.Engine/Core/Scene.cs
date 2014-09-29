@@ -20,8 +20,8 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a layer on the final composed image that is presented to the screen.
     /// </summary>
-    [DataContract(IsReference = true)]
     [ContentReader(typeof(SceneReader))]
+    [DataContract(IsReference = true), JsonObject]
     public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
     {
         /// <summary>
@@ -35,6 +35,8 @@ namespace LightClaw.Engine.Core
         private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault(
             new JsonSerializerSettings()
             {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                 TypeNameHandling = TypeNameHandling.Auto
             }
         );
@@ -276,12 +278,11 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentException>(s.CanWrite);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(CompressionLevel), level));
 
-            Logger.Info(() => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(level));
+            Logger.Info(l => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(l), level);
 
             using (DeflateStream deflateStream = new DeflateStream(s, level, true))
             {
                 await this.SaveRawAsync(deflateStream);
-                //new NetDataContractSerializer().WriteObject(deflateStream, this); // Check whether we can switch to Json.NET here
             }
         }
 
@@ -315,9 +316,10 @@ namespace LightClaw.Engine.Core
                 Logger.Info(() => "Saving scene to a stream.");
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
-                using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 1024 * 1024, true))
+                using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 1024, true))
+                using (JsonTextWriter jtw = new JsonTextWriter(sw) {  CloseOutput = false })
                 {
-                    serializer.Serialize(sw, this);
+                    serializer.Serialize(jtw, this);
                     //new NetDataContractSerializer().WriteObject(s, this); // Check whether we can switch to Json.NET here
                 }
 
@@ -410,11 +412,11 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to load from.</param>
         /// <returns>The loaded <see cref="Scene"/>.</returns>
-        public static Task<Scene> Load(Stream s)
+        public static async Task<Scene> Load(Stream s)
         {
             using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
             {
-                return LoadRaw(deflateStream);
+                return await LoadRaw(deflateStream);
             }
         }
 
@@ -433,7 +435,7 @@ namespace LightClaw.Engine.Core
                 staticLogger.Info("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
 
                 using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 1024, true))
-                using (JsonTextReader jtr = new JsonTextReader(sr))
+                using (JsonTextReader jtr = new JsonTextReader(sr) { CloseInput = false })
                 {
                     return serializer.Deserialize<Scene>(jtr);
                 }
@@ -446,7 +448,7 @@ namespace LightClaw.Engine.Core
                 }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
             );
             sceneLoadingTask.ContinueWith(
-                t => staticLogger.Warn(scene => "Scene loading failed.".FormatWith(scene.Name), t.Result), 
+                t => staticLogger.Warn(scene => "Scene loading failed.".FormatWith(scene.Name), t.Exception, t.Result), 
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );
             return sceneLoadingTask;

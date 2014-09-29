@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Logging
     /// Contains information about an exception that lead to a log entry being created.
     /// </summary>
     [DataContract]
-    public class ExceptionInfo
+    public sealed class ExceptionInfo
     {
         /// <summary>
         /// The exceptions message.

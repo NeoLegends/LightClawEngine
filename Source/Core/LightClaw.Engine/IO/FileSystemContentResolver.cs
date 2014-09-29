@@ -36,7 +36,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(rootPath != null);
 
             this.RootPath = rootPath;
-            Logger.Debug(path => "Initialized a new {0}. Root path will be {1}.".FormatWith(typeof(FileSystemContentResolver).Name, path), rootPath);
+            Logger.Debug(path => "Initialized a new {0}. Root path will be '{1}'.".FormatWith(typeof(FileSystemContentResolver).Name, path), rootPath);
         }
 
         /// <summary>
@@ -62,13 +62,21 @@ namespace LightClaw.Engine.IO
             {
                 result = new FileStream(
                     Path.Combine(this.RootPath, resourceString), 
-                    FileMode.OpenOrCreate, 
+                    writable ? FileMode.OpenOrCreate : FileMode.Open, 
                     writable ? FileAccess.ReadWrite : FileAccess.Read
                 );
             }
+            catch (DirectoryNotFoundException exception)
+            {
+                Logger.Warn(rs => "The directory containing asset '{0}' could not be found. Returning null.".FormatWith(rs), exception, resourceString);
+            }
+            catch (FileNotFoundException exception)
+            {
+                Logger.Warn(rs => "The file of asset '{0}' could not be found. Returning null.".FormatWith(rs), exception, resourceString);
+            }
             catch (Exception exception)
             {
-                Logger.Warn(ex => "An error of type '{0}' occured while obtaining the stream to an asset. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName), exception, exception);
+                Logger.Warn((ex, rs) => "An error of type '{0}' occured while obtaining the stream to asset '{1}'. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName, rs), exception, exception, resourceString);
             }
             return Task.FromResult(result);
         }

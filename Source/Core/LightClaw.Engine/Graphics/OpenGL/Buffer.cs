@@ -363,9 +363,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                if (this.IsInitialized)
+                lock (this.nameGenerationLock)
                 {
-                    GL.DeleteBuffer(this);
+                    if (this.IsInitialized)
+                    {
+                        GL.DeleteBuffer(this);
+                    }
                 }
                 base.Dispose(disposing);
             }

@@ -12,15 +12,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DataContract]
     public struct VertexAttributeDescription : ICloneable, IEquatable<VertexAttributeDescription>
     {
-        private static readonly VertexAttributeDescription[] _Empty = new VertexAttributeDescription[] { };
-
         public static VertexAttributeDescription[] Empty
         {
             get
             {
                 Contract.Ensures(Contract.Result<VertexAttributeDescription[]>() != null);
 
-                return _Empty.ToArray();
+                return new VertexAttributeDescription[] { };
             }
         }
 

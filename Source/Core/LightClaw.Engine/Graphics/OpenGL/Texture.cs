@@ -257,11 +257,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (this.IsDisposed)
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    GL.DeleteTexture(this);
+                    if (this.IsInitialized)
+                    {
+                        GL.DeleteTexture(this);
+                    }
                 }
-
                 base.Dispose(disposing);
             }
         }

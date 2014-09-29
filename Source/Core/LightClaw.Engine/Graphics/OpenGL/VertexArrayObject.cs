@@ -111,14 +111,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
-            Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
+            Contract.Requires<ArgumentException>(indexBuffer.Target == BufferTarget.ElementArrayBuffer);
         }
 
         public VertexArrayObject(IBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType, params BufferDescription[] buffers)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
-            Contract.Requires<ArgumentException>(!buffers.Any(desc => desc.Buffer.Target == BufferTarget.ElementArrayBuffer));
+            Contract.Requires<ArgumentException>(indexBuffer.Target == BufferTarget.ElementArrayBuffer);
 
             this.DrawMode = drawMode;
             this.IndexBuffer = indexBuffer;
@@ -195,9 +195,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             if (!this.IsDisposed)
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    GL.DeleteVertexArray(this);
+                    if (this.IsInitialized)
+                    {
+                        GL.DeleteVertexArray(this);
+                    }
                 }
                 base.Dispose(disposing);
             }

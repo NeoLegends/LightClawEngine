@@ -15,7 +15,7 @@ namespace LightClaw.Engine.IO
     /// <summary>
     /// Represents an <see cref="IContentReader"/> reading <see cref="Scene"/>s.
     /// </summary>
-    public class SceneReader : IContentReader
+    public class SceneReader : Entity, IContentReader
     {
         /// <summary>
         /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
@@ -35,9 +35,18 @@ namespace LightClaw.Engine.IO
         /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
         /// cannot be read.
         /// </returns>
-        public Task<object> ReadAsync(ContentReadParameters parameters)
+        public async Task<object> ReadAsync(ContentReadParameters parameters)
         {
-            return Scene.Load(parameters.AssetStream).Upcast<Scene, object>();
+            try
+            {
+                return await Scene.Load(parameters.AssetStream);
+            }
+            catch 
+            {
+                Logger.Warn(s => "Loading scene '{0}' from the compressed format failed, trying to load uncompressed...".FormatWith(s), parameters.ResourceString);
+            }
+
+            return await Scene.LoadRaw(parameters.AssetStream);
         }
     }
 }

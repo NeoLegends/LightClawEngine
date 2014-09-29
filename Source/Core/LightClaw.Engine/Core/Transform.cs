@@ -175,6 +175,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute position as translation <see cref="Matrix"/>.
         /// </summary>
+        [IgnoreDataMember]
         public Matrix PositionMatrix
         {
             get
@@ -235,6 +236,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute rotation in world space as rotation <see cref="Matrix"/>.
         /// </summary>
+        [IgnoreDataMember]
         public Matrix RotationMatrix
         {
             get
@@ -295,6 +297,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute scaling in world space as scaling <see cref="Matrix"/>.
         /// </summary>
+        [IgnoreDataMember]
         public Matrix ScalingMatrix
         {
             get
@@ -328,6 +331,7 @@ namespace LightClaw.Engine.Core
         ///     </item>
         /// </list>
         /// </remarks>
+        [IgnoreDataMember]
         public Matrix ModelMatrix
         {
             get

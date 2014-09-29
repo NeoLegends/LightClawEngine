@@ -18,26 +18,26 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
-        private readonly IBuffer indexBuffer = new LCBuffer(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
+        private IBuffer indexBuffer;
 
         private VertexArrayObject vao;
 
         private ShaderProgram program;
 
-        private readonly IBuffer vertexBuffer = new LCBuffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+        private IBuffer vertexBuffer;
 
         public BasicMesh() { }
 
         protected override void OnLoad()
         {
-            vertexBuffer.Set(
+            (vertexBuffer = new LCBuffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw)).Set(
                 new Vertex[] { 
                     new Vertex(new Vector3(-1.0f, -1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Red),
                     new Vertex(new Vector3(1.0f, -1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Blue),
                     new Vertex(new Vector3(0.0f,  1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Yellow)
                 }
             );
-            indexBuffer.Set(new int[] { 1, 2, 3 });
+            (indexBuffer = new LCBuffer(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw)).Set(new int[] { 1, 2, 3 });
 
             VertexAttributePointer[] pointers = new VertexAttributePointer[]
             {
@@ -51,7 +51,8 @@ namespace LightClaw.GameCode
             Task<string> vertexShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.vert");
             Task<string> fragmentShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.frag");
 
-            Task.WhenAll(vertexShaderSourceTask, fragmentShaderSourceTask).ContinueWith(t =>
+            Task<string[]> shaderLoadTask = Task.WhenAll(vertexShaderSourceTask, fragmentShaderSourceTask);
+            shaderLoadTask.ContinueWith(t =>
             {
                 this.program = new ShaderProgram(
                     new Shader[] { 
@@ -59,7 +60,11 @@ namespace LightClaw.GameCode
                         new Shader(t.Result[1], ShaderType.FragmentShader)
                     }
                 );
-            });
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+            shaderLoadTask.ContinueWith(
+                t => Logger.Warn(ex => "An exception of type '{0}' occured while loading the shaders.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
+                TaskContinuationOptions.OnlyOnFaulted
+            );
 
             base.OnLoad();
         }

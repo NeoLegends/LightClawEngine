@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DataContract]
     [JsonConverter(typeof(VertexAttributeLocationConverter))]
-    public struct VertexAttributeLocation : ICloneable, IEquatable<VertexAttributeLocation>
+    public struct VertexAttributeLocation : ICloneable, IEquatable<int>, IEquatable<VertexAttributeLocation>
     {
         public static readonly VertexAttributeLocation Position = new VertexAttributeLocation(0);
 
@@ -50,9 +50,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return (obj is VertexAttributeLocation) ? this.Equals((VertexAttributeLocation)obj) : false;
         }
 
+        public bool Equals(int other)
+        {
+            return (this.Location == other);
+        }
+
         public bool Equals(VertexAttributeLocation other)
         {
-            return (this.Location == other.Location);
+            return this.Equals(other.Location);
         }
 
         public override int GetHashCode()

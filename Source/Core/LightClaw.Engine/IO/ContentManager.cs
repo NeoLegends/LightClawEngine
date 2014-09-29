@@ -159,9 +159,8 @@ namespace LightClaw.Engine.IO
                     !cachedAsset.TryGetTarget(out asset)) // weak reference to cached asset collected.
                 {
                     Logger.Debug(
-                        (reloadForced, rs) => ((reloadForced ? "No cached version of '{0}' available" : "Reload of '{0}' forced") + ", obtaining stream...").FormatWith(rs), 
-                        forceReload, 
-                        resourceString
+                        (fr, rs) => ((fr ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(rs), 
+                        forceReload, resourceString
                     );
                     using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false))
                                                                     .FirstFinishedOrDefaultAsync(s => s != null))
@@ -174,8 +173,8 @@ namespace LightClaw.Engine.IO
                             throw new FileNotFoundException(message);
                         }
 
-                        // Try to get IContentReader that was specified via attribute and attempt deserialization
-                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing...".FormatWith(rs), resourceString);
+                        // Try to deserialize using registered content readers
+                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing with registered readers...".FormatWith(rs), resourceString);
                         asset = await this.readers.Where(reader => reader.CanRead(assetType))
                                                   .Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
                                                   .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
@@ -183,10 +182,11 @@ namespace LightClaw.Engine.IO
                         // If deserialization didn't work for some reason, see if there is a specialized IContentReader and try to use that.
                         if (asset == null)
                         {
+                            Logger.Debug(() => "Registered {0}s failed to deserialize.".FormatWith(typeof(IContentReader).Name));
                             IContentReader reader = this.GetAttributeReader(assetType);
                             if (reader != null)
                             {
-                                Logger.Debug(() => "Registered {0}s failed to deserialize. Designated reader obtained, deserializing...".FormatWith(typeof(IContentReader).Name));
+                                Logger.Debug(() => "Designated reader obtained, deserializing...");
                                 asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter));
                             }
                         }
@@ -198,10 +198,10 @@ namespace LightClaw.Engine.IO
                             Logger.Warn(message);
                             throw new InvalidOperationException(message);
                         }
-
-                        cachedAsset = new WeakReference<object>(asset);
-                        this.cachedAssets.AddOrUpdate(new ResourceKey(resourceString, assetType), cachedAsset, (key, oldValue) => cachedAsset);
                     }
+
+                    cachedAsset = new WeakReference<object>(asset);
+                    this.cachedAssets.TryAdd(new ResourceKey(resourceString, assetType), cachedAsset);
                 }
                 else
                 {
