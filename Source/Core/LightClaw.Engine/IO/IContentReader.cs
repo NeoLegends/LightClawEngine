@@ -13,11 +13,15 @@ namespace LightClaw.Engine.IO
     /// Represents an object that converts the asset stream into an object.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// <see cref="IContentReader"/>s are supposed to be cheap objects that are easy to create. Preferrably, they also have a default
     /// constructor because that is what the <see cref="ContentManager"/> that ships with LightClaw needs to create an <see cref="IContentReader"/>
     /// at runtime on demand.
-    /// 
-    /// Also, they have to be thread-safe in respect to deserializing different objects (different resource strings) at once.
+    /// </para>
+    /// <para>
+    /// They have to be thread-safe in respect to deserializing different objects (different resource strings) at once.
+    /// </para>
+    /// <para>If an asset of a specified type cannot be read, the <see cref="ContentReadParameters.AssetStream"/> shall not be touched!</para>
     /// </remarks>
     /// <seealso cref="IContentManager"/>
     [ContractClass(typeof(IContentReaderContracts))]

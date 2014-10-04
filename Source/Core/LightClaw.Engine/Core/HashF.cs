@@ -30,6 +30,11 @@ namespace LightClaw.Engine.Core
     /// All calls will be inlined, so there really is no performance penalty in calling the method multiple times.
     /// </para>
     /// <para>
+    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>, there
+    /// is an overload for that. Just make sure the elements inside the collection do not change as this would render the previously
+    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you will break the universe. :)
+    /// </para>
+    /// <para>
     /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
     /// <code>
     /// unchecked
@@ -47,11 +52,10 @@ namespace LightClaw.Engine.Core
     /// </code>
     /// </para>
     /// <para>
-    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>, there
-    /// is an overload for that. Just make sure the elements inside the collection do not change as this would render the previously
-    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you will break the universe. :)
+    /// This class is thread-safe.
     /// </para>
     /// </remarks>
+    [Pure]
     public static class HashF
     {
         // AggressiveInlining everywhere to allow inlining even with value types. See http://blogs.msdn.com/b/davidnotario/archive/2004/11/01/250398.aspx.
@@ -89,52 +93,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets the hash codes of all elements inside the <paramref name="collection"/>.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
-        /// <param name="array">The collection to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
-        public static int GetHashCode<T>(IEnumerable<T> collection)
-        {
-            if (collection != null)
-            {
-                int finalHash = HashStart;
-                foreach (T item in collection)
-                {
-                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(item));
-                }
-                return finalHash;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the hash codes of all elements inside the <paramref name="array"/>.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
-        /// <param name="array">The array to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
-        public static int GetHashCode<T>(T[] array)
-        {
-            if (array != null)
-            {
-                int finalHash = HashStart;
-                for (int i = 0; i < array.Length; i++)
-                {
-                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(array[i]));
-                }
-                return finalHash;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        /// <summary>
         /// Safely gets the hash code of the specified item.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
@@ -143,7 +101,14 @@ namespace LightClaw.Engine.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T item)
         {
-            return (item != null) ? item.GetHashCode() : 0;
+            try
+            {
+                return (item != null) ? item.GetHashCode() : 0;
+            }
+            catch 
+            {
+                return 0;
+            }
         }
 
         /// <summary>
@@ -268,6 +233,55 @@ namespace LightClaw.Engine.Core
                 hash = hash * HashFactor + GetHashCode(fifth);
                 hash = hash * HashFactor + GetHashCode(sixth);
                 return hash;
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash codes of all elements inside the <paramref name="collection"/>.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
+        /// <param name="array">The collection to get the hash codes from.</param>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
+        public static int GetHashCode<T>(IEnumerable<T> collection)
+        {
+            if (collection != null)
+            {
+                int finalHash = HashStart;
+                foreach (T item in collection)
+                {
+                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(item));
+                }
+                return finalHash;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash codes of all elements inside the <paramref name="array"/>.
+        /// </summary>
+        /// <remarks>
+        /// No parameter array to avoid accidental use of this method which performs worse than the generic methods.
+        /// </remarks>
+        /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
+        /// <param name="array">The array to get the hash codes from.</param>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
+        public static int GetHashCode<T>(T[] array)
+        {
+            if (array != null)
+            {
+                int finalHash = HashStart;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(array[i]));
+                }
+                return finalHash;
+            }
+            else
+            {
+                return 0;
             }
         }
     }

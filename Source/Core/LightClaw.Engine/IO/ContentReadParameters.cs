@@ -12,7 +12,7 @@ namespace LightClaw.Engine.IO
     /// <summary>
     /// Parameters for an <see cref="IContentReader"/>.
     /// </summary>
-    public struct ContentReadParameters : ICloneable, IEquatable<ContentReadParameters>
+    public sealed class ContentReadParameters : ICloneable, IEquatable<ContentReadParameters>
     {
         /// <summary>
         /// The <see cref="IContentManager"/> that triggered the loading process.
@@ -48,7 +48,6 @@ namespace LightClaw.Engine.IO
         /// <param name="assetStream">The <see cref="Type"/> of asset to read.</param>
         /// <param name="parameter">A parameter the client specifies when requesting an asset. This may be null.</param>
         public ContentReadParameters(IContentManager contentManager, ResourceString resourceString, Type assetType, Stream assetStream, object parameter)
-            : this()
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(assetType != null);
@@ -80,7 +79,8 @@ namespace LightClaw.Engine.IO
             if (ReferenceEquals(obj, null))
                 return false;
 
-            return (obj is ContentReadParameters) ? this.Equals((ContentReadParameters)obj) : false;
+            ContentReadParameters parameters = obj as ContentReadParameters;
+            return (parameters != null) ? this.Equals(parameters) : false;
         }
 
         /// <summary>
@@ -90,6 +90,11 @@ namespace LightClaw.Engine.IO
         /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c>.</returns>
         public bool Equals(ContentReadParameters other)
         {
+            if (ReferenceEquals(other, null))
+                return false;
+            if (ReferenceEquals(other, this))
+                return true;
+
             return (this.ContentManager == other.ContentManager) && (this.ResourceString == other.ResourceString) &&
                    (this.AssetType == other.AssetType) && (this.AssetStream == other.AssetStream) &&
                    (this.Parameter == other.Parameter);
@@ -112,6 +117,11 @@ namespace LightClaw.Engine.IO
         /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(ContentReadParameters left, ContentReadParameters right)
         {
+            if (ReferenceEquals(left, right))
+                return true;
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+
             return left.Equals(right);
         }
 

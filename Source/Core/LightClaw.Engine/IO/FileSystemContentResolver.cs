@@ -61,7 +61,7 @@ namespace LightClaw.Engine.IO
             try
             {
                 result = new FileStream(
-                    Path.Combine(this.RootPath, resourceString), 
+                    Path.GetFullPath(Path.Combine(this.RootPath, resourceString)), 
                     writable ? FileMode.OpenOrCreate : FileMode.Open, 
                     writable ? FileAccess.ReadWrite : FileAccess.Read
                 );

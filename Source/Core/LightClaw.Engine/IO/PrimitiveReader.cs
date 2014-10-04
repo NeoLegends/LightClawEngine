@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
         {
             Encoding encoding = parameters.Parameter as Encoding;
             Type assetType = parameters.AssetType;
-            if (assetType.IsPrimitive)
+            if (assetType.IsPrimitive || assetType == typeof(decimal))
             {
                 using (BinaryReader br = new BinaryReader(parameters.AssetStream, encoding ?? Encoding.UTF8, true))
                 {
@@ -87,6 +87,10 @@ namespace LightClaw.Engine.IO
                     else if (assetType == typeof(double))
                     {
                         return Task.FromResult<object>(br.ReadDouble());
+                    } 
+                    if (assetType == typeof(decimal))
+                    {
+                        return Task.FromResult<object>(br.ReadDecimal());
                     }
 
                     // Rest
@@ -110,13 +114,6 @@ namespace LightClaw.Engine.IO
                     {
                         return Task.FromResult<object>(null);
                     }
-                }
-            }
-            else if (assetType == typeof(decimal))
-            {
-                using (BinaryReader br = new BinaryReader(parameters.AssetStream, encoding ?? Encoding.UTF8))
-                {
-                    return Task.FromResult<object>(br.ReadDecimal());
                 }
             }
             else if (assetType == typeof(string))

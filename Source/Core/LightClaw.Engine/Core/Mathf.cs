@@ -9,6 +9,9 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains extensions to the math class.
     /// </summary>
+    /// <remarks>
+    /// This class is thread-safe.
+    /// </remarks>
     [Pure]
     public static class MathF
     {
@@ -663,24 +666,15 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Class used to convert bytes into hex strings.
         /// </summary>
+        /// <remarks>
+        /// This class is thread-safe.
+        /// </remarks>
         public static class HexTable
         {
             /// <summary>
             /// Backing field.
             /// </summary>
             private static readonly string[] hexData = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
-
-            /// <summary>
-            /// Gets the specified byte as hexadecimal string.
-            /// </summary>
-            /// <param name="index">The byte to obtain as hex string.</param>
-            /// <returns>The byte's representation as hex string.</returns>
-            public static string GetHexData(byte index)
-            {
-                Contract.Assume(index < hexData.Length);
-
-                return hexData[index];
-            }
 
             /// <summary>
             /// Gets the hexadecimal representation of all byte values.
@@ -690,10 +684,23 @@ namespace LightClaw.Engine.Core
                 return hexData.ToArray();
             }
 
+            /// <summary>
+            /// Gets the specified byte as hexadecimal string.
+            /// </summary>
+            /// <param name="index">The byte to obtain as hex string.</param>
+            /// <returns>The byte's representation as hex string.</returns>
+            public static string GetHexData(byte index)
+            {
+                return hexData[index];
+            }
+
+            /// <summary>
+            /// Contains Contract.Invariant definitions.
+            /// </summary>
             [ContractInvariantMethod]
             private static void ObjectInvariant()
             {
-                Contract.Invariant(hexData.Length == 256);
+                Contract.Invariant(hexData.Length > byte.MaxValue);
             }
         }
     }

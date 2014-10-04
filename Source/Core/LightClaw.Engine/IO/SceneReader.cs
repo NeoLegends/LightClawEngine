@@ -18,10 +18,10 @@ namespace LightClaw.Engine.IO
     public class SceneReader : Entity, IContentReader
     {
         /// <summary>
-        /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
+        /// Checks whether the <see cref="SceneReader"/> can read assets of the specified <see cref="Type"/>.
         /// </summary>
-        /// <param name="assetType">The type of the asset that is about to be read.</param>
-        /// <returns><c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>, otherwise <c>false</c>.</returns>
+        /// <param name="assetType">The <see cref="Type"/> to read.</param>
+        /// <returns><c>true</c> if assets of the specified <paramref name="assetType"/> can be read, otherwise <c>false</c>.</returns>
         public bool CanRead(Type assetType)
         {
             return (assetType == typeof(Scene));
@@ -46,7 +46,19 @@ namespace LightClaw.Engine.IO
                 Logger.Warn(s => "Loading scene '{0}' from the compressed format failed, trying to load uncompressed...".FormatWith(s), parameters.ResourceString);
             }
 
-            return await Scene.LoadRaw(parameters.AssetStream);
+            try
+            {
+                if (parameters.AssetStream.CanSeek)
+                {
+                    parameters.AssetStream.Position = 0;
+                }
+                return await Scene.LoadRaw(parameters.AssetStream);
+            }
+            catch (Exception exception)
+            {
+                Logger.Warn((rs, ex) => "Loading the scene '{0}' failed. An exception of type '{1}' occured.".FormatWith(ex.GetType().FullName), exception, parameters.ResourceString, exception);
+                return null;
+            }
         }
     }
 }

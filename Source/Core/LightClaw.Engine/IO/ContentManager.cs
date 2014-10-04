@@ -174,21 +174,16 @@ namespace LightClaw.Engine.IO
                         }
 
                         // Try to deserialize using registered content readers
-                        Logger.Debug(rs => "Stream around '{0}' obtained, deserializing with registered readers...".FormatWith(rs), resourceString);
-                        asset = await this.readers.Where(reader => reader.CanRead(assetType))
-                                                  .Select(rdr => rdr.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter)))
-                                                  .FirstFinishedOrDefaultAsync(readAsset => readAsset != null);
-
-                        // If deserialization didn't work for some reason, see if there is a specialized IContentReader and try to use that.
-                        if (asset == null)
+                        Logger.Debug(rs => "Stream around '{0}' obtained, obtaining reader...".FormatWith(rs), resourceString);
+                        IContentReader reader = this.GetReader(assetType);
+                        if (reader != null)
                         {
-                            Logger.Debug(() => "Registered {0}s failed to deserialize.".FormatWith(typeof(IContentReader).Name));
-                            IContentReader reader = this.GetAttributeReader(assetType);
-                            if (reader != null)
-                            {
-                                Logger.Debug(() => "Designated reader obtained, deserializing...");
-                                asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter));
-                            }
+                            Logger.Debug((rs, at) => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(rs, at.FullName), resourceString, assetType);
+                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter));
+                        }
+                        else
+                        {
+                            Logger.Debug(at => "{0} for asset type '{1}' could not be obtained.".FormatWith(typeof(IContentReader).Name, at.FullName), assetType);
                         }
 
                         // If no content reader was able to deserialize the asset, forget it and throw exception
@@ -273,23 +268,22 @@ namespace LightClaw.Engine.IO
                 base.Dispose(disposing);
             }
         }
-
+        
         /// <summary>
-        /// Tries to get the content reader that is declared with the <see cref="ContentReaderAttribute"/> on the type itself.
+        /// Gets the <see cref="IContentReader"/> for the specified <paramref name="assetType"/>.
         /// </summary>
         /// <param name="assetType">The <see cref="Type"/> of asset to get the <see cref="IContentReader"/> for.</param>
-        /// <returns>The <see cref="IContentReader"/> or <c>null</c> if no specialized <see cref="IContentReader"/> could be found.</returns>
-        private IContentReader GetAttributeReader(Type assetType)
+        /// <returns>The <see cref="IContentReader"/> for the asset of the specified <see cref="Type"/>.</returns>
+        private IContentReader GetReader(Type assetType)
         {
             Contract.Requires<ArgumentNullException>(assetType != null);
 
-            Logger.Debug(t => "Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, t.FullName), assetType);
-            IContentReader reader = null;
-            ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
-            if (attr != null)
+            IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType));
+            if (reader == null)
             {
-                reader = this.readers.FirstOrDefault(rdr => rdr.GetType() == attr.ContentReaderType);
-                if (reader != null || (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
+                Logger.Debug(t => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, t.FullName), assetType);
+                ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
+                if (attr != null && (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
                 {
                     Logger.Debug(t => "{0} of type '{1}' obtained.".FormatWith(typeof(IContentReader).Name, t.FullName), attr.ContentReaderType);
                     this.readers.Add(reader);
@@ -383,6 +377,10 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Represents a unique key of an asset including the path and its type.
         /// </summary>
+        /// <remarks>
+        /// Because an asset can be loaded as different types (e.g. shader source as string or as shader) storing the <see cref="ResourceString"/>
+        /// as cache key is not enough.
+        /// </remarks>
         private struct ResourceKey : ICloneable, IEquatable<ResourceKey>
         {
             /// <summary>
@@ -399,12 +397,14 @@ namespace LightClaw.Engine.IO
             /// Initializes a new <see cref="ResourceKey"/>.
             /// </summary>
             /// <param name="resourceString">The assets <see cref="ResourceString"/>.</param>
-            /// <param name="type">The assets <see cref="Type"/>.</param>
-            public ResourceKey(ResourceString resourceString, Type type)
+            /// <param name="assetType">The assets <see cref="Type"/>.</param>
+            public ResourceKey(ResourceString resourceString, Type assetType)
                 : this()
             {
+                Contract.Requires<ArgumentNullException>(assetType != null);
+
                 this.ResourceString = resourceString;
-                this.Type = type;
+                this.Type = assetType;
             }
 
             /// <summary>

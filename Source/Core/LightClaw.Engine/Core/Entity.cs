@@ -80,7 +80,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Entity"/>.
         /// </summary>
-        protected Entity() 
+        protected Entity()
         {
             Type entityType = this.GetType();
             this.Logger = LogManager.GetLogger(entityType);
@@ -95,6 +95,21 @@ namespace LightClaw.Engine.Core
             : this()
         {
             this.Name = name;
+        }
+
+        /// <summary>
+        /// Invokes the specified delegate via late binding.
+        /// </summary>
+        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
+        /// <param name="parameters">Delegate parameters.</param>
+        protected void Raise(Delegate del, params object[] parameters)
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null);
+
+            if (del != null)
+            {
+                del.DynamicInvoke(parameters);
+            }
         }
 
         /// <summary>

@@ -105,7 +105,6 @@ namespace LightClaw.Extensions
         /// <param name="param2">The second parameter to pass to the message generator.</param>
         /// <param name="param3">The third parameter to pass to the message generator.</param>
         /// <param name="param4">The fourth parameter to pass to the message generator.</param>
-        /// <typeparam name="TIn1">The <see cref="Type"/> of the first parameter.</typeparam>
         /// <param name="logger">The <see cref="ILogger"/> to write the <paramref name="message"/> into.</param>
         /// <param name="level">The log level.</param>
         /// <param name="message">The message to write into the <paramref name="logger"/>.</param>

@@ -142,12 +142,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(s));
 
-            int unit = int.Parse(s);
-            if (unit < 0)
+            TextureUnit result;
+            if (!TryParse(s, out result))
             {
-                throw new InvalidOperationException("The parsed number from the string was smaller than zero.");
+                throw new InvalidOperationException("Parsing a TextureUnit from the string was not successful.");
             }
-            return new TextureUnit(unit);
+            return result;
         }
 
         public static bool TryParse(string s, out TextureUnit textureUnit)
@@ -158,11 +158,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             bool result = int.TryParse(s, out unit) && (unit >= 0);
             textureUnit = result ? new TextureUnit(unit) : default(TextureUnit);
             return result;
-        }
-
-        public static TextureUnit operator +(TextureUnit left, TextureUnit right)
-        {
-            return new TextureUnit(left.Unit + right.Unit);
         }
 
         public static bool operator <(TextureUnit left, TextureUnit right)

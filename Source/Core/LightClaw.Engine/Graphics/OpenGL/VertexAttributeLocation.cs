@@ -70,18 +70,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return this.Location.ToString();
         }
 
-        public static implicit operator VertexAttributeLocation(int location)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
-
-            return new VertexAttributeLocation(location);
-        }
-
-        public static implicit operator int(VertexAttributeLocation location)
-        {
-            return location.Location;
-        }
-
         public static bool operator <(VertexAttributeLocation left, VertexAttributeLocation right)
         {
             return (left.Location < right.Location);
@@ -110,6 +98,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public static bool operator !=(VertexAttributeLocation left, VertexAttributeLocation right)
         {
             return !(left == right);
+        }
+
+        public static implicit operator VertexAttributeLocation(int location)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
+
+            return new VertexAttributeLocation(location);
+        }
+
+        public static implicit operator int(VertexAttributeLocation location)
+        {
+            return location.Location;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.Location >= 0);
         }
 
         public class VertexAttributeLocationConverter : JsonConverter

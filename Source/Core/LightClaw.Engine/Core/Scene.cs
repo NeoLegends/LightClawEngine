@@ -276,7 +276,6 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(CompressionLevel), level));
 
             Logger.Info(l => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(l), level);
 
