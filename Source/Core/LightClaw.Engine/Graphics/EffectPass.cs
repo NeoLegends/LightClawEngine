@@ -95,16 +95,16 @@ namespace LightClaw.Engine.Graphics
                 {
                     if (!this.IsInitialized)
                     {
-                        this.ShaderProgram.Uniforms.Select((Func<Uniform, EffectUniform>)(uniform =>
+                        this.ShaderProgram.Uniforms.Select((Func<KeyValuePair<string, Uniform>, EffectUniform>)(kvp =>
                         {
                             throw new NotImplementedException();
-                            if (uniform.Type.IsSampler())
+                            if (kvp.Value.Type.IsSampler())
                             {
-                                return new SamplerEffectUniform(this, uniform, 0);
+                                return new SamplerEffectUniform(this, kvp.Value, 0);
                             }
-                            else if (uniform.Type.IsVector() || uniform.Type.IsMatrix())
+                            else if (kvp.Value.Type.IsVector() || kvp.Value.Type.IsMatrix())
                             {
-                                return new DataEffectUniform(this, uniform, 0);
+                                return new DataEffectUniform(this, kvp.Value, 0);
                             }
                             else
                             {

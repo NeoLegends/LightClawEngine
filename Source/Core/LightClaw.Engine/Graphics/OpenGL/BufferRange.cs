@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents a range inside a <see cref="IBuffer"/>.
     /// </summary>
-    [DataContract]
+    [Serializable, DataContract]
     public struct BufferRange : IEquatable<BufferRange>
     {
         /// <summary>

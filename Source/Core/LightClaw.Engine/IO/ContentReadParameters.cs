@@ -40,7 +40,7 @@ namespace LightClaw.Engine.IO
         public object Parameter { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="ContentReaderParameters"/>-instance.
+        /// Initializes a new <see cref="ContentReadParameters"/>-instance.
         /// </summary>
         /// <param name="contentManager">The <see cref="IContentManager"/> that triggered the loading process.</param>
         /// <param name="resourceString">The resource string of the asset to be loaded.</param>

@@ -18,6 +18,32 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
+        private const string vertexShaderSource = 
+@"#version 400
+
+in vec3 inVertexPosition;
+in vec4 inVertexColor;
+
+out vec4 vertexColor
+
+void main(void)
+{
+	gl_Position = inVertexPosition;
+	vertexColor = inVertexColor;
+}";
+
+        private const string fragmentShaderSource =
+@"#version 400
+
+in vec4 vertexColor;
+
+out vec3 finalColor;
+
+void main(void)
+{
+	finalColor = vertexColor;
+}";
+
         private IBuffer indexBuffer;
 
         private VertexArrayObject vao;
@@ -27,6 +53,32 @@ namespace LightClaw.GameCode
         private IBuffer vertexBuffer;
 
         public BasicMesh() { }
+
+        protected override void Dispose(bool disposing)
+        {
+            VertexArrayObject vao = this.vao;
+            if (vao != null)
+            {
+                vao.Dispose();
+            }
+            IBuffer iBuffer = this.indexBuffer;
+            if (iBuffer != null)
+            {
+                iBuffer.Dispose();
+            }
+            IBuffer vBuffer = this.vertexBuffer;
+            if (vBuffer != null)
+            {
+                vBuffer.Dispose();
+            }
+            ShaderProgram program = this.program;
+            if (program != null)
+            {
+                program.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
 
         protected override void OnLoad()
         {
@@ -47,24 +99,24 @@ namespace LightClaw.GameCode
             BufferDescription desc = new BufferDescription(this.vertexBuffer, pointers);
             this.vao = new VertexArrayObject(this.indexBuffer, desc);
 
-            IContentManager contentMgr = this.IocC.Resolve<IContentManager>();
-            Task<string> vertexShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.vert");
-            Task<string> fragmentShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.frag");
+            //IContentManager contentMgr = this.IocC.Resolve<IContentManager>();
+            //Task<string> vertexShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.vert");
+            //Task<string> fragmentShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.frag");
 
-            Task<string[]> shaderLoadTask = Task.WhenAll(vertexShaderSourceTask, fragmentShaderSourceTask);
-            shaderLoadTask.ContinueWith(t =>
-            {
-                this.program = new ShaderProgram(
-                    new Shader[] { 
-                        new Shader(t.Result[0], ShaderType.VertexShader, new[] { new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color) }),
-                        new Shader(t.Result[1], ShaderType.FragmentShader)
-                    }
-                );
-            }, TaskContinuationOptions.OnlyOnRanToCompletion);
-            shaderLoadTask.ContinueWith(
-                t => Logger.Warn(ex => "An exception of type '{0}' occured while loading the shaders.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted
-            );
+            //Task<string[]> shaderLoadTask = Task.WhenAll(vertexShaderSourceTask, fragmentShaderSourceTask);
+            //shaderLoadTask.ContinueWith(t =>
+            //{
+            Shader[] shaders = new Shader[] 
+            { 
+                new Shader(vertexShaderSource, ShaderType.VertexShader, new[] { new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color) }),
+                new Shader(fragmentShaderSource, ShaderType.FragmentShader)
+            };
+            this.program = new ShaderProgram(shaders);
+            //}, TaskContinuationOptions.OnlyOnRanToCompletion);
+            //shaderLoadTask.ContinueWith(
+            //    t => Logger.Warn(ex => "An exception of type '{0}' occured while loading the shaders.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
+            //    TaskContinuationOptions.OnlyOnFaulted
+            //);
 
             base.OnLoad();
         }
@@ -76,6 +128,7 @@ namespace LightClaw.GameCode
             if (vao != null && program != null)
             {
                 using (Binding programBinding = new Binding(program))
+                using (Binding vaoBinding = new Binding(vao))
                 {
                     vao.DrawIndexed();
                 }

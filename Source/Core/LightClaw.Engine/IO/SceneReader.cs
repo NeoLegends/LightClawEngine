@@ -32,8 +32,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="parameters"><see cref="ContentReadParameters"/> containing information about the asset to be loaded.</param>
         /// <returns>
-        /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/>
-        /// cannot be read.
+        /// The deserialized <see cref="Scene"/>.
         /// </returns>
         public async Task<object> ReadAsync(ContentReadParameters parameters)
         {
@@ -56,7 +55,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception exception)
             {
-                Logger.Warn((rs, ex) => "Loading the scene '{0}' failed. An exception of type '{1}' occured.".FormatWith(ex.GetType().FullName), exception, parameters.ResourceString, exception);
+                Logger.Warn((rs, ex) => "Loading the scene '{0}' uncompressed failed as well. An exception of type '{1}' occured.".FormatWith(ex.GetType().FullName), exception, parameters.ResourceString, exception);
                 return null;
             }
         }

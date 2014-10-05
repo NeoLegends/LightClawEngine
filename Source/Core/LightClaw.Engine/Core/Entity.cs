@@ -61,6 +61,7 @@ namespace LightClaw.Engine.Core
         /// An Ioc-Container used to obtain certain service instances such as IContentManager at runtime.
         /// </summary>
         [IgnoreDataMember]
+        [CLSCompliant(false)]
         public DryIoc.Container IocC
         {
             get
@@ -156,11 +157,7 @@ namespace LightClaw.Engine.Core
         /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            RaisePropertyChanged(this, this.PropertyChanged, propertyName);
         }
 
         /// <summary>
@@ -172,8 +169,7 @@ namespace LightClaw.Engine.Core
         /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
-            location = newValue;
-            this.RaisePropertyChanged(propertyName);
+            SetProperty(this, this.PropertyChanged, ref location, newValue, propertyName);
         }
 
         /// <summary>
@@ -202,6 +198,35 @@ namespace LightClaw.Engine.Core
         {
             Contract.Invariant(this._IocC != null);
             Contract.Invariant(this.Logger != null);
+        }
+
+        /// <summary>
+        /// Raises the property changed event on the specified <see cref="Object"/>.
+        /// </summary>
+        /// <param name="sender">The object whose property was changed.</param>
+        /// <param name="handler">The <see cref="PropertyChangedEventHandler"/> to raise.</param>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        public static void RaisePropertyChanged(object sender, PropertyChangedEventHandler handler, [CallerMemberName] string propertyName = null)
+        {
+            if (handler != null)
+            {
+                handler(sender, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        /// <summary>
+        /// Sets the property to the new value and raises the property changed event.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the property to set.</typeparam>
+        /// <param name="sender">The object whose property was changed.</param>
+        /// <param name="handler">The <see cref="PropertyChangedEventHandler"/> to raise.</param>
+        /// <param name="location">The backing field of the property to set.</param>
+        /// <param name="newValue">The properties new value.</param>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        public static void SetProperty<T>(object sender, PropertyChangedEventHandler handler, ref T location, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            location = newValue;
+            RaisePropertyChanged(sender, handler, propertyName);
         }
     }
 }

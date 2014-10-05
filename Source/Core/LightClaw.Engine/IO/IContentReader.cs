@@ -35,8 +35,8 @@ namespace LightClaw.Engine.IO
         bool CanRead(Type assetType);
 
         /// <summary>
-        /// Asynchronously converts from the specified <paramref name="assetStream"/> into a usable asset of
-        /// type <paramref name="assetType"/>.
+        /// Asynchronously converts from the specified <paramref name="ContentReadParameters.AssetStream"/> into a usable asset of
+        /// type <paramref name="ContentReadParameters.AssetType"/>.
         /// </summary>
         /// <param name="parameters"><see cref="ContentReadParameters"/> containing information about the asset to be loaded.</param>
         /// <returns>

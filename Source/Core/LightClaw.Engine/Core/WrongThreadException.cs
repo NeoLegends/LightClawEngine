@@ -12,17 +12,39 @@ namespace LightClaw.Engine.Core
     /// An error describing the condition when the current thread is not a specified thread.
     /// </summary>
     [Serializable]
-    public class WrongThreadException : Exception
+    public class WrongThreadException : ApplicationException
     {
         /// <summary>
-        /// The <see cref="Thread.ManagedThreadId"/> of the current thread.
+        /// The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.
         /// </summary>
-        public int CurrentThreadId { get; private set; }
+        public int CurrentThreadId
+        {
+            get
+            {
+                object value = this.Data["CurrentThreadId"];
+                return (value != null) ? (int)value : 0;
+            }
+            private set
+            {
+                this.Data["CurrentThreadId"] = value;
+            }
+        }
 
         /// <summary>
-        /// The <see cref="Thread.ManagedThreadId"/> of the target thread.
+        /// The <see cref="System.Threading.Thread.ManagedThreadId"/> of the target thread.
         /// </summary>
-        public int TargetThreadId { get; private set; }
+        public int TargetThreadId
+        {
+            get
+            {
+                object value = this.Data["TargetThreadId"];
+                return (value != null) ? (int)value : 0;
+            }
+            private set
+            {
+                this.Data["TargetThreadId"] = value;
+            }
+        }
 
         /// <summary>
         /// Initializes a new <see cref="WrongThreadException"/>.
@@ -32,8 +54,8 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="WrongThreadException"/> setting <see cref="P:CurrentThreadId"/> and <see cref="P:TargetThreadId"/>.
         /// </summary>
-        /// <param name="currentThreadId">The <see cref="Thread.ManagedThreadId"/> of the current thread.</param>
-        /// <param name="targetThreadId">The <see cref="Thread.ManagedThreadId"/> of the target thread.</param>
+        /// <param name="currentThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.</param>
+        /// <param name="targetThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the target thread.</param>
         public WrongThreadException(int currentThreadId, int targetThreadId)
         {
             this.CurrentThreadId = currentThreadId;
@@ -49,8 +71,8 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="WrongThreadException"/> setting the exception message, <see cref="P:CurrentThreadId"/> and <see cref="P:TargetThreadId"/>.
         /// </summary>
-        /// <param name="currentThreadId">The <see cref="Thread.ManagedThreadId"/> of the current thread.</param>
-        /// <param name="targetThreadId">The <see cref="Thread.ManagedThreadId"/> of the target thread.</param>
+        /// <param name="currentThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.</param>
+        /// <param name="targetThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the target thread.</param>
         /// <param name="message">A description of the error.</param>
         public WrongThreadException(string message, int currentThreadId, int targetThreadId)
             : base(message)
@@ -66,5 +88,12 @@ namespace LightClaw.Engine.Core
         /// <param name="message">A description of the error.</param>
         /// <param name="inner">The <see cref="Exception"/> that lead up to this <see cref="Exception"/>.</param>
         public WrongThreadException(string message, Exception inner) : base(message, inner) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="WrongThreadException"/> after deserialization.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/>.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected WrongThreadException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

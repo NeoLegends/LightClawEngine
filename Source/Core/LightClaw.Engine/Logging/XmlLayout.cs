@@ -63,8 +63,8 @@ namespace LightClaw.Engine.Logging
             Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
 
             this.Capacity = capacity;
-            this.Header = "<LoggingEvents>";
-            this.Footer = "</LoggingEvents>";
+            this.Header = "<LoggingEvents>" + Environment.NewLine;
+            this.Footer = "</LoggingEvents>" + Environment.NewLine;
         }
 
         /// <summary>

@@ -218,9 +218,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
                         GL.GetShader(this, ShaderParameter.CompileStatus, out result);
                         if (result == 0)
                         {
-                            string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, GL.GetShaderInfoLog(this));
+                            string infoLog = GL.GetShaderInfoLog(this);
+                            string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
                             Logger.Warn(message);
-                            throw new InvalidOperationException(message);
+                            throw new CompilationFailedException(message, infoLog, result);
                         }
 
                         this.IsInitialized = true;

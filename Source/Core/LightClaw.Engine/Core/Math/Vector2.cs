@@ -272,6 +272,7 @@ namespace LightClaw.Engine.Core
         /// <returns>
         /// 	<c>true</c> if the specified <see cref="Vector2"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
+        [CLSCompliant(false)]
         public bool Equals(ref Vector2 other)
         {
             return (this.X == other.X) && (this.Y == other.Y);

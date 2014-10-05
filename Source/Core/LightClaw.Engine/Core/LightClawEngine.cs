@@ -35,6 +35,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="Container"/> used to resolve instances of certain interfaces at runtime.
         /// </summary>
+        [CLSCompliant(false)]
         public static Container DefaultIocContainer
         {
             get
@@ -69,7 +70,7 @@ namespace LightClaw.Engine.Core
         {
             logger.Info("LightClaw starting up.");
 
-#if DESKTOP
+#if DESKTOP && !MONO
             string profileRoot = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "LightClaw",
@@ -77,9 +78,10 @@ namespace LightClaw.Engine.Core
             );
 
             logger.Info(pr => "Initializing profile optimization. Profile root will be '{0}'.".FormatWith(pr), profileRoot);
+            Directory.CreateDirectory(profileRoot);
             ProfileOptimization.SetProfileRoot(profileRoot);
 
-            string profile = Assembly.GetExecutingAssembly().GetName().Name;
+            string profile = Assembly.GetExecutingAssembly().GetName().FullName;
             logger.Info(p => "Enabling profile '{0}'.".FormatWith(p), profile);
             ProfileOptimization.StartProfile(profile);
 #endif
@@ -95,10 +97,10 @@ namespace LightClaw.Engine.Core
                 }
 
                 logger.Info(s => "Initializing Game with start scene '{0}'.".FormatWith(s), startScene);
-                using (IGame game = new Game(startScene) { Name = GeneralSettings.Default.GameName })
+                using (Game game = new Game(startScene))
                 {
                     logger.Info("Game created, starting up.");
-                    DefaultIocContainer.RegisterInstance<IGame>(game);
+                    DefaultIocContainer.RegisterInstance<Game>(game);
                     game.Run();
                 }
             }

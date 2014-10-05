@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +10,7 @@ using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
+using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
@@ -18,7 +20,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a game.
     /// </summary>
-    public class Game : DisposableEntity, IGame
+    public class Game : DisposableEntity
     {
         // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system.
         //       New renderer should also allow for multiple render targets, respectively cameras rendering to textures.
@@ -108,21 +110,32 @@ namespace LightClaw.Engine.Core
                 this.SetProperty(ref _SceneManager, value);
             }
         }
-        
+
+        /// <summary>
+        /// Indicates whether the drawing shall not be performed.
+        /// </summary>
+        public bool SuppressDraw
+        {
+            get
+            {
+                return !this.GameWindow.Visible;
+            }
+        }
+
         /// <summary>
         /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
         /// </summary>
         /// <param name="startScene">The resource string of the <see cref="Scene"/> to be loaded at startup.</param>
-        public Game(string startScene)
+        public Game(ResourceString startScene)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
-            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
             this.Initialize();
+            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
-            Logger.Info(() => "Game successfully created.");
+            Logger.Debug(() => "Game successfully created.");
         }
 
         /// <summary>
@@ -133,12 +146,12 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s.Name), startScene);
             this.Initialize();
+            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s.Name), startScene);
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
-            Logger.Info(() => "Game successfully created.");
+            Logger.Debug(() => "Game successfully created.");
         }
 
         /// <summary>
@@ -165,8 +178,8 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            this.GameWindow.Dispose();
             this.SceneManager.Dispose();
+            this.GameWindow.Dispose();
 
             base.Dispose(disposing);
         }
@@ -174,7 +187,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.Closed"/>.
         /// </summary>
-        protected void OnClosed()
+        protected virtual void OnClosed()
         {
             Logger.Info(() => "Closing game window.");
 
@@ -184,24 +197,27 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.Load"/>.
         /// </summary>
-        protected void OnLoad()
+        protected virtual void OnLoad()
         {
+            this.SceneManager.Load();
+
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
-
-            GL.ClearColor(Color.CornflowerBlue);
-
-            this.SceneManager.Load();
+            GL.Viewport(0, 0, this.GameWindow.Width, this.GameWindow.Height);
         }
 
         /// <summary>
         /// Callback for <see cref="E:IGameWindow.RenderFrame"/>.
         /// </summary>
-        protected void OnRender()
+        protected virtual void OnRender()
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-
-            this.SceneManager.Draw();
+            if (!this.SuppressDraw)
+            {
+                GL.ClearColor(Color.CornflowerBlue);
+                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+                this.SceneManager.Draw();
+                this.GameWindow.SwapBuffers();
+            }
         }
 
         /// <summary>
@@ -209,11 +225,12 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="width">The <see cref="IGameWindow"/>s new width.</param>
         /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
-        protected void OnResize(int width, int height)
+        protected virtual void OnResize(int width, int height)
         {
-            Logger.Info((windowWidth, windowHeight) => "Resizing window to {0}x{1}.".FormatWith(windowWidth, windowHeight), width, height);
+            Logger.Debug((windowWidth, windowHeight) => "Resizing window to {0}x{1}.".FormatWith(windowWidth, windowHeight), width, height);
 
             GL.Viewport(0, 0, width, height);
+            this.OnRender();
         }
 
         /// <summary>
@@ -223,16 +240,23 @@ namespace LightClaw.Engine.Core
         protected virtual void OnUpdate(double elapsedSinceLastUpdate)
         {
             elapsedSinceLastUpdate = Math.Max(elapsedSinceLastUpdate, 0.0);
-            GameTime currentGameTime = new GameTime(
-                this.CurrentGameTime.ElapsedSinceLastUpdate + elapsedSinceLastUpdate,
-                this.CurrentGameTime.TotalGameTime + elapsedSinceLastUpdate
-            );
-
-            this.CurrentGameTime = currentGameTime;
+            GameTime currentGameTime = this.CurrentGameTime = this.CurrentGameTime + elapsedSinceLastUpdate;
+            Contract.Assume(this.SceneManager != null);
             this.SceneManager.Update(currentGameTime);
             this.SceneManager.LateUpdate();
         }
 
+        /// <summary>
+        /// Unloads the game's contents.
+        /// </summary>
+        protected virtual void OnUnload()
+        {
+            this.SceneManager.Dispose();
+        }
+
+        /// <summary>
+        /// Initializes the game attaching the event handlers and loading the icon.
+        /// </summary>
         private void Initialize()
         {
             this.Name = GeneralSettings.Default.GameName;
@@ -242,20 +266,22 @@ namespace LightClaw.Engine.Core
             this.GameWindow.RenderFrame += (s, e) => this.OnRender();
             this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
             this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
+            this.GameWindow.Unload += (s, e) => this.OnUnload();
 
-            //Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
-            //                                                  .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
-            //iconLoadTask.ContinueWith(
-            //    t => {
-            //        this.GameWindow.Icon = t.Result;
-            //        Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
-            //    },
-            //    TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
-            //);
-            //iconLoadTask.ContinueWith(
-            //    t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
-            //    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
-            //);
+            Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
+                                                              .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
+            iconLoadTask.ContinueWith(
+                t =>
+                {
+                    this.GameWindow.Icon = t.Result;
+                    Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
+                },
+                TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
+            );
+            iconLoadTask.ContinueWith(
+                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
+            );
         }
 
         /// <summary>

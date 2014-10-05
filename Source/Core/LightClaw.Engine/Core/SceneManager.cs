@@ -57,7 +57,7 @@ namespace LightClaw.Engine.Core
         /// As the startup scene will be loaded synchronously, it is crucial to engine performance that the <see cref="Scene"/> is
         /// small and can be loaded quickly.
         /// </remarks>
-        public SceneManager(string startScene)
+        public SceneManager(ResourceString startScene)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 

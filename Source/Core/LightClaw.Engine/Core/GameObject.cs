@@ -71,9 +71,10 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Initializes a new <see cref="GameObject"/>.
+        /// Initializes a new <see cref="GameObject"/>. Constructor used for serialization.
         /// </summary>
-        public GameObject() : this(new Component[] { }) { }
+        [JsonConstructor]
+        private GameObject() { }
 
         /// <summary>
         /// Initializes a new <see cref="GameObject"/> from a set of <see cref="Component"/>s.
@@ -528,7 +529,7 @@ namespace LightClaw.Engine.Core
         {
             if (!this.Any(component => component is Transform))
             {
-                this.Add(new Transform());
+                this.TryAdd(Transform.Null);
             }
             foreach (Component component in this)
             {

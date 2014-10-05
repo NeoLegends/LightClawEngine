@@ -25,8 +25,8 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Asynchronously converts from the specified <paramref name="assetStream"/> into a usable asset of
-        /// type <paramref name="assetType"/>.
+        /// Asynchronously converts from the specified <paramref name="ContentReadParameters.AssetStream"/> into a usable asset of
+        /// type <paramref name="ContentReadParameters.AssetType"/>.
         /// </summary>
         /// <remarks>
         /// This method accepts an <see cref="Encoding"/> via <see cref="ContentReadParameters.Parameter"/>. If 

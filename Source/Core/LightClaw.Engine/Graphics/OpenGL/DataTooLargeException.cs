@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,17 +16,50 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// The offset of the data to be set inside the <see cref="RangedBuffer"/>'s range.
         /// </summary>
-        public int Offset { get; private set; }
+        public int Offset
+        {
+            get
+            {
+                object value = this.Data["Offset"];
+                return (value != null) ? (int)value : 0;
+            }
+            set
+            {
+                this.Data["Offset"] = value;
+            }
+        }
 
         /// <summary>
         /// The range the buffer occupies of the underlying buffer.
         /// </summary>
-        public BufferRange Range { get; private set; }
+        public BufferRange Range
+        {
+            get
+            {
+                object value = this.Data["Range"];
+                return (value != null) ? (BufferRange)value : default(BufferRange);
+            }
+            set
+            {
+                this.Data["Range"] = value;
+            }
+        }
 
         /// <summary>
         /// The size of the data that was supposed to be set.
         /// </summary>
-        public int SizeInBytes { get; private set; }
+        public int SizeInBytes
+        {
+            get
+            {
+                object value = this.Data["SizeInBytes"];
+                return (value != null) ? (int)value : 0;
+            }
+            set
+            {
+                this.Data["SizeInBytes"] = value;
+            }
+        }
 
         /// <summary>
         /// Initializes a new <see cref="DataTooLargeException"/>.
@@ -78,5 +112,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Offset = offset;
             this.Range = range;
         }
+
+        /// <summary>
+        /// Initializes a new <see cref="DataTooLargeException"/> from the specified serialization data.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo"/>.</param>
+        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        protected DataTooLargeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

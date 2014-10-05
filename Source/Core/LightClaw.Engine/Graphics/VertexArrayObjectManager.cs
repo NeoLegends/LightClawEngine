@@ -45,9 +45,10 @@ namespace LightClaw.Engine.Graphics
             this.VertexAttributePointers = vertexAttributePointers.ToImmutableArray();
         }
 
+        [CLSCompliant(false)] 
         public VertexArrayObjectManager(
                     IEnumerable<VertexAttributePointer> vertexAttributePointers, 
-                    IEnumerable<TVertex> vertices, 
+                    IEnumerable<TVertex> vertices,
                     IEnumerable<ushort> indices
                 )
             : this(vertexAttributePointers)
@@ -60,6 +61,7 @@ namespace LightClaw.Engine.Graphics
             this.Set(vertices);
         }
 
+        [CLSCompliant(false)]
         public VertexArrayObjectManager(
                     IEnumerable<VertexAttributePointer> vertexAttributePointers,
                     TVertex[] vertices,
@@ -97,6 +99,7 @@ namespace LightClaw.Engine.Graphics
             vao.DrawIndexed();
         }
 
+        [CLSCompliant(false)]
         public void Set(IEnumerable<ushort> indices)
         {
             Contract.Requires<ArgumentNullException>(indices != null);
@@ -113,6 +116,7 @@ namespace LightClaw.Engine.Graphics
             this.Set(vertices.ToArray());
         }
 
+        [CLSCompliant(false)]
         public void Set(ushort[] indices)
         {
             Contract.Requires<ArgumentNullException>(indices != null);
@@ -168,10 +172,9 @@ namespace LightClaw.Engine.Graphics
                 this.SetBuffer(data, target, ref newBuffer);
                 buffer = newBuffer; 
                 
-                VertexArrayObject vao = this.vertexArrayObject; // Destroy old VAO
+                VertexArrayObject vao = Interlocked.Exchange(ref this.vertexArrayObject, null); // Destroy old VAO
                 if (vao != null)
                 {
-                    this.vertexArrayObject = null;
                     vao.Dispose();
                 }
             }

@@ -154,7 +154,7 @@
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
+    <CodeContractsAnalysisWarningLevel>2</CodeContractsAnalysisWarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>

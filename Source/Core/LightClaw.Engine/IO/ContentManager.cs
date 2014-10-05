@@ -90,7 +90,7 @@ namespace LightClaw.Engine.IO
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public async Task<bool> ExistsAsync(ResourceString resourceString)
         {
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
+            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             {
                 return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).AnyAsync(b => b);
             }
@@ -108,7 +108,7 @@ namespace LightClaw.Engine.IO
         {
             Logger.Debug(rs => "Obtaining stream around '{0}'.".FormatWith(rs), resourceString);
 
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, new AsyncLock()).LockAsync())
+            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.StreamObtaining, this.StreamObtained, resourceString, resourceString))
             {
                 try
@@ -148,7 +148,7 @@ namespace LightClaw.Engine.IO
         {
             Logger.Debug((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
 
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, s => new AsyncLock()).LockAsync())
+            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
                 WeakReference<object> cachedAsset = null;
@@ -251,7 +251,11 @@ namespace LightClaw.Engine.IO
                     IDisposable disposableResolver = resolver as IDisposable;
                     if (disposableResolver != null)
                     {
-                        disposableResolver.Dispose();
+                        try
+                        {
+                            disposableResolver.Dispose();
+                        }
+                        catch (ObjectDisposedException) { }
                     }
                 }
 
@@ -261,7 +265,11 @@ namespace LightClaw.Engine.IO
                     IDisposable disposableReader = reader as IDisposable;
                     if (disposableReader != null)
                     {
-                        disposableReader.Dispose();
+                        try
+                        {
+                            disposableReader.Dispose();
+                        }
+                        catch (ObjectDisposedException) { }
                     }
                 }
 
@@ -285,7 +293,6 @@ namespace LightClaw.Engine.IO
                 ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
                 if (attr != null && (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
                 {
-                    Logger.Debug(t => "{0} of type '{1}' obtained.".FormatWith(typeof(IContentReader).Name, t.FullName), attr.ContentReaderType);
                     this.readers.Add(reader);
                 }
             }
@@ -310,7 +317,7 @@ namespace LightClaw.Engine.IO
         public static T CreateInstanceOrDefault<T>()
         {
             object instance;
-            return TryCreateInstance(typeof(T), out instance) ? (T)instance : default(T);
+            return (TryCreateInstance(typeof(T), out instance) && instance != null) ? (T)instance : default(T);
         }
 
         /// <summary>
@@ -320,6 +327,8 @@ namespace LightClaw.Engine.IO
         /// <returns>The created instance or <c>null</c> if instance-creation failed.</returns>
         public static object CreateInstanceOrDefault(Type t)
         {
+            Contract.Requires<ArgumentNullException>(t != null);
+
             object instance;
             return TryCreateInstance(t, out instance) ? instance : null;
         }
@@ -432,7 +441,7 @@ namespace LightClaw.Engine.IO
             /// <summary>
             /// Checks whether the <see cref="ResourceKey"/> equals the specified <see cref="ResourceKey"/>.
             /// </summary>
-            /// <param name="obj">The <see cref="ResourceKey"/> to test.</param>
+            /// <param name="other">The <see cref="ResourceKey"/> to test.</param>
             /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
             public bool Equals(ResourceKey other)
             {

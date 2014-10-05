@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using log4net;
 
 namespace LightClaw.Engine.IO
 {
+#if DESKTOP
     /// <summary>
     /// Represents a <see cref="IContentResolver"/> resolving assets from the file system / disk.
     /// </summary>
@@ -90,4 +92,5 @@ namespace LightClaw.Engine.IO
             Contract.Invariant(this.RootPath != null);
         }
     }
+#endif
 }

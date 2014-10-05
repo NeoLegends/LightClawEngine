@@ -50,6 +50,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
+                this.Initialize();
                 return base.Name;
             }
             set
@@ -124,6 +125,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
+        [CLSCompliant(false)]
         public void Set(uint value1)
         {
             this.Initialize();
@@ -148,6 +150,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
+        [CLSCompliant(false)]
         public void Set(uint value1, uint value2)
         {
             this.Initialize();
@@ -172,6 +175,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
+        [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3)
         {
             this.Initialize();
@@ -196,6 +200,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
+        [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3, uint value4)
         {
             this.Initialize();

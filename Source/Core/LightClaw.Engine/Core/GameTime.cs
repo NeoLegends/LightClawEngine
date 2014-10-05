@@ -95,6 +95,22 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Adds the specified time that <paramref name="elapsedSinceLastUpdate"/> to the <see cref="GameTime"/>.
+        /// </summary>
+        /// <param name="gameTime">The <see cref="GameTime"/> to add to.</param>
+        /// <param name="elapsedSinceLastUpdate">The time that elapsed since the last update call.</param>
+        /// <returns>A newly created game time with the new values.</returns>
+        public static GameTime operator +(GameTime gameTime, double elapsedSinceLastUpdate)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(elapsedSinceLastUpdate >= 0.0);
+
+            return new GameTime(
+                elapsedSinceLastUpdate,
+                gameTime.TotalGameTime + elapsedSinceLastUpdate
+            );
+        }
+
+        /// <summary>
         /// Checks whether two <see cref="GameTime"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>

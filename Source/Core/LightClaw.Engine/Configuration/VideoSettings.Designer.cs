@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
 namespace LightClaw.Engine.Configuration {
     
     
@@ -38,7 +39,9 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1280")]
-        public uint Width {
+        [CLSCompliant(false)]
+        public uint Width
+        {
             get {
                 return ((uint)(this["Width"]));
             }
@@ -50,6 +53,7 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("720")]
+        [CLSCompliant(false)]
         public uint Height {
             get {
                 return ((uint)(this["Height"]));
@@ -86,6 +90,7 @@ namespace LightClaw.Engine.Configuration {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        [CLSCompliant(false)]
         public uint FPSLimit {
             get {
                 return ((uint)(this["FPSLimit"]));

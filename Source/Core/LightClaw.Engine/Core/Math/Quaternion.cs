@@ -1338,6 +1338,7 @@ namespace LightClaw.Engine.Core
         /// <returns>
         /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
+        [CLSCompliant(false)]
         public bool Equals(ref Quaternion other)
         {
             return MathF.AlmostEquals(other.X, X) && MathF.AlmostEquals(other.Y, Y) && MathF.AlmostEquals(other.Z, Z) && MathF.AlmostEquals(other.W, W);

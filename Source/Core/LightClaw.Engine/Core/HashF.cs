@@ -101,14 +101,7 @@ namespace LightClaw.Engine.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T item)
         {
-            try
-            {
-                return (item != null) ? item.GetHashCode() : 0;
-            }
-            catch 
-            {
-                return 0;
-            }
+            return (item != null) ? item.GetHashCode() : 0;
         }
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The <see cref="ResourceString"/> as <see cref="String"/>.</returns>
         public override string ToString()
         {
-            return this.Path;
+            return this.Path ?? "Invalid Path";
         }
         
         /// <summary>

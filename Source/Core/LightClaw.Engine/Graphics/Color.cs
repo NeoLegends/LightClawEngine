@@ -1181,6 +1181,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="color">A packed integer containing all four color components in BGRA order.</param>
         /// <returns>A color.</returns>
+        [CLSCompliant(false)]
         public static Color FromBgra(uint color)
         {
             return FromBgra(unchecked((int)color));
@@ -1201,6 +1202,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="color">A packed integer containing all four color components in ABGR order.</param>
         /// <returns>A color.</returns>
+        [CLSCompliant(false)]
         public static Color FromAbgr(uint color)
         {
             return FromAbgr(unchecked((int)color));

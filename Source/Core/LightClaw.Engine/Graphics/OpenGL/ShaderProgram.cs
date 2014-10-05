@@ -70,23 +70,23 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Backing field.
         /// </summary>
-        private ImmutableArray<Uniform> _Uniforms;
+        private ImmutableDictionary<string, Uniform> _Uniforms;
 
         /// <summary>
         /// The <see cref="Uniform"/>s of the <see cref="ShaderProgram"/>.
         /// </summary>
-        public ImmutableArray<Uniform> Uniforms
+        public ImmutableDictionary<string, Uniform> Uniforms
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableArray<Uniform>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
 
                 return _Uniforms;
             }
             set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(uniform => uniform != null));
+                Contract.Requires<ArgumentException>(value.All(kvp => kvp.Value != null));
 
                 this.SetProperty(ref _Uniforms, value);
             }
@@ -154,7 +154,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                             int uniformCount = 0;
                             GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
-                            this.Uniforms = Enumerable.Range(0, uniformCount).Select(uniformIndex => new Uniform(this, uniformIndex)).ToImmutableArray();
+                            this.Uniforms = Enumerable.Range(0, uniformCount)
+                                                      .Select(uniformIndex => new Uniform(this, uniformIndex))
+                                                      .ToImmutableDictionary(uniform => uniform.Name);
                         }
                         finally
                         {
@@ -204,7 +206,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Shaders != null);
-            Contract.Invariant(this._Uniforms != null);
+            Contract.Invariant(!this.IsInitialized || this._Uniforms != null);
         }
     }
 }
