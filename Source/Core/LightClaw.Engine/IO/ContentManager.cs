@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
@@ -91,13 +92,15 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the process.</param>
         /// <param name="resourceString">The resource string to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
-        public async Task<bool> ExistsAsync(ResourceString resourceString)
+        public async Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             {
-                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString)).AnyAsync(b => b);
+                return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString, token)).AnyAsync(b => b);
             }
         }
 
@@ -107,10 +110,12 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the stream obtaining process.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
-        /// <seealso cref="Stream"></seealso>
-        public async Task<Stream> GetStreamAsync(ResourceString resourceString)
+        /// <seealso cref="Stream"/>
+        public async Task<Stream> GetStreamAsync(ResourceString resourceString, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             Logger.Debug(rs => "Obtaining stream around '{0}'.".FormatWith(rs), resourceString);
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
@@ -118,7 +123,7 @@ namespace LightClaw.Engine.IO
             {
                 try
                 {
-                    return await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, true))
+                    return await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, true, token))
                                                .FirstAsync(s => s != null);
                 }
                 catch (InvalidOperationException ex)
@@ -149,8 +154,9 @@ namespace LightClaw.Engine.IO
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
-        public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false)
+        public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter, CancellationToken token, bool forceReload)
         {
+            token.ThrowIfCancellationRequested();
             Logger.Debug((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
 
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
@@ -167,7 +173,8 @@ namespace LightClaw.Engine.IO
                         (fr, rs) => ((fr ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(rs),
                         forceReload, resourceString
                     );
-                    using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false))
+                    token.ThrowIfCancellationRequested();
+                    using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false, token))
                                                                     .FirstFinishedOrDefaultAsync(s => s != null))
                     {
                         // If the stream could not be found, throw exception
@@ -184,7 +191,8 @@ namespace LightClaw.Engine.IO
                         if (reader != null)
                         {
                             Logger.Debug((rs, at) => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(rs, at.FullName), resourceString, assetType);
-                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, parameter));
+                            token.ThrowIfCancellationRequested();
+                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter));
                         }
                         else
                         {
@@ -206,6 +214,7 @@ namespace LightClaw.Engine.IO
                 else
                 {
                     Logger.Debug(rs => "Cached version of '{0}' available, returning that instead.".FormatWith(rs), resourceString);
+                    // Remark for the future: No need to use cachedAsset.TryGetTarget, we've already called it inside the if.
                 }
 
                 Logger.Debug(rs => "Asset '{0}' loaded successfully.".FormatWith(rs), resourceString);

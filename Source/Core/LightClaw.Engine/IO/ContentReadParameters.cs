@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
@@ -15,14 +16,9 @@ namespace LightClaw.Engine.IO
     public sealed class ContentReadParameters : ICloneable, IEquatable<ContentReadParameters>
     {
         /// <summary>
-        /// The <see cref="IContentManager"/> that triggered the loading process.
+        /// The <see cref="Type"/> of asset to read.
         /// </summary>
-        public IContentManager ContentManager { get; private set; }
-
-        /// <summary>
-        /// The resource string of the asset to be loaded.
-        /// </summary>
-        public ResourceString ResourceString { get; private set; }
+        public Stream AssetStream { get; private set; }
 
         /// <summary>
         /// A <see cref="Stream"/> of the asset's data.
@@ -30,14 +26,24 @@ namespace LightClaw.Engine.IO
         public Type AssetType { get; private set; }
 
         /// <summary>
-        /// The <see cref="Type"/> of asset to read.
+        /// A <see cref="CancellationToken"/> used to signal the cancellation of the content reading process.
         /// </summary>
-        public Stream AssetStream { get; private set; }
+        public CancellationToken CancellationToken { get; private set; }
+
+        /// <summary>
+        /// The <see cref="IContentManager"/> that triggered the loading process.
+        /// </summary>
+        public IContentManager ContentManager { get; private set; }
 
         /// <summary>
         /// A parameter the client specifies when requesting an asset. This may be null.
         /// </summary>
         public object Parameter { get; private set; }
+
+        /// <summary>
+        /// The resource string of the asset to be loaded.
+        /// </summary>
+        public ResourceString ResourceString { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="ContentReadParameters"/>-instance.
@@ -47,17 +53,25 @@ namespace LightClaw.Engine.IO
         /// <param name="assetType">A <see cref="Stream"/> of the asset's data.</param>
         /// <param name="assetStream">The <see cref="Type"/> of asset to read.</param>
         /// <param name="parameter">A parameter the client specifies when requesting an asset. This may be null.</param>
-        public ContentReadParameters(IContentManager contentManager, ResourceString resourceString, Type assetType, Stream assetStream, object parameter)
+        public ContentReadParameters(
+                IContentManager contentManager, 
+                ResourceString resourceString, 
+                Type assetType, 
+                Stream assetStream, 
+                CancellationToken token,
+                object parameter
+            )
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
             Contract.Requires<ArgumentNullException>(assetType != null);
             Contract.Requires<ArgumentNullException>(assetStream != null);
 
-            this.ContentManager = contentManager;
-            this.ResourceString = resourceString;
-            this.AssetType = assetType;
             this.AssetStream = assetStream;
+            this.AssetType = assetType;
+            this.CancellationToken = CancellationToken;
+            this.ContentManager = contentManager;
             this.Parameter = parameter;
+            this.ResourceString = resourceString;
         }
 
         /// <summary>
@@ -66,7 +80,14 @@ namespace LightClaw.Engine.IO
         /// <returns>The cloning result.</returns>
         public object Clone()
         {
-            return new ContentReadParameters(this.ContentManager, this.ResourceString, this.AssetType, this.AssetStream, this.Parameter);
+            return new ContentReadParameters(
+                this.ContentManager, 
+                this.ResourceString, 
+                this.AssetType, 
+                this.AssetStream, 
+                this.CancellationToken,
+                this.Parameter
+            );
         }
 
         /// <summary>
@@ -100,7 +121,7 @@ namespace LightClaw.Engine.IO
 
             return (this.ContentManager == other.ContentManager) && (this.ResourceString == other.ResourceString) &&
                    (this.AssetType == other.AssetType) && (this.AssetStream == other.AssetStream) &&
-                   (this.Parameter == other.Parameter);
+                   (this.CancellationToken == other.CancellationToken) && (this.Parameter == other.Parameter);
         }
 
         /// <summary>
@@ -109,7 +130,14 @@ namespace LightClaw.Engine.IO
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
-            return HashF.GetHashCode(this.ContentManager, this.ResourceString, this.AssetType, this.AssetStream, this.Parameter);
+            return HashF.GetHashCode(
+                this.AssetStream, 
+                this.AssetType, 
+                this.CancellationToken, 
+                this.ContentManager,
+                this.ResourceString, 
+                this.Parameter
+            );
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
@@ -47,10 +48,11 @@ namespace LightClaw.Engine.IO
         /// Checks whether the asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the process.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
-        public Task<bool> ExistsAsync(ResourceString resourceString)
+        public Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
-            return Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString)));
+            return !token.IsCancellationRequested ? Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString))) : Task.FromResult(false);
         }
 
         /// <summary>
@@ -58,12 +60,14 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to obtain a <see cref="Stream"/> around.</param>
         /// <param name="writable">Indicates whether the <see cref="Stream"/> needs to be writable.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the content resolving process.</param>
         /// <returns>The <see cref="Stream"/> around the asset or <c>null</c> if the asset could not be found.</returns>
-        public Task<Stream> GetStreamAsync(ResourceString resourceString, bool writable)
+        public Task<Stream> GetStreamAsync(ResourceString resourceString, bool writable, CancellationToken token)
         {
             Stream result = null;
             try
             {
+                token.ThrowIfCancellationRequested();
                 result = new FileStream(
                     Path.GetFullPath(Path.Combine(this.RootPath, resourceString)),
                     writable ? FileMode.OpenOrCreate : FileMode.Open,

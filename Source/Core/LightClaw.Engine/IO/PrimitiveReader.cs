@@ -50,6 +50,7 @@ namespace LightClaw.Engine.IO
             {
                 using (BinaryReader br = new BinaryReader(parameters.AssetStream, encoding ?? Encoding.UTF8, true))
                 {
+                    parameters.CancellationToken.ThrowIfCancellationRequested();
                     // Integers
                     if (assetType == typeof(byte))
                     {
@@ -125,6 +126,7 @@ namespace LightClaw.Engine.IO
             {
                 using (StreamReader sr = new StreamReader(parameters.AssetStream, encoding ?? Encoding.UTF8))
                 {
+                    parameters.CancellationToken.ThrowIfCancellationRequested();
                     return sr.ReadToEndAsync().Upcast<string, object>();
                 }
             }

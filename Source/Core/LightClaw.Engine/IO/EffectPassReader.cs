@@ -31,22 +31,22 @@ namespace LightClaw.Engine.IO
                 data = await Task.Run(() => serializer.Deserialize<EffectData>(jtr));
             }
 
-            string vertexShaderSource = await contentManager.LoadAsync<string>(data.Sources.Vertex.Source);
-            string fragmentSource = await contentManager.LoadAsync<string>(data.Sources.Fragment.Source);
+            string vertexShaderSource = await contentManager.LoadAsync<string>(data.Sources.Vertex.Source, parameters.CancellationToken);
+            string fragmentSource = await contentManager.LoadAsync<string>(data.Sources.Fragment.Source, parameters.CancellationToken);
             string tessControlSource = null;
             if (data.Sources.TessControl != null)
             {
-                tessControlSource = await contentManager.LoadAsync<string>(data.Sources.TessControl.Source);
+                tessControlSource = await contentManager.LoadAsync<string>(data.Sources.TessControl.Source, parameters.CancellationToken);
             }
             string tessEvalSource = null;
             if (data.Sources.TessControl != null)
             {
-                tessEvalSource = await contentManager.LoadAsync<string>(data.Sources.TessEval.Source);
+                tessEvalSource = await contentManager.LoadAsync<string>(data.Sources.TessEval.Source, parameters.CancellationToken);
             }
             string geometrySource = null;
             if (data.Sources.Geometry != null)
             {
-                geometrySource = await contentManager.LoadAsync<string>(data.Sources.Geometry.Source);
+                geometrySource = await contentManager.LoadAsync<string>(data.Sources.Geometry.Source, parameters.CancellationToken);
             }
 
             List<VertexAttributeDescription> descriptions = new List<VertexAttributeDescription>(8);

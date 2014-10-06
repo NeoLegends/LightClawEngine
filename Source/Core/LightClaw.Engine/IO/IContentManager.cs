@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
@@ -42,8 +43,9 @@ namespace LightClaw.Engine.IO
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of process.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
-        Task<bool> ExistsAsync(ResourceString resourceString);
+        Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token);
 
         /// <summary>
         /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no asset with the
@@ -51,9 +53,10 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the stream obtaining process.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
         /// <seealso cref="Stream"></seealso>
-        Task<Stream> GetStreamAsync(ResourceString resourceString);
+        Task<Stream> GetStreamAsync(ResourceString resourceString, CancellationToken token);
 
         /// <summary>
         /// Asynchronously loads the asset with the specified resource string.
@@ -66,14 +69,16 @@ namespace LightClaw.Engine.IO
         /// generic texture class. It needs information about the file type of the image to load to be able to properly
         /// load it. </example>
         /// </param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the content loading process.</param>
         /// <param name="forceReload">
         /// Indicates whether to force-load the asset from the disk and bypass any caching structures.
         /// </param>
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
-        Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter = null, bool forceReload = false);
-
+        /// <exception cref="OperationCanceledException">The content loading operation was canceled.</exception>
+        Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter, CancellationToken token, bool forceReload);
+        
         /// <summary>
         /// Registers a new <see cref="IContentReader"/>.
         /// </summary>
@@ -108,7 +113,7 @@ namespace LightClaw.Engine.IO
 
         event EventHandler<ParameterEventArgs> IContentManager.StreamObtained { add { } remove { } }
 
-        Task<bool> IContentManager.ExistsAsync(ResourceString resourceString)
+        Task<bool> IContentManager.ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
@@ -116,7 +121,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<Stream> IContentManager.GetStreamAsync(ResourceString resourceString)
+        Task<Stream> IContentManager.GetStreamAsync(ResourceString resourceString, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Ensures(Contract.Result<Task<Stream>>() != null);
@@ -126,7 +131,7 @@ namespace LightClaw.Engine.IO
             return null;
         }
 
-        Task<object> IContentManager.LoadAsync(ResourceString resourceString, Type assetType, object parameter, bool forceReload)
+        Task<object> IContentManager.LoadAsync(ResourceString resourceString, Type assetType, object parameter, CancellationToken token, bool forceReload)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);
