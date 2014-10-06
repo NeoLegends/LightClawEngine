@@ -9,8 +9,6 @@ using DryIoc;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using log4net;
-using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -68,11 +66,13 @@ namespace LightClaw.Engine.Graphics
                 this.SetProperty(ref _ResourceString, value);
             }
         }
-    
+
         /// <summary>
         /// Initializes a new <see cref="Mesh"/>. Constructor required for serialization.
         /// </summary>
-        private Mesh() { }
+        private Mesh()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="Mesh"/> and sets the resource string of the model to load.
@@ -105,9 +105,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Asynchronously loads the <see cref="Model"/> into the <see cref="Mesh"/>.
         /// </summary>
-        /// <remarks>
-        /// Drawing and updating will be performed when the mesh is loaded successfully.
-        /// </remarks>
+        /// <remarks>Drawing and updating will be performed when the mesh is loaded successfully.</remarks>
         protected override void OnLoad()
         {
             Logger.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));

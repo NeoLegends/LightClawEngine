@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
@@ -8,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
-using log4net;
 
 namespace LightClaw.Engine.IO
 {
 #if DESKTOP
+
     /// <summary>
     /// Represents a <see cref="IContentResolver"/> resolving assets from the file system / disk.
     /// </summary>
@@ -26,8 +25,11 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Initializes a new <see cref="FileSystemContentResolver"/> using the application's base directory as root path.
         /// </summary>
-        /// <seealso cref="AppDomain.BaseDirectory"/>
-        public FileSystemContentResolver() : this(AppDomain.CurrentDomain.BaseDirectory) { }
+        /// <seealso cref="AppDomain.BaseDirectory"></seealso>
+        public FileSystemContentResolver()
+            : this(AppDomain.CurrentDomain.BaseDirectory)
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="FileSystemContentResolver"/> from the specified root path.
@@ -45,7 +47,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether the asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
         public Task<bool> ExistsAsync(ResourceString resourceString)
         {
             return Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString)));
@@ -63,8 +65,8 @@ namespace LightClaw.Engine.IO
             try
             {
                 result = new FileStream(
-                    Path.GetFullPath(Path.Combine(this.RootPath, resourceString)), 
-                    writable ? FileMode.OpenOrCreate : FileMode.Open, 
+                    Path.GetFullPath(Path.Combine(this.RootPath, resourceString)),
+                    writable ? FileMode.OpenOrCreate : FileMode.Open,
                     writable ? FileAccess.ReadWrite : FileAccess.Read
                 );
             }
@@ -92,5 +94,6 @@ namespace LightClaw.Engine.IO
             Contract.Invariant(this.RootPath != null);
         }
     }
+
 #endif
 }

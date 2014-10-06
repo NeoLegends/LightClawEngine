@@ -5,8 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -20,7 +18,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// at least a vertex and a fragment shader need to be linked to a <see cref="ShaderProgram"/> that can be bound to
     /// the graphics pipeline to draw.
     /// </remarks>
-    /// <seealso href="http://www.opengl.org/wiki/Shader"/>
+    /// <seealso href="http://www.opengl.org/wiki/Shader"></seealso>
     public class Shader : GLObject, IInitializable
     {
         /// <summary>
@@ -98,7 +96,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ImmutableArray<VertexAttributeDescription> _VertexAttributeDescriptions;
 
         /// <summary>
-        /// The vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the shader source.
+        /// The vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
+        /// shader source.
         /// </summary>
         public ImmutableArray<VertexAttributeDescription> VertexAttributeDescriptions
         {
@@ -134,9 +133,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
         /// <param name="vad">
-        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the shader source.
+        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
+        /// shader source.
         /// </param>
-        public Shader(string source, ShaderType type, IEnumerable<VertexAttributeDescription> vad)
+        public Shader(string source, ShaderType type, params VertexAttributeDescription[] vad)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
@@ -150,20 +150,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Attaches the <see cref="Shader"/> to the specified <see cref="ShaderProgram"/>.
         /// </summary>
-        /// <remarks>
-        /// <list type="bullet">
-        ///     <item>
-        ///         <description>
-        ///             Expects the <paramref name="program"/> to have a name already.
-        ///         </description>
-        ///     </item>
-        ///     <item>
-        ///         <description>
-        ///             Triggers initialization.
-        ///         </description>
-        ///     </item>
-        /// </list>
-        /// </remarks>
+        /// <remarks>Triggers initialization.</remarks>
         /// <param name="program">The <see cref="ShaderProgram"/> to attach the shader to.</param>
         public void AttachTo(ShaderProgram program)
         {
@@ -176,20 +163,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Detaches the <see cref="Shader"/> from the specified <see cref="ShaderProgram"/>.
         /// </summary>
-        /// <remarks>
-        /// <list type="bullet">
-        ///     <item>
-        ///         <description>
-        ///             Expects the <paramref name="program"/> to have a name already.
-        ///         </description>
-        ///     </item>
-        ///     <item>
-        ///         <description>
-        ///             Triggers initialization.
-        ///         </description>
-        ///     </item>
-        /// </list>
-        /// </remarks>
+        /// <remarks>Triggers initialization.</remarks>
         /// <param name="program">The <see cref="ShaderProgram"/> to detach from.</param>
         public void DetachFrom(ShaderProgram program)
         {

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
-using LightClaw.Extensions;
-using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -73,7 +69,7 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(program != null);
         }
 
-        public EffectPass(ShaderProgram program, bool ownsProgram) 
+        public EffectPass(ShaderProgram program, bool ownsProgram)
         {
             Contract.Requires<ArgumentNullException>(program != null);
 
@@ -111,7 +107,7 @@ namespace LightClaw.Engine.Graphics
                                 throw new NotImplementedException();
                             }
                         }));
-                        
+
                         this.IsInitialized = true;
                     }
                 }

@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using LightClaw.Extensions;
-using log4net;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -139,10 +137,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public void DrawIndexed()
         {
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, this.IndexCount, this.IndexCount))
+            this.DrawIndexed(0);
+        }
+
+        public void DrawIndexed(int offset)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+
+            int drawCount = this.IndexCount - offset;
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, drawCount, drawCount))
             using (Binding vaoBinding = new Binding(this))
             {
-                GL.DrawElements(this.DrawMode, this.IndexCount, this.IndexBufferType, 0);
+                GL.DrawElements(this.DrawMode, this.IndexCount, this.IndexBufferType, offset);
             }
         }
 
@@ -162,22 +168,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
                         this.Handle = GL.GenVertexArray();
                         using (Binding vaoBinding = new Binding(this))
                         {
-                            foreach (BufferDescription bufferConfig in this.VertexBuffers)
+                            foreach (BufferDescription desc in this.VertexBuffers)
                             {
-                                using (Binding vboBinding = new Binding(bufferConfig.Buffer))
+                                using (Binding vboBinding = new Binding(desc.Buffer))
                                 {
-                                    foreach (VertexAttributePointer vertexPointer in bufferConfig.VertexAttributePointers)
+                                    foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
                                     {
-                                        GL.EnableVertexAttribArray(vertexPointer.Index);
-                                        GL.VertexAttribPointer(
-                                            vertexPointer.Index,
-                                            vertexPointer.Size,
-                                            vertexPointer.Type,
-                                            vertexPointer.Normalize,
-                                            vertexPointer.Stride,
-                                            vertexPointer.Offset
-                                        );
-                                        GL.DisableVertexAttribArray(vertexPointer.Index);
+                                        vertexPointer.Apply();
                                     }
                                 }
                             }

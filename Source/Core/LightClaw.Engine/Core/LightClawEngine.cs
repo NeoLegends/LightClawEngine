@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
-using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using log4net;
@@ -66,7 +65,7 @@ namespace LightClaw.Engine.Core
         /// Main entry point.
         /// </summary>
         /// <param name="args">Command line arguments.</param>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             logger.Info("LightClaw starting up.");
 

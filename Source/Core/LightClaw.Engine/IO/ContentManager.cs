@@ -9,17 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
-using log4net;
 
 namespace LightClaw.Engine.IO
 {
     /// <summary>
     /// Represents a caching <see cref="IContentManager"/>.
     /// </summary>
+    /// <seealso cref="IContentManager"/>
     public class ContentManager : DisposableEntity, IContentManager
     {
         /// <summary>
-        /// Contains <see cref="AsyncLock"/>s used to lock access to a specific asset while it is being loaded.
+        /// Contains <see cref="AsyncLock"/> s used to lock access to a specific asset while it is being loaded.
         /// </summary>
         private readonly ConcurrentDictionary<ResourceString, AsyncLock> assetLocks = new ConcurrentDictionary<ResourceString, AsyncLock>();
 
@@ -51,28 +51,33 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Notifies about the start of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"/>
+        /// <seealso cref="GetStreamAsync"></seealso>
         public event EventHandler<ParameterEventArgs> StreamObtaining;
 
         /// <summary>
         /// Notifies about the end of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"/>
+        /// <seealso cref="GetStreamAsync"></seealso>
         public event EventHandler<ParameterEventArgs> StreamObtained;
 
         /// <summary>
-        /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/>s and <see cref="IContentResolver"/>s.
+        /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/> s and
+        /// <see cref="IContentResolver"/>s.
         /// </summary>
-        public ContentManager() : this(GetDefaultReaders(), GetDefaultResolvers()) { }
+        public ContentManager()
+            : this(GetDefaultReaders(), GetDefaultResolvers())
+        {
+        }
 
         /// <summary>
-        /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/>s and <see cref="IContentResolver"/>s.
+        /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/> s and
+        /// <see cref="IContentResolver"/>s.
         /// </summary>
-        /// <param name="readers">The <see cref="IContentReader"/>s to use.</param>
-        /// <param name="resolvers">The <see cref="IContentResolver"/>s to use.</param>
+        /// <param name="readers">The <see cref="IContentReader"/> s to use.</param>
+        /// <param name="resolvers">The <see cref="IContentResolver"/> s to use.</param>
         /// <remarks>
-        /// The <see cref="ContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/>s and
-        /// <see cref="IContentResolver"/>s (in case it implements IDisposable) on its disposal.
+        /// The <see cref="ContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> s and
+        /// <see cref="IContentResolver"/> s (in case it implements IDisposable) on its disposal.
         /// </remarks>
         public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {
@@ -87,7 +92,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
         public async Task<bool> ExistsAsync(ResourceString resourceString)
         {
             using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
@@ -97,13 +102,13 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no
-        /// asset with the specified resource string, it will be created.
+        /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no asset with the
+        /// specified resource string, it will be created.
         /// </summary>
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
-        /// <seealso cref="Stream"/>
+        /// <seealso cref="Stream"></seealso>
         public async Task<Stream> GetStreamAsync(ResourceString resourceString)
         {
             Logger.Debug(rs => "Obtaining stream around '{0}'.".FormatWith(rs), resourceString);
@@ -133,14 +138,14 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
-        /// information about the asset being read.
-        /// <example>
-        /// Imagine a content reader reading texture files to a generic texture class. It needs information about
-        /// the file type of the image to load to be able to properly load it.
-        /// </example>
+        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// information about the asset being read. <example> Imagine a content reader reading texture files to a
+        /// generic texture class. It needs information about the file type of the image to load to be able to properly
+        /// load it. </example>
         /// </param>
-        /// <param name="forceReload">Indicates whether to force-load the asset from the disk and bypass any caching structures.</param>
+        /// <param name="forceReload">
+        /// Indicates whether to force-load the asset from the disk and bypass any caching structures.
+        /// </param>
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
@@ -159,7 +164,7 @@ namespace LightClaw.Engine.IO
                     !cachedAsset.TryGetTarget(out asset)) // weak reference to cached asset collected.
                 {
                     Logger.Debug(
-                        (fr, rs) => ((fr ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(rs), 
+                        (fr, rs) => ((fr ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(rs),
                         forceReload, resourceString
                     );
                     using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false))
@@ -212,11 +217,11 @@ namespace LightClaw.Engine.IO
         /// Registers a new <see cref="IContentReader"/>.
         /// </summary>
         /// <remarks>
-        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case it implements IDisposable)
-        /// on its disposal.
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case
+        /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
-        /// <seealso cref="IContentReader"/>
+        /// <seealso cref="IContentReader"></seealso>
         public void Register(IContentReader reader)
         {
             this.readers.Add(reader);
@@ -226,19 +231,19 @@ namespace LightClaw.Engine.IO
         /// Registers a new <see cref="IContentResolver"/>.
         /// </summary>
         /// <remarks>
-        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case it implements IDisposable)
-        /// on its disposal.
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case
+        /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
-        /// <seealso cref="IContentResolver"/>
+        /// <seealso cref="IContentResolver"></seealso>
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
         }
 
         /// <summary>
-        /// Disposes the <see cref="IContentManager"/> disposing of all of the <see cref="IContentReader"/>s
-        /// and <see cref="IContentResolver"/>s.
+        /// Disposes the <see cref="IContentManager"/> disposing of all of the <see cref="IContentReader"/> s and
+        /// <see cref="IContentResolver"/>s.
         /// </summary>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected override void Dispose(bool disposing)
@@ -276,7 +281,7 @@ namespace LightClaw.Engine.IO
                 base.Dispose(disposing);
             }
         }
-        
+
         /// <summary>
         /// Gets the <see cref="IContentReader"/> for the specified <paramref name="assetType"/>.
         /// </summary>
@@ -366,7 +371,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="t">The <see cref="Type"/> of object to create an instance from.</param>
         /// <param name="instance">The newly created instance, if the method succeeds.</param>
-        /// <returns><c>true</c> if the instance could be created, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the instance could be created, otherwise <c>false</c> .</returns>
         private static bool TryCreateInstance(Type t, out object instance)
         {
             Contract.Requires<ArgumentNullException>(t != null);
@@ -376,7 +381,7 @@ namespace LightClaw.Engine.IO
                 instance = Activator.CreateInstance(t);
                 return true;
             }
-            catch 
+            catch
             {
                 instance = null;
                 return false;
@@ -387,8 +392,8 @@ namespace LightClaw.Engine.IO
         /// Represents a unique key of an asset including the path and its type.
         /// </summary>
         /// <remarks>
-        /// Because an asset can be loaded as different types (e.g. shader source as string or as shader) storing the <see cref="ResourceString"/>
-        /// as cache key is not enough.
+        /// Because an asset can be loaded as different types (e.g. shader source as string or as shader) storing the
+        /// <see cref="ResourceString"/> as cache key is not enough.
         /// </remarks>
         private struct ResourceKey : ICloneable, IEquatable<ResourceKey>
         {
@@ -429,7 +434,7 @@ namespace LightClaw.Engine.IO
             /// Checks whether the <see cref="ResourceKey"/> equals the specified object.
             /// </summary>
             /// <param name="obj">The object to test.</param>
-            /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+            /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(obj, null))
@@ -442,14 +447,14 @@ namespace LightClaw.Engine.IO
             /// Checks whether the <see cref="ResourceKey"/> equals the specified <see cref="ResourceKey"/>.
             /// </summary>
             /// <param name="other">The <see cref="ResourceKey"/> to test.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c> .</returns>
             public bool Equals(ResourceKey other)
             {
                 return (this.ResourceString == other.ResourceString) && (this.Type == other.Type);
             }
 
             /// <summary>
-            /// Gets the <see cref="ResourceKey"/>s hash code.
+            /// Gets the <see cref="ResourceKey"/> s hash code.
             /// </summary>
             /// <returns>The hash code.</returns>
             public override int GetHashCode()
@@ -462,7 +467,7 @@ namespace LightClaw.Engine.IO
             /// </summary>
             /// <param name="left">The first operand.</param>
             /// <param name="right">The second operand.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c> .</returns>
             public static bool operator ==(ResourceKey left, ResourceKey right)
             {
                 return left.Equals(right);
@@ -473,7 +478,7 @@ namespace LightClaw.Engine.IO
             /// </summary>
             /// <param name="left">The first operand.</param>
             /// <param name="right">The second operand.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are inequal, otherwise <c>false</c>.</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are inequal, otherwise <c>false</c> .</returns>
             public static bool operator !=(ResourceKey left, ResourceKey right)
             {
                 return !(left == right);

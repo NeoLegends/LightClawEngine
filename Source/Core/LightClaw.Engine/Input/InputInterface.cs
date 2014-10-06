@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using OpenTK.Input;
 
 namespace LightClaw.Engine.Input
 {

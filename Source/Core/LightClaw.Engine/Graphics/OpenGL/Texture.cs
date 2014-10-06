@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Configuration;
-using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
@@ -125,9 +124,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             staticLogger.Info(() => "Initializing OpenGL Texturing system. Enabling textures...");
 
             GL.Enable(EnableCap.Texture1D);
-            // Not sure whether bug still exists, but on http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states
-            // that ATI cards had problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card,
-            // I can't test that.
+            // Not sure whether bug still exists, but on
+            // http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states that ATI cards had
+            // problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card, I
+            // can't test that.
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.TextureCubeMap);
             GL.Enable(EnableCap.TextureCubeMapSeamless);
@@ -186,7 +186,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, anisoLevel);
                 GL.TexParameter(TextureTarget.Texture1DArray, anisoParameterName, anisoLevel);
-                
+
                 GL.TexParameter(TextureTarget.Texture2D, anisoParameterName, anisoLevel);
                 GL.TexParameter(TextureTarget.Texture2DArray, anisoParameterName, anisoLevel);
 

@@ -8,10 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
-using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
+using LCBuffer = LightClaw.Engine.Graphics.OpenGL.BufferObject;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -45,9 +44,9 @@ namespace LightClaw.Engine.Graphics
             this.VertexAttributePointers = vertexAttributePointers.ToImmutableArray();
         }
 
-        [CLSCompliant(false)] 
+        [CLSCompliant(false)]
         public VertexArrayObjectManager(
-                    IEnumerable<VertexAttributePointer> vertexAttributePointers, 
+                    IEnumerable<VertexAttributePointer> vertexAttributePointers,
                     IEnumerable<TVertex> vertices,
                     IEnumerable<ushort> indices
                 )
@@ -93,7 +92,10 @@ namespace LightClaw.Engine.Graphics
                     throw new InvalidOperationException("The vertex buffer was null. Set it before drawing.");
                 }
 
-                this.vertexArrayObject = vao = new VertexArrayObject(indexBuffer, new BufferDescription(vertexBuffer, this.VertexAttributePointers));
+                this.vertexArrayObject = vao = new VertexArrayObject(
+                    indexBuffer,
+                    new BufferDescription(vertexBuffer, this.VertexAttributePointers.ToArray())
+                );
             }
 
             vao.DrawIndexed();
@@ -170,8 +172,8 @@ namespace LightClaw.Engine.Graphics
             {
                 IBuffer newBuffer = new LCBuffer(target, BufferUsageHint.StaticDraw);
                 this.SetBuffer(data, target, ref newBuffer);
-                buffer = newBuffer; 
-                
+                buffer = newBuffer;
+
                 VertexArrayObject vao = Interlocked.Exchange(ref this.vertexArrayObject, null); // Destroy old VAO
                 if (vao != null)
                 {

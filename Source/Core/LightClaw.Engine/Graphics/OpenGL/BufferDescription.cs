@@ -10,7 +10,7 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
-    /// Represents a <see cref="Buffer"/>-<see cref="VertexAttributePointer"/>-association.
+    /// Represents a <see cref="Buffer"/>- <see cref="VertexAttributePointer"/>-association.
     /// </summary>
     public struct BufferDescription
     {
@@ -20,7 +20,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public IBuffer Buffer { get; private set; }
 
         /// <summary>
-        /// The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.
+        /// The <see cref="VertexAttributePointer"/> s describing the layout of the data in memory.
         /// </summary>
         public ImmutableArray<VertexAttributePointer> VertexAttributePointers { get; private set; }
 
@@ -28,8 +28,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Initializes a new <see cref="BufferDescription"/> setting the buffer and the attribute pointers.
         /// </summary>
         /// <param name="vertexBuffer">The data buffer.</param>
-        /// <param name="vertexAttributePointers">The <see cref="VertexAttributePointer"/>s describing the layout of the data in memory.</param>
-        public BufferDescription(IBuffer vertexBuffer, IEnumerable<VertexAttributePointer> vertexAttributePointers)
+        /// <param name="vertexAttributePointers">
+        /// The <see cref="VertexAttributePointer"/> s describing the layout of the data in memory.
+        /// </param>
+        public BufferDescription(IBuffer vertexBuffer, params VertexAttributePointer[] vertexAttributePointers)
             : this()
         {
             Contract.Requires<ArgumentNullException>(vertexBuffer != null);

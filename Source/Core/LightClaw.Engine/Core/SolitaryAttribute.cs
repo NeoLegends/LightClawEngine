@@ -38,12 +38,15 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Validates attachment of the <see cref="Component"/> to the specified <see cref="GameObject"/>.
         /// </summary>
-        /// <param name="gameObjectToAttachTo">The <see cref="GameObject"/> the <see cref="Component"/> is about to be attached to.</param>
-        /// <param name="componentsToAttach">
-        /// Other <see cref="Component"/>s (except the current one being attached!) that are supposed to be attached in the same transaction 
-        /// as the current object. Used to provide support for attaching multiple interdependent <see cref="Component"/>s.
+        /// <param name="gameObjectToAttachTo">
+        /// The <see cref="GameObject"/> the <see cref="Component"/> is about to be attached to.
         /// </param>
-        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c>.</returns>
+        /// <param name="componentsToAttach">
+        /// Other <see cref="Component"/>s (except the current one being attached!) that are supposed to be attached in
+        /// the same transaction as the current object. Used to provide support for attaching multiple interdependent
+        /// <see cref="Component"/>s.
+        /// </param>
+        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c> .</returns>
         public override bool Validate(GameObject gameObjectToAttachTo, IEnumerable<Component> componentsToAttach)
         {
             return !gameObjectToAttachTo.Concat(componentsToAttach)

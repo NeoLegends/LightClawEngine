@@ -42,13 +42,18 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="DisposableEntity"/>.
         /// </summary>
-        public DisposableEntity() { }
+        public DisposableEntity()
+        {
+        }
 
         /// <summary>
         /// Initializing a new <see cref="DisposableEntity"/> setting the <paramref name="name"/>.
         /// </summary>
-        /// <param name="name">The <see cref="Entity"/>'s name.</param>
-        public DisposableEntity(string name) : base(name) { }
+        /// <param name="name">The <see cref="Entity"/>s name.</param>
+        public DisposableEntity(string name)
+            : base(name)
+        {
+        }
 
         /// <summary>
         /// Finalizes the <see cref="DisposableEntity"/> releasing all allocated resources.

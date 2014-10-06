@@ -4,16 +4,14 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     public class Texture2DArray : Texture3DBase
     {
-        public Texture2DArray(TextureDescription description) 
-            : base(description) 
+        public Texture2DArray(TextureDescription description)
+            : base(description)
         {
             Contract.Requires<ArgumentException>(IsTexture2DArrayTarget(description.Target));
         }

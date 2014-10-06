@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Determines whether the coroutine can be executed again.
         /// </summary>
-        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c> .</returns>
         bool CanExecute();
     }
 }

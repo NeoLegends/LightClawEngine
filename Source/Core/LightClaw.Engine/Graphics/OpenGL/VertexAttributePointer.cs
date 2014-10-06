@@ -10,7 +10,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    [DataContract]
+    [Serializable, DataContract]
     public struct VertexAttributePointer : ICloneable, IEquatable<VertexAttributePointer>
     {
         [DataMember]
@@ -54,6 +54,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Size = size;
             this.Stride = stride;
             this.Type = type;
+        }
+
+        public void Apply()
+        {
+            GL.EnableVertexAttribArray(this.Index);
+            GL.VertexAttribPointer(
+                this.Index,
+                this.Size,
+                this.Type,
+                this.Normalize,
+                this.Stride,
+                this.Offset
+            );
+            GL.DisableVertexAttribArray(this.Index);
         }
 
         public object Clone()

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -89,7 +88,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Indicates whether the <see cref="RangedBuffer"/> is already initialized.
         /// </summary>
-        /// <value>As the <see cref="RangedBuffer"/> does not need to be initialized, it always returns <c>true</c>.</value>
+        /// <value>
+        /// As the <see cref="RangedBuffer"/> does not need to be initialized, it always returns <c>true</c> .
+        /// </value>
         public bool IsInitialized
         {
             get
@@ -104,8 +105,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private bool _OwnsBaseBuffer;
 
         /// <summary>
-        /// Indicates whether the <see cref="RangedBuffer"/> owns the underlying <see cref="IBuffer"/> and can dispose of it
-        /// when it is disposed itself.
+        /// Indicates whether the <see cref="RangedBuffer"/> owns the underlying <see cref="IBuffer"/> and can dispose
+        /// of it when it is disposed itself.
         /// </summary>
         public bool OwnsBaseBuffer
         {
@@ -192,8 +193,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="index">The buffer binding index the <see cref="RangedBuffer"/> will be bound to.</param>
         /// <param name="rangeTarget">The <see cref="BufferRangeTarget"/> the buffer range will be bound to.</param>
         /// <param name="ownsBaseBuffer">
-        /// Indicates whether the <see cref="RangedBuffer"/> owns the underlying <see cref="IBuffer"/> and can dispose of it
-        /// when it is disposed itself.
+        /// Indicates whether the <see cref="RangedBuffer"/> owns the underlying <see cref="IBuffer"/> and can dispose
+        /// of it when it is disposed itself.
         /// </param>
         public RangedBuffer(IBuffer baseBuffer, BufferRange range, int index, BufferRangeTarget rangeTarget, bool ownsBaseBuffer)
             : base(baseBuffer.Handle)
@@ -258,7 +259,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Does nothing, <see cref="RangedBuffer"/> does not need to be initialized.
         /// </summary>
-        public void Initialize() { }
+        public void Initialize()
+        {
+        }
 
         /// <summary>
         /// Maps the buffer with read-write access.
@@ -267,7 +270,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Mapping the buffer means obtaining a pointer that points directly to the buffer memory, without any copy in-between.
         /// This is useful in situations where it's beneficial to directly write the data into the buffer instead of loading it
         /// into managed memory first and then transferring it to video memory.
-        /// 
+        ///
         /// This operation will bind the buffer and overwrite any previous bindings.
         /// </remarks>
         /// <returns>A pointer to the buffer's memory.</returns>
@@ -284,7 +287,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Mapping the buffer means obtaining a pointer that points directly to the buffer memory, without any copy in-between.
         /// This is useful in situations where it's beneficial to directly write the data into the buffer instead of loading it
         /// into managed memory first and then transferring it to video memory.
-        /// 
+        ///
         /// This operation will bind the buffer and overwrite any previous bindings.
         /// </remarks>
         /// <param name="access">An access mask used to indicate what one's intention with the data pointer is.</param>
@@ -299,9 +302,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Unmaps the buffer.
         /// </summary>
-        /// <remarks>
-        /// This method expects the current <see cref="IBuffer"/> to be bound.
-        /// </remarks>
+        /// <remarks>This method expects the current <see cref="IBuffer"/> to be bound.</remarks>
         public void Unmap()
         {
             GL.UnmapBuffer(this.Target);
@@ -462,7 +463,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     this.BaseBuffer.Dispose();
                 }
-                
+
                 base.Dispose(disposing);
             }
         }

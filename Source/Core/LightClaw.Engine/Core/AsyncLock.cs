@@ -12,8 +12,8 @@ namespace LightClaw.Engine.Core
     /// Represents an asynchronous lock built around a <see cref="SemaphoreSlim"/> for use with the 'using'-dispose-pattern.
     /// </summary>
     /// <remarks>
-    /// Always make sure to release lock via <see cref="M:AsyncLockReleaser.Release"/> or <see cref="M:AsyncLockReleaser.Dispose"/>, otherwise
-    /// the lock will not be released and deadlocks will occur.
+    /// Always make sure to release lock via <see cref="M:AsyncLockReleaser.Release"/> or
+    /// <see cref="M:AsyncLockReleaser.Dispose"/> , otherwise the lock will not be released and deadlocks will occur.
     /// </remarks>
     /// <example>
     /// <code>
@@ -21,9 +21,8 @@ namespace LightClaw.Engine.Core
     /// {
     ///     // do locked stuff here
     /// }
-    /// </code>
-    /// </example>
-    /// <seealso cref="SemaphoreSlim"/>
+    /// </code></example>
+    /// <seealso cref="SemaphoreSlim"></seealso>
     public class AsyncLock
     {
         /// <summary>
@@ -34,7 +33,10 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="AsyncLock"/> with an initial count of 1 (= only one thread has access at a time).
         /// </summary>
-        public AsyncLock() : this(1) { }
+        public AsyncLock()
+            : this(1)
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="AsyncLock"/> setting the amount of threads that can acquire the lock.
@@ -51,7 +53,8 @@ namespace LightClaw.Engine.Core
         /// Synchronously takes the lock.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI responsiveness is of the essence.
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// responsiveness is of the essence.
         /// </remarks>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
         public AsyncLockReleaser Lock()
@@ -63,7 +66,8 @@ namespace LightClaw.Engine.Core
         /// Synchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI responsiveness is of the essence.
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// responsiveness is of the essence.
         /// </remarks>
         /// <param name="millisecondsTimeOut">The time which to wait until the lock is taken.</param>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
@@ -76,7 +80,8 @@ namespace LightClaw.Engine.Core
         /// Synchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI responsiveness is of the essence.
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// responsiveness is of the essence.
         /// </remarks>
         /// <param name="timeOut">The time which to wait until the lock is taken.</param>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
@@ -88,7 +93,10 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Asynchronously takes the lock.
         /// </summary>
-        /// <returns>A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free the lock.</returns>
+        /// <returns>
+        /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
+        /// the lock.
+        /// </returns>
         public Task<AsyncLockReleaser> LockAsync()
         {
             return this.LockAsync(Timeout.Infinite);
@@ -98,7 +106,10 @@ namespace LightClaw.Engine.Core
         /// Asynchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <param name="millisecondsTimeOut">The time which to wait until the lock is taken.</param>
-        /// <returns>A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free the lock.</returns>
+        /// <returns>
+        /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
+        /// the lock.
+        /// </returns>
         public Task<AsyncLockReleaser> LockAsync(int millisecondsTimeOut)
         {
             return this.semaphore.WaitAsync(millisecondsTimeOut).ContinueWith(t => new AsyncLockReleaser(this.semaphore, t.Result), TaskContinuationOptions.ExecuteSynchronously);
@@ -108,7 +119,10 @@ namespace LightClaw.Engine.Core
         /// Asynchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <param name="timeOut">The time which to wait until the lock is taken.</param>
-        /// <returns>A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free the lock.</returns>
+        /// <returns>
+        /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
+        /// the lock.
+        /// </returns>
         public Task<AsyncLockReleaser> LockAsync(TimeSpan timeOut)
         {
             return this.semaphore.WaitAsync(timeOut).ContinueWith(t => new AsyncLockReleaser(this.semaphore, t.Result), TaskContinuationOptions.ExecuteSynchronously);
@@ -127,8 +141,8 @@ namespace LightClaw.Engine.Core
         /// The struct used to release the previously acquired lock. Usable via using-pattern.
         /// </summary>
         /// <remarks>
-        /// Always make sure to release lock via <see cref="M:Release"/> or <see cref="M:Dispose"/>, otherwise
-        /// the lock will not be released and deadlocks will occur.
+        /// Always make sure to release lock via <see cref="M:Release"/> or <see cref="M:Dispose"/> , otherwise the lock
+        /// will not be released and deadlocks will occur.
         /// </remarks>
         public struct AsyncLockReleaser : IDisposable
         {

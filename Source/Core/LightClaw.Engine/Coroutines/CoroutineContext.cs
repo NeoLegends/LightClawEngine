@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -162,7 +160,7 @@ namespace LightClaw.Engine.Coroutines
         /// Steps the coroutine once.
         /// </summary>
         /// <param name="current">The current object.</param>
-        /// <returns><c>true</c> if the coroutine has finished execution, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the coroutine has finished execution, otherwise <c>false</c> .</returns>
         public bool Step(out object current)
         {
             lock (this.enumerable)
@@ -213,7 +211,7 @@ namespace LightClaw.Engine.Coroutines
         /// Raises the <see cref="E:Stepped"/>-event.
         /// </summary>
         /// <param name="current">The current object.</param>
-        /// <param name="result"><c>true</c> if the coroutine finished execution, otherwise <c>false</c>.</param>
+        /// <param name="result"><c>true</c> if the coroutine finished execution, otherwise <c>false</c> .</param>
         private void RaiseStepped(object current, bool result)
         {
             EventHandler<SteppedEventArgs> handler = this.Stepped;
@@ -233,7 +231,8 @@ namespace LightClaw.Engine.Coroutines
         }
 
         /// <summary>
-        /// A structure used to avoid immediate execution <see cref="Func{IEnumerable}"/>s on registration in the <see cref="CoroutineContext"/>.
+        /// A structure used to avoid immediate execution <see cref="Func{IEnumerable}"/>s on registration in the
+        /// <see cref="CoroutineContext"/>.
         /// </summary>
         private class DeferredFuncEnumerator : IEnumerable, IEnumerator
         {

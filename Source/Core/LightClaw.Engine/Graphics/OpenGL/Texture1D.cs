@@ -5,16 +5,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     public class Texture1D : Texture
     {
-        public Texture1D(TextureDescription description) 
-            : base(description) 
+        public Texture1D(TextureDescription description)
+            : base(description)
         {
             Contract.Requires<ArgumentException>(IsTexture1DTarget(description.Target));
         }
@@ -33,7 +31,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 this.Set(
                     dataHandle.AddrOfPinnedObject(),
                     pixelType, pixelFormat,
-                    width, 
+                    width,
                     xOffset,
                     level
                 );

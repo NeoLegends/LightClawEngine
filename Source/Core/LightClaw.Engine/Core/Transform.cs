@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
 
 namespace LightClaw.Engine.Core
 {
@@ -82,7 +81,7 @@ namespace LightClaw.Engine.Core
         /// Backing field.
         /// </summary>
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
-        
+
         /// <summary>
         /// The logically attached childs.
         /// </summary>
@@ -129,7 +128,7 @@ namespace LightClaw.Engine.Core
         private Vector3 _LocalPosition = Vector3.Zero;
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s local position in relation to the parent's position.
+        /// The <see cref="GameObject"/>s local position in relation to the parent's position.
         /// </summary>
         [DataMember]
         public Vector3 LocalPosition
@@ -148,7 +147,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s absolute position in world space.
+        /// The <see cref="GameObject"/>s absolute position in world space.
         /// </summary>
         [IgnoreDataMember]
         public Vector3 Position
@@ -190,7 +189,7 @@ namespace LightClaw.Engine.Core
         private Quaternion _LocalRotation = Quaternion.Identity;
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.
+        /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
         /// </summary>
         [DataMember]
         public Quaternion LocalRotation
@@ -209,7 +208,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s absolute rotation in world space.
+        /// The <see cref="GameObject"/>s absolute rotation in world space.
         /// </summary>
         [IgnoreDataMember]
         public Quaternion Rotation
@@ -251,7 +250,7 @@ namespace LightClaw.Engine.Core
         private Vector3 _LocalScaling = Vector3.One;
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s scaling relative to the parent's scaling.
+        /// The <see cref="GameObject"/>s scaling relative to the parent's scaling.
         /// </summary>
         [DataMember]
         public Vector3 LocalScaling
@@ -270,7 +269,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The <see cref="GameObject"/>'s absolute scaling in world space.
+        /// The <see cref="GameObject"/>s absolute scaling in world space.
         /// </summary>
         [IgnoreDataMember]
         public Vector3 Scaling
@@ -312,23 +311,26 @@ namespace LightClaw.Engine.Core
         private Matrix _ModelMatrix;
 
         /// <summary>
-        /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/> (up to you how you call it ;)).
+        /// The position-, rotation, and scaling matrices combined as model / world- <see cref="Matrix"/> (up to you how
+        /// you call it ;)).
         /// </summary>
         /// <remarks>
         /// <list type="number">
         ///     <listheader>
-        ///         <term>Order of Operations</term>
-        ///         <description>Contains the order in which the transformation matrices are applied to form the final model / world-matrix.</description>
+        ///         <term>Order of Operations</term> 
+        ///         <description>
+        ///             Contains the order in which the transformation matrices are applied to form the final model / world-matrix.
+        ///         </description> 
         ///     </listheader>
         ///     <item>
-        ///         <description>Scaling</description>
+        ///         <description>Scaling</description> 
+        ///     </item> 
+        ///     <item>
+        ///         <description>Rotation</description> 
         ///     </item>
         ///     <item>
-        ///         <description>Rotation</description>
-        ///     </item>
-        ///     <item>
-        ///         <description>Position</description>
-        ///     </item>
+        ///         <description>Position</description> 
+        ///     </item> 
         /// </list>
         /// </remarks>
         [IgnoreDataMember]
@@ -375,18 +377,29 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Transform"/> setting position, rotation and scaling.
         /// </summary>
-        /// <param name="localPosition">The <see cref="GameObject"/>'s local position in relation to the parent's position.</param>
-        /// <param name="localRotation">The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.</param>
-        /// <param name="localScale">The <see cref="GameObject"/>'s scaling relative to the parent's scaling.</param>
-        public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale) : this(null, localPosition, localRotation, localScale) { }
+        /// <param name="localPosition">
+        /// The <see cref="GameObject"/>s local position in relation to the parent's position.
+        /// </param>
+        /// <param name="localRotation">
+        /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
+        /// </param>
+        /// <param name="localScale">The <see cref="GameObject"/>s scaling relative to the parent's scaling.</param>
+        public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
+            : this(null, localPosition, localRotation, localScale)
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="Transform"/> the parent, position, rotation and scaling.
         /// </summary>
         /// <param name="parent">The parent.</param>
-        /// <param name="localPosition">The <see cref="GameObject"/>'s local position in relation to the parent's position.</param>
-        /// <param name="localRotation">The <see cref="GameObject"/>'s local rotation in relation to the parent's rotation.</param>
-        /// <param name="localScale">The <see cref="GameObject"/>'s scaling relative to the parent's scaling.</param>
+        /// <param name="localPosition">
+        /// The <see cref="GameObject"/>s local position in relation to the parent's position.
+        /// </param>
+        /// <param name="localRotation">
+        /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
+        /// </param>
+        /// <param name="localScale">The <see cref="GameObject"/>s scaling relative to the parent's scaling.</param>
         public Transform(Transform parent, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
             : this()
         {
@@ -434,9 +447,12 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (thread-safe / null-check) gets the parent's rotation and returns <see cref="Quaternion.Identity"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's rotation and returns <see cref="Quaternion.Identity"/>
+        /// if it could not be obtained.
         /// </summary>
-        /// <returns><see cref="Quaternion.Identity"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s rotation.</returns>
+        /// <returns>
+        /// <see cref="Quaternion.Identity"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>s rotation.
+        /// </returns>
         protected Quaternion GetParentRotation()
         {
             Transform parent = this.Parent;
@@ -444,9 +460,12 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (thread-safe / null-check) gets the parent's position and returns <see cref="Vector3.Zero"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's position and returns <see cref="Vector3.Zero"/> if it
+        /// could not be obtained.
         /// </summary>
-        /// <returns><see cref="Vector3.Zero"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s position.</returns>
+        /// <returns>
+        /// <see cref="Vector3.Zero"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>s position.
+        /// </returns>
         protected Vector3 GetParentPosition()
         {
             Transform parent = this.Parent;
@@ -454,9 +473,12 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Safely (thread-safe / null-check) gets the parent's scaling and returns <see cref="Vector3.One"/> if it could not be obtained.
+        /// Safely (thread-safe / null-check) gets the parent's scaling and returns <see cref="Vector3.One"/> if it
+        /// could not be obtained.
         /// </summary>
-        /// <returns><see cref="Vector3.One"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>'s scaling.</returns>
+        /// <returns>
+        /// <see cref="Vector3.One"/> if <see cref="P:Parent"/> was null, otherwise <see cref="P:Parent"/>s scaling.
+        /// </returns>
         protected Vector3 GetParentScale()
         {
             Transform parent = this.Parent;

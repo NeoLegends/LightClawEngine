@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Graphics;
 
 namespace LightClaw.Engine.Core
 {
@@ -88,7 +86,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// Preferrably, loading will be done asynchronous and calls to other methods shall be ignored until loading is done.
-        /// 
+        ///
         /// Calls to <see cref="M:Load"/> shall be ignored if the instance is already loaded.
         /// </remarks>
         void Load();
@@ -96,7 +94,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Resets the instance to the default values.
         /// </summary>
-        /// <example><see cref="Transform"/> resets its local position / rotation / scaling to zero / identity / one.</example>
+        /// <example>
+        /// <see cref="Transform"/> resets its local position / rotation / scaling to zero / identity / one.
+        /// </example>
         void Reset();
     }
 }

@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -14,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents an OpenGL sampler, an object that stores texture sampling parameters.
     /// </summary>
-    /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"/>
+    /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"></seealso>
     public class Sampler : GLObject, IBindable, IInitializable
     {
         /// <summary>

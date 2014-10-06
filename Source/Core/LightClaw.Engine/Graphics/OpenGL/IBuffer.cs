@@ -58,7 +58,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Mapping the buffer means obtaining a pointer that points directly to the buffer memory, without any copy in-between.
         /// This is useful in situations where it's beneficial to directly write the data into the buffer instead of loading it
         /// into managed memory first and then transferring it to video memory.
-        /// 
+        ///
         /// This operation will bind the buffer and overwrite any previous bindings.
         /// </remarks>
         /// <param name="access">An access mask used to indicate what one's intention with the data pointer is.</param>
@@ -69,9 +69,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Unmaps the buffer.
         /// </summary>
-        /// <remarks>
-        /// Expects the current <see cref="IBuffer"/> to be bound.
-        /// </remarks>
+        /// <remarks>Expects the current <see cref="IBuffer"/> to be bound.</remarks>
         void Unmap();
 
         /// <summary>
@@ -133,7 +131,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     }
 
     [ContractClassFor(typeof(IBuffer))]
-    abstract class IBufferContracts : IBuffer
+    internal abstract class IBufferContracts : IBuffer
     {
         int IBuffer.Length
         {
@@ -175,7 +173,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        T[] IBuffer.Get<T>() 
+        T[] IBuffer.Get<T>()
         {
             Contract.Ensures(Contract.Result<T[]>() != null);
 
@@ -198,9 +196,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return IntPtr.Zero;
         }
 
-        void IBuffer.Unmap() { }
+        void IBuffer.Unmap()
+        {
+        }
 
-        void IBuffer.Set<T>(T data) { }
+        void IBuffer.Set<T>(T data)
+        {
+        }
 
         void IBuffer.Set<T>(T[] data)
         {
@@ -233,12 +235,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
         }
 
-        void IBindable.Bind() { }
+        void IBindable.Bind()
+        {
+        }
 
-        void IInitializable.Initialize() { }
+        void IInitializable.Initialize()
+        {
+        }
 
-        void IBindable.Unbind() { }
+        void IBindable.Unbind()
+        {
+        }
 
-        void IDisposable.Dispose() { }
+        void IDisposable.Dispose()
+        {
+        }
     }
 }

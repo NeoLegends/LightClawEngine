@@ -4,7 +4,6 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -32,8 +31,8 @@ namespace LightClaw.Engine.Logging
         /// The initial capacity the underlying <see cref="StringBuilder"/> will be instantiated with.
         /// </summary>
         /// <remarks>
-        /// The performance of the <see cref="XmlLayout"/> depends on this value. Set this to a higher value if it is common
-        /// to log larger messages.
+        /// The performance of the <see cref="XmlLayout"/> depends on this value. Set this to a higher value if it is
+        /// common to log larger messages.
         /// </remarks>
         public int Capacity
         {
@@ -50,14 +49,18 @@ namespace LightClaw.Engine.Logging
         }
 
         /// <summary>
-        /// Initializes a new <see cref="XmlLayout"/>.
+        /// Initializes a new <see cref="XmlLayout"/> .
         /// </summary>
-        public XmlLayout() : this(1024) { }
+        public XmlLayout()
+            : this(1024)
+        {
+        }
 
         /// <summary>
-        /// Initializes a new <see cref="XmlLayout"/> and sets the capacity of the underlying <see cref="StringBuilder"/>.
+        /// Initializes a new <see cref="XmlLayout"/> and sets the capacity of the underlying
+        /// <see cref="StringBuilder"/> .
         /// </summary>
-        /// <param name="capacity">The capacity of the underlying <see cref="StringBuilder"/>.</param>
+        /// <param name="capacity">The capacity of the underlying <see cref="StringBuilder"/> .</param>
         public XmlLayout(int capacity)
         {
             Contract.Requires<ArgumentOutOfRangeException>(capacity >= 0);
@@ -68,7 +71,7 @@ namespace LightClaw.Engine.Logging
         }
 
         /// <summary>
-        /// Converts the specified <see cref="LoggingEvent"/> into XML and writes it into the <paramref name="writer"/>.
+        /// Converts the specified <see cref="LoggingEvent"/> into XML and writes it into the <paramref name="writer"/> .
         /// </summary>
         /// <param name="writer">The <see cref="XmlWriter"/> to output the XML into.</param>
         /// <param name="loggingEvent">The <see cref="LoggingEvent"/> containing the data about the log entry.</param>

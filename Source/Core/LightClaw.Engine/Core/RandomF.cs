@@ -54,7 +54,8 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets a random number that is larger than <paramref name="minIncluse"/> and smaller than <paramref name="maxExclusive"/>.
+        /// Gets a random number that is larger than <paramref name="minIncluse"/> and smaller than
+        /// <paramref name="maxExclusive"/>.
         /// </summary>
         /// <param name="minInclusive">The lower boundary of the value to obtain.</param>
         /// <param name="maxExclusive">The upper boundary of the value to obtain.</param>

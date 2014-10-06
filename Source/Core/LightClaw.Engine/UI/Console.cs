@@ -2,14 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
 
 namespace LightClaw.Engine.UI
@@ -69,7 +67,10 @@ namespace LightClaw.Engine.UI
             }
         }
 
-        public Console() : this(true) { }
+        public Console()
+            : this(true)
+        {
+        }
 
         public Console(bool registerDefaultCommands)
         {
@@ -77,7 +78,7 @@ namespace LightClaw.Engine.UI
             {
                 foreach (MethodInfo defaultCommand in typeof(DefaultCommands).GetMethods(BindingFlags.Public | BindingFlags.Static)
                                                                              .FilterNull()
-                                                                             .Where(mInfo => 
+                                                                             .Where(mInfo =>
                                                                              {
                                                                                  ParameterInfo[] pInfo = mInfo.GetParameters();
                                                                                  return (pInfo.Length == 1) && (pInfo[0].ParameterType == typeof(string[]));
@@ -125,7 +126,6 @@ namespace LightClaw.Engine.UI
         {
             if (this.IsShown)
             {
-
             }
             base.OnDraw();
         }
@@ -134,7 +134,6 @@ namespace LightClaw.Engine.UI
         {
             if (this.IsShown)
             {
-
             }
             base.OnUpdate(gameTime);
         }

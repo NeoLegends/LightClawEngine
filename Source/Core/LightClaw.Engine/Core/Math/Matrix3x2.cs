@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -199,9 +198,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is an identity matrix.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity matrix; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance is an identity matrix; otherwise, <c>false</c> .</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -213,7 +210,9 @@ namespace LightClaw.Engine.Core
         /// <value>The value of the matrix component, depending on the index.</value>
         /// <param name="index">The zero-based index of the component to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 5].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 5].
+        /// </exception>
         [IgnoreDataMember]
         public float this[int index]
         {
@@ -257,7 +256,9 @@ namespace LightClaw.Engine.Core
         /// <param name="row">The row of the matrix to access.</param>
         /// <param name="column">The column of the matrix to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="row"/> or <paramref name="column"/>is out of the range [0, 3].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="row"/> or <paramref name="column"/> is out of the range [0, 3].
+        /// </exception>
         [IgnoreDataMember]
         public float this[int row, int column]
         {
@@ -283,9 +284,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value that will be assigned to all components.</param>
         public Matrix3x2(float value)
         {
-            M11 = M12 = 
-            M21 = M22 = 
-            M31 = M32 = value; 
+            M11 = M12 =
+            M21 = M22 =
+            M31 = M32 = value;
         }
 
         /// <summary>
@@ -307,9 +308,13 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix3x2"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the components of the matrix. This must be an array with six elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than six elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the components of the matrix. This must be an array with six elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than six elements.
+        /// </exception>
         public Matrix3x2(float[] values)
             : this(
                 values[0], values[1],
@@ -325,7 +330,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -337,7 +342,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix3x2"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix3x2"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix3x2"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Matrix3x2 other)
         {
@@ -357,7 +362,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {
@@ -382,12 +387,10 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
-            return 
+            return
                 ("[{0}, {1}] " +
                 "[{2}, {3}] " +
                 "[{4}, {5}]").FormatWith(M11, M12, M21, M22, M31, M32);
@@ -605,7 +608,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two matrices.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Matrix3x2 start, ref Matrix3x2 end, float amount, out Matrix3x2 result)
         {
@@ -625,7 +629,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two matrices.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Matrix3x2 Lerp(Matrix3x2 start, Matrix3x2 end, float amount)
         {
@@ -743,8 +748,8 @@ namespace LightClaw.Engine.Core
         {
             Matrix3x2 result;
 
-            result.M11 = x;     result.M12 = 0.0f;
-            result.M21 = 0.0f;  result.M22 = y;
+            result.M11 = x; result.M12 = 0.0f;
+            result.M21 = 0.0f; result.M22 = y;
 
             result.M31 = center.X - (x * center.X);
             result.M32 = center.Y - (y * center.Y);
@@ -759,12 +764,12 @@ namespace LightClaw.Engine.Core
         /// <param name="y">Scaling factor that is applied along the y-axis.</param>
         /// <param name="center">The center of the scaling.</param>
         /// <param name="result">The created scaling matrix.</param>
-        public static void Scaling( float x, float y, ref Vector2 center, out Matrix3x2 result)
+        public static void Scaling(float x, float y, ref Vector2 center, out Matrix3x2 result)
         {
             Matrix3x2 localResult;
 
-            localResult.M11 = x;     localResult.M12 = 0.0f;
-            localResult.M21 = 0.0f;  localResult.M22 = y;
+            localResult.M11 = x; localResult.M12 = 0.0f;
+            localResult.M21 = 0.0f; localResult.M22 = y;
 
             localResult.M31 = center.X - (x * center.X);
             localResult.M32 = center.Y - (y * center.Y);
@@ -775,7 +780,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void Rotation(float angle, out Matrix3x2 result)
         {
@@ -792,7 +799,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.
+        /// </param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix3x2 Rotation(float angle)
         {
@@ -804,7 +813,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates about a specified center.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.
+        /// </param>
         /// <param name="center">The center of the rotation.</param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix3x2 Rotation(float angle, Vector2 center)
@@ -817,7 +828,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates about a specified center.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.
+        /// </param>
         /// <param name="center">The center of the rotation.</param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void Rotation(float angle, Vector2 center, out Matrix3x2 result)
@@ -830,7 +843,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="xScale">Scaling factor that is applied along the x-axis.</param>
         /// <param name="yScale">Scaling factor that is applied along the y-axis.</param>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis.
+        /// </param>
         /// <param name="xOffset">X-coordinate offset.</param>
         /// <param name="yOffset">Y-coordinate offset.</param>
         /// <param name="result">When the method completes, contains the created transformation matrix.</param>
@@ -974,8 +989,8 @@ namespace LightClaw.Engine.Core
         public static void Skew(float angleX, float angleY, out Matrix3x2 result)
         {
             result = Matrix.Identity;
-            result.M12 = (float) Math.Tan(angleX);
-            result.M21 = (float) Math.Tan(angleY);
+            result.M12 = (float)Math.Tan(angleX);
+            result.M21 = (float)Math.Tan(angleY);
         }
 
         /// <summary>
@@ -1137,7 +1152,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Matrix3x2 left, Matrix3x2 right)
         {
             return left.Equals(right);
@@ -1148,7 +1166,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Matrix3x2 left, Matrix3x2 right)
         {
             return !left.Equals(right);

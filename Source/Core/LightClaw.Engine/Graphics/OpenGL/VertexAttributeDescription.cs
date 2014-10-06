@@ -9,7 +9,7 @@ using LightClaw.Engine.Core;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    [DataContract]
+    [Serializable, DataContract]
     public struct VertexAttributeDescription : ICloneable, IEquatable<VertexAttributeDescription>
     {
         public static VertexAttributeDescription[] Empty

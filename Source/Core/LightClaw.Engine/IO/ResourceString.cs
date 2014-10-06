@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -18,7 +17,7 @@ namespace LightClaw.Engine.IO
     public struct ResourceString : ICloneable, IEquatable<ResourceString>
     {
         /// <summary>
-        /// Indicates whether the <see cref="ResourceString"/> is valid, respectively <c>!string.IsNullOrWhiteSpace</c>.
+        /// Indicates whether the <see cref="ResourceString"/> is valid, respectively <c>!string.IsNullOrWhiteSpace</c> .
         /// </summary>
         [IgnoreDataMember]
         public bool IsValid
@@ -58,7 +57,7 @@ namespace LightClaw.Engine.IO
         /// Tests whether the <see cref="ResourceString"/> equals the specified object.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -71,14 +70,14 @@ namespace LightClaw.Engine.IO
         /// Checks whether the <see cref="ResourceString"/> equals the <paramref name="other"/> one.
         /// </summary>
         /// <param name="obj">The <see cref="ResourceString"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c> .</returns>
         public bool Equals(ResourceString other)
         {
             return (this.Path == other.Path);
         }
 
         /// <summary>
-        /// Gets the <see cref="ResourceString"/>s hash code.
+        /// Gets the <see cref="ResourceString"/> s hash code.
         /// </summary>
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
@@ -94,7 +93,7 @@ namespace LightClaw.Engine.IO
         {
             return this.Path ?? "Invalid Path";
         }
-        
+
         /// <summary>
         /// Implicitly converts the <see cref="ResourceString"/> into a <see cref="String"/>.
         /// </summary>
@@ -116,34 +115,36 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Checks whether two <see cref="ResourceString"/>s are equal.
+        /// Checks whether two <see cref="ResourceString"/> s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c> .</returns>
         public static bool operator ==(ResourceString left, ResourceString right)
         {
             return left.Equals(right);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="ResourceString"/>s are inequal.
+        /// Checks whether two <see cref="ResourceString"/> s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are inequal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are inequal, otherwise <c>false</c> .</returns>
         public static bool operator !=(ResourceString left, ResourceString right)
         {
             return !(left == right);
         }
 
         /// <summary>
-        /// A custom <see cref="JsonConverter"/> used for more natural conversion of the <see cref="ResourceString"/> into its JSON representation.
+        /// A custom <see cref="JsonConverter"/> used for more natural conversion of the <see cref="ResourceString"/>
+        /// into its JSON representation.
         /// </summary>
         public class ResourceStringConverter : JsonConverter
         {
             /// <summary>
-            /// Indicates whether the <see cref="ResourceStringConverter"/> can read JSON into a <see cref="ResourceString"/>.
+            /// Indicates whether the <see cref="ResourceStringConverter"/> can read JSON into a
+            /// <see cref="ResourceString"/>.
             /// </summary>
             public override bool CanRead
             {
@@ -165,10 +166,14 @@ namespace LightClaw.Engine.IO
             }
 
             /// <summary>
-            /// Checks whether the <see cref="ResourceStringConverter"/> can convert objects of the specified <see cref="Type"/> to JSON.
+            /// Checks whether the <see cref="ResourceStringConverter"/> can convert objects of the specified
+            /// <see cref="Type"/> to JSON.
             /// </summary>
             /// <param name="objectType">The <see cref="Type"/> to test.</param>
-            /// <returns><c>true</c> if objects of the specified <see cref="Type"/> can be converted to JSON, otherwise <c>false</c>.</returns>
+            /// <returns>
+            /// <c>true</c> if objects of the specified <see cref="Type"/> can be converted to JSON, otherwise
+            /// <c>false</c> .
+            /// </returns>
             public override bool CanConvert(Type objectType)
             {
                 return (objectType == typeof(ResourceString));
@@ -188,7 +193,8 @@ namespace LightClaw.Engine.IO
             }
 
             /// <summary>
-            /// Writes the <paramref name="value"/> (which is a <see cref="ResourceString"/>) into the <paramref name="writer"/>.
+            /// Writes the <paramref name="value"/> (which is a <see cref="ResourceString"/> ) into the
+            /// <paramref name="writer"/>.
             /// </summary>
             /// <param name="writer">The <see cref="JsonWriter"/> to write the data into.</param>
             /// <param name="value">The value to write.</param>

@@ -14,7 +14,7 @@ namespace LightClaw.Engine.UI
 
         public override Encoding Encoding
         {
-            get 
+            get
             {
                 return Encoding.UTF8;
             }

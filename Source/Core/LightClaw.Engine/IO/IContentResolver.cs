@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Represents an object that obtains <see cref="Stream"/>s around specified resource strings.
+    /// Represents an object that obtains <see cref="Stream"/> s around specified resource strings.
     /// </summary>
-    /// <seealso cref="IContentManager"/>
+    /// <seealso cref="IContentManager"></seealso>
     [ContractClass(typeof(IContentResolverContracts))]
     public interface IContentResolver
     {
@@ -19,7 +19,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether the asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
         Task<bool> ExistsAsync(ResourceString resourceString);
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace LightClaw.Engine.IO
     }
 
     [ContractClassFor(typeof(IContentResolver))]
-    abstract class IContentResolverContracts : IContentResolver
+    internal abstract class IContentResolverContracts : IContentResolver
     {
         Task<bool> IContentResolver.ExistsAsync(ResourceString resourceString)
         {

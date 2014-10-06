@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics
     public class Camera : Component
     {
         /// <summary>
-        /// Notifies about changes in the <see cref="Camera"/>'s field of view.
+        /// Notifies about changes in the <see cref="Camera"/> s field of view.
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<float>> FoVChanged;
 
@@ -30,7 +30,7 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ValueChangedEventArgs<int>> WidthChanged;
 
         /// <summary>
-        /// Notifies about changes in the <see cref="Camera"/>'s zoom level.
+        /// Notifies about changes in the <see cref="Camera"/> s zoom level.
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<float>> ZoomChanged;
 
@@ -40,7 +40,7 @@ namespace LightClaw.Engine.Graphics
         private float _FoV = 90.0f;
 
         /// <summary>
-        /// The <see cref="Camera"/>'s horizontal field of view (in degrees).
+        /// The <see cref="Camera"/> s horizontal field of view (in degrees).
         /// </summary>
         [DataMember]
         public float FoV
@@ -110,7 +110,7 @@ namespace LightClaw.Engine.Graphics
         private float _Zoom;
 
         /// <summary>
-        /// Gets the <see cref="Camera"/>'s zoom level.
+        /// Gets the <see cref="Camera"/> s zoom level.
         /// </summary>
         [DataMember]
         public float Zoom

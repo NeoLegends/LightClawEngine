@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using LightClaw.Engine.IO;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -92,7 +91,7 @@ namespace LightClaw.Engine.Graphics
         {
             return !(left == right);
         }
-        
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {

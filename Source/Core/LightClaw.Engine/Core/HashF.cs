@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Core
 {
@@ -30,36 +29,35 @@ namespace LightClaw.Engine.Core
     /// All calls will be inlined, so there really is no performance penalty in calling the method multiple times.
     /// </para>
     /// <para>
-    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>, there
-    /// is an overload for that. Just make sure the elements inside the collection do not change as this would render the previously
-    /// computed hash code invalid. As hash codes are not allowed to change over the lifetime of the object you will break the universe. :)
+    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/> ,
+    /// there is an overload for that. Just make sure the elements inside the collection do not change as this would
+    /// render the previously computed hash code invalid. As hash codes are not allowed to change over the lifetime of
+    /// the object you will break the universe. :)
     /// </para>
     /// <para>
-    /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
+    /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/> ):
     /// <code>
     /// unchecked
     /// {
-    ///     int hash = <see cref="HashStart"/> * <see cref="HashFactor"/> + GetHashCode(first);
-    ///     hash = hash * <see cref="HashFactor"/> + GetHashCode(second);
+    ///     int hash = <see cref="HashStart" /> * <see cref="HashFactor" /> + GetHashCode(first);
+    ///     hash = hash * <see cref="HashFactor" /> + GetHashCode(second);
     ///     ...
-    ///     hash = hash * <see cref="HashFactor"/> + GetHashCode(nth);
+    ///     hash = hash * <see cref="HashFactor" /> + GetHashCode(nth);
     ///     return hash;
     /// }
-    /// </code>
-    /// Where the call to GetHashCode for a single element results in:
+    /// </code>Where the call to GetHashCode for a single element results in:
     /// <code>
     /// return (item != null) ? item.GetHashCode() : 0;
     /// </code>
     /// </para>
-    /// <para>
-    /// This class is thread-safe.
-    /// </para>
+    /// <para>This class is thread-safe.</para>
     /// </remarks>
     [Pure]
     public static class HashF
     {
-        // AggressiveInlining everywhere to allow inlining even with value types. See http://blogs.msdn.com/b/davidnotario/archive/2004/11/01/250398.aspx.
-        // Also, we really want to make sure the methods are inlined to make sure they are blazing fast as GetHashCode is supposed to be, especially for
+        // AggressiveInlining everywhere to allow inlining even with value types. See
+        // http://blogs.msdn.com/b/davidnotario/archive/2004/11/01/250398.aspx. Also, we really want to make sure the
+        // methods are inlined to make sure they are blazing fast as GetHashCode is supposed to be, especially for
         // larger structs (Matrix, for example).
 
         /// <summary>
@@ -97,7 +95,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
         /// <param name="item">The item to get the hash code of.</param>
-        /// <returns>The <paramref name="item"/>'s hash code or <c>0</c>, if <paramref name="item"/> was null.</returns>
+        /// <returns>The <paramref name="item"/>s hash code or <c>0</c> , if <paramref name="item"/> was null.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T item)
         {
@@ -234,7 +232,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
         /// <param name="array">The collection to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c> .</returns>
         public static int GetHashCode<T>(IEnumerable<T> collection)
         {
             if (collection != null)
@@ -260,7 +258,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
         /// <param name="array">The array to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c> .</returns>
         public static int GetHashCode<T>(T[] array)
         {
             if (array != null)

@@ -44,7 +44,7 @@ namespace LightClaw.Engine.Logging
         /// </summary>
         [DataMember]
         public string Message { get; private set; }
-        
+
         /// <summary>
         /// The thread in which the log entry was created.
         /// </summary>
@@ -58,9 +58,11 @@ namespace LightClaw.Engine.Logging
         public DateTime Timestamp { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="LoggingEventInfo"/>.
+        /// Initializes a new <see cref="LoggingEventInfo"/> .
         /// </summary>
-        /// <param name="loggingEvent">The <see cref="LoggingEvent"/> to create a new <see cref="LoggingEventInfo"/> from.</param>
+        /// <param name="loggingEvent">
+        /// The <see cref="LoggingEvent"/> to create a new <see cref="LoggingEventInfo"/> from.
+        /// </param>
         public LoggingEventInfo(LoggingEvent loggingEvent)
         {
             Contract.Requires<ArgumentNullException>(loggingEvent != null);

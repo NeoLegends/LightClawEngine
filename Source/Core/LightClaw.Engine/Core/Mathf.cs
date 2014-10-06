@@ -9,9 +9,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains extensions to the math class.
     /// </summary>
-    /// <remarks>
-    /// This class is thread-safe.
-    /// </remarks>
+    /// <remarks>This class is thread-safe.</remarks>
     [Pure]
     public static class MathF
     {
@@ -68,7 +66,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c> .</returns>
         public static bool AlmostEquals(double left, double right)
         {
             return IsAlmostZero(left - right);
@@ -205,10 +203,10 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified <paramref name="value"/> is almost one.
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c> .</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>. 
-        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
+        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostOne(double value)
         {
@@ -220,10 +218,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
         /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c> .</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>. 
-        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
+        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostOne(double value, int decimalPlaceCount)
         {
@@ -238,8 +236,8 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>. 
-        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>
+        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostZero(double value)
         {
@@ -253,8 +251,8 @@ namespace LightClaw.Engine.Core
         /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>. 
-        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>
+        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
@@ -292,7 +290,8 @@ namespace LightClaw.Engine.Core
         /// <param name="min">The range's lower boundary.</param>
         /// <param name="max">The range's lower boundary.</param>
         /// <returns>
-        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller than <paramref name="max"/>.
+        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller
+        /// than <paramref name="max"/>.
         /// </returns>
         public static bool IsInRange(int value, int min, int max)
         {
@@ -306,7 +305,8 @@ namespace LightClaw.Engine.Core
         /// <param name="min">The range's lower boundary.</param>
         /// <param name="max">The range's lower boundary.</param>
         /// <returns>
-        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller than <paramref name="max"/>.
+        /// <c>true</c> if the specified <paramref name="value"/> is greater than <paramref name="min"/> and smaller
+        /// than <paramref name="max"/>.
         /// </returns>
         public static bool IsInRange(double value, double min, double max)
         {
@@ -317,10 +317,10 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a prime number.
         /// </summary>
         /// <param name="number">The number to test.</param>
-        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c> .</returns>
         /// <remarks>
-        /// This function is expensive (lots of divisions (worst case Sqrt(<paramref name="number"/>) - 2), one Math.Sqrt). 
-        /// Call only if absolutely required.
+        /// This function is expensive (lots of divisions (worst case Sqrt( <paramref name="number"/> ) - 2), one
+        /// Math.Sqrt). Call only if absolutely required.
         /// </remarks>
         public static bool IsPrime(int number)
         {
@@ -349,7 +349,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a power of two.
         /// </summary>
         /// <param name="value">The value to check.</param>
-        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c> .</returns>
         [CLSCompliant(false)]
         public static bool IsPowerOfTwo(uint value)
         {
@@ -360,7 +360,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a power of two.
         /// </summary>
         /// <param name="value">The value to check.</param>
-        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c> .</returns>
         [CLSCompliant(false)]
         public static bool IsPowerOfTwo(ulong value)
         {
@@ -393,7 +393,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// See http://www.encyclopediaofmath.org/index.php/Linear_interpolation and
-        /// http://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
+        /// http: //fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
         /// </remarks>
         /// <param name="from">Value to interpolate from.</param>
         /// <param name="to">Value to interpolate to.</param>
@@ -409,7 +409,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// See http://www.encyclopediaofmath.org/index.php/Linear_interpolation and
-        /// http://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
+        /// http: //fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
         /// </remarks>
         /// <param name="from">Value to interpolate from.</param>
         /// <param name="to">Value to interpolate to.</param>
@@ -425,7 +425,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// See http://www.encyclopediaofmath.org/index.php/Linear_interpolation and
-        /// http://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
+        /// http: //fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
         /// </remarks>
         /// <param name="from">Value to interpolate from.</param>
         /// <param name="to">Value to interpolate to.</param>
@@ -520,13 +520,13 @@ namespace LightClaw.Engine.Core
         ///     <item>
         ///         <description>
         ///             <code>RoundUp(1, 10) = 10</code>
-        ///         </description>
-        ///     </item>
+        ///         </description> 
+        ///     </item> 
         ///     <item>
         ///         <description>
         ///             <code>RoundUp(11, 10) = 20</code>
-        ///         </description>
-        ///     </item>
+        ///         </description> 
+        ///     </item> 
         /// </list>
         /// </example>
         public static int RoundToMultiple(int number, int factor)
@@ -547,13 +547,13 @@ namespace LightClaw.Engine.Core
         ///     <item>
         ///         <description>
         ///             <code>RoundUp(1, 10) = 10</code>
-        ///         </description>
-        ///     </item>
+        ///         </description> 
+        ///     </item> 
         ///     <item>
         ///         <description>
         ///             <code>RoundUp(11, 10) = 20</code>
-        ///         </description>
-        ///     </item>
+        ///         </description> 
+        ///     </item> 
         /// </list>
         /// </example>
         public static long RoundToMultiple(long number, long factor)
@@ -566,9 +566,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Performs smooth (cubic Hermite) interpolation between 0 and 1.
         /// </summary>
-        /// <remarks>
-        /// See https://en.wikipedia.org/wiki/Smoothstep
-        /// </remarks>
+        /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [ContractVerification(false)]
         public static float SmoothStep(float amount)
@@ -583,9 +581,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Performs smooth (cubic Hermite) interpolation between 0 and 1.
         /// </summary>
-        /// <remarks>
-        /// See https://en.wikipedia.org/wiki/Smoothstep
-        /// </remarks>
+        /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [ContractVerification(false)]
         public static double SmoothStep(double amount)
@@ -600,9 +596,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Performs a smooth(er) interpolation between 0 and 1 with 1st and 2nd order derivatives of zero at endpoints.
         /// </summary>
-        /// <remarks>
-        /// See https://en.wikipedia.org/wiki/Smoothstep
-        /// </remarks>
+        /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [ContractVerification(false)]
         public static float SmootherStep(float amount)
@@ -617,9 +611,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Performs a smooth(er) interpolation between 0 and 1 with 1st and 2nd order derivatives of zero at endpoints.
         /// </summary>
-        /// <remarks>
-        /// See https://en.wikipedia.org/wiki/Smoothstep
-        /// </remarks>
+        /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
         [ContractVerification(false)]
         public static double SmootherStep(double amount)
@@ -634,9 +626,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Class used to convert bytes into hex strings.
         /// </summary>
-        /// <remarks>
-        /// This class is thread-safe.
-        /// </remarks>
+        /// <remarks>This class is thread-safe.</remarks>
         [Pure]
         public static class HexTable
         {

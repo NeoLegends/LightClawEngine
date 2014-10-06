@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Core
     public class ParameterEventArgs : EventArgs
     {
         /// <summary>
-        /// Default <see cref="ParameterEventArgs"/> with the <see cref="P:Parameter"/> set to <c>null</c>.
+        /// Default <see cref="ParameterEventArgs"/> with the <see cref="P:Parameter"/> set to <c>null</c> .
         /// </summary>
         public static readonly ParameterEventArgs Default = new ParameterEventArgs();
 
@@ -24,7 +24,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="ParameterEventArgs"/>.
         /// </summary>
-        public ParameterEventArgs() { }
+        public ParameterEventArgs()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="ParameterEventArgs"/> and sets the parameter.

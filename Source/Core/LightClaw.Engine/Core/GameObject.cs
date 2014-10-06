@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
 using Newtonsoft.Json;
 
@@ -137,7 +136,9 @@ namespace LightClaw.Engine.Core
         /// Returns the <see cref="Component"/> with the specified name.
         /// </summary>
         /// <param name="name">The name of the <see cref="Component"/> to return.</param>
-        /// <returns>The <see cref="Component"/> with the specified name, or <c>null</c> if no <see cref="Component"/> was found.</returns>
+        /// <returns>
+        /// The <see cref="Component"/> with the specified name, or <c>null</c> if no <see cref="Component"/> was found.
+        /// </returns>
         public Component Find(string name)
         {
             return this.FirstOrDefault(component => component.Name == name);
@@ -148,7 +149,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to look for.</typeparam>
         /// <param name="name">The name of the <see cref="Component"/> to return.</param>
-        /// <returns>The <see cref="Component"/> with the specified name, or <c>null</c> if no <see cref="Component"/> was found.</returns>
+        /// <returns>
+        /// The <see cref="Component"/> with the specified name, or <c>null</c> if no <see cref="Component"/> was found.
+        /// </returns>
         public T Find<T>(string name)
             where T : Component
         {
@@ -156,17 +159,19 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/>, if possible, and
-        /// sets <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>, 
-        /// if attachment fails.
+        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/> , if possible, and sets
+        /// <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>
+        /// , if attachment fails.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to add.</typeparam>
-        /// <param name="predicate">The condition an element has to fulfill to be returned if <paramref name="component"/> could not be added.</param>
+        /// <param name="predicate">
+        /// The condition an element has to fulfill to be returned if <paramref name="component"/> could not be added.
+        /// </param>
         /// <param name="component">The <see cref="Component"/> to try to add.</param>
         /// <param name="result">The <see cref="Component"/> that was either retreived or added.</param>
         /// <returns>
-        /// <c>true</c> if the value in <paramref name="result"/> is not <c>null</c> (i.e. a <see cref="Component"/> could be fetched),
-        /// otherwise <c>false</c>.
+        /// <c>true</c> if the value in <paramref name="result"/> is not <c>null</c> (i.e. a <see cref="Component"/>
+        /// could be fetched), otherwise <c>false</c> .
         /// </returns>
         public bool GetOrAdd<T>(T component, Func<Component, bool> predicate, out T result)
             where T : Component
@@ -221,7 +226,9 @@ namespace LightClaw.Engine.Core
         /// Returns the first <see cref="Component"/> of the specified <see cref="Type"/>.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to get.</typeparam>
-        /// <returns>The first <see cref="Component"/> of the specified <see cref="Type"/>, or <c>null</c> there was no match.</returns>
+        /// <returns>
+        /// The first <see cref="Component"/> of the specified <see cref="Type"/> , or <c>null</c> there was no match.
+        /// </returns>
         public T OfType<T>()
             where T : Component
         {
@@ -232,7 +239,7 @@ namespace LightClaw.Engine.Core
         /// Removes the specified <see cref="Component"/> from the <see cref="GameObject"/>.
         /// </summary>
         /// <param name="item">The item to remove.</param>
-        /// <returns><c>true</c> if the specified item could be removed, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified item could be removed, otherwise <c>false</c> .</returns>
         public override bool Remove(Component item)
         {
             lock (this.Items)
@@ -264,7 +271,7 @@ namespace LightClaw.Engine.Core
         /// Tries to add the specified <see cref="Component"/>.
         /// </summary>
         /// <param name="item">The <see cref="Component"/> to add.</param>
-        /// <returns><c>true</c> if the <see cref="Component"/> was added, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="Component"/> was added, otherwise <c>false</c> .</returns>
         public bool TryAdd(Component item)
         {
             Contract.Requires<ArgumentNullException>(item != null);
@@ -287,7 +294,7 @@ namespace LightClaw.Engine.Core
         /// Tries to add a range of <see cref="Component"/>s.
         /// </summary>
         /// <param name="item">The <see cref="Component"/>s to add.</param>
-        /// <returns><c>true</c> if the <see cref="Component"/>s was added, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="Component"/>s was added, otherwise <c>false</c> .</returns>
         public bool TryAddRange(IEnumerable<Component> items)
         {
             Contract.Requires<ArgumentNullException>(items != null);
@@ -311,7 +318,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="index">The index to insert at.</param>
         /// <param name="item">The item to insert.</param>
-        /// <returns><c>true</c> if the item could be inserted, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the item could be inserted, otherwise <c>false</c> .</returns>
         public bool TryInsert(int index, Component item)
         {
             Contract.Requires<ArgumentNullException>(item != null);
@@ -337,7 +344,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="index">The index to insert at.</param>
         /// <param name="item">The items to insert.</param>
-        /// <returns><c>true</c> if the items could be inserted, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the items could be inserted, otherwise <c>false</c> .</returns>
         public bool TryInsertRange(int index, IEnumerable<Component> items)
         {
             Contract.Requires<ArgumentNullException>(items != null);
@@ -365,7 +372,9 @@ namespace LightClaw.Engine.Core
         /// Tries to remove the <see cref="Component"/> at the specified <paramref name="index"/>.
         /// </summary>
         /// <param name="index">The index of the <see cref="Component"/> to remove.</param>
-        /// <returns><c>true</c> if the <see cref="Component"/> at the specified index was removed, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="Component"/> at the specified index was removed, otherwise <c>false</c> .
+        /// </returns>
         public bool TryRemoveAt(int index)
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
@@ -416,8 +425,8 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Ensures attachability of the specified <see cref="Component"/> and allows specification of another set of <see cref="Component"/>s
-        /// that are about to be attached in the same transaction.
+        /// Ensures attachability of the specified <see cref="Component"/> and allows specification of another set of
+        /// <see cref="Component"/>s that are about to be attached in the same transaction.
         /// </summary>
         /// <param name="component">The <see cref="Component"/> that is about to be attached.</param>
         /// <param name="gameObjectsToAttach">Other <see cref="Component"/>s that are about to be attached immediately.</param>
@@ -452,7 +461,7 @@ namespace LightClaw.Engine.Core
         /// Tries to ensure that the specified <see cref="Component"/> can be attached.
         /// </summary>
         /// <param name="component">The <see cref="Component"/> that is about to be attached</param>
-        /// <returns><c>true</c> if the <paramref name="component"/> can be attached, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <paramref name="component"/> can be attached, otherwise <c>false</c> .</returns>
         private bool TryCheckAttachability(Component component)
         {
             Contract.Requires<ArgumentNullException>(component != null);
@@ -465,7 +474,7 @@ namespace LightClaw.Engine.Core
         /// Tries to ensure that the specified <see cref="Component"/>s can be attached.
         /// </summary>
         /// <param name="component">The <see cref="Component"/>s that are about to be attached</param>
-        /// <returns><c>true</c> if the <paramref name="components"/> can be attached, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <paramref name="components"/> can be attached, otherwise <c>false</c> .</returns>
         private bool TryCheckAttachability(IEnumerable<Component> components)
         {
             Contract.Requires<ArgumentNullException>(components != null);
@@ -484,12 +493,14 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Tries to ensure attachability of the specified <see cref="Component"/> and allows specification of another set of
-        /// <see cref="Component"/>s that are about to be attached in the same transaction.
+        /// Tries to ensure attachability of the specified <see cref="Component"/> and allows specification of another
+        /// set of <see cref="Component"/>s that are about to be attached in the same transaction.
         /// </summary>
         /// <param name="component">The <see cref="Component"/> that is about to be attached.</param>
         /// <param name="gameObjectsToAttach">Other <see cref="Component"/>s that are about to be attached immediately.</param>
-        /// <returns><c>true</c> if the specified <see cref="Component"/> can be attached, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the specified <see cref="Component"/> can be attached, otherwise <c>false</c> .
+        /// </returns>
         private bool TryCheckAttachability(Component component, IEnumerable<Component> gameObjectsToAttach)
         {
             Contract.Requires<ArgumentNullException>(component != null);
@@ -503,7 +514,7 @@ namespace LightClaw.Engine.Core
         /// Tries to ensure removability of the specified <see cref="Component"/>.
         /// </summary>
         /// <param name="component">The <see cref="Component"/> that is about to be removed.</param>
-        /// <returns><c>true</c> if the <paramref name="component"/> can be removed, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <paramref name="component"/> can be removed, otherwise <c>false</c> .</returns>
         private bool TryCheckRemovability(Component component)
         {
             Contract.Requires<ArgumentNullException>(component != null);

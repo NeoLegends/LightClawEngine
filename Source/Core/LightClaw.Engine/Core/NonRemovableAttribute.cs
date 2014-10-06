@@ -15,19 +15,29 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="NonRemovableAttribute"/>.
         /// </summary>
-        public NonRemovableAttribute() { }
+        public NonRemovableAttribute()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="NonRemovableAttribute"/> and sets the reason.
         /// </summary>
         /// <param name="reason">The reason why the <see cref="Component"/> is not removable.</param>
-        public NonRemovableAttribute(string reason) : base(reason) { }
+        public NonRemovableAttribute(string reason)
+            : base(reason)
+        {
+        }
 
         /// <summary>
         /// Validates removal from the specified <paramref name="gameObjectToRemoveFrom"/>.
         /// </summary>
-        /// <param name="gameObjectToRemoveFrom">The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.</param>
-        /// <returns><c>false</c>, as <see cref="NonRemovableAttribute"/> makes a <see cref="Component"/> non-removable. (obviously, lol)</returns>
+        /// <param name="gameObjectToRemoveFrom">
+        /// The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.
+        /// </param>
+        /// <returns>
+        /// <c>false</c> , as <see cref="NonRemovableAttribute"/> makes a <see cref="Component"/> non-removable.
+        /// (obviously, lol)
+        /// </returns>
         public override bool Validate(GameObject gameObjectToRemoveFrom)
         {
             return false;

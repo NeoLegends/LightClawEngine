@@ -5,9 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
-using log4net;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -15,7 +12,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents a data store on GPU memory.
     /// </summary>
-    public class Buffer : GLObject, IBuffer, IInitializable
+    public class BufferObject : GLObject, IBuffer, IInitializable
     {
         /// <summary>
         /// Used for restricting access to the name generation process.
@@ -28,7 +25,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private BufferUsageHint _Hint;
 
         /// <summary>
-        /// The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.
+        /// The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="BufferObject"/>.
         /// </summary>
         public BufferUsageHint Hint
         {
@@ -48,7 +45,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private bool _IsInitialized;
 
         /// <summary>
-        /// Indicates whether the <see cref="Buffer"/> is already initialized and has got a name.
+        /// Indicates whether the <see cref="BufferObject"/> is already initialized and has got a name.
         /// </summary>
         public bool IsInitialized
         {
@@ -103,11 +100,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes a new <see cref="Buffer"/> setting usage hint and target.
+        /// Initializes a new <see cref="BufferObject"/> setting usage hint and target.
         /// </summary>
         /// <param name="target">The <see cref="BufferTarget"/>.</param>
-        /// <param name="hint">The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.</param>
-        public Buffer(BufferTarget target, BufferUsageHint hint)
+        /// <param name="hint">
+        /// The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="BufferObject"/>.
+        /// </param>
+        public BufferObject(BufferTarget target, BufferUsageHint hint)
         {
             this.Hint = hint;
             this.Target = target;
@@ -123,10 +122,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Gets all of the <see cref="Buffer"/>s data.
+        /// Gets all of the <see cref="BufferObject"/> s data.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
-        /// <returns>The <see cref="Buffer"/>s data.</returns>
+        /// <returns>The <see cref="BufferObject"/> s data.</returns>
         public T[] Get<T>()
             where T : struct
         {
@@ -134,12 +133,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Gets a range of the <see cref="Buffer"/>s data.
+        /// Gets a range of the <see cref="BufferObject"/> s data.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
         /// <param name="offset">The starting index.</param>
         /// <param name="count">The amount of bytes to read.</param>
-        /// <returns>The <see cref="Buffer"/>s data.</returns>
+        /// <returns>The <see cref="BufferObject"/> s data.</returns>
         public T[] GetRange<T>(int offset, int count)
             where T : struct
         {
@@ -153,7 +152,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes the <see cref="Buffer"/>.
+        /// Initializes the <see cref="BufferObject"/>.
         /// </summary>
         public void Initialize()
         {
@@ -173,9 +172,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the buffer and maps it with <see cref="BufferAccess.ReadWrite"/>.
         /// </summary>
-        /// <remarks>
-        /// Important, this method binds the buffer!
-        /// </remarks>
+        /// <remarks>Important, this method binds the buffer!</remarks>
         /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
         public IntPtr Map()
         {
@@ -185,9 +182,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the buffer and maps it with the specified <paramref name="bufferAccess"/>.
         /// </summary>
-        /// <remarks>
-        /// Important, this method binds the buffer!
-        /// </remarks>
+        /// <remarks>Important, this method binds the buffer!</remarks>
         /// <param name="bufferAccess">A <see cref="BufferAccess"/> enum describing the access capabilities.</param>
         /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
         public IntPtr Map(BufferAccess bufferAccess)
@@ -207,9 +202,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Unmaps the buffer.
         /// </summary>
-        /// <remarks>
-        /// Important, this method expects the current buffer to be bound.
-        /// </remarks>
+        /// <remarks>Important, this method expects the current buffer to be bound.</remarks>
         public void Unmap()
         {
             GL.UnmapBuffer(this.Target);
@@ -217,7 +210,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="Buffer"/>'s contents.
+        /// Updates the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -236,21 +229,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="Buffer"/>'s contents.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
-        /// <param name="data">The data itself.</param>
-        public virtual void Set<T>(IEnumerable<T> data)
-            where T : struct
-        {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentException>(data.Any());
-
-            this.Set(data.ToArray());
-        }
-
-        /// <summary>
-        /// Updates the <see cref="Buffer"/>'s contents.
+        /// Updates the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -265,11 +244,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             finally
             {
                 dataHandle.Free();
-            } 
+            }
         }
 
         /// <summary>
-        /// Sets a range of the <see cref="Buffer"/>'s contents.
+        /// Sets a range of the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -289,23 +268,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates a range of the <see cref="Buffer"/>'s contents.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
-        /// <param name="data">The data itself.</param>
-        /// <param name="offset">The offset in bytes to start applying the new data at.</param>
-        public virtual void SetRange<T>(IEnumerable<T> data, int offset)
-            where T : struct
-        {
-            Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Requires<ArgumentNullException>(offset >= 0);
-            Contract.Requires<ArgumentException>(data.Any());
-
-            this.SetRange(data.ToArray(), offset);
-        }
-
-        /// <summary>
-        /// Updates a range of the <see cref="Buffer"/>'s contents.
+        /// Updates a range of the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -325,7 +288,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="Buffer"/>'s contents.
+        /// Updates the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
         /// <param name="sizeInBytes">The size of the data in bytes.</param>
@@ -340,7 +303,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="Buffer"/>'s contents.
+        /// Updates the <see cref="BufferObject"/> 's contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
         /// <param name="sizeInBytes">The size of the data in bytes.</param>
@@ -356,7 +319,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Disposes the <see cref="Buffer"/> removing it from the GPU memory.
+        /// Disposes the <see cref="BufferObject"/> removing it from the GPU memory.
         /// </summary>
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
@@ -375,7 +338,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Recalculates the size of the <see cref="Buffer"/> after a change.
+        /// Recalculates the size of the <see cref="BufferObject"/> after a change.
         /// </summary>
         /// <param name="sizeOfNewData">The size of the new data in bytes.</param>
         /// <param name="offset">The offset of the new data.</param>
@@ -393,13 +356,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of data to upload.</typeparam>
         /// <param name="data">The data.</param>
-        /// <param name="target">The <see cref="BufferTarget"/> the <see cref="Buffer"/> will be bound to.</param>
-        /// <returns>The newly created <see cref="Buffer"/>.</returns>
-        public static Buffer Create<T>(T[] data, BufferTarget target)
+        /// <param name="target">The <see cref="BufferTarget"/> the <see cref="BufferObject"/> will be bound to.</param>
+        /// <returns>The newly created <see cref="BufferObject"/>.</returns>
+        public static BufferObject Create<T>(T[] data, BufferTarget target)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Ensures(Contract.Result<Buffer>() != null);
+            Contract.Ensures(Contract.Result<BufferObject>() != null);
 
             return Create(data, target, BufferUsageHint.StaticDraw);
         }
@@ -409,16 +372,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of data to upload.</typeparam>
         /// <param name="data">The data.</param>
-        /// <param name="target">The <see cref="BufferTarget"/> the <see cref="Buffer"/> will be bound to.</param>
-        /// <param name="hint">The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="Buffer"/>.</param>
-        /// <returns>The newly created <see cref="Buffer"/>.</returns>
-        public static Buffer Create<T>(T[] data, BufferTarget target, BufferUsageHint hint)
+        /// <param name="target">The <see cref="BufferTarget"/> the <see cref="BufferObject"/> will be bound to.</param>
+        /// <param name="hint">
+        /// The <see cref="BufferUsageHint"/> hinting the desired way of using the <see cref="BufferObject"/>.
+        /// </param>
+        /// <returns>The newly created <see cref="BufferObject"/>.</returns>
+        public static BufferObject Create<T>(T[] data, BufferTarget target, BufferUsageHint hint)
             where T : struct
         {
             Contract.Requires<ArgumentNullException>(data != null);
-            Contract.Ensures(Contract.Result<Buffer>() != null);
+            Contract.Ensures(Contract.Result<BufferObject>() != null);
 
-            Buffer buffer = new Buffer(target, hint);
+            BufferObject buffer = new BufferObject(target, hint);
             buffer.Set(data);
             return buffer;
         }

@@ -24,7 +24,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         [DataMember]
         public int Depth { get; private set; }
-        
+
         [DataMember]
         public int Levels { get; private set; }
 
@@ -47,7 +47,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         public TextureDescription(int width, int height, int texLevels, int msLevels, TextureTarget2d target, PixelInternalFormat pixelInternalFormat)
-            : this(width, height, 0, texLevels, msLevels, (TextureTarget3d)target, pixelInternalFormat) 
+            : this(width, height, 0, texLevels, msLevels, (TextureTarget3d)target, pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
@@ -82,14 +82,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public object Clone()
         {
-            return this.initializedViaParameterizedConstructor ? 
+            return this.initializedViaParameterizedConstructor ?
                 new TextureDescription(
-                    this.Width, 
-                    this.Height, 
-                    this.Depth, 
-                    this.Levels, 
-                    this.MultisamplingLevels, 
-                    (TextureTarget3d)this.Target, 
+                    this.Width,
+                    this.Height,
+                    this.Depth,
+                    this.Levels,
+                    this.MultisamplingLevels,
+                    (TextureTarget3d)this.Target,
                     this.PixelInternalFormat
                 ) : default(TextureDescription);
         }

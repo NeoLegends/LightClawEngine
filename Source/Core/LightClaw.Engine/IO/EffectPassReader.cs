@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.Graphics.OpenGL;
-using LightClaw.Extensions;
 using Newtonsoft.Json;
 using OpenTK.Graphics.OpenGL4;
 
@@ -81,7 +77,7 @@ namespace LightClaw.Engine.IO
 
             List<Shader> shaders = new List<Shader>(5)
             {
-                new Shader(vertexShaderSource, ShaderType.VertexShader, descriptions),
+                new Shader(vertexShaderSource, ShaderType.VertexShader, descriptions.ToArray()),
                 new Shader(fragmentSource, ShaderType.FragmentShader)
             };
             if (tessControlSource != null)

@@ -291,9 +291,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is an identity Matrix5x4.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity Matrix5x4; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance is an identity Matrix5x4; otherwise, <c>false</c> .</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -305,7 +303,9 @@ namespace LightClaw.Engine.Core
         /// <value>The value of the Matrix5x4 component, depending on the index.</value>
         /// <param name="index">The zero-based index of the component to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 15].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 15].
+        /// </exception>
         public float this[int index]
         {
             get
@@ -376,7 +376,9 @@ namespace LightClaw.Engine.Core
         /// <param name="row">The row of the Matrix5x4 to access.</param>
         /// <param name="column">The column of the Matrix5x4 to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="row"/> or <paramref name="column"/>is out of the range [0, 3].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="row"/> or <paramref name="column"/> is out of the range [0, 3].
+        /// </exception>
         public float this[int row, int column]
         {
             get
@@ -404,7 +406,7 @@ namespace LightClaw.Engine.Core
             M11 = M12 = M13 = M14 =
             M21 = M22 = M23 = M24 =
             M31 = M32 = M33 = M34 =
-            M41 = M42 = M43 = M44 = 
+            M41 = M42 = M43 = M44 =
             M51 = M52 = M53 = M54 = value;
         }
 
@@ -448,14 +450,18 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix5x4"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the components of the Matrix5x4. This must be an array with sixteen elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than sixteen elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the components of the Matrix5x4. This must be an array with sixteen elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than sixteen elements.
+        /// </exception>
         public Matrix5x4(float[] values)
             : this(
-                values[0],  values[1],  values[2],  values[3],
-                values[4],  values[5],  values[6],  values[7],
-                values[8],  values[9],  values[10], values[11],
+                values[0], values[1], values[2], values[3],
+                values[4], values[5], values[6], values[7],
+                values[8], values[9], values[10], values[11],
                 values[12], values[13], values[14], values[15],
                 values[16], values[17], values[18], values[19]
             )
@@ -468,7 +474,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -486,7 +492,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix5x4"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix5x4"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix5x4"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Matrix5x4 other)
         {
@@ -522,7 +528,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {
@@ -541,8 +547,8 @@ namespace LightClaw.Engine.Core
             Contract.Ensures(Contract.Result<float[]>() != null);
             Contract.Ensures(Contract.Result<float[]>().Length == 20);
 
-            return new[] 
-            { 
+            return new[]
+            {
                 this.M11, this.M12, this.M13, this.M14,
                 this.M21, this.M22, this.M23, this.M24,
                 this.M31, this.M32, this.M33, this.M34,
@@ -554,20 +560,18 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
-            return 
+            return
                 ("[{0}, {1}, {2}, {3}] " +
                 "[{4}, {5}, {6}, {7}] " +
                 "[{8}, {9}, {10}, {11}] " +
                 "[{12}, {13}, {14}, {15}] " +
-                "[{16}, {17}, {18}, {19}]").FormatWith(M11, M12, M13, M14, 
-                                                                    M21, M22, M23, M24, 
-                                                                    M31, M32, M33, M34, 
-                                                                    M41, M42, M43, M44, 
+                "[{16}, {17}, {18}, {19}]").FormatWith(M11, M12, M13, M14,
+                                                                    M21, M22, M23, M24,
+                                                                    M31, M32, M33, M34,
+                                                                    M41, M42, M43, M44,
                                                                     M51, M52, M53, M54
             );
         }
@@ -769,7 +773,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two matrices.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Matrix5x4 start, ref Matrix5x4 end, float amount, out Matrix5x4 result)
         {
@@ -803,7 +808,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two matrices.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Matrix5x4 Lerp(Matrix5x4 start, Matrix5x4 end, float amount)
         {
@@ -946,7 +952,7 @@ namespace LightClaw.Engine.Core
         /// <param name="z">Z-coordinate offset.</param>
         /// <param name="w">W-coordinate offset.</param>
         /// <param name="result">When the method completes, contains the created translation Matrix5x4.</param>
-        public static void Translation(float x, float y, float z, float w,  out Matrix5x4 result)
+        public static void Translation(float x, float y, float z, float w, out Matrix5x4 result)
         {
             result = Matrix5x4.Identity;
             result.M51 = x;
@@ -1062,7 +1068,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Matrix5x4 left, Matrix5x4 right)
         {
             return left.Equals(right);
@@ -1073,7 +1082,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Matrix5x4 left, Matrix5x4 right)
         {
             return !left.Equals(right);

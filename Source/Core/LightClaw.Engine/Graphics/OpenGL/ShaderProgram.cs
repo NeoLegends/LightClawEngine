@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -14,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents an OpenGL shader program.
     /// </summary>
-    /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
+    /// <seealso href="http://www.opengl.org/wiki/Program_Object"></seealso>
     public class ShaderProgram : GLObject, IBindable, IInitializable
     {
         /// <summary>
@@ -48,7 +47,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ImmutableArray<Shader> _Shaders;
 
         /// <summary>
-        /// The <see cref="Shader"/>s the <see cref="ShaderProgram"/> consists of.
+        /// The <see cref="Shader"/> s the <see cref="ShaderProgram"/> consists of.
         /// </summary>
         public ImmutableArray<Shader> Shaders
         {
@@ -73,7 +72,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ImmutableDictionary<string, Uniform> _Uniforms;
 
         /// <summary>
-        /// The <see cref="Uniform"/>s of the <see cref="ShaderProgram"/>.
+        /// The <see cref="Uniform"/> s of the <see cref="ShaderProgram"/>.
         /// </summary>
         public ImmutableDictionary<string, Uniform> Uniforms
         {
@@ -95,7 +94,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Initializes a new <see cref="ShaderProgram"/> from a set of <see cref="Shader"/>s.
         /// </summary>
-        /// <param name="shaders">The <see cref="Shader"/>s to initialize from.</param>
+        /// <param name="shaders">The <see cref="Shader"/> s to initialize from.</param>
         public ShaderProgram(params Shader[] shaders)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
@@ -125,7 +124,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
-                        Logger.Info("Initializing shader program.");
+                        Logger.Debug(n => "Initializing shader program '{0}'.".FormatWith(n), this.Name ?? "N/A");
 
                         this.Handle = GL.CreateProgram();
                         try
@@ -147,9 +146,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
                             GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
                             if (result == 0)
                             {
-                                string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, GL.GetProgramInfoLog(this));
+                                string infoLog = GL.GetProgramInfoLog(this);
+                                string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
                                 Logger.Warn(message);
-                                throw new InvalidOperationException(message);
+                                throw new LinkingFailedException(message, infoLog, result);
                             }
 
                             int uniformCount = 0;

@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
 
@@ -22,8 +18,8 @@ namespace LightClaw.Engine.Core
     /// </summary>
     public class Game : DisposableEntity
     {
-        // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system.
-        //       New renderer should also allow for multiple render targets, respectively cameras rendering to textures.
+        // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system. New
+        //       renderer should also allow for multiple render targets, respectively cameras rendering to textures.
         //       (which then can be rendered afterwards into the scene)
 
         /// <summary>
@@ -54,15 +50,15 @@ namespace LightClaw.Engine.Core
             MathF.ClampToInt32(VideoSettings.Default.Height),
             new OpenTK.Graphics.GraphicsMode(),
             GeneralSettings.Default.WindowTitle,
-            OpenTK.GameWindowFlags.Default, 
+            OpenTK.GameWindowFlags.Default,
             OpenTK.DisplayDevice.Default,
             4, 4,
 #if DEBUG
-            OpenTK.Graphics.GraphicsContextFlags.Debug
+ OpenTK.Graphics.GraphicsContextFlags.Debug
 #else
             OpenTK.Graphics.GraphicsContextFlags.Default
 #endif
-        )
+)
         {
             WindowState = VideoSettings.Default.WindowState,
             VSync = VideoSettings.Default.VSync
@@ -160,7 +156,7 @@ namespace LightClaw.Engine.Core
         public void Run()
         {
             bool limitFps = VideoSettings.Default.LimitFPS;
-            double maxFrameRate = (double)VideoSettings.Default.FPSLimit;
+            double maxFrameRate = VideoSettings.Default.FPSLimit;
 
             Logger.Info(
                 (fpsLimited, frameRate) => fpsLimited ?

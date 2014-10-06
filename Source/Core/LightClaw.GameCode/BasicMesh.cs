@@ -11,7 +11,6 @@ using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
-using LCBuffer = LightClaw.Engine.Graphics.OpenGL.Buffer;
 
 namespace LightClaw.GameCode
 {
@@ -22,14 +21,13 @@ namespace LightClaw.GameCode
 @"#version 400
 
 in vec3 inVertexPosition;
-in vec4 inVertexColor;
 
 out vec4 vertexColor
 
 void main(void)
 {
 	gl_Position = inVertexPosition;
-	vertexColor = inVertexColor;
+	vertexColor = vec4(1, 0, 0, 0);
 }";
 
         private const string fragmentShaderSource =
@@ -82,41 +80,29 @@ void main(void)
 
         protected override void OnLoad()
         {
-            (vertexBuffer = new LCBuffer(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw)).Set(
-                new Vertex[] { 
-                    new Vertex(new Vector3(-1.0f, -1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Red),
-                    new Vertex(new Vector3(1.0f, -1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Blue),
-                    new Vertex(new Vector3(0.0f,  1.0f, 0.0f), Vector3.Zero, Vector2.Zero, Color.Yellow)
-                }
+            this.vertexBuffer = BufferObject.Create(
+                new[] 
+                { 
+                    -1.0f, -1.0f, 0.0f,
+                    1.0f, -1.0f, 0.0f,
+                    0.0f,  1.0f, 0.0f,
+                }, 
+                BufferTarget.ArrayBuffer, 
+                BufferUsageHint.StaticDraw
             );
-            (indexBuffer = new LCBuffer(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw)).Set(new int[] { 1, 2, 3 });
+            this.indexBuffer = BufferObject.Create(new int[] { 1, 2, 3 }, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
 
-            VertexAttributePointer[] pointers = new VertexAttributePointer[]
-            {
-                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0),
-                new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, Vertex.SizeInBytes, 32),
-            };
-            BufferDescription desc = new BufferDescription(this.vertexBuffer, pointers);
+            BufferDescription desc = new BufferDescription(
+                this.vertexBuffer,
+                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
+            );
             this.vao = new VertexArrayObject(this.indexBuffer, desc);
-
-            //IContentManager contentMgr = this.IocC.Resolve<IContentManager>();
-            //Task<string> vertexShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.vert");
-            //Task<string> fragmentShaderSourceTask = contentMgr.LoadAsync<string>("Shaders/Basic.frag");
-
-            //Task<string[]> shaderLoadTask = Task.WhenAll(vertexShaderSourceTask, fragmentShaderSourceTask);
-            //shaderLoadTask.ContinueWith(t =>
-            //{
             Shader[] shaders = new Shader[] 
             { 
-                new Shader(vertexShaderSource, ShaderType.VertexShader, new[] { new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color) }),
+                new Shader(vertexShaderSource, ShaderType.VertexShader, new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position)),
                 new Shader(fragmentShaderSource, ShaderType.FragmentShader)
             };
             this.program = new ShaderProgram(shaders);
-            //}, TaskContinuationOptions.OnlyOnRanToCompletion);
-            //shaderLoadTask.ContinueWith(
-            //    t => Logger.Warn(ex => "An exception of type '{0}' occured while loading the shaders.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
-            //    TaskContinuationOptions.OnlyOnFaulted
-            //);
 
             base.OnLoad();
         }

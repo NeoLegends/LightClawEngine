@@ -84,7 +84,7 @@ namespace LightClaw.Engine.Graphics
         private ObservableCollection<ModelPart> _ModelParts = new ObservableCollection<ModelPart>();
 
         /// <summary>
-        /// A collection of <see cref="ModelPart"/>s this <see cref="Model"/> consists of.
+        /// A collection of <see cref="ModelPart"/> s this <see cref="Model"/> consists of.
         /// </summary>
         public ObservableCollection<ModelPart> ModelParts
         {

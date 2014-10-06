@@ -36,7 +36,9 @@ namespace LightClaw.Engine.Graphics
             [DataMember]
             public string ColorAttribute { get; private set; }
 
-            private StageData() { }
+            private StageData()
+            {
+            }
 
             public StageData(ResourceString source)
                 : this(source, null, null, null, null, null, null)

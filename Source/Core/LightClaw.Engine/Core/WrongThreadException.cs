@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -49,12 +48,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="WrongThreadException"/>.
         /// </summary>
-        public WrongThreadException() { }
+        public WrongThreadException()
+        {
+        }
 
         /// <summary>
-        /// Initializes a new <see cref="WrongThreadException"/> setting <see cref="P:CurrentThreadId"/> and <see cref="P:TargetThreadId"/>.
+        /// Initializes a new <see cref="WrongThreadException"/> setting <see cref="P:CurrentThreadId"/> and
+        /// <see cref="P:TargetThreadId"/>.
         /// </summary>
-        /// <param name="currentThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.</param>
+        /// <param name="currentThreadId">
+        /// The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.
+        /// </param>
         /// <param name="targetThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the target thread.</param>
         public WrongThreadException(int currentThreadId, int targetThreadId)
         {
@@ -66,12 +70,18 @@ namespace LightClaw.Engine.Core
         /// Initializes a new <see cref="WrongThreadException"/> setting the exception message.
         /// </summary>
         /// <param name="message">A description of the error.</param>
-        public WrongThreadException(string message) : base(message) { }
+        public WrongThreadException(string message)
+            : base(message)
+        {
+        }
 
         /// <summary>
-        /// Initializes a new <see cref="WrongThreadException"/> setting the exception message, <see cref="P:CurrentThreadId"/> and <see cref="P:TargetThreadId"/>.
+        /// Initializes a new <see cref="WrongThreadException"/> setting the exception message,
+        /// <see cref="P:CurrentThreadId"/> and <see cref="P:TargetThreadId"/>.
         /// </summary>
-        /// <param name="currentThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.</param>
+        /// <param name="currentThreadId">
+        /// The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.
+        /// </param>
         /// <param name="targetThreadId">The <see cref="System.Threading.Thread.ManagedThreadId"/> of the target thread.</param>
         /// <param name="message">A description of the error.</param>
         public WrongThreadException(string message, int currentThreadId, int targetThreadId)
@@ -82,18 +92,24 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Initializes a new <see cref="WrongThreadException"/> setting the exception message and the inner exception that lead to
-        /// this exception being thrown.
+        /// Initializes a new <see cref="WrongThreadException"/> setting the exception message and the inner exception
+        /// that lead to this exception being thrown.
         /// </summary>
         /// <param name="message">A description of the error.</param>
         /// <param name="inner">The <see cref="Exception"/> that lead up to this <see cref="Exception"/>.</param>
-        public WrongThreadException(string message, Exception inner) : base(message, inner) { }
+        public WrongThreadException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="WrongThreadException"/> after deserialization.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/>.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected WrongThreadException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected WrongThreadException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 }

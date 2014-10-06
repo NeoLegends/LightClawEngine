@@ -21,8 +21,11 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="ReverseComparer{T}"/> using the default comparer.
         /// </summary>
-        /// <seealso cref="P:Comparer{T}.Default"/>
-        public ReverseComparer() : this(Comparer<T>.Default) { }
+        /// <seealso cref="P:Comparer{T}.Default"></seealso>
+        public ReverseComparer()
+            : this(Comparer<T>.Default)
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="ReverseComparer{T}"/> using the specified <see cref="IComparer{T}"/>.
@@ -41,8 +44,8 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns>An integer representing the relationship of the two operands.</returns>
-        public int Compare(T left, T right) 
-        { 
+        public int Compare(T left, T right)
+        {
             return inner.Compare(right, left);
         }
     }

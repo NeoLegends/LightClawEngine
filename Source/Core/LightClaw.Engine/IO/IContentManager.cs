@@ -12,6 +12,7 @@ namespace LightClaw.Engine.IO
     /// <summary>
     /// Represents an instance enabling access to the game's assets and content.
     /// </summary>
+    /// <seealso cref="ContentManager"/>
     [ContractClass(typeof(IContentManagerContracts))]
     public interface IContentManager
     {
@@ -28,30 +29,30 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Notifies about the start of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"/>
+        /// <seealso cref="GetStreamAsync"></seealso>
         event EventHandler<ParameterEventArgs> StreamObtaining;
 
         /// <summary>
         /// Notifies about the end of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"/>
+        /// <seealso cref="GetStreamAsync"></seealso>
         event EventHandler<ParameterEventArgs> StreamObtained;
 
         /// <summary>
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
         Task<bool> ExistsAsync(ResourceString resourceString);
 
         /// <summary>
-        /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no
-        /// asset with the specified resource string, it will be created.
+        /// Gets a <u>writable</u> <see cref="Stream"/> around a specific resource string. If there is no asset with the
+        /// specified resource string, it will be created.
         /// </summary>
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
-        /// <seealso cref="Stream"/>
+        /// <seealso cref="Stream"></seealso>
         Task<Stream> GetStreamAsync(ResourceString resourceString);
 
         /// <summary>
@@ -60,14 +61,14 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
-        /// information about the asset being read.
-        /// <example>
-        /// Imagine a content reader reading texture files to a generic texture class. It needs information about
-        /// the file type of the image to load to be able to properly load it.
-        /// </example>
+        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// information about the asset being read. <example> Imagine a content reader reading texture files to a
+        /// generic texture class. It needs information about the file type of the image to load to be able to properly
+        /// load it. </example>
         /// </param>
-        /// <param name="forceReload">Indicates whether to force-load the asset from the disk and bypass any caching structures.</param>
+        /// <param name="forceReload">
+        /// Indicates whether to force-load the asset from the disk and bypass any caching structures.
+        /// </param>
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
@@ -77,27 +78,27 @@ namespace LightClaw.Engine.IO
         /// Registers a new <see cref="IContentReader"/>.
         /// </summary>
         /// <remarks>
-        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case it implements IDisposable)
-        /// on its disposal.
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case
+        /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
-        /// <seealso cref="IContentReader"/>
+        /// <seealso cref="IContentReader"></seealso>
         void Register(IContentReader reader);
 
         /// <summary>
         /// Registers a new <see cref="IContentResolver"/>.
         /// </summary>
         /// <remarks>
-        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case it implements IDisposable)
-        /// on its disposal.
+        /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case
+        /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
-        /// <seealso cref="IContentResolver"/>
+        /// <seealso cref="IContentResolver"></seealso>
         void Register(IContentResolver resolver);
     }
 
     [ContractClassFor(typeof(IContentManager))]
-    abstract class IContentManagerContracts : IContentManager
+    internal abstract class IContentManagerContracts : IContentManager
     {
         event EventHandler<ParameterEventArgs> IContentManager.AssetLoading { add { } remove { } }
 

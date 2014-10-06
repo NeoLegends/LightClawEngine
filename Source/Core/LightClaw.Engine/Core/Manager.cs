@@ -148,13 +148,18 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Manager"/>.
         /// </summary>
-        protected Manager() { }
+        protected Manager()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="Manager"/> and sets the name.
         /// </summary>
         /// <param name="name">The instance's name.</param>
-        protected Manager(string name) : base(name) { }
+        protected Manager(string name)
+            : base(name)
+        {
+        }
 
         /// <summary>
         /// Enables the instance.
@@ -223,9 +228,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Loads the instance.
         /// </summary>
-        /// <remarks>
-        /// Calls to <see cref="M:Load"/> will be ignored if the instance is already loaded.
-        /// </remarks>
+        /// <remarks>Calls to <see cref="M:Load"/> will be ignored if the instance is already loaded.</remarks>
         public void Load()
         {
             if (!this.IsLoaded)
@@ -247,7 +250,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Resets the instance to the default values.
         /// </summary>
-        /// <example><see cref="Transform"/> resets its local position / rotation / scaling to zero / identity / one.</example>
+        /// <example>
+        /// <see cref="Transform"/> resets its local position / rotation / scaling to zero / identity / one.
+        /// </example>
         public void Reset()
         {
             lock (this.stateLock)

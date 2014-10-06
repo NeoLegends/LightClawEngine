@@ -44,9 +44,12 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Effect() : this(false) { }
+        protected Effect()
+            : this(false)
+        {
+        }
 
-        protected Effect(bool ownsPasses) 
+        protected Effect(bool ownsPasses)
         {
             this.OwnsPasses = ownsPasses;
         }
@@ -78,7 +81,7 @@ namespace LightClaw.Engine.Graphics
         }
 
         public IEnumerator<EffectPass> GetEnumerator()
-        {   
+        {
             return ((IEnumerable<EffectPass>)this.Passes).GetEnumerator();
         }
 

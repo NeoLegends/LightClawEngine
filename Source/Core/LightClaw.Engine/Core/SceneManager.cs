@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using log4net;
 
 namespace LightClaw.Engine.Core
 {
@@ -17,7 +16,7 @@ namespace LightClaw.Engine.Core
     /// <remarks>
     /// <see cref="SceneManager"/> <u>will</u> assume ownage of the <see cref="Scene"/> it controls
     /// and thus also disposes them if <see cref="SceneManager"/> itself is disposed.
-    /// 
+    ///
     /// Image composition works by rendering all managed scenes on top of each other. Scenes with higher slots are
     /// drawn later and thus are more visible.
     /// </remarks>
@@ -54,8 +53,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="startScene">The <see cref="Scene"/> to load on startup.</param>
         /// <remarks>
-        /// As the startup scene will be loaded synchronously, it is crucial to engine performance that the <see cref="Scene"/> is
-        /// small and can be loaded quickly.
+        /// As the startup scene will be loaded synchronously, it is crucial to engine performance that the
+        /// <see cref="Scene"/> is small and can be loaded quickly.
         /// </remarks>
         public SceneManager(ResourceString startScene)
         {
@@ -107,9 +106,10 @@ namespace LightClaw.Engine.Core
         /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
         /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
         /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done until a free
-        /// slot is found. However, moving the scene into a lower layer during rendering (final image is a composition of all scenes drawing 
-        /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it.
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
+        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
+        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
+        /// that are not supposed to overdraw it.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
         public async Task<int> Load(int slot, ResourceString resourceString)
@@ -124,10 +124,10 @@ namespace LightClaw.Engine.Core
         /// <param name="s">The existing <see cref="Scene"/> to load.</param>
         /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
         /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below until a free
-        /// slot is found. However, moving the scene into a lower layer during rendering (final image is a composition of all scenes drawing 
-        /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it. So make sure
-        /// to check on the return value and move the scene accordingly, if required.
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below until a free slot
+        /// is found. However, moving the scene into a lower layer during rendering (final image is a composition of all
+        /// scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed
+        /// to overdraw it. So make sure to check on the return value and move the scene accordingly, if required.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
         public int Load(int slot, Scene s)
@@ -155,7 +155,8 @@ namespace LightClaw.Engine.Core
                     }
                 }
 
-                // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its already taken ;)
+                // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its
+                // already taken ;)
                 Logger.Warn(() => "Scene insertion failed, all slots below were taken.");
                 throw new InvalidOperationException("Scene insertion failed, all slots below were taken.");
             }
@@ -167,12 +168,14 @@ namespace LightClaw.Engine.Core
         /// <param name="slot">The slot of the old scene.</param>
         /// <param name="newSlot">The new slot.</param>
         /// <returns>
-        /// The slot the <see cref="Scene"/> was moved to. If the move was impossible, the return value will be equal to <paramref name="slot"/>.
+        /// The slot the <see cref="Scene"/> was moved to. If the move was impossible, the return value will be equal to
+        /// <paramref name="slot"/>.
         /// </returns>
         /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done until a free
-        /// slot is found. However, moving the scene into a lower layer during rendering (final image is a composition of all scenes drawing 
-        /// on top of each other) poses a higher risk of being overdrawn by scenes that are not supposed to overdraw it.
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
+        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
+        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
+        /// that are not supposed to overdraw it.
         /// </remarks>
         [ContractVerification(false)] // Contracts show some obscure warning about a constant value. If sb is smarter than me and knows how to properly get rid of the warning, please do.
         public int Move(int slot, int newSlot)
@@ -210,7 +213,7 @@ namespace LightClaw.Engine.Core
         /// Unloads the <see cref="Scene"/> from the specified slot.
         /// </summary>
         /// <param name="slot">The slot of the <see cref="Scene"/> to unload.</param>
-        /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c> .</returns>
         public bool Unload(int slot)
         {
             Logger.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));
@@ -234,7 +237,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Implementation of <see cref="M:Enable"/>.
         /// </summary>
-        protected override void OnEnable() 
+        protected override void OnEnable()
         {
             lock (this.scenes)
             {

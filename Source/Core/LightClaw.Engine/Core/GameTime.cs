@@ -40,7 +40,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="GameTime"/> setting the delta time and the total game time.
         /// </summary>
-        /// <param name="elapsedSinceUpdate">The time in seconds that passed since the last call to <see cref="IUpdateable.Update"/>.</param>
+        /// <param name="elapsedSinceUpdate">
+        /// The time in seconds that passed since the last call to <see cref="IUpdateable.Update"/>.
+        /// </param>
         /// <param name="totalTime">The game's total running time in seconds.</param>
         public GameTime(double elapsedSinceUpdate, double totalTime)
             : this()
@@ -65,7 +67,7 @@ namespace LightClaw.Engine.Core
         /// Tests whether the current instance and the specified object are the same.
         /// </summary>
         /// <param name="obj">The <see cref="Object"/> to test against.</param>
-        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c> .</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -78,7 +80,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the two <see cref="GameTime"/>s are equal.
         /// </summary>
         /// <param name="other">The <see cref="GameTime"/> to test against.</param>
-        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c> .</returns>
         public bool Equals(GameTime other)
         {
             return MathF.AlmostEquals(this.ElapsedSinceLastUpdate, other.ElapsedSinceLastUpdate) &&
@@ -86,9 +88,9 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Obtains the <see cref="GameTime"/>'s hash code.
+        /// Obtains the <see cref="GameTime"/>s hash code.
         /// </summary>
-        /// <returns>The <see cref="GameTime"/>'s hash code.</returns>
+        /// <returns>The <see cref="GameTime"/>s hash code.</returns>
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.ElapsedSinceLastUpdate, this.TotalGameTime);
@@ -115,7 +117,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c> .</returns>
         public static bool operator ==(GameTime left, GameTime right)
         {
             return left.Equals(right);
@@ -126,7 +128,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c> .</returns>
         public static bool operator !=(GameTime left, GameTime right)
         {
             return !(left == right);

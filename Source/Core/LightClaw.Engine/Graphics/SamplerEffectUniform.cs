@@ -4,10 +4,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
-using OpenTK.Graphics.OpenGL4;
 
 using LCTextureUnit = LightClaw.Engine.Graphics.OpenGL.TextureUnit;
 
@@ -119,7 +117,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected override void OnInitialize() { }
+        protected override void OnInitialize()
+        {
+        }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

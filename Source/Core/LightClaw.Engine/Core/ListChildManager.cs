@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -58,7 +57,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public int Count
         {
-            get 
+            get
             {
                 return this.Items.Count;
             }
@@ -79,7 +78,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new, empty <see cref="ListChildManager{T}"/>.
         /// </summary>
-        public ListChildManager() 
+        public ListChildManager()
         {
             this.Items.CollectionChanged += (s, e) =>
             {
@@ -144,7 +143,9 @@ namespace LightClaw.Engine.Core
         /// Checks whether the <see cref="ListChildManager{T}"/> contains the specified item.
         /// </summary>
         /// <param name="item">The item to check for.</param>
-        /// <returns><c>true</c> if the <see cref="ListChildManager{T}"/> contains the specified item, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="ListChildManager{T}"/> contains the specified item, otherwise <c>false</c> .
+        /// </returns>
         public virtual bool Contains(T item)
         {
             lock (this.Items)
@@ -195,7 +196,10 @@ namespace LightClaw.Engine.Core
         /// Returns the index of the specified item.
         /// </summary>
         /// <param name="item">The index of the specified item.</param>
-        /// <returns>The zero-based index of the specified item inside the <see cref="ListChildManager{T}"/> or -1 if the item could not be found.</returns>
+        /// <returns>
+        /// The zero-based index of the specified item inside the <see cref="ListChildManager{T}"/> or -1 if the item
+        /// could not be found.
+        /// </returns>
         public virtual int IndexOf(T item)
         {
             lock (this.Items)
@@ -238,7 +242,7 @@ namespace LightClaw.Engine.Core
         /// Removes the specified item from the <see cref="ListChildManager{T}"/>.
         /// </summary>
         /// <param name="item">The item to remove.</param>
-        /// <returns><c>true</c> if the specified item was removed, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified item was removed, otherwise <c>false</c> .</returns>
         public virtual bool Remove(T item)
         {
             lock (this.Items)
@@ -266,7 +270,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="index">The index of the item to obtain.</param>
         /// <param name="item">If the method succeeds, the item at the specified index.</param>
-        /// <returns><c>true</c> if the item could be obtained, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the item could be obtained, otherwise <c>false</c> .</returns>
         public virtual bool TryGetItem(int index, out T item)
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);

@@ -14,7 +14,9 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Binds the object to the graphics pipeline.
         /// </summary>
-        /// <remarks>Binding shall not fail in case of something already bound, instead the previous binding shall be overwritten.</remarks>
+        /// <remarks>
+        /// Binding shall not fail in case of something already bound, instead the previous binding shall be overwritten.
+        /// </remarks>
         void Bind();
 
         /// <summary>

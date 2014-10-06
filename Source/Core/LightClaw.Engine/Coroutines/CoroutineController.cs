@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Coroutines
 {
@@ -32,7 +31,9 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Initializes a new <see cref="CoroutineController"/>.
         /// </summary>
-        public CoroutineController() { }
+        public CoroutineController()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="CoroutineController"/> from a <see cref="Func{T}"/>.

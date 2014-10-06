@@ -10,12 +10,12 @@ using LightClaw.Engine.Core;
 namespace LightClaw.Engine.Coroutines
 {
     /// <summary>
-    /// Represents an <see cref="IExecutionBlockRequest"/> with a specified amount of calls to <see cref="M:CanExecute"/>
-    /// required before execution is allowed again.
+    /// Represents an <see cref="IExecutionBlockRequest"/> with a specified amount of calls to
+    /// <see cref="M:CanExecute"/> required before execution is allowed again.
     /// </summary>
     /// <remarks>
-    /// This struct can be used to block execution for a specified amount of frames when used together with
-    /// a <see cref="CoroutineController"/> calling <see cref="M:ICoroutineContext.Step"/> (which results in
+    /// This struct can be used to block execution for a specified amount of frames when used together with a
+    /// <see cref="CoroutineController"/> calling <see cref="M:ICoroutineContext.Step"/> (which results in
     /// <see cref="M:CanExecute"/> being called) every frame.
     /// </remarks>
     [DataContract]
@@ -45,7 +45,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Determines whether the coroutine can be executed again.
         /// </summary>
-        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c> .</returns>
         public bool CanExecute()
         {
             return (Interlocked.Increment(ref this.tries) > this.RequiredTries);
@@ -55,7 +55,7 @@ namespace LightClaw.Engine.Coroutines
         /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
         /// </summary>
         /// <param name="obj">The object to check against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -68,7 +68,7 @@ namespace LightClaw.Engine.Coroutines
         /// Tests for equality with the <paramref name="other"/> specified <see cref="UpdateCountBlockRequest"/>.
         /// </summary>
         /// <param name="other">The <see cref="UpdateCountBlockRequest"/> to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
         public bool Equals(UpdateCountBlockRequest other)
         {
             if (ReferenceEquals(other, null))
@@ -93,7 +93,9 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are equal, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are equal, otherwise <c>false</c> .
+        /// </returns>
         public static bool operator ==(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
         {
             if (ReferenceEquals(left, right))
@@ -109,7 +111,9 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are inequal, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are inequal, otherwise <c>false</c> .
+        /// </returns>
         public static bool operator !=(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
         {
             return !(left == right);

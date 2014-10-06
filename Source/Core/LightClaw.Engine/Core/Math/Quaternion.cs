@@ -116,7 +116,10 @@ namespace LightClaw.Engine.Core
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
-        public Quaternion(float value) : this(value, value, value, value) { }
+        public Quaternion(float value)
+            : this(value, value, value, value)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
@@ -124,27 +127,40 @@ namespace LightClaw.Engine.Core
         /// <param name="value">A vector containing the values with which to initialize the X and Y components.</param>
         /// <param name="z">Initial value for the Z component of the quaternion.</param>
         /// <param name="w">Initial value for the W component of the quaternion.</param>
-        public Quaternion(Vector2 value, float z, float w) : this(value.X, value.Y, z, w) { }
+        public Quaternion(Vector2 value, float z, float w)
+            : this(value.X, value.Y, z, w)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
         /// <param name="value">A vector containing the values with which to initialize the X, Y, and Z components.</param>
         /// <param name="w">Initial value for the W component of the quaternion.</param>
-        public Quaternion(Vector3 value, float w) : this(value.X, value.Y, value.Z, w) { }
+        public Quaternion(Vector3 value, float w)
+            : this(value.X, value.Y, value.Z, w)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
         /// <param name="value">A vector containing the values with which to initialize the components.</param>
-        public Quaternion(Vector4 value) : this(value.X, value.Y, value.Z, value.W) { }
+        public Quaternion(Vector4 value)
+            : this(value.X, value.Y, value.Z, value.W)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Quaternion"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the X, Y, Z, and W components of the quaternion. This must be an array with four elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than four elements.
+        /// </exception>
         public Quaternion(float[] values)
             : this(values[0], values[1], values[2], values[3])
         {
@@ -170,9 +186,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is equivalent to the identity quaternion.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity quaternion; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance is an identity quaternion; otherwise, <c>false</c> .</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -224,8 +238,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <returns>The length of the quaternion.</returns>
         /// <remarks>
-        /// <see cref="Quaternion.LengthSquared"/> may be preferred when only the relative length is needed
-        /// and speed is of the essence.
+        /// <see cref="Quaternion.LengthSquared"/> may be preferred when only the relative length is needed and speed is
+        /// of the essence.
         /// </remarks>
         public float Length
         {
@@ -240,8 +254,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <returns>The squared length of the quaternion.</returns>
         /// <remarks>
-        /// This method may be preferred to <see cref="Quaternion.Length"/> when only a relative length is needed
-        /// and speed is of the essence.
+        /// This method may be preferred to <see cref="Quaternion.Length"/> when only a relative length is needed and
+        /// speed is of the essence.
         /// </remarks>
         public float LengthSquared
         {
@@ -255,9 +269,14 @@ namespace LightClaw.Engine.Core
         /// Gets or sets the component at the specified index.
         /// </summary>
         /// <value>The value of the X, Y, Z, or W component, depending on the index.</value>
-        /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, 2 for the Z component, and 3 for the W component.</param>
+        /// <param name="index">
+        /// The index of the component to access. Use 0 for the X component, 1 for the Y component, 2 for the Z
+        /// component, and 3 for the W component.
+        /// </param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 3].
+        /// </exception>
         public float this[int index]
         {
             get
@@ -486,14 +505,30 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in
+        /// Barycentric coordinates relative to a 2D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <param name="result">When the method completes, contains a new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</param>
+        /// <param name="value1">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.
+        /// </param>
+        /// <param name="value2">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.
+        /// </param>
+        /// <param name="value3">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.
+        /// </param>
+        /// <param name="amount1">
+        /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
+        /// <paramref name="value2"/> ).
+        /// </param>
+        /// <param name="amount2">
+        /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
+        /// <paramref name="value3"/> ).
+        /// </param>
+        /// <param name="result">
+        /// When the method completes, contains a new <see cref="Quaternion"/> containing the 4D Cartesian coordinates
+        /// of the specified point.
+        /// </param>
         public static void Barycentric(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, float amount1, float amount2, out Quaternion result)
         {
             Quaternion start, end;
@@ -503,13 +538,26 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// Returns a <see cref="Quaternion"/> containing the 4D Cartesian coordinates of a point specified in
+        /// Barycentric coordinates relative to a 2D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
+        /// <param name="value1">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.
+        /// </param>
+        /// <param name="value2">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.
+        /// </param>
+        /// <param name="value3">
+        /// A <see cref="Quaternion"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.
+        /// </param>
+        /// <param name="amount1">
+        /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
+        /// <paramref name="value2"/> ).
+        /// </param>
+        /// <param name="amount2">
+        /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
+        /// <paramref name="value3"/> ).
+        /// </param>
         /// <returns>A new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</returns>
         public static Quaternion Barycentric(Quaternion value1, Quaternion value2, Quaternion value3, float amount1, float amount2)
         {
@@ -634,8 +682,11 @@ namespace LightClaw.Engine.Core
         /// <param name="result">When the method completes, contains the linear interpolation of the two quaternions.</param>
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
-        /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// <code>
+        /// start + (end - start) * amount
+        /// </code>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
         {
@@ -668,8 +719,11 @@ namespace LightClaw.Engine.Core
         /// <returns>The linear interpolation of the two quaternions.</returns>
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
-        /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// <code>
+        /// start + (end - start) * amount
+        /// </code>
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Quaternion Lerp(Quaternion start, Quaternion end, float amount)
         {
@@ -1109,7 +1163,9 @@ namespace LightClaw.Engine.Core
         /// <param name="start">Start quaternion.</param>
         /// <param name="end">End quaternion.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
-        /// <param name="result">When the method completes, contains the spherical linear interpolation of the two quaternions.</param>
+        /// <param name="result">
+        /// When the method completes, contains the spherical linear interpolation of the two quaternions.
+        /// </param>
         public static void Slerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
         {
             float opposite;
@@ -1158,7 +1214,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value3">Third source quaternion.</param>
         /// <param name="value4">Fourth source quaternion.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of interpolation.</param>
-        /// <param name="result">When the method completes, contains the spherical quadrangle interpolation of the quaternions.</param>
+        /// <param name="result">
+        /// When the method completes, contains the spherical quadrangle interpolation of the quaternions.
+        /// </param>
         public static void Squad(ref Quaternion value1, ref Quaternion value2, ref Quaternion value3, ref Quaternion value4, float amount, out Quaternion result)
         {
             Quaternion start, end;
@@ -1292,7 +1350,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Quaternion left, Quaternion right)
         {
             return left.Equals(ref right);
@@ -1303,7 +1364,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Quaternion left, Quaternion right)
         {
             return !left.Equals(ref right);
@@ -1312,9 +1376,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
             return string.Format("<{0}|{1}|{2}|{3}>", X, Y, Z, W);
@@ -1324,7 +1386,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -1336,7 +1398,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Quaternion"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         [CLSCompliant(false)]
         public bool Equals(ref Quaternion other)
@@ -1349,7 +1411,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Quaternion"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Quaternion"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Quaternion other)
         {
@@ -1361,7 +1423,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {

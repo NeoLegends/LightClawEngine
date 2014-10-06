@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    [DataContract]
+    [Serializable, DataContract]
     [JsonConverter(typeof(VertexAttributeLocationConverter))]
     public struct VertexAttributeLocation : ICloneable, IEquatable<int>, IEquatable<VertexAttributeLocation>
     {

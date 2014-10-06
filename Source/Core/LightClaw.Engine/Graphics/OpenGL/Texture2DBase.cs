@@ -5,8 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -14,8 +12,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClass(typeof(Texture2DBaseContracts))]
     public abstract class Texture2DBase : Texture
     {
-        protected Texture2DBase(TextureDescription description) 
-            : base(description) 
+        protected Texture2DBase(TextureDescription description)
+            : base(description)
         {
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget2d), description.Target));
         }
@@ -58,20 +56,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     case TextureTarget.Texture2DMultisample:
                     case TextureTarget.ProxyTexture2DMultisample:
                         GL.TexStorage2DMultisample(
-                            (TextureTargetMultisample2d)this.Target, 
-                            this.MultisamplingLevels, 
-                            (SizedInternalFormat)this.PixelInternalFormat, 
-                            this.Width, 
-                            this.Height, 
+                            (TextureTargetMultisample2d)this.Target,
+                            this.MultisamplingLevels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
+                            this.Height,
                             false
                         );
                         break;
                     default:
                         GL.TexStorage2D(
-                            (TextureTarget2d)this.Target, 
-                            this.Levels, 
-                            (SizedInternalFormat)this.PixelInternalFormat, 
-                            this.Width, 
+                            (TextureTarget2d)this.Target,
+                            this.Levels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
                             this.Height
                         );
                         break;
@@ -81,9 +79,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     }
 
     [ContractClassFor(typeof(Texture2DBase))]
-    abstract class Texture2DBaseContracts : Texture2DBase
+    internal abstract class Texture2DBaseContracts : Texture2DBase
     {
-        public Texture2DBaseContracts() : base(new TextureDescription()) { }
+        public Texture2DBaseContracts()
+            : base(new TextureDescription())
+        {
+        }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {

@@ -6,9 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Graphics;
 using LightClaw.Extensions;
-using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Core
 {
@@ -192,7 +190,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets the <see cref="Matrix"/>' determinant.
+        /// Gets the <see cref="Matrix"/> ' determinant.
         /// </summary>
         public float Determinant
         {
@@ -210,7 +208,7 @@ namespace LightClaw.Engine.Core
                     (M14 * (((M21 * temp3) - (M22 * temp5)) + (M23 * temp6))));
             }
         }
-     
+
         /// <summary>
         /// Gets or sets the up <see cref="Vector3"/> of the matrix; that is M21, M22, and M23.
         /// </summary>
@@ -232,7 +230,7 @@ namespace LightClaw.Engine.Core
                 this.M23 = value.Z;
             }
         }
-    
+
         /// <summary>
         /// Gets or sets the down <see cref="Vector3"/> of the matrix; that is -M21, -M22, and -M23.
         /// </summary>
@@ -254,7 +252,7 @@ namespace LightClaw.Engine.Core
                 this.M23 = -value.Z;
             }
         }
-    
+
         /// <summary>
         /// Gets or sets the right <see cref="Vector3"/> of the matrix; that is M11, M12, and M13.
         /// </summary>
@@ -276,7 +274,7 @@ namespace LightClaw.Engine.Core
                 this.M13 = value.Z;
             }
         }
-    
+
         /// <summary>
         /// Gets or sets the left <see cref="Vector3"/> of the matrix; that is -M11, -M12, and -M13.
         /// </summary>
@@ -298,7 +296,7 @@ namespace LightClaw.Engine.Core
                 this.M13 = -value.Z;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the forward <see cref="Vector3"/> of the matrix; that is -M31, -M32, and -M33.
         /// </summary>
@@ -319,7 +317,7 @@ namespace LightClaw.Engine.Core
                 this.M33 = -value.Z;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the backward <see cref="Vector3"/> of the matrix; that is M31, M32, and M33.
         /// </summary>
@@ -435,9 +433,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is an identity matrix.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity matrix; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance is an identity matrix; otherwise, <c>false</c> .</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -449,7 +445,9 @@ namespace LightClaw.Engine.Core
         /// <value>The value of the matrix component, depending on the index.</value>
         /// <param name="index">The zero-based index of the component to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 15].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 15].
+        /// </exception>
         public float this[int index]
         {
             get
@@ -512,7 +510,9 @@ namespace LightClaw.Engine.Core
         /// <param name="row">The row of the matrix to access.</param>
         /// <param name="column">The column of the matrix to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="row"/> or <paramref name="column"/>is out of the range [0, 3].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="row"/> or <paramref name="column"/> is out of the range [0, 3].
+        /// </exception>
         public float this[int row, int column]
         {
             get
@@ -530,7 +530,7 @@ namespace LightClaw.Engine.Core
                 this[(row * 4) + column] = value;
             }
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix"/> struct.
         /// </summary>
@@ -577,14 +577,18 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the components of the matrix. This must be an array with sixteen elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than sixteen elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the components of the matrix. This must be an array with sixteen elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than sixteen elements.
+        /// </exception>
         public Matrix(float[] values)
             : this(
-                values[0],  values[1],  values[2],  values[3],
-                values[4],  values[5],  values[6],  values[7],
-                values[8],  values[9],  values[10], values[11],
+                values[0], values[1], values[2], values[3],
+                values[4], values[5], values[6], values[7],
+                values[8], values[9], values[10], values[11],
                 values[12], values[13], values[14], values[15]
             )
         {
@@ -596,7 +600,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -613,7 +617,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         [CLSCompliant(false)]
         public bool Equals(ref Matrix other)
@@ -645,7 +649,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Matrix other)
         {
@@ -657,7 +661,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {
@@ -687,15 +691,19 @@ namespace LightClaw.Engine.Core
         /// Orthogonalizes the specified matrix.
         /// </summary>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the matrix will be orthogonal to any other given row in the
-        /// matrix.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the matrix will be orthogonal to any other given row in the matrix.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public void Orthogonalize()
         {
@@ -706,17 +714,21 @@ namespace LightClaw.Engine.Core
         /// Orthonormalizes the specified matrix.
         /// </summary>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public void Orthonormalize()
         {
@@ -762,14 +774,14 @@ namespace LightClaw.Engine.Core
 
             L = new Matrix();
             L.M11 = Vector4.Dot(Q.Row1, Row1);
-            
+
             L.M21 = Vector4.Dot(Q.Row1, Row2);
             L.M22 = Vector4.Dot(Q.Row2, Row2);
-            
+
             L.M31 = Vector4.Dot(Q.Row1, Row3);
             L.M32 = Vector4.Dot(Q.Row2, Row3);
             L.M33 = Vector4.Dot(Q.Row3, Row3);
-            
+
             L.M41 = Vector4.Dot(Q.Row1, Row4);
             L.M42 = Vector4.Dot(Q.Row2, Row4);
             L.M43 = Vector4.Dot(Q.Row3, Row4);
@@ -781,10 +793,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="scale">When the method completes, contains the scaling component of the decomposed matrix.</param>
         /// <param name="rotation">When the method completes, contains the rotation component of the decomposed matrix.</param>
-        /// <param name="translation">When the method completes, contains the translation component of the decomposed matrix.</param>
-        /// <remarks>
-        /// This method is designed to decompose an SRT transformation matrix only.
-        /// </remarks>
+        /// <param name="translation">
+        /// When the method completes, contains the translation component of the decomposed matrix.
+        /// </param>
+        /// <remarks>This method is designed to decompose an SRT transformation matrix only.</remarks>
         public bool Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation)
         {
             //Source: Unknown
@@ -830,12 +842,14 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Decomposes a uniform scale matrix into a scale, rotation, and translation.
-        /// A uniform scale matrix has the same scale in every axis.
+        /// Decomposes a uniform scale matrix into a scale, rotation, and translation. A uniform scale matrix has the
+        /// same scale in every axis.
         /// </summary>
         /// <param name="scale">When the method completes, contains the scaling component of the decomposed matrix.</param>
         /// <param name="rotation">When the method completes, contains the rotation component of the decomposed matrix.</param>
-        /// <param name="translation">When the method completes, contains the translation component of the decomposed matrix.</param>
+        /// <param name="translation">
+        /// When the method completes, contains the translation component of the decomposed matrix.
+        /// </param>
         /// <remarks>
         /// This method is designed to decompose only an SRT transformation matrix that has the same scale in every axis.
         /// </remarks>
@@ -954,9 +968,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
             return
@@ -1082,7 +1094,7 @@ namespace LightClaw.Engine.Core
             Multiply(ref left, right, out result);
             return result;
         }
-        
+
         /// <summary>
         /// Multiplies the <see cref="Matrix"/> with a <see cref="Vector4"/>.
         /// </summary>
@@ -1237,7 +1249,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to perform the operation on.</param>
         /// <param name="exponent">The exponent to raise the matrix to.</param>
         /// <param name="result">When the method completes, contains the exponential matrix.</param>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="exponent"/> is negative.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="exponent"/> is negative.
+        /// </exception>
         public static void Exponent(ref Matrix value, int exponent, out Matrix result)
         {
             //Source: http://rosettacode.org
@@ -1288,7 +1302,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to perform the operation on.</param>
         /// <param name="exponent">The exponent to raise the matrix to.</param>
         /// <returns>The exponential matrix.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="exponent"/> is negative.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="exponent"/> is negative.
+        /// </exception>
         public static Matrix Exponent(Matrix value, int exponent)
         {
             Contract.Requires<ArgumentOutOfRangeException>(exponent >= 0);
@@ -1343,7 +1359,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two matrices.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Matrix start, ref Matrix end, float amount, out Matrix result)
         {
@@ -1373,7 +1390,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two matrices.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Matrix Lerp(Matrix start, Matrix end, float amount)
         {
@@ -1547,15 +1565,19 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to orthogonalize.</param>
         /// <param name="result">When the method completes, contains the orthogonalized matrix.</param>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the matrix will be orthogonal to any other given row in the
-        /// matrix.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the matrix will be orthogonal to any other given row in the matrix.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static void Orthogonalize(ref Matrix value, out Matrix result)
         {
@@ -1584,15 +1606,19 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to orthogonalize.</param>
         /// <returns>The orthogonalized matrix.</returns>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the matrix will be orthogonal to any other given row in the
-        /// matrix.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the matrix will be orthogonal to any other given row in the matrix.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static Matrix Orthogonalize(Matrix value)
         {
@@ -1607,17 +1633,21 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to orthonormalize.</param>
         /// <param name="result">When the method completes, contains the orthonormalized matrix.</param>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static void Orthonormalize(ref Matrix value, out Matrix result)
         {
@@ -1653,17 +1683,21 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to orthonormalize.</param>
         /// <returns>The orthonormalized matrix.</returns>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting matrix
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the matrix rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting matrix tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the matrix rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static Matrix Orthonormalize(Matrix value)
         {
@@ -1678,10 +1712,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to put into upper triangular form.</param>
         /// <param name="result">When the method completes, contains the upper triangular matrix.</param>
         /// <remarks>
-        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the matrix represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the matrix represents a system of linear equations, than this often
+        /// means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static void UpperTriangularForm(ref Matrix value, out Matrix result)
         {
@@ -1740,10 +1773,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to put into upper triangular form.</param>
         /// <returns>The upper triangular matrix.</returns>
         /// <remarks>
-        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the matrix represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the matrix represents a system of linear equations, than this often
+        /// means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static Matrix UpperTriangularForm(Matrix value)
         {
@@ -1758,10 +1790,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to put into lower triangular form.</param>
         /// <param name="result">When the method completes, contains the lower triangular matrix.</param>
         /// <remarks>
-        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the matrix represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the matrix represents a system of linear equations, than this often
+        /// means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static void LowerTriangularForm(ref Matrix value, out Matrix result)
         {
@@ -1824,10 +1855,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The matrix to put into lower triangular form.</param>
         /// <returns>The lower triangular matrix.</returns>
         /// <remarks>
-        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the matrix represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the matrix is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the matrix represents a system of linear equations, than this often
+        /// means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static Matrix LowerTriangularForm(Matrix value)
         {
@@ -1918,14 +1948,20 @@ namespace LightClaw.Engine.Core
         /// <param name="result">When the method completes, contains the resultant matrix after the operation.</param>
         /// <param name="augmentResult">When the method completes, contains the resultant fifth column of the matrix.</param>
         /// <remarks>
-        /// <para>The fifth column is often called the augmented part of the matrix. This is because the fifth
-        /// column is really just an extension of the matrix so that there is a place to put all of the
-        /// non-zero components after the operation is complete.</para>
-        /// <para>Often times the resultant matrix will the identity matrix or a matrix similar to the identity
-        /// matrix. Sometimes, however, that is not possible and numbers other than zero and one may appear.</para>
-        /// <para>This method can be used to solve systems of linear equations. Upon completion of this method,
-        /// the <paramref name="augmentResult"/> will contain the solution for the system. It is up to the user
-        /// to analyze both the input and the result to determine if a solution really exists.</para>
+        /// <para>
+        /// The fifth column is often called the augmented part of the matrix. This is because the fifth column is
+        /// really just an extension of the matrix so that there is a place to put all of the non-zero components after
+        /// the operation is complete.
+        /// </para>
+        /// <para>
+        /// Often times the resultant matrix will the identity matrix or a matrix similar to the identity matrix.
+        /// Sometimes, however, that is not possible and numbers other than zero and one may appear.
+        /// </para>
+        /// <para>
+        /// This method can be used to solve systems of linear equations. Upon completion of this method, the
+        /// <paramref name="augmentResult"/> will contain the solution for the system. It is up to the user to analyze
+        /// both the input and the result to determine if a solution really exists.
+        /// </para>
         /// </remarks>
         public static void ReducedRowEchelonForm(ref Matrix value, ref Vector4 augment, out Matrix result, out Vector4 augmentResult)
         {
@@ -2142,7 +2178,8 @@ namespace LightClaw.Engine.Core
         /// <param name="cameraUpVector">The up vector of the camera.</param>
         /// <param name="cameraForwardVector">The forward vector of the camera.</param>
         /// <returns>The created billboard matrix.</returns>
-        public static Matrix BillboardRH(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector) {
+        public static Matrix BillboardRH(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector)
+        {
             Matrix result;
             BillboardRH(ref objectPosition, ref cameraPosition, ref cameraUpVector, ref cameraForwardVector, out result);
             return result;
@@ -2651,7 +2688,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the x-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void RotationX(float angle, out Matrix result)
         {
@@ -2668,7 +2707,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the x-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix RotationX(float angle)
         {
@@ -2680,7 +2721,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the y-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void RotationY(float angle, out Matrix result)
         {
@@ -2697,7 +2740,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the y-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix RotationY(float angle)
         {
@@ -2709,7 +2754,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the z-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void RotationZ(float angle, out Matrix result)
         {
@@ -2726,7 +2773,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a matrix that rotates around the z-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix RotationZ(float angle)
         {
@@ -2739,7 +2788,9 @@ namespace LightClaw.Engine.Core
         /// Creates a matrix that rotates around an arbitrary axis.
         /// </summary>
         /// <param name="axis">The axis around which to rotate. This parameter is assumed to be normalized.</param>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation matrix.</param>
         public static void RotationAxis(ref Vector3 axis, float angle, out Matrix result)
         {
@@ -2771,7 +2822,9 @@ namespace LightClaw.Engine.Core
         /// Creates a matrix that rotates around an arbitrary axis.
         /// </summary>
         /// <param name="axis">The axis around which to rotate. This parameter is assumed to be normalized.</param>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation matrix.</returns>
         public static Matrix RotationAxis(Vector3 axis, float angle)
         {
@@ -2902,13 +2955,14 @@ namespace LightClaw.Engine.Core
 
         /// <summary>
         /// Creates a skew/shear matrix by means of a translation vector, a rotation vector, and a rotation angle.
-        /// shearing is performed in the direction of translation vector, where translation vector and rotation vector define the shearing plane.
-        /// The effect is such that the skewed rotation vector has the specified angle with rotation itself.
+        /// shearing is performed in the direction of translation vector, where translation vector and rotation vector
+        /// define the shearing plane. The effect is such that the skewed rotation vector has the specified angle with
+        /// rotation itself.
         /// </summary>
         /// <param name="angle">The rotation angle.</param>
         /// <param name="rotationVec">The rotation vector</param>
         /// <param name="transVec">The translation vector</param>
-        /// <param name="matrix">Contains the created skew/shear matrix. </param>
+        /// <param name="matrix">Contains the created skew/shear matrix.</param>
         public static void Skew(float angle, ref Vector3 rotationVec, ref Vector3 transVec, out Matrix matrix)
         {
             //http://elckerlyc.ewi.utwente.nl/browser/Elckerlyc/Hmi/HmiMath/src/hmi/math/Mat3f.java
@@ -3069,7 +3123,7 @@ namespace LightClaw.Engine.Core
             Matrix sr = RotationQuaternion(scalingRotation);
 
             result = Translation(-scalingCenter) * Transpose(sr) * Scaling(scaling) * sr * Translation(scalingCenter) * Translation(-rotationCenter) *
-                RotationQuaternion(rotation) * Translation(rotationCenter) * Translation(translation);       
+                RotationQuaternion(rotation) * Translation(rotationCenter) * Translation(translation);
         }
 
         /// <summary>
@@ -3101,7 +3155,7 @@ namespace LightClaw.Engine.Core
         /// <param name="result">When the method completes, contains the created transformation matrix.</param>
         public static void Transformation2D(ref Vector2 scalingCenter, float scalingRotation, ref Vector2 scaling, ref Vector2 rotationCenter, float rotation, ref Vector2 translation, out Matrix result)
         {
-            result = Translation((Vector3)(-scalingCenter)) * RotationZ(-scalingRotation) * Scaling((Vector3)scaling) * RotationZ(scalingRotation) * Translation((Vector3)scalingCenter) * 
+            result = Translation((Vector3)(-scalingCenter)) * RotationZ(-scalingRotation) * Scaling((Vector3)scaling) * RotationZ(scalingRotation) * Translation((Vector3)scalingCenter) *
                 Translation((Vector3)(-rotationCenter)) * RotationZ(rotation) * Translation((Vector3)rotationCenter) * Translation((Vector3)translation);
 
             result.M33 = 1f;
@@ -3256,7 +3310,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Matrix left, Matrix right)
         {
             return left.Equals(ref right);
@@ -3267,7 +3324,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Matrix left, Matrix right)
         {
             return !left.Equals(ref right);

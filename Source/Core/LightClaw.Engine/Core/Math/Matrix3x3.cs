@@ -223,9 +223,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is an identity Matrix3x3.
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this instance is an identity Matrix3x3; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance is an identity Matrix3x3; otherwise, <c>false</c> .</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -237,7 +235,9 @@ namespace LightClaw.Engine.Core
         /// <value>The value of the Matrix3x3 component, depending on the index.</value>
         /// <param name="index">The zero-based index of the component to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 15].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 15].
+        /// </exception>
         public float this[int index]
         {
             get
@@ -286,7 +286,9 @@ namespace LightClaw.Engine.Core
         /// <param name="row">The row of the Matrix3x3 to access.</param>
         /// <param name="column">The column of the Matrix3x3 to access.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="row"/> or <paramref name="column"/>is out of the range [0, 3].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="row"/> or <paramref name="column"/> is out of the range [0, 3].
+        /// </exception>
         public float this[int row, int column]
         {
             get
@@ -304,15 +306,15 @@ namespace LightClaw.Engine.Core
                 this[(row * 3) + column] = value;
             }
         }
-     
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix3x3"/> struct.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
         public Matrix3x3(float value)
         {
-            M11 = M12 = M13 = 
-            M21 = M22 = M23 = 
+            M11 = M12 = M13 =
+            M21 = M22 = M23 =
             M31 = M32 = M33 = value;
         }
 
@@ -341,13 +343,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix3x3"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the components of the Matrix3x3. This must be an array with sixteen elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than sixteen elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the components of the Matrix3x3. This must be an array with sixteen elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than sixteen elements.
+        /// </exception>
         public Matrix3x3(float[] values)
             : this(
-                values[0], values[1], values[2], 
-                values[3], values[4], values[5], 
+                values[0], values[1], values[2],
+                values[3], values[4], values[5],
                 values[6], values[7], values[8]
             )
         {
@@ -359,7 +365,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -375,7 +381,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix3x3"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix3x3"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix3x3"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         [CLSCompliant(false)]
         public bool Equals(ref Matrix3x3 other)
@@ -396,7 +402,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix3x3"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix3x3"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Matrix3x3"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Matrix3x3 other)
         {
@@ -427,7 +433,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {
@@ -457,15 +463,19 @@ namespace LightClaw.Engine.Core
         /// Orthogonalizes the specified Matrix3x3.
         /// </summary>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the Matrix3x3 will be orthogonal to any other given row in the
-        /// Matrix3x3.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the Matrix3x3 will be orthogonal to any other given row in the Matrix3x3.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public void Orthogonalize()
         {
@@ -476,17 +486,21 @@ namespace LightClaw.Engine.Core
         /// Orthonormalizes the specified Matrix3x3.
         /// </summary>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public void Orthonormalize()
         {
@@ -527,10 +541,10 @@ namespace LightClaw.Engine.Core
 
             L = new Matrix3x3();
             L.M11 = Vector3.Dot(Q.Row1, Row1);
-            
+
             L.M21 = Vector3.Dot(Q.Row1, Row2);
             L.M22 = Vector3.Dot(Q.Row2, Row2);
-            
+
             L.M31 = Vector3.Dot(Q.Row1, Row3);
             L.M32 = Vector3.Dot(Q.Row2, Row3);
             L.M33 = Vector3.Dot(Q.Row3, Row3);
@@ -541,14 +555,12 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="scale">When the method completes, contains the scaling component of the decomposed Matrix3x3.</param>
         /// <param name="rotation">When the method completes, contains the rotation component of the decomposed Matrix3x3.</param>
-        /// <remarks>
-        /// This method is designed to decompose an SRT transformation Matrix3x3 only.
-        /// </remarks>
+        /// <remarks>This method is designed to decompose an SRT transformation Matrix3x3 only.</remarks>
         public bool Decompose(out Vector3 scale, out Quaternion rotation)
         {
             //Source: Unknown
             //References: http://www.gamedev.net/community/forums/topic.asp?topic_id=441695
-            
+
             //Scaling is the length of the rows.
             scale.X = (float)Math.Sqrt((M11 * M11) + (M12 * M12) + (M13 * M13));
             scale.Y = (float)Math.Sqrt((M21 * M21) + (M22 * M22) + (M23 * M23));
@@ -582,8 +594,8 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Decomposes a uniform scale matrix into a scale, rotation, and translation.
-        /// A uniform scale matrix has the same scale in every axis.
+        /// Decomposes a uniform scale matrix into a scale, rotation, and translation. A uniform scale matrix has the
+        /// same scale in every axis.
         /// </summary>
         /// <param name="scale">When the method completes, contains the scaling component of the decomposed matrix.</param>
         /// <param name="rotation">When the method completes, contains the rotation component of the decomposed matrix.</param>
@@ -688,9 +700,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
             return string.Format(
@@ -929,7 +939,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to perform the operation on.</param>
         /// <param name="exponent">The exponent to raise the Matrix3x3 to.</param>
         /// <param name="result">When the method completes, contains the exponential Matrix3x3.</param>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="exponent"/> is negative.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="exponent"/> is negative.
+        /// </exception>
         public static void Exponent(ref Matrix3x3 value, int exponent, out Matrix3x3 result)
         {
             //Source: http://rosettacode.org
@@ -975,7 +987,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to perform the operation on.</param>
         /// <param name="exponent">The exponent to raise the Matrix3x3 to.</param>
         /// <returns>The exponential Matrix3x3.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="exponent"/> is negative.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="exponent"/> is negative.
+        /// </exception>
         public static Matrix3x3 Exponent(Matrix3x3 value, int exponent)
         {
             Matrix3x3 result;
@@ -1021,7 +1035,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two matrices.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Matrix3x3 start, ref Matrix3x3 end, float amount, out Matrix3x3 result)
         {
@@ -1044,7 +1059,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two matrices.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Matrix3x3 Lerp(Matrix3x3 start, Matrix3x3 end, float amount)
         {
@@ -1181,15 +1197,19 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to orthogonalize.</param>
         /// <param name="result">When the method completes, contains the orthogonalized Matrix3x3.</param>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the Matrix3x3 will be orthogonal to any other given row in the
-        /// Matrix3x3.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the Matrix3x3 will be orthogonal to any other given row in the Matrix3x3.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static void Orthogonalize(ref Matrix3x3 value, out Matrix3x3 result)
         {
@@ -1213,15 +1233,19 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to orthogonalize.</param>
         /// <returns>The orthogonalized Matrix3x3.</returns>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all rows orthogonal to each other. This
-        /// means that any given row in the Matrix3x3 will be orthogonal to any other given row in the
-        /// Matrix3x3.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all rows orthogonal to each other. This means that any given row
+        /// in the Matrix3x3 will be orthogonal to any other given row in the Matrix3x3.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static Matrix3x3 Orthogonalize(Matrix3x3 value)
         {
@@ -1236,17 +1260,21 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to orthonormalize.</param>
         /// <param name="result">When the method completes, contains the orthonormalized Matrix3x3.</param>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static void Orthonormalize(ref Matrix3x3 value, out Matrix3x3 result)
         {
@@ -1276,17 +1304,21 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to orthonormalize.</param>
         /// <returns>The orthonormalized Matrix3x3.</returns>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all rows and columns orthogonal to each
-        /// other and making all rows and columns of unit length. This means that any given row will
-        /// be orthogonal to any other given row and any given column will be orthogonal to any other
-        /// given column. Any given row will not be orthogonal to any given column. Every row and every
-        /// column will be of unit length.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3
-        /// tends to be numerically unstable. The numeric stability decreases according to the rows
-        /// so that the first row is the most stable and the last row is the least stable.</para>
-        /// <para>This operation is performed on the rows of the Matrix3x3 rather than the columns.
-        /// If you wish for this operation to be performed on the columns, first transpose the
-        /// input and than transpose the output.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all rows and columns orthogonal to each other and making all
+        /// rows and columns of unit length. This means that any given row will be orthogonal to any other given row and
+        /// any given column will be orthogonal to any other given column. Any given row will not be orthogonal to any
+        /// given column. Every row and every column will be of unit length.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting Matrix3x3 tends to be numerically
+        /// unstable. The numeric stability decreases according to the rows so that the first row is the most stable and
+        /// the last row is the least stable.
+        /// </para>
+        /// <para>
+        /// This operation is performed on the rows of the Matrix3x3 rather than the columns. If you wish for this
+        /// operation to be performed on the columns, first transpose the input and than transpose the output.
+        /// </para>
         /// </remarks>
         public static Matrix3x3 Orthonormalize(Matrix3x3 value)
         {
@@ -1301,10 +1333,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to put into upper triangular form.</param>
         /// <param name="result">When the method completes, contains the upper triangular Matrix3x3.</param>
         /// <remarks>
-        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the Matrix3x3 represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the Matrix3x3 represents a system of linear equations, than this
+        /// often means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static void UpperTriangularForm(ref Matrix3x3 value, out Matrix3x3 result)
         {
@@ -1362,10 +1393,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to put into upper triangular form.</param>
         /// <returns>The upper triangular Matrix3x3.</returns>
         /// <remarks>
-        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the Matrix3x3 represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the Matrix3x3 represents a system of linear equations, than this
+        /// often means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static Matrix3x3 UpperTriangularForm(Matrix3x3 value)
         {
@@ -1380,10 +1410,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to put into lower triangular form.</param>
         /// <param name="result">When the method completes, contains the lower triangular Matrix3x3.</param>
         /// <remarks>
-        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the Matrix3x3 represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the Matrix3x3 represents a system of linear equations, than this
+        /// often means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static void LowerTriangularForm(ref Matrix3x3 value, out Matrix3x3 result)
         {
@@ -1445,10 +1474,9 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The Matrix3x3 to put into lower triangular form.</param>
         /// <returns>The lower triangular Matrix3x3.</returns>
         /// <remarks>
-        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this
-        /// method may produce Single.Nan and Single.Inf values. When the Matrix3x3 represents a system
-        /// of linear equations, than this often means that either no solution exists or an infinite
-        /// number of solutions exist.
+        /// If the Matrix3x3 is not invertible (i.e. its determinant is zero) than the result of this method may produce
+        /// Single.Nan and Single.Inf values. When the Matrix3x3 represents a system of linear equations, than this
+        /// often means that either no solution exists or an infinite number of solutions exist.
         /// </remarks>
         public static Matrix3x3 LowerTriangularForm(Matrix3x3 value)
         {
@@ -1774,7 +1802,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the x-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation Matrix3x3.</param>
         public static void RotationX(float angle, out Matrix3x3 result)
         {
@@ -1791,7 +1821,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the x-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation Matrix3x3.</returns>
         public static Matrix3x3 RotationX(float angle)
         {
@@ -1803,7 +1835,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the y-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation Matrix3x3.</param>
         public static void RotationY(float angle, out Matrix3x3 result)
         {
@@ -1820,7 +1854,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the y-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation Matrix3x3.</returns>
         public static Matrix3x3 RotationY(float angle)
         {
@@ -1832,7 +1868,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the z-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation Matrix3x3.</param>
         public static void RotationZ(float angle, out Matrix3x3 result)
         {
@@ -1849,7 +1887,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Creates a Matrix3x3 that rotates around the z-axis.
         /// </summary>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation Matrix3x3.</returns>
         public static Matrix3x3 RotationZ(float angle)
         {
@@ -1862,7 +1902,9 @@ namespace LightClaw.Engine.Core
         /// Creates a Matrix3x3 that rotates around an arbitrary axis.
         /// </summary>
         /// <param name="axis">The axis around which to rotate. This parameter is assumed to be normalized.</param>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <param name="result">When the method completes, contains the created rotation Matrix3x3.</param>
         public static void RotationAxis(ref Vector3 axis, float angle, out Matrix3x3 result)
         {
@@ -1894,7 +1936,9 @@ namespace LightClaw.Engine.Core
         /// Creates a Matrix3x3 that rotates around an arbitrary axis.
         /// </summary>
         /// <param name="axis">The axis around which to rotate. This parameter is assumed to be normalized.</param>
-        /// <param name="angle">Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.</param>
+        /// <param name="angle">
+        /// Angle of rotation in radians. Angles are measured clockwise when looking along the rotation axis toward the origin.
+        /// </param>
         /// <returns>The created rotation Matrix3x3.</returns>
         public static Matrix3x3 RotationAxis(Vector3 axis, float angle)
         {
@@ -1971,7 +2015,7 @@ namespace LightClaw.Engine.Core
             RotationYawPitchRoll(yaw, pitch, roll, out result);
             return result;
         }
-        
+
         /// <summary>
         /// Adds two matrices.
         /// </summary>
@@ -2103,7 +2147,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Matrix3x3 left, Matrix3x3 right)
         {
             return left.Equals(ref right);
@@ -2114,12 +2161,15 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Matrix3x3 left, Matrix3x3 right)
         {
             return !left.Equals(ref right);
         }
-        
+
         /// <summary>
         /// Convert the 3x3 Matrix to a 4x4 Matrix.
         /// </summary>
@@ -2127,10 +2177,10 @@ namespace LightClaw.Engine.Core
         public static explicit operator Matrix(Matrix3x3 Value)
         {
             return new Matrix(
-                Value.M11, Value.M12, Value.M13 , 0 ,
-                Value.M21, Value.M22, Value.M23 , 0 ,
-                Value.M31, Value.M32, Value.M33 , 0 ,
-                0, 0, 0 , 1
+                Value.M11, Value.M12, Value.M13, 0,
+                Value.M21, Value.M22, Value.M23, 0,
+                Value.M31, Value.M32, Value.M33, 0,
+                0, 0, 0, 1
                 );
         }
 

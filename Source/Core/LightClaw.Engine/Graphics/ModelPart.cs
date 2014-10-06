@@ -11,7 +11,8 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
-    /// Represents a subdivision of the <see cref="Model"/>-class allowing for different shaders on the same <see cref="Model"/>.
+    /// Represents a subdivision of the <see cref="Model"/>-class allowing for different shaders on the same
+    /// <see cref="Model"/>.
     /// </summary>
     public class ModelPart : Entity, IDrawable, IUpdateable, ILateUpdateable
     {
@@ -142,7 +143,9 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/>.
         /// </summary>
-        public ModelPart() { }
+        public ModelPart()
+        {
+        }
 
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.

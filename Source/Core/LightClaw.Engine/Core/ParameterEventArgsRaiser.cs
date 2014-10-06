@@ -15,8 +15,7 @@ namespace LightClaw.Engine.Core
     /// {
     ///     // Code surrounded by events. "Updating" will be raised on entry of the block, "Updated" right after.
     /// }
-    /// </code>
-    /// </example>
+    /// </code></example>
     public struct ParameterEventArgsRaiser : IDisposable
     {
         /// <summary>
@@ -53,8 +52,8 @@ namespace LightClaw.Engine.Core
         /// <param name="onBeforeParameter">The parameter for the for the event raised on entry.</param>
         /// <param name="onAfterParameter">The parameter for the for the event raised on exit.</param>
         /// <param name="raiseImmediately">
-        /// Indicates whether to raise the <paramref name="onBeforeHandler"/> immediately on construction
-        /// of the <see cref="ParameterEventArgsRaiser"/> or only on <see cref="M:RaiseOnBefore"/>.
+        /// Indicates whether to raise the <paramref name="onBeforeHandler"/> immediately on construction of the
+        /// <see cref="ParameterEventArgsRaiser"/> or only on <see cref="M:RaiseOnBefore"/>.
         /// </param>
         public ParameterEventArgsRaiser(
                 object sender,

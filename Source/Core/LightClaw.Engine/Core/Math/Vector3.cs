@@ -176,7 +176,7 @@ namespace LightClaw.Engine.Core
             }
         }
 
-        #endregion
+        #endregion Predefined Vectors
 
         /// <summary>
         /// The X component of the vector.
@@ -247,8 +247,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <returns>The length of the vector.</returns>
         /// <remarks>
-        /// <see cref="Vector3.LengthSquared"/> may be preferred when only the relative length is needed
-        /// and speed is of the essence.
+        /// <see cref="Vector3.LengthSquared"/> may be preferred when only the relative length is needed and speed is of
+        /// the essence.
         /// </remarks>
         public float Length
         {
@@ -263,8 +263,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <returns>The squared length of the vector.</returns>
         /// <remarks>
-        /// This method may be preferred to <see cref="Vector3.Length"/> when only a relative length is needed
-        /// and speed is of the essence.
+        /// This method may be preferred to <see cref="Vector3.Length"/> when only a relative length is needed and speed
+        /// is of the essence.
         /// </remarks>
         public float LengthSquared
         {
@@ -278,9 +278,13 @@ namespace LightClaw.Engine.Core
         /// Gets or sets the component at the specified index.
         /// </summary>
         /// <value>The value of the X, Y, or Z component, depending on the index.</value>
-        /// <param name="index">The index of the component to access. Use 0 for the X component, 1 for the Y component, and 2 for the Z component.</param>
+        /// <param name="index">
+        /// The index of the component to access. Use 0 for the X component, 1 for the Y component, and 2 for the Z component.
+        /// </param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 2].</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="index"/> is out of the range [0, 2].
+        /// </exception>
         [IgnoreDataMember]
         public float this[int index]
         {
@@ -325,14 +329,21 @@ namespace LightClaw.Engine.Core
         /// Initializes a new instance of the <see cref="Vector3"/> struct.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
-        public Vector3(float value) : this(value, value, value) { }
+        public Vector3(float value)
+            : this(value, value, value)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Vector3"/> struct.
         /// </summary>
-        /// <param name="values">The values to assign to the X, Y, and Z components of the vector. This must be an array with three elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than three elements.</exception>
+        /// <param name="values">
+        /// The values to assign to the X, Y, and Z components of the vector. This must be an array with three elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="values"/> contains more or less than three elements.
+        /// </exception>
         public Vector3(float[] values)
             : this(values[0], values[1], values[2])
         {
@@ -345,7 +356,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">A vector containing the values with which to initialize the X and Y components.</param>
         /// <param name="z">Initial value for the Z component of the vector.</param>
-        public Vector3(Vector2 value, float z) : this(value.X, value.Y, z) { }
+        public Vector3(Vector2 value, float z)
+            : this(value.X, value.Y, z)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Vector3"/> struct.
@@ -365,7 +379,7 @@ namespace LightClaw.Engine.Core
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -377,7 +391,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Vector3"/> to compare with this instance.</param>
         /// <returns>
-        /// 	<c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public bool Equals(Vector3 other)
         {
@@ -389,7 +403,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Vector3"/> to compare with this instance.</param>
         /// <returns>
-        /// 	<c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         [CLSCompliant(false)]
         public bool Equals(ref Vector3 other)
@@ -402,7 +416,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// 	<c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
         /// </returns>
         public override bool Equals(object value)
         {
@@ -441,9 +455,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
         public override string ToString()
         {
             return string.Format("({0}|{1}|{2})", X, Y, Z);
@@ -624,7 +636,7 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3(value.X / scale, value.Y / scale, value.Z / scale);
         }
-        
+
         /// <summary>
         /// Scales a vector by the given value.
         /// </summary>
@@ -668,14 +680,29 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 3D triangle.
+        /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric
+        /// coordinates relative to a 3D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <param name="result">When the method completes, contains the 3D Cartesian coordinates of the specified point.</param>
+        /// <param name="value1">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.
+        /// </param>
+        /// <param name="value2">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 2 of the triangle.
+        /// </param>
+        /// <param name="value3">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 3 of the triangle.
+        /// </param>
+        /// <param name="amount1">
+        /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
+        /// <paramref name="value2"/> ).
+        /// </param>
+        /// <param name="amount2">
+        /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
+        /// <paramref name="value3"/> ).
+        /// </param>
+        /// <param name="result">
+        /// When the method completes, contains the 3D Cartesian coordinates of the specified point.
+        /// </param>
         public static void Barycentric(ref Vector3 value1, ref Vector3 value2, ref Vector3 value3, float amount1, float amount2, out Vector3 result)
         {
             result = new Vector3((value1.X + (amount1 * (value2.X - value1.X))) + (amount2 * (value3.X - value1.X)),
@@ -684,13 +711,26 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 3D triangle.
+        /// Returns a <see cref="Vector3"/> containing the 3D Cartesian coordinates of a point specified in Barycentric
+        /// coordinates relative to a 3D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 3 of the triangle.</param>
-        /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
-        /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
+        /// <param name="value1">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 1 of the triangle.
+        /// </param>
+        /// <param name="value2">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 2 of the triangle.
+        /// </param>
+        /// <param name="value3">
+        /// A <see cref="Vector3"/> containing the 3D Cartesian coordinates of vertex 3 of the triangle.
+        /// </param>
+        /// <param name="amount1">
+        /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
+        /// <paramref name="value2"/> ).
+        /// </param>
+        /// <param name="amount2">
+        /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
+        /// <paramref name="value3"/> ).
+        /// </param>
         /// <returns>A new <see cref="Vector3"/> containing the 3D Cartesian coordinates of the specified point.</returns>
         public static Vector3 Barycentric(Vector3 value1, Vector3 value2, Vector3 value3, float amount1, float amount2)
         {
@@ -771,8 +811,8 @@ namespace LightClaw.Engine.Core
         /// <param name="value2">The second vector.</param>
         /// <param name="result">When the method completes, contains the distance between the two vectors.</param>
         /// <remarks>
-        /// <see cref="Vector3.DistanceSquared(ref Vector3, ref Vector3, out float)"/> may be preferred when only the relative distance is needed
-        /// and speed is of the essence.
+        /// <see cref="Vector3.DistanceSquared(ref Vector3, ref Vector3, out float)"/> may be preferred when only the
+        /// relative distance is needed and speed is of the essence.
         /// </remarks>
         public static void Distance(ref Vector3 value1, ref Vector3 value2, out float result)
         {
@@ -787,8 +827,8 @@ namespace LightClaw.Engine.Core
         /// <param name="value2">The second vector.</param>
         /// <returns>The distance between the two vectors.</returns>
         /// <remarks>
-        /// <see cref="Vector3.DistanceSquared(Vector3, Vector3)"/> may be preferred when only the relative distance is needed
-        /// and speed is of the essence.
+        /// <see cref="Vector3.DistanceSquared(Vector3, Vector3)"/> may be preferred when only the relative distance is
+        /// needed and speed is of the essence.
         /// </remarks>
         public static float Distance(Vector3 value1, Vector3 value2)
         {
@@ -803,12 +843,12 @@ namespace LightClaw.Engine.Core
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <param name="result">When the method completes, contains the squared distance between the two vectors.</param>
-        /// <remarks>Distance squared is the value before taking the square root. 
-        /// Distance squared can often be used in place of distance if relative comparisons are being made. 
-        /// For example, consider three points A, B, and C. To determine whether B or C is further from A, 
-        /// compare the distance between A and B to the distance between A and C. Calculating the two distances 
-        /// involves two square roots, which are computationally expensive. However, using distance squared 
-        /// provides the same information and avoids calculating two square roots.
+        /// <remarks>
+        /// Distance squared is the value before taking the square root. Distance squared can often be used in place of
+        /// distance if relative comparisons are being made. For example, consider three points A, B, and C. To
+        /// determine whether B or C is further from A, compare the distance between A and B to the distance between A
+        /// and C. Calculating the two distances involves two square roots, which are computationally expensive.
+        /// However, using distance squared provides the same information and avoids calculating two square roots.
         /// </remarks>
         public static void DistanceSquared(ref Vector3 value1, ref Vector3 value2, out float result)
         {
@@ -825,12 +865,12 @@ namespace LightClaw.Engine.Core
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The squared distance between the two vectors.</returns>
-        /// <remarks>Distance squared is the value before taking the square root. 
-        /// Distance squared can often be used in place of distance if relative comparisons are being made. 
-        /// For example, consider three points A, B, and C. To determine whether B or C is further from A, 
-        /// compare the distance between A and B to the distance between A and C. Calculating the two distances 
-        /// involves two square roots, which are computationally expensive. However, using distance squared 
-        /// provides the same information and avoids calculating two square roots.
+        /// <remarks>
+        /// Distance squared is the value before taking the square root. Distance squared can often be used in place of
+        /// distance if relative comparisons are being made. For example, consider three points A, B, and C. To
+        /// determine whether B or C is further from A, compare the distance between A and B to the distance between A
+        /// and C. Calculating the two distances involves two square roots, which are computationally expensive.
+        /// However, using distance squared provides the same information and avoids calculating two square roots.
         /// </remarks>
         public static float DistanceSquared(Vector3 value1, Vector3 value2)
         {
@@ -891,7 +931,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two vectors.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Vector3 start, ref Vector3 end, float amount, out Vector3 result)
         {
@@ -908,7 +949,8 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two vectors.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value
+        /// of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Vector3 Lerp(Vector3 start, Vector3 end, float amount)
         {
@@ -1031,7 +1073,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
-        /// <param name="result">When the method completes, contains an new vector composed of the largest components of the source vectors.</param>
+        /// <param name="result">
+        /// When the method completes, contains an new vector composed of the largest components of the source vectors.
+        /// </param>
         public static void Max(ref Vector3 left, ref Vector3 right, out Vector3 result)
         {
             result.X = (left.X > right.X) ? left.X : right.X;
@@ -1057,7 +1101,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first source vector.</param>
         /// <param name="right">The second source vector.</param>
-        /// <param name="result">When the method completes, contains an new vector composed of the smallest components of the source vectors.</param>
+        /// <param name="result">
+        /// When the method completes, contains an new vector composed of the smallest components of the source vectors.
+        /// </param>
         public static void Min(ref Vector3 left, ref Vector3 right, out Vector3 result)
         {
             result.X = (left.X < right.X) ? left.X : right.X;
@@ -1079,7 +1125,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Projects a 3D vector from object space into screen space. 
+        /// Projects a 3D vector from object space into screen space.
         /// </summary>
         /// <param name="vector">The vector to project.</param>
         /// <param name="x">The X position of the viewport.</param>
@@ -1099,7 +1145,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Projects a 3D vector from object space into screen space. 
+        /// Projects a 3D vector from object space into screen space.
         /// </summary>
         /// <param name="vector">The vector to project.</param>
         /// <param name="x">The X position of the viewport.</param>
@@ -1118,7 +1164,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Projects a 3D vector from screen space into object space. 
+        /// Projects a 3D vector from screen space into object space.
         /// </summary>
         /// <param name="vector">The vector to project.</param>
         /// <param name="x">The X position of the viewport.</param>
@@ -1143,7 +1189,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Projects a 3D vector from screen space into object space. 
+        /// Projects a 3D vector from screen space into object space.
         /// </summary>
         /// <param name="vector">The vector to project.</param>
         /// <param name="x">The X position of the viewport.</param>
@@ -1162,13 +1208,15 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns the reflection of a vector off a surface that has the specified normal. 
+        /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
         /// <param name="vector">The source vector.</param>
         /// <param name="normal">Normal of the surface.</param>
         /// <param name="result">When the method completes, contains the reflected vector.</param>
-        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine 
-        /// whether the original vector was close enough to the surface to hit it.</remarks>
+        /// <remarks>
+        /// Reflect only gives the direction of a reflection off a surface, it does not determine whether the original
+        /// vector was close enough to the surface to hit it.
+        /// </remarks>
         public static void Reflect(ref Vector3 vector, ref Vector3 normal, out Vector3 result)
         {
             float dot = (vector.X * normal.X) + (vector.Y * normal.Y) + (vector.Z * normal.Z);
@@ -1179,13 +1227,15 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Returns the reflection of a vector off a surface that has the specified normal. 
+        /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
         /// <param name="vector">The source vector.</param>
         /// <param name="normal">Normal of the surface.</param>
         /// <returns>The reflected vector.</returns>
-        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine 
-        /// whether the original vector was close enough to the surface to hit it.</remarks>
+        /// <remarks>
+        /// Reflect only gives the direction of a reflection off a surface, it does not determine whether the original
+        /// vector was close enough to the surface to hit it.
+        /// </remarks>
         public static Vector3 Reflect(Vector3 vector, Vector3 normal)
         {
             Vector3 result;
@@ -1199,16 +1249,22 @@ namespace LightClaw.Engine.Core
         /// <param name="destination">The list of orthogonalized vectors.</param>
         /// <param name="source">The list of vectors to orthogonalize.</param>
         /// <remarks>
-        /// <para>Orthogonalization is the process of making all vectors orthogonal to each other. This
-        /// means that any given vector in the list will be orthogonal to any other given vector in the
-        /// list.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting vectors
-        /// tend to be numerically unstable. The numeric stability decreases according to the vectors
-        /// position in the list so that the first vector is the most stable and the last vector is the
-        /// least stable.</para>
+        /// <para>
+        /// Orthogonalization is the process of making all vectors orthogonal to each other. This means that any given
+        /// vector in the list will be orthogonal to any other given vector in the list.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting vectors tend to be numerically
+        /// unstable. The numeric stability decreases according to the vectors position in the list so that the first
+        /// vector is the most stable and the last vector is the least stable.
+        /// </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         public static void Orthogonalize(Vector3[] destination, params Vector3[] source)
         {
             //Uses the modified Gram-Schmidt process.
@@ -1241,16 +1297,22 @@ namespace LightClaw.Engine.Core
         /// <param name="destination">The list of orthonormalized vectors.</param>
         /// <param name="source">The list of vectors to orthonormalize.</param>
         /// <remarks>
-        /// <para>Orthonormalization is the process of making all vectors orthogonal to each
-        /// other and making all vectors of unit length. This means that any given vector will
-        /// be orthogonal to any other given vector in the list.</para>
-        /// <para>Because this method uses the modified Gram-Schmidt process, the resulting vectors
-        /// tend to be numerically unstable. The numeric stability decreases according to the vectors
-        /// position in the list so that the first vector is the most stable and the last vector is the
-        /// least stable.</para>
+        /// <para>
+        /// Orthonormalization is the process of making all vectors orthogonal to each other and making all vectors of
+        /// unit length. This means that any given vector will be orthogonal to any other given vector in the list.
+        /// </para>
+        /// <para>
+        /// Because this method uses the modified Gram-Schmidt process, the resulting vectors tend to be numerically
+        /// unstable. The numeric stability decreases according to the vectors position in the list so that the first
+        /// vector is the most stable and the last vector is the least stable.
+        /// </para>
         /// </remarks>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         public static void Orthonormalize(Vector3[] destination, params Vector3[] source)
         {
             //Uses the modified Gram-Schmidt process.
@@ -1325,10 +1387,16 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="source">The array of vectors to transform.</param>
         /// <param name="rotation">The <see cref="Quaternion"/> rotation to apply.</param>
-        /// <param name="destination">The array for which the transformed vectors are stored.
-        /// This array may be the same array as <paramref name="source"/>.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <param name="destination">
+        /// The array for which the transformed vectors are stored. This array may be the same array as
+        /// <paramref name="source"/>.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         public static void Transform(Vector3[] source, ref Quaternion rotation, Vector3[] destination)
         {
             Contract.Requires<ArgumentNullException>(source != null);
@@ -1375,7 +1443,7 @@ namespace LightClaw.Engine.Core
         /// <param name="result">When the method completes, contains the transformed <see cref="Vector3"/>.</param>
         public static void Transform(ref Vector3 vector, ref Matrix3x3 transform, out Vector3 result)
         {
-            result = new Vector3(   (vector.X * transform.M11) + (vector.Y * transform.M21) + (vector.Z * transform.M31),
+            result = new Vector3((vector.X * transform.M11) + (vector.Y * transform.M21) + (vector.Z * transform.M31),
                                     (vector.X * transform.M12) + (vector.Y * transform.M22) + (vector.Z * transform.M32),
                                     (vector.X * transform.M13) + (vector.Y * transform.M23) + (vector.Z * transform.M33)
                                 );
@@ -1441,8 +1509,12 @@ namespace LightClaw.Engine.Core
         /// <param name="source">The array of vectors to transform.</param>
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         public static void Transform(Vector3[] source, ref Matrix transform, Vector4[] destination)
         {
             Contract.Requires<ArgumentNullException>(source != null);
@@ -1462,11 +1534,10 @@ namespace LightClaw.Engine.Core
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <param name="result">When the method completes, contains the transformed coordinates.</param>
         /// <remarks>
-        /// A coordinate transform performs the transformation with the assumption that the w component
-        /// is one. The four dimensional vector obtained from the transformation operation has each
-        /// component in the vector divided by the w component. This forces the w component to be one and
-        /// therefore makes the vector homogeneous. The homogeneous vector is often preferred when working
-        /// with coordinates as the w component can safely be ignored.
+        /// A coordinate transform performs the transformation with the assumption that the w component is one. The four
+        /// dimensional vector obtained from the transformation operation has each component in the vector divided by
+        /// the w component. This forces the w component to be one and therefore makes the vector homogeneous. The
+        /// homogeneous vector is often preferred when working with coordinates as the w component can safely be ignored.
         /// </remarks>
         public static void TransformCoordinate(ref Vector3 coordinate, ref Matrix transform, out Vector3 result)
         {
@@ -1486,11 +1557,10 @@ namespace LightClaw.Engine.Core
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <returns>The transformed coordinates.</returns>
         /// <remarks>
-        /// A coordinate transform performs the transformation with the assumption that the w component
-        /// is one. The four dimensional vector obtained from the transformation operation has each
-        /// component in the vector divided by the w component. This forces the w component to be one and
-        /// therefore makes the vector homogeneous. The homogeneous vector is often preferred when working
-        /// with coordinates as the w component can safely be ignored.
+        /// A coordinate transform performs the transformation with the assumption that the w component is one. The four
+        /// dimensional vector obtained from the transformation operation has each component in the vector divided by
+        /// the w component. This forces the w component to be one and therefore makes the vector homogeneous. The
+        /// homogeneous vector is often preferred when working with coordinates as the w component can safely be ignored.
         /// </remarks>
         public static Vector3 TransformCoordinate(Vector3 coordinate, Matrix transform)
         {
@@ -1504,16 +1574,21 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="source">The array of coordinate vectors to transform.</param>
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
-        /// <param name="destination">The array for which the transformed vectors are stored.
-        /// This array may be the same array as <paramref name="source"/>.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <param name="destination">
+        /// The array for which the transformed vectors are stored. This array may be the same array as
+        /// <paramref name="source"/>.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         /// <remarks>
-        /// A coordinate transform performs the transformation with the assumption that the w component
-        /// is one. The four dimensional vector obtained from the transformation operation has each
-        /// component in the vector divided by the w component. This forces the w component to be one and
-        /// therefore makes the vector homogeneous. The homogeneous vector is often preferred when working
-        /// with coordinates as the w component can safely be ignored.
+        /// A coordinate transform performs the transformation with the assumption that the w component is one. The four
+        /// dimensional vector obtained from the transformation operation has each component in the vector divided by
+        /// the w component. This forces the w component to be one and therefore makes the vector homogeneous. The
+        /// homogeneous vector is often preferred when working with coordinates as the w component can safely be ignored.
         /// </remarks>
         public static void TransformCoordinate(Vector3[] source, ref Matrix transform, Vector3[] destination)
         {
@@ -1534,11 +1609,10 @@ namespace LightClaw.Engine.Core
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <param name="result">When the method completes, contains the transformed normal.</param>
         /// <remarks>
-        /// A normal transform performs the transformation with the assumption that the w component
-        /// is zero. This causes the fourth row and fourth column of the matrix to be unused. The
-        /// end result is a vector that is not translated, but all other transformation properties
-        /// apply. This is often preferred for normal vectors as normals purely represent direction
-        /// rather than location because normal vectors should not be translated.
+        /// A normal transform performs the transformation with the assumption that the w component is zero. This causes
+        /// the fourth row and fourth column of the matrix to be unused. The end result is a vector that is not
+        /// translated, but all other transformation properties apply. This is often preferred for normal vectors as
+        /// normals purely represent direction rather than location because normal vectors should not be translated.
         /// </remarks>
         public static void TransformNormal(ref Vector3 normal, ref Matrix transform, out Vector3 result)
         {
@@ -1555,11 +1629,10 @@ namespace LightClaw.Engine.Core
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <returns>The transformed normal.</returns>
         /// <remarks>
-        /// A normal transform performs the transformation with the assumption that the w component
-        /// is zero. This causes the fourth row and fourth column of the matrix to be unused. The
-        /// end result is a vector that is not translated, but all other transformation properties
-        /// apply. This is often preferred for normal vectors as normals purely represent direction
-        /// rather than location because normal vectors should not be translated.
+        /// A normal transform performs the transformation with the assumption that the w component is zero. This causes
+        /// the fourth row and fourth column of the matrix to be unused. The end result is a vector that is not
+        /// translated, but all other transformation properties apply. This is often preferred for normal vectors as
+        /// normals purely represent direction rather than location because normal vectors should not be translated.
         /// </remarks>
         public static Vector3 TransformNormal(Vector3 normal, Matrix transform)
         {
@@ -1573,16 +1646,21 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="source">The array of normal vectors to transform.</param>
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
-        /// <param name="destination">The array for which the transformed vectors are stored.
-        /// This array may be the same array as <paramref name="source"/>.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
+        /// <param name="destination">
+        /// The array for which the transformed vectors are stored. This array may be the same array as
+        /// <paramref name="source"/>.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
+        /// </exception>
         /// <remarks>
-        /// A normal transform performs the transformation with the assumption that the w component
-        /// is zero. This causes the fourth row and fourth column of the matrix to be unused. The
-        /// end result is a vector that is not translated, but all other transformation properties
-        /// apply. This is often preferred for normal vectors as normals purely represent direction
-        /// rather than location because normal vectors should not be translated.
+        /// A normal transform performs the transformation with the assumption that the w component is zero. This causes
+        /// the fourth row and fourth column of the matrix to be unused. The end result is a vector that is not
+        /// translated, but all other transformation properties apply. This is often preferred for normal vectors as
+        /// normals purely represent direction rather than location because normal vectors should not be translated.
         /// </remarks>
         public static void TransformNormal(Vector3[] source, ref Matrix transform, Vector3[] destination)
         {
@@ -1608,7 +1686,8 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Multiplies a vector with another by performing component-wise multiplication equivalent to <see cref="Multiply(ref Vector3,ref Vector3,out Vector3)"/>.
+        /// Multiplies a vector with another by performing component-wise multiplication equivalent to
+        /// <see cref="Multiply(ref Vector3,ref Vector3,out Vector3)"/>.
         /// </summary>
         /// <param name="left">The first vector to multiply.</param>
         /// <param name="right">The second vector to multiply.</param>
@@ -1686,7 +1765,7 @@ namespace LightClaw.Engine.Core
         /// Scales a vector by the given value.
         /// </summary>
         /// <param name="scale">The amount by which to scale the vector.</param>
-        /// <param name="value">The vector to scale.</param>  
+        /// <param name="value">The vector to scale.</param>
         /// <returns>The scaled vector.</returns>
         public static Vector3 operator /(float scale, Vector3 value)
         {
@@ -1703,7 +1782,7 @@ namespace LightClaw.Engine.Core
         {
             return new Vector3(value.X / scale.X, value.Y / scale.Y, value.Z / scale.Z);
         }
-        
+
         /// <summary>
         /// Perform a component-wise addition
         /// </summary>
@@ -1753,7 +1832,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator ==(Vector3 left, Vector3 right)
         {
             return left.Equals(ref right);
@@ -1764,7 +1846,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
-        /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
+        /// <c>false</c> .
+        /// </returns>
         public static bool operator !=(Vector3 left, Vector3 right)
         {
             return !left.Equals(ref right);

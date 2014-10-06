@@ -10,9 +10,8 @@ namespace LightClaw.Engine.Core
     /// Defines a mechanism to update an instance after any main updating has occured.
     /// </summary>
     /// <remarks>
-    /// Late-updating is not supposed to alter the game's state anymore, instead shall be used
-    /// to fetch required values. Those are guaranteed to stay constant for the rest of the frame
-    /// and can be used safely.
+    /// Late-updating is not supposed to alter the game's state anymore, instead shall be used to fetch required values.
+    /// Those are guaranteed to stay constant for the rest of the frame and can be used safely.
     /// </remarks>
     public interface ILateUpdateable
     {

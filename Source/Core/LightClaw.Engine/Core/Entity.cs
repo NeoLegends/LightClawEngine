@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -91,7 +90,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Entity"/> and sets the name.
         /// </summary>
-        /// <param name="name">The <see cref="Entity"/>'s name.</param>
+        /// <param name="name">The <see cref="Entity"/>s name.</param>
         protected Entity(string name)
             : this()
         {
@@ -154,7 +153,9 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Raises the <see cref="E:PropertyChanged"/>-event for the specified property name.
         /// </summary>
-        /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
+        /// <param name="propertyName">
+        /// The property name that changed. Leave this blank, it will be filled out by the compiler.
+        /// </param>
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             RaisePropertyChanged(this, this.PropertyChanged, propertyName);
@@ -166,7 +167,9 @@ namespace LightClaw.Engine.Core
         /// <typeparam name="T">The <see cref="Type"/> of the property that changed.</typeparam>
         /// <param name="location">The property's backing field.</param>
         /// <param name="newValue">The property's new value.</param>
-        /// <param name="propertyName">The property name that changed. Leave this blank, it will be filled out by the compiler.</param>
+        /// <param name="propertyName">
+        /// The property name that changed. Leave this blank, it will be filled out by the compiler.
+        /// </param>
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
             SetProperty(this, this.PropertyChanged, ref location, newValue, propertyName);

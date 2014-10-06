@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
-    /// Represents a mechanism for binding <see cref="IBindable"/>-instances for a specified
-    /// time using the 'using'-clause for convenient syntax and ensured unbinding after usage.
+    /// Represents a mechanism for binding <see cref="IBindable"/>-instances for a specified time using the
+    /// 'using'-clause for convenient syntax and ensured unbinding after usage.
     /// </summary>
     /// <example>
     /// <code>
@@ -17,8 +17,7 @@ namespace LightClaw.Engine.Graphics
     /// {
     ///     // Code interacting with bound shader
     /// }
-    /// </code>
-    /// </example>
+    /// </code></example>
     public struct Binding : IDisposable, IBindable
     {
         /// <summary>
@@ -30,7 +29,9 @@ namespace LightClaw.Engine.Graphics
         /// Initializes a new <see cref="Binding"/>.
         /// </summary>
         /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
-        /// <param name="bindImmediately">Indicates whether to bind the element upon creation of this struct. Defaults to true.</param>
+        /// <param name="bindImmediately">
+        /// Indicates whether to bind the element upon creation of this struct. Defaults to true.
+        /// </param>
         public Binding(IBindable bindable, bool bindImmediately = true)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);

@@ -14,10 +14,11 @@ namespace LightClaw.Engine.Core
     public static class ThreadF
     {
         /// <summary>
-        /// Checks whether the current thread is the main thread and throws a <see cref="WrongThreadException"/> if it is not.
+        /// Checks whether the current thread is the main thread and throws a <see cref="WrongThreadException"/> if it
+        /// is not.
         /// </summary>
-        /// <seealso cref="LightClawEngine.MainThreadId"/>
-        /// <seealso cref="WrongThreadException"/>
+        /// <seealso cref="LightClawEngine.MainThreadId"></seealso>
+        /// <seealso cref="WrongThreadException"></seealso>
         public static void AssertMainThread()
         {
             if (!TryAssertMainThread())
@@ -31,9 +32,10 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Checks whether the current thread is the specified thread and throws a <see cref="WrongThreadException"/> if it is not.
+        /// Checks whether the current thread is the specified thread and throws a <see cref="WrongThreadException"/> if
+        /// it is not.
         /// </summary>
-        /// <seealso cref="WrongThreadException"/>
+        /// <seealso cref="WrongThreadException"></seealso>
         public static void AssertThread(int targetThreadId)
         {
             if (!TryAssertThread(targetThreadId))
@@ -49,8 +51,8 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Checks whether the current thread is the main thread.
         /// </summary>
-        /// <returns><c>true</c> if the current thread is the main thread, otherwise <c>false</c>.</returns>
-        /// <seealso cref="LightClawEngine.MainThreadId"/>
+        /// <returns><c>true</c> if the current thread is the main thread, otherwise <c>false</c> .</returns>
+        /// <seealso cref="LightClawEngine.MainThreadId"></seealso>
         public static bool TryAssertMainThread()
         {
             return TryAssertThread(LightClawEngine.MainThreadId);
@@ -59,7 +61,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Checks whether the current thread is the specified thread.
         /// </summary>
-        /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c> .</returns>
         public static bool TryAssertThread(int targetThreadId)
         {
             return (Thread.CurrentThread.ManagedThreadId == targetThreadId);

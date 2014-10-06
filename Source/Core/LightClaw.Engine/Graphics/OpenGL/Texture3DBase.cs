@@ -5,9 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Configuration;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -15,8 +12,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClass(typeof(Texture3DBaseContracts))]
     public abstract class Texture3DBase : Texture
     {
-        protected Texture3DBase(TextureDescription description) 
-            : base(description) 
+        protected Texture3DBase(TextureDescription description)
+            : base(description)
         {
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), description.Target));
         }
@@ -86,9 +83,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     }
 
     [ContractClassFor(typeof(Texture3DBase))]
-    abstract class Texture3DBaseContracts : Texture3DBase
+    internal abstract class Texture3DBaseContracts : Texture3DBase
     {
-        public Texture3DBaseContracts() : base(new TextureDescription()) { }
+        public Texture3DBaseContracts()
+            : base(new TextureDescription())
+        {
+        }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
         {

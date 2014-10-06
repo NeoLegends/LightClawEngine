@@ -73,7 +73,10 @@ namespace LightClaw.Engine.IO
         /// Tests for equality with the specified <see cref="Object"/>.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> is equal to the specified object, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="ContentReadParameters"/> is equal to the specified object, otherwise
+        /// <c>false</c> .
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -87,7 +90,7 @@ namespace LightClaw.Engine.IO
         /// Tests for equality with the <paramref name="other"/> specified <see cref="ContentReadParameters"/>.
         /// </summary>
         /// <param name="other"><see cref="ContentReadParameters"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c> .</returns>
         public bool Equals(ContentReadParameters other)
         {
             if (ReferenceEquals(other, null))
@@ -114,7 +117,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are equal, otherwise <c>false</c> .</returns>
         public static bool operator ==(ContentReadParameters left, ContentReadParameters right)
         {
             if (ReferenceEquals(left, right))
@@ -130,7 +133,9 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ContentReadParameters"/> are inequal, otherwise <c>false</c>.</returns>
+        /// <returns>
+        /// <c>true</c> if the <see cref="ContentReadParameters"/> are inequal, otherwise <c>false</c> .
+        /// </returns>
         public static bool operator !=(ContentReadParameters left, ContentReadParameters right)
         {
             return !(left == right);

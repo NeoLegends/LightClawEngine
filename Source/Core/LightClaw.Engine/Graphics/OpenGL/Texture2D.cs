@@ -4,8 +4,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LightClaw.Engine.Core;
-using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -13,7 +11,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class Texture2D : Texture2DBase
     {
         public Texture2D(TextureDescription description)
-            : base(description) 
+            : base(description)
         {
             Contract.Requires<ArgumentException>(IsTexture2DTarget(description.Target));
         }

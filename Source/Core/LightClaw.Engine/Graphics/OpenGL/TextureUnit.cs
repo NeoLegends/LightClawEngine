@@ -92,7 +92,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Unit = unit;
         }
 
-        public TextureUnit(GLTextureUnit unit) : this(unit - GLTextureUnit.Texture0) { }
+        public TextureUnit(GLTextureUnit unit)
+            : this(unit - GLTextureUnit.Texture0)
+        {
+        }
 
         public object Clone()
         {
