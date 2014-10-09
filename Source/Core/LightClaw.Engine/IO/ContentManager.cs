@@ -52,13 +52,13 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Notifies about the start of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"></seealso>
+        /// <seealso cref="GetStreamAsync"/>
         public event EventHandler<ParameterEventArgs> StreamObtaining;
 
         /// <summary>
         /// Notifies about the end of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"></seealso>
+        /// <seealso cref="GetStreamAsync"/>
         public event EventHandler<ParameterEventArgs> StreamObtained;
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the process.</param>
         /// <param name="resourceString">The resource string to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public async Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
@@ -144,10 +144,14 @@ namespace LightClaw.Engine.IO
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
         /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
-        /// information about the asset being read. <example> Imagine a content reader reading texture files to a
+        /// information about the asset being read. 
+        /// <example> 
+        /// Imagine a content reader reading texture files to a
         /// generic texture class. It needs information about the file type of the image to load to be able to properly
-        /// load it. </example>
+        /// load it. 
+        /// </example>
         /// </param>
+        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the content loading process.</param>
         /// <param name="forceReload">
         /// Indicates whether to force-load the asset from the disk and bypass any caching structures.
         /// </param>
@@ -230,7 +234,7 @@ namespace LightClaw.Engine.IO
         /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
-        /// <seealso cref="IContentReader"></seealso>
+        /// <seealso cref="IContentReader"/>
         public void Register(IContentReader reader)
         {
             this.readers.Add(reader);
@@ -244,7 +248,7 @@ namespace LightClaw.Engine.IO
         /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
-        /// <seealso cref="IContentResolver"></seealso>
+        /// <seealso cref="IContentResolver"/>
         public void Register(IContentResolver resolver)
         {
             this.resolvers.Add(resolver);
@@ -259,33 +263,35 @@ namespace LightClaw.Engine.IO
         {
             if (!this.IsDisposed)
             {
-                IContentResolver resolver;
-                while (this.resolvers.TryTake(out resolver))
+                // Some funny ODE occurs here w/o the blocks. I wonder whether any of the readers / resolvers will be
+                // disposed before the ODE is thrown by the ConcurrentBag...?!
+                try
                 {
-                    IDisposable disposableResolver = resolver as IDisposable;
-                    if (disposableResolver != null)
+                    IContentResolver resolver;
+                    while (this.resolvers.TryTake(out resolver))
                     {
-                        try
+                        IDisposable disposableResolver = resolver as IDisposable;
+                        if (disposableResolver != null)
                         {
                             disposableResolver.Dispose();
                         }
-                        catch (ObjectDisposedException) { }
                     }
                 }
+                catch (ObjectDisposedException) { }
 
-                IContentReader reader;
-                while (this.readers.TryTake(out reader))
+                try
                 {
-                    IDisposable disposableReader = reader as IDisposable;
-                    if (disposableReader != null)
+                    IContentReader reader;
+                    while (this.readers.TryTake(out reader))
                     {
-                        try
+                        IDisposable disposableReader = reader as IDisposable;
+                        if (disposableReader != null)
                         {
                             disposableReader.Dispose();
                         }
-                        catch (ObjectDisposedException) { }
                     }
                 }
+                catch (ObjectDisposedException) { }
 
                 base.Dispose(disposing);
             }
@@ -380,7 +386,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="t">The <see cref="Type"/> of object to create an instance from.</param>
         /// <param name="instance">The newly created instance, if the method succeeds.</param>
-        /// <returns><c>true</c> if the instance could be created, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the instance could be created, otherwise <c>false</c>.</returns>
         private static bool TryCreateInstance(Type t, out object instance)
         {
             Contract.Requires<ArgumentNullException>(t != null);
@@ -443,7 +449,7 @@ namespace LightClaw.Engine.IO
             /// Checks whether the <see cref="ResourceKey"/> equals the specified object.
             /// </summary>
             /// <param name="obj">The object to test.</param>
-            /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+            /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(obj, null))
@@ -456,7 +462,7 @@ namespace LightClaw.Engine.IO
             /// Checks whether the <see cref="ResourceKey"/> equals the specified <see cref="ResourceKey"/>.
             /// </summary>
             /// <param name="other">The <see cref="ResourceKey"/> to test.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c> .</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
             public bool Equals(ResourceKey other)
             {
                 return (this.ResourceString == other.ResourceString) && (this.Type == other.Type);
@@ -476,7 +482,7 @@ namespace LightClaw.Engine.IO
             /// </summary>
             /// <param name="left">The first operand.</param>
             /// <param name="right">The second operand.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c> .</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are equal, otherwise <c>false</c>.</returns>
             public static bool operator ==(ResourceKey left, ResourceKey right)
             {
                 return left.Equals(right);
@@ -487,7 +493,7 @@ namespace LightClaw.Engine.IO
             /// </summary>
             /// <param name="left">The first operand.</param>
             /// <param name="right">The second operand.</param>
-            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are inequal, otherwise <c>false</c> .</returns>
+            /// <returns><c>true</c> if the <see cref="ResourceKey"/> are inequal, otherwise <c>false</c>.</returns>
             public static bool operator !=(ResourceKey left, ResourceKey right)
             {
                 return !(left == right);

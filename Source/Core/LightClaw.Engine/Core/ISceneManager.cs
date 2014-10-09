@@ -28,7 +28,7 @@ namespace LightClaw.Engine.Core
         /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c> .
+        /// <c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c>.
         /// </returns>
         Task<int> Load(int slot, ResourceString resourceString);
 
@@ -37,7 +37,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="s">The <see cref="Scene"/> to load.</param>
-        /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted, otherwise <c>false</c>.</returns>
         int Load(int slot, Scene s);
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="slot">The index of the <see cref="Scene"/> to unload.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="Scene"/> was unloaded, otherwise <c>false</c> . If the <see cref="Scene"/>
+        /// <c>true</c> if the <see cref="Scene"/> was unloaded, otherwise <c>false</c>. If the <see cref="Scene"/>
         /// could not be found, <c>false</c> will also be returned.
         /// </returns>
         bool Unload(int slot);

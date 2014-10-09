@@ -40,7 +40,7 @@ namespace LightClaw.Engine.Logging
         public string MethodName { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="LocationInfo"/> from the specified <see cref="LoggingEvent"/> .
+        /// Initializes a new <see cref="LocationInfo"/> from the specified <see cref="LoggingEvent"/>.
         /// </summary>
         /// <param name="loggingEvent">The <see cref="LoggingEvent"/> to create a <see cref="LocationInfo"/> from.</param>
         public LocationInfo(LoggingEvent loggingEvent)

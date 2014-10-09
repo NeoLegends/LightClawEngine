@@ -58,7 +58,7 @@ namespace LightClaw.Engine.Logging
         public DateTime Timestamp { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="LoggingEventInfo"/> .
+        /// Initializes a new <see cref="LoggingEventInfo"/>.
         /// </summary>
         /// <param name="loggingEvent">
         /// The <see cref="LoggingEvent"/> to create a new <see cref="LoggingEventInfo"/> from.

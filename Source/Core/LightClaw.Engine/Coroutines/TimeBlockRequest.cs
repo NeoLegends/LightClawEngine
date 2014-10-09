@@ -66,7 +66,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Determines whether the coroutine can be executed again.
         /// </summary>
-        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
         public bool CanExecute()
         {
             return ((Stopwatch.GetTimestamp() - this.startTicks) > this.BlockingTicks);
@@ -76,7 +76,7 @@ namespace LightClaw.Engine.Coroutines
         /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
         /// </summary>
         /// <param name="obj">The object to check against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -89,7 +89,7 @@ namespace LightClaw.Engine.Coroutines
         /// Tests for equality with the <paramref name="other"/> specified <see cref="TimeBlockRequest"/>.
         /// </summary>
         /// <param name="other">The <see cref="TimeBlockRequest"/> to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public bool Equals(TimeBlockRequest other)
         {
             return (this.startTicks == other.startTicks) && (this.BlockingTicks == other.BlockingTicks);
@@ -109,7 +109,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(TimeBlockRequest left, TimeBlockRequest right)
         {
             return left.Equals(right);
@@ -120,7 +120,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are inequal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(TimeBlockRequest left, TimeBlockRequest right)
         {
             return !(left == right);

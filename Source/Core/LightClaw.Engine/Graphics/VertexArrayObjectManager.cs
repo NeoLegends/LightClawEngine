@@ -10,8 +10,6 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
 using OpenTK.Graphics.OpenGL4;
 
-using LCBuffer = LightClaw.Engine.Graphics.OpenGL.BufferObject;
-
 namespace LightClaw.Engine.Graphics
 {
     public class VertexArrayObjectManager<TVertex> : DisposableEntity
@@ -42,22 +40,6 @@ namespace LightClaw.Engine.Graphics
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
 
             this.VertexAttributePointers = vertexAttributePointers.ToImmutableArray();
-        }
-
-        [CLSCompliant(false)]
-        public VertexArrayObjectManager(
-                    IEnumerable<VertexAttributePointer> vertexAttributePointers,
-                    IEnumerable<TVertex> vertices,
-                    IEnumerable<ushort> indices
-                )
-            : this(vertexAttributePointers)
-        {
-            Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
-            Contract.Requires<ArgumentNullException>(vertices != null);
-            Contract.Requires<ArgumentNullException>(indices != null);
-
-            this.Set(indices);
-            this.Set(vertices);
         }
 
         [CLSCompliant(false)]
@@ -99,23 +81,6 @@ namespace LightClaw.Engine.Graphics
             }
 
             vao.DrawIndexed();
-        }
-
-        [CLSCompliant(false)]
-        public void Set(IEnumerable<ushort> indices)
-        {
-            Contract.Requires<ArgumentNullException>(indices != null);
-            Contract.Requires<ArgumentException>(indices.Any());
-
-            this.Set(indices.ToArray());
-        }
-
-        public void Set(IEnumerable<TVertex> vertices)
-        {
-            Contract.Requires<ArgumentNullException>(vertices != null);
-            Contract.Requires<ArgumentException>(vertices.Any());
-
-            this.Set(vertices.ToArray());
         }
 
         [CLSCompliant(false)]
@@ -170,7 +135,7 @@ namespace LightClaw.Engine.Graphics
             }
             else
             {
-                IBuffer newBuffer = new LCBuffer(target, BufferUsageHint.StaticDraw);
+                IBuffer newBuffer = new BufferObject(target, BufferUsageHint.StaticDraw);
                 this.SetBuffer(data, target, ref newBuffer);
                 buffer = newBuffer;
 

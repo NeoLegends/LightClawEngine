@@ -25,7 +25,7 @@ namespace LightClaw.Engine.Coroutines
         /// Initializes a new <see cref="SteppedEventArgs"/>.
         /// </summary>
         /// <param name="current">The current return value of the coroutine.</param>
-        /// <param name="result"><c>true</c> if the coroutine has finished execution, otherwise <c>false</c> .</param>
+        /// <param name="result"><c>true</c> if the coroutine has finished execution, otherwise <c>false</c>.</param>
         public SteppedEventArgs(object current, bool result)
         {
             this.Current = current;

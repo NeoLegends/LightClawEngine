@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -20,11 +21,13 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Assume(this.Data != null);
                 object value = this.Data["CurrentThreadId"];
                 return (value != null) ? (int)value : 0;
             }
             private set
             {
+                Contract.Assume(this.Data != null);
                 this.Data["CurrentThreadId"] = value;
             }
         }
@@ -36,11 +39,13 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Assume(this.Data != null);
                 object value = this.Data["TargetThreadId"];
                 return (value != null) ? (int)value : 0;
             }
             private set
             {
+                Contract.Assume(this.Data != null);
                 this.Data["TargetThreadId"] = value;
             }
         }

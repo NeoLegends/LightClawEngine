@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Coroutines
         /// Steps the <see cref="ICoroutineContext"/> once without returning the current object.
         /// </summary>
         /// <param name="context">The <see cref="ICoroutineContext"/> to step.</param>
-        /// <returns><c>true</c> if the context finished execution, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the context finished execution, otherwise <c>false</c>.</returns>
         public static bool Step(this ICoroutineContext context)
         {
             Contract.Requires<ArgumentNullException>(context != null);
@@ -33,7 +33,7 @@ namespace LightClaw.Engine.Coroutines
         /// <param name="timeOut">The time to step.</param>
         /// <returns>
         /// <c>true</c> if the <see cref="ICoroutineContext"/> finished execution during the specified time, otherwise
-        /// <c>false</c> .
+        /// <c>false</c>.
         /// </returns>
         public static bool StepUntil(this ICoroutineContext context, TimeSpan timeOut)
         {

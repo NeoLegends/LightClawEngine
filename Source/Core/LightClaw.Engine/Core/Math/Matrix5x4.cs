@@ -291,7 +291,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a value indicating whether this instance is an identity Matrix5x4.
         /// </summary>
-        /// <value><c>true</c> if this instance is an identity Matrix5x4; otherwise, <c>false</c> .</value>
+        /// <value><c>true</c> if this instance is an identity Matrix5x4; otherwise, <c>false</c>.</value>
         public bool IsIdentity
         {
             get { return this.Equals(Identity); }
@@ -453,7 +453,7 @@ namespace LightClaw.Engine.Core
         /// <param name="values">
         /// The values to assign to the components of the Matrix5x4. This must be an array with sixteen elements.
         /// </param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="values"/> contains more or less than sixteen elements.
         /// </exception>
@@ -492,7 +492,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Matrix5x4"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Matrix5x4"/> is equal to this instance; otherwise, <c>false</c> .
+        /// <c>true</c> if the specified <see cref="Matrix5x4"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Matrix5x4 other)
         {
@@ -528,7 +528,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object value)
         {
@@ -1070,7 +1070,7 @@ namespace LightClaw.Engine.Core
         /// <param name="right">The second value to compare.</param>
         /// <returns>
         /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
-        /// <c>false</c> .
+        /// <c>false</c>.
         /// </returns>
         public static bool operator ==(Matrix5x4 left, Matrix5x4 right)
         {
@@ -1084,7 +1084,7 @@ namespace LightClaw.Engine.Core
         /// <param name="right">The second value to compare.</param>
         /// <returns>
         /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
-        /// <c>false</c> .
+        /// <c>false</c>.
         /// </returns>
         public static bool operator !=(Matrix5x4 left, Matrix5x4 right)
         {

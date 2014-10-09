@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Checks whether the specified OpenGL extension is supported.
         /// </summary>
         /// <param name="extensionName">The extension to check for.</param>
-        /// <returns><c>true</c> if the extension can be used, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the extension can be used, otherwise <c>false</c>.</returns>
         public static bool SupportsExtension(string extensionName)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(extensionName));
@@ -118,7 +118,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="glObject">The <see cref="GLObject"/> to obtain the handle of.</param>
         /// <returns>
-        /// The <see cref="GLObject"/> 's handle or <c>0</c> , if <paramref name="glObject"/> was <c>null</c> .
+        /// The <see cref="GLObject"/> 's handle or <c>0</c> , if <paramref name="glObject"/> was <c>null</c>.
         /// </returns>
         public static implicit operator int(GLObject glObject)
         {

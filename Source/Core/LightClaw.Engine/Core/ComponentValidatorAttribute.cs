@@ -113,7 +113,7 @@ namespace LightClaw.Engine.Core
         /// <param name="gameObjectToAttachTo">
         /// The <see cref="GameObject"/> the <see cref="Component"/> is about to be attached to.
         /// </param>
-        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c>.</returns>
         public bool Validate(GameObject gameObjectToAttachTo)
         {
             Contract.Requires<ArgumentNullException>(gameObjectToAttachTo != null);
@@ -132,7 +132,7 @@ namespace LightClaw.Engine.Core
         /// the same transaction as the current object. Used to provide support for attaching multiple interdependent
         /// <see cref="Component"/>s.
         /// </param>
-        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the attachment can be done, otherwise <c>false</c>.</returns>
         public abstract bool Validate(GameObject gameObjectToAttachTo, IEnumerable<Component> componentsToAttach);
     }
 
@@ -184,7 +184,7 @@ namespace LightClaw.Engine.Core
         /// <param name="gameObjectToRemoveFrom">
         /// The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.
         /// </param>
-        /// <returns><c>true</c> if the <see cref="Component"/> can be safely removed, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="Component"/> can be safely removed, otherwise <c>false</c>.</returns>
         public abstract bool Validate(GameObject gameObjectToRemoveFrom);
     }
 

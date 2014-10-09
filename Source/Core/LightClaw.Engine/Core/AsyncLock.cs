@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Core
     ///     // do locked stuff here
     /// }
     /// </code></example>
-    /// <seealso cref="SemaphoreSlim"></seealso>
+    /// <seealso cref="SemaphoreSlim"/>
     public class AsyncLock
     {
         /// <summary>

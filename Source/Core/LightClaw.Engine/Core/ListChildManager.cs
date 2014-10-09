@@ -144,7 +144,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="item">The item to check for.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="ListChildManager{T}"/> contains the specified item, otherwise <c>false</c> .
+        /// <c>true</c> if the <see cref="ListChildManager{T}"/> contains the specified item, otherwise <c>false</c>.
         /// </returns>
         public virtual bool Contains(T item)
         {
@@ -242,7 +242,7 @@ namespace LightClaw.Engine.Core
         /// Removes the specified item from the <see cref="ListChildManager{T}"/>.
         /// </summary>
         /// <param name="item">The item to remove.</param>
-        /// <returns><c>true</c> if the specified item was removed, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the specified item was removed, otherwise <c>false</c>.</returns>
         public virtual bool Remove(T item)
         {
             lock (this.Items)
@@ -270,7 +270,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="index">The index of the item to obtain.</param>
         /// <param name="item">If the method succeeds, the item at the specified index.</param>
-        /// <returns><c>true</c> if the item could be obtained, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the item could be obtained, otherwise <c>false</c>.</returns>
         public virtual bool TryGetItem(int index, out T item)
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);

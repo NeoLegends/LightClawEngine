@@ -20,23 +20,25 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Notifies about the start of an asset loading process.
         /// </summary>
+        /// <seealso cref="LoadAsync"/>
         event EventHandler<ParameterEventArgs> AssetLoading;
 
         /// <summary>
         /// Notifies about the end of an asset loading process.
         /// </summary>
+        /// <seealso cref="LoadAsync"/>
         event EventHandler<ParameterEventArgs> AssetLoaded;
 
         /// <summary>
         /// Notifies about the start of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"></seealso>
+        /// <seealso cref="GetStreamAsync"/>
         event EventHandler<ParameterEventArgs> StreamObtaining;
 
         /// <summary>
         /// Notifies about the end of <see cref="GetStreamAsync"/>.
         /// </summary>
-        /// <seealso cref="GetStreamAsync"></seealso>
+        /// <seealso cref="GetStreamAsync"/>
         event EventHandler<ParameterEventArgs> StreamObtained;
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of process.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token);
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the stream obtaining process.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
-        /// <seealso cref="Stream"></seealso>
+        /// <seealso cref="Stream"/>
         Task<Stream> GetStreamAsync(ResourceString resourceString, CancellationToken token);
 
         /// <summary>
@@ -65,9 +67,12 @@ namespace LightClaw.Engine.IO
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
         /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
-        /// information about the asset being read. <example> Imagine a content reader reading texture files to a
+        /// information about the asset being read. 
+        /// <example> 
+        /// Imagine a content reader reading texture files to a
         /// generic texture class. It needs information about the file type of the image to load to be able to properly
-        /// load it. </example>
+        /// load it. 
+        /// </example>
         /// </param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the content loading process.</param>
         /// <param name="forceReload">
@@ -87,7 +92,7 @@ namespace LightClaw.Engine.IO
         /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="reader">The <see cref="IContentReader"/> to register.</param>
-        /// <seealso cref="IContentReader"></seealso>
+        /// <seealso cref="IContentReader"/>
         void Register(IContentReader reader);
 
         /// <summary>
@@ -98,7 +103,7 @@ namespace LightClaw.Engine.IO
         /// it implements IDisposable) on its disposal.
         /// </remarks>
         /// <param name="resolver">The <see cref="IContentResolver"/> to register.</param>
-        /// <seealso cref="IContentResolver"></seealso>
+        /// <seealso cref="IContentResolver"/>
         void Register(IContentResolver resolver);
     }
 

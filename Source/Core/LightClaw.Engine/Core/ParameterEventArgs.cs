@@ -12,9 +12,20 @@ namespace LightClaw.Engine.Core
     public class ParameterEventArgs : EventArgs
     {
         /// <summary>
-        /// Default <see cref="ParameterEventArgs"/> with the <see cref="P:Parameter"/> set to <c>null</c> .
+        /// Backing field.
         /// </summary>
-        public static readonly ParameterEventArgs Default = new ParameterEventArgs();
+        private static readonly ParameterEventArgs _Default = new ParameterEventArgs();
+
+        /// <summary>
+        /// Default <see cref="ParameterEventArgs"/> with the <see cref="P:Parameter"/> set to <c>null</c>.
+        /// </summary>
+        public static ParameterEventArgs Default
+        {
+            get
+            {
+                return _Default;
+            }
+        }
 
         /// <summary>
         /// The parameter. May be null.

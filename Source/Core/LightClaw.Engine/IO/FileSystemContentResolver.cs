@@ -26,7 +26,7 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Initializes a new <see cref="FileSystemContentResolver"/> using the application's base directory as root path.
         /// </summary>
-        /// <seealso cref="AppDomain.BaseDirectory"></seealso>
+        /// <seealso cref="AppDomain.BaseDirectory"/>
         public FileSystemContentResolver()
             : this(AppDomain.CurrentDomain.BaseDirectory)
         {
@@ -49,7 +49,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the process.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             return !token.IsCancellationRequested ? Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString))) : Task.FromResult(false);

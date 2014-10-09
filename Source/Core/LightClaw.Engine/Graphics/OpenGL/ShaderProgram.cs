@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents an OpenGL shader program.
     /// </summary>
-    /// <seealso href="http://www.opengl.org/wiki/Program_Object"></seealso>
+    /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
     public class ShaderProgram : GLObject, IBindable, IInitializable
     {
         /// <summary>

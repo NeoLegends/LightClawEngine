@@ -311,7 +311,7 @@ namespace LightClaw.Engine.Core
         private Matrix _ModelMatrix;
 
         /// <summary>
-        /// The position-, rotation, and scaling matrices combined as model / world- <see cref="Matrix"/> (up to you how
+        /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/> (up to you how
         /// you call it ;)).
         /// </summary>
         /// <remarks>

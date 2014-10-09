@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents an OpenGL sampler, an object that stores texture sampling parameters.
     /// </summary>
-    /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"></seealso>
+    /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"/>
     public class Sampler : GLObject, IBindable, IInitializable
     {
         /// <summary>

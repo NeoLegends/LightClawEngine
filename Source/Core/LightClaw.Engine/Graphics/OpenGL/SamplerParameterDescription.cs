@@ -43,7 +43,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Checks whether the <see cref="SamplerParameterDescription"/> equals the specified object.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -57,7 +57,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="other">The <see cref="SamplerParameterDescription"/> to test against.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c> .
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c>.
         /// </returns>
         public bool Equals(SamplerParameterDescription other)
         {
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c> .
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c>.
         /// </returns>
         public static bool operator ==(SamplerParameterDescription left, SamplerParameterDescription right)
         {
@@ -92,7 +92,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are inequal, otherwise <c>false</c> .
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are inequal, otherwise <c>false</c>.
         /// </returns>
         public static bool operator !=(SamplerParameterDescription left, SamplerParameterDescription right)
         {

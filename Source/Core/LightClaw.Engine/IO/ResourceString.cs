@@ -17,7 +17,7 @@ namespace LightClaw.Engine.IO
     public struct ResourceString : ICloneable, IEquatable<ResourceString>
     {
         /// <summary>
-        /// Indicates whether the <see cref="ResourceString"/> is valid, respectively <c>!string.IsNullOrWhiteSpace</c> .
+        /// Indicates whether the <see cref="ResourceString"/> is valid, respectively <c>!string.IsNullOrWhiteSpace</c>.
         /// </summary>
         [IgnoreDataMember]
         public bool IsValid
@@ -35,7 +35,7 @@ namespace LightClaw.Engine.IO
         public string Path { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="ResourceString"/> and sets the <paramref name="path"/>.
+        /// Initializes a new <see cref="ResourceString"/> and sets the <paramref name="path"/>.30
         /// </summary>
         /// <param name="path">The actual asset path.</param>
         public ResourceString(string path)
@@ -57,7 +57,7 @@ namespace LightClaw.Engine.IO
         /// Tests whether the <see cref="ResourceString"/> equals the specified object.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -70,7 +70,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether the <see cref="ResourceString"/> equals the <paramref name="other"/> one.
         /// </summary>
         /// <param name="obj">The <see cref="ResourceString"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c>.</returns>
         public bool Equals(ResourceString other)
         {
             return (this.Path == other.Path);
@@ -119,7 +119,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(ResourceString left, ResourceString right)
         {
             return left.Equals(right);
@@ -130,7 +130,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="ResourceString"/> are inequal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="ResourceString"/> are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(ResourceString left, ResourceString right)
         {
             return !(left == right);
@@ -172,7 +172,7 @@ namespace LightClaw.Engine.IO
             /// <param name="objectType">The <see cref="Type"/> to test.</param>
             /// <returns>
             /// <c>true</c> if objects of the specified <see cref="Type"/> can be converted to JSON, otherwise
-            /// <c>false</c> .
+            /// <c>false</c>.
             /// </returns>
             public override bool CanConvert(Type objectType)
             {

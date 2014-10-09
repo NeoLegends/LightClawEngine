@@ -340,7 +340,7 @@ namespace LightClaw.Engine.Core
         /// <param name="values">
         /// The values to assign to the X, Y, and Z components of the vector. This must be an array with three elements.
         /// </param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c> .</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="values"/> contains more or less than three elements.
         /// </exception>
@@ -391,7 +391,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Vector3"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c> .
+        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Vector3 other)
         {
@@ -403,7 +403,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="other">The <see cref="Vector3"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c> .
+        /// <c>true</c> if the specified <see cref="Vector3"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         [CLSCompliant(false)]
         public bool Equals(ref Vector3 other)
@@ -416,7 +416,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c> .
+        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object value)
         {
@@ -1260,7 +1260,7 @@ namespace LightClaw.Engine.Core
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1308,7 +1308,7 @@ namespace LightClaw.Engine.Core
         /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1392,7 +1392,7 @@ namespace LightClaw.Engine.Core
         /// <paramref name="source"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1510,7 +1510,7 @@ namespace LightClaw.Engine.Core
         /// <param name="transform">The transformation <see cref="Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.</param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1579,7 +1579,7 @@ namespace LightClaw.Engine.Core
         /// <paramref name="source"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1651,7 +1651,7 @@ namespace LightClaw.Engine.Core
         /// <paramref name="source"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c> .
+        /// Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.
@@ -1834,7 +1834,7 @@ namespace LightClaw.Engine.Core
         /// <param name="right">The second value to compare.</param>
         /// <returns>
         /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
-        /// <c>false</c> .
+        /// <c>false</c>.
         /// </returns>
         public static bool operator ==(Vector3 left, Vector3 right)
         {
@@ -1848,7 +1848,7 @@ namespace LightClaw.Engine.Core
         /// <param name="right">The second value to compare.</param>
         /// <returns>
         /// <c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/> ; otherwise,
-        /// <c>false</c> .
+        /// <c>false</c>.
         /// </returns>
         public static bool operator !=(Vector3 left, Vector3 right)
         {

@@ -68,7 +68,10 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            this.PerformChildAction(item => item.Dispose());
+            foreach (T item in this.Items)
+            {
+                item.Dispose();
+            }
             base.Dispose(disposing);
         }
 
@@ -77,7 +80,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnEnable()
         {
-            this.PerformChildAction(item => item.Enable());
+            foreach (T item in this.Items)
+            {
+                item.Enable();
+            }
         }
 
         /// <summary>
@@ -85,7 +91,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDisable()
         {
-            this.PerformChildAction(item => item.Disable());
+            foreach (T item in this.Items)
+            {
+                item.Disable();
+            }
         }
 
         /// <summary>
@@ -93,7 +102,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDraw()
         {
-            this.PerformChildAction(item => item.Draw());
+            foreach (T item in this.Items)
+            {
+                item.Draw();
+            }
         }
 
         /// <summary>
@@ -101,7 +113,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            this.PerformChildAction(item => item.Load());
+            foreach (T item in this.Items)
+            {
+                item.Load();
+            }
         }
 
         /// <summary>
@@ -109,7 +124,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnReset()
         {
-            this.PerformChildAction(item => item.Reset());
+            foreach (T item in this.Items)
+            {
+                item.Reset();
+            }
         }
 
         /// <summary>
@@ -118,7 +136,10 @@ namespace LightClaw.Engine.Core
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
         protected override void OnUpdate(GameTime gameTime)
         {
-            this.PerformChildAction(item => item.Update(gameTime));
+            foreach (T item in this.Items)
+            {
+                item.Update(gameTime);
+            }
         }
 
         /// <summary>
@@ -126,20 +147,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLateUpdate()
         {
-            this.PerformChildAction(item => item.LateUpdate());
-        }
-
-        /// <summary>
-        /// Executes the specified <see cref="Action{T}"/> for all children.
-        /// </summary>
-        /// <param name="action">The <see cref="Action{T}"/> to execute for all children.</param>
-        private void PerformChildAction(Action<T> action)
-        {
-            Contract.Requires<ArgumentNullException>(action != null);
-
             foreach (T item in this.Items)
             {
-                action(item);
+                item.LateUpdate();
             }
         }
 

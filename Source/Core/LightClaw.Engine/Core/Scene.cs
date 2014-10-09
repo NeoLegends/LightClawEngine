@@ -349,6 +349,7 @@ namespace LightClaw.Engine.Core
         {
             if (!this.SuppressDraw)
             {
+                ThreadF.AssertMainThread();
                 base.OnDraw();
             }
         }

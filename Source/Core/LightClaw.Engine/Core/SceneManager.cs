@@ -213,7 +213,7 @@ namespace LightClaw.Engine.Core
         /// Unloads the <see cref="Scene"/> from the specified slot.
         /// </summary>
         /// <param name="slot">The slot of the <see cref="Scene"/> to unload.</param>
-        /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c>.</returns>
         public bool Unload(int slot)
         {
             Logger.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));

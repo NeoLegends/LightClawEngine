@@ -84,7 +84,7 @@ namespace LightClaw.Engine.UI
                                                                                  return (pInfo.Length == 1) && (pInfo[0].ParameterType == typeof(string[]));
                                                                              }))
                 {
-                    this.Register((Action<string[]>)defaultCommand.CreateDelegate(typeof(Action<string[]>)));
+                    this.Register(defaultCommand.CreateDelegate<Action<string[]>>());
                 }
             }
         }

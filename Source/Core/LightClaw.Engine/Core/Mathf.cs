@@ -66,7 +66,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the numbers are almost the same number, otherwise <c>false</c>.</returns>
         public static bool AlmostEquals(double left, double right)
         {
             return IsAlmostZero(left - right);
@@ -203,7 +203,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified <paramref name="value"/> is almost one.
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
         /// <remarks>
         /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
         /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
@@ -218,7 +218,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
         /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
-        /// <returns><c>true</c> if the value was one, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
         /// <remarks>
         /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
         /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
@@ -317,7 +317,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a prime number.
         /// </summary>
         /// <param name="number">The number to test.</param>
-        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
         /// <remarks>
         /// This function is expensive (lots of divisions (worst case Sqrt( <paramref name="number"/> ) - 2), one
         /// Math.Sqrt). Call only if absolutely required.
@@ -349,7 +349,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a power of two.
         /// </summary>
         /// <param name="value">The value to check.</param>
-        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
         [CLSCompliant(false)]
         public static bool IsPowerOfTwo(uint value)
         {
@@ -360,7 +360,7 @@ namespace LightClaw.Engine.Core
         /// Checks whether the specified number is a power of two.
         /// </summary>
         /// <param name="value">The value to check.</param>
-        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the specified number is a power of two, otherwise <c>false</c>.</returns>
         [CLSCompliant(false)]
         public static bool IsPowerOfTwo(ulong value)
         {

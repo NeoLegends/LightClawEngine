@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -322,6 +323,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Disposes the <see cref="BufferObject"/> removing it from the GPU memory.
         /// </summary>
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
             if (!this.IsDisposed)
@@ -330,7 +332,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (this.IsInitialized)
                     {
-                        GL.DeleteBuffer(this);
+                        try
+                        {
+                            GL.DeleteBuffer(this);
+                        }
+                        catch (AccessViolationException ex)
+                        {
+                            Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(BufferObject).Name), ex, ex);
+                        }
                     }
                 }
                 base.Dispose(disposing);

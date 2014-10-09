@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,6 +65,8 @@ namespace LightClaw.Engine.Core
                 bool raiseImmediately = true
             )
         {
+            Contract.Requires<ArgumentNullException>(sender != null);
+
             this.onAfterHandler = onAfterHandler;
             this.onAfterEventArgs = (onAfterParameter != null) ? new ParameterEventArgs(onAfterParameter) : ParameterEventArgs.Default;
             this.onBeforeHandler = onBeforeHandler;

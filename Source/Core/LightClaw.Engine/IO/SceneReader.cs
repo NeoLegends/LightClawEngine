@@ -18,7 +18,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="assetType">The <see cref="Type"/> to read.</param>
         /// <returns>
-        /// <c>true</c> if assets of the specified <paramref name="assetType"/> can be read, otherwise <c>false</c> .
+        /// <c>true</c> if assets of the specified <paramref name="assetType"/> can be read, otherwise <c>false</c>.
         /// </returns>
         public bool CanRead(Type assetType)
         {

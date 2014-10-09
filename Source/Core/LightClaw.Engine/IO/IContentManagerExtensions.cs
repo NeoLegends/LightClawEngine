@@ -22,7 +22,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
         /// <param name="resourceString">The resource string to check for.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public static Task<bool> ExistsAsync(this IContentManager manager, ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(manager != null);
@@ -38,7 +38,7 @@ namespace LightClaw.Engine.IO
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
-        /// <seealso cref="Stream"></seealso>
+        /// <seealso cref="Stream"/>
         public static Task<Stream> GetStreamAsync(this IContentManager manager, ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(manager != null);

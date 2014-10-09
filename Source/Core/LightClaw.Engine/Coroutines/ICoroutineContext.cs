@@ -35,7 +35,7 @@ namespace LightClaw.Engine.Coroutines
         /// Steps the <see cref="ICoroutineContext"/> returning the current object in the coroutine.
         /// </summary>
         /// <param name="current">The current return value of the coroutine.</param>
-        /// <returns><c>true</c> if the coroutine has finished execution, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the coroutine has finished execution, otherwise <c>false</c>.</returns>
         bool Step(out object current);
     }
 }

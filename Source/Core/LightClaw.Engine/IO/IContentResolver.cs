@@ -12,7 +12,7 @@ namespace LightClaw.Engine.IO
     /// <summary>
     /// Represents an object that obtains <see cref="Stream"/> s around specified resource strings.
     /// </summary>
-    /// <seealso cref="IContentManager"></seealso>
+    /// <seealso cref="IContentManager"/>
     [ContractClass(typeof(IContentResolverContracts))]
     public interface IContentResolver
     {
@@ -21,7 +21,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="resourceString">The resource string of the asset to check for.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the process.</param>
-        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token);
 
         /// <summary>

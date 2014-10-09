@@ -203,12 +203,21 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Callback for <see cref="E:IGameWindow.Move"/>.
+        /// </summary>
+        protected virtual void OnMove(System.Drawing.Point location)
+        {
+            this.OnRender();
+        }
+
+        /// <summary>
         /// Callback for <see cref="E:IGameWindow.RenderFrame"/>.
         /// </summary>
         protected virtual void OnRender()
         {
             if (!this.SuppressDraw)
             {
+                GL.Viewport(0, 0, this.GameWindow.Width, this.GameWindow.Height);
                 GL.ClearColor(Color.CornflowerBlue);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
                 this.SceneManager.Draw();
@@ -223,9 +232,6 @@ namespace LightClaw.Engine.Core
         /// <param name="height">The <see cref="IGameWindow"/>s new height.</param>
         protected virtual void OnResize(int width, int height)
         {
-            Logger.Debug((windowWidth, windowHeight) => "Resizing window to {0}x{1}.".FormatWith(windowWidth, windowHeight), width, height);
-
-            GL.Viewport(0, 0, width, height);
             this.OnRender();
         }
 
@@ -259,6 +265,7 @@ namespace LightClaw.Engine.Core
 
             this.GameWindow.Closed += (s, e) => this.OnClosed();
             this.GameWindow.Load += (s, e) => this.OnLoad();
+            this.GameWindow.Move += (s, e) => this.OnMove(this.GameWindow.Location);
             this.GameWindow.RenderFrame += (s, e) => this.OnRender();
             this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
             this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);

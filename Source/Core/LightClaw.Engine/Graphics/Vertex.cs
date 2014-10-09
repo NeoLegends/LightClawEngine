@@ -173,7 +173,7 @@ namespace LightClaw.Engine.Graphics
         /// Checks whether the <see cref="Vertex"/> equals the specified object.
         /// </summary>
         /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the objects are equal, otherwise <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(obj, null))
@@ -183,10 +183,10 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Checks whether the current instance is equal to the specified <see cref="Vertex"/> .
+        /// Checks whether the current instance is equal to the specified <see cref="Vertex"/>.
         /// </summary>
         /// <param name="other">The <see cref="Vertex"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) &&
@@ -207,7 +207,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(Vertex left, Vertex right)
         {
             return left.Equals(right);
@@ -218,7 +218,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are inequal, otherwise <c>false</c> .</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/> s are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(Vertex left, Vertex right)
         {
             return !(left == right);

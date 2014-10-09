@@ -75,6 +75,7 @@ namespace LightClaw.Engine.IO
                 descriptions.Add(new VertexAttributeDescription(data.Sources.Vertex.ColorAttribute, VertexAttributeLocation.Color));
             }
 
+            parameters.CancellationToken.ThrowIfCancellationRequested();
             List<Shader> shaders = new List<Shader>(5)
             {
                 new Shader(vertexShaderSource, ShaderType.VertexShader, descriptions.ToArray()),

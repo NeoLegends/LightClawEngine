@@ -232,7 +232,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
         /// <param name="array">The collection to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c> .</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
         public static int GetHashCode<T>(IEnumerable<T> collection)
         {
             if (collection != null)
@@ -258,7 +258,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
         /// <param name="array">The array to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c> .</returns>
+        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
         public static int GetHashCode<T>(T[] array)
         {
             if (array != null)

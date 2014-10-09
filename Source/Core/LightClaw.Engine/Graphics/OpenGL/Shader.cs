@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// at least a vertex and a fragment shader need to be linked to a <see cref="ShaderProgram"/> that can be bound to
     /// the graphics pipeline to draw.
     /// </remarks>
-    /// <seealso href="http://www.opengl.org/wiki/Shader"></seealso>
+    /// <seealso href="http://www.opengl.org/wiki/Shader"/>
     public class Shader : GLObject, IInitializable
     {
         /// <summary>

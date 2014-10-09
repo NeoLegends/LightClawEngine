@@ -89,7 +89,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Indicates whether the <see cref="RangedBuffer"/> is already initialized.
         /// </summary>
         /// <value>
-        /// As the <see cref="RangedBuffer"/> does not need to be initialized, it always returns <c>true</c> .
+        /// As the <see cref="RangedBuffer"/> does not need to be initialized, it always returns <c>true</c>.
         /// </value>
         public bool IsInitialized
         {

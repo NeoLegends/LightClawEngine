@@ -20,7 +20,7 @@ namespace LightClaw.Engine.IO
         /// <param name="assetType">The type of the asset that is about to be read.</param>
         /// <returns>
         /// <c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/> ,
-        /// otherwise <c>false</c> .
+        /// otherwise <c>false</c>.
         /// </returns>
         public bool CanRead(Type assetType)
         {
@@ -94,7 +94,7 @@ namespace LightClaw.Engine.IO
                     {
                         return Task.FromResult<object>(br.ReadDouble());
                     }
-                    if (assetType == typeof(decimal))
+                    else if (assetType == typeof(decimal))
                     {
                         return Task.FromResult<object>(br.ReadDecimal());
                     }
@@ -116,10 +116,6 @@ namespace LightClaw.Engine.IO
                     {
                         return Task.FromResult<object>(new UIntPtr(br.ReadUInt32()));
                     }
-                    else
-                    {
-                        return Task.FromResult<object>(null);
-                    }
                 }
             }
             else if (assetType == typeof(string))
@@ -130,10 +126,8 @@ namespace LightClaw.Engine.IO
                     return sr.ReadToEndAsync().Upcast<string, object>();
                 }
             }
-            else
-            {
-                return Task.FromResult<object>(null);
-            }
+
+            return Task.FromResult<object>(null);
         }
     }
 }
