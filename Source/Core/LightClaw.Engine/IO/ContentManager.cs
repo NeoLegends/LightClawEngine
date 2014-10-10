@@ -20,7 +20,7 @@ namespace LightClaw.Engine.IO
     public class ContentManager : DisposableEntity, IContentManager
     {
         /// <summary>
-        /// Contains <see cref="AsyncLock"/> s used to lock access to a specific asset while it is being loaded.
+        /// Contains <see cref="AsyncLock"/>s used to lock access to a specific asset while it is being loaded.
         /// </summary>
         private readonly ConcurrentDictionary<ResourceString, AsyncLock> assetLocks = new ConcurrentDictionary<ResourceString, AsyncLock>();
 
@@ -62,7 +62,7 @@ namespace LightClaw.Engine.IO
         public event EventHandler<ParameterEventArgs> StreamObtained;
 
         /// <summary>
-        /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/> s and
+        /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/>s and
         /// <see cref="IContentResolver"/>s.
         /// </summary>
         public ContentManager()
@@ -71,14 +71,14 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/> s and
+        /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/>s and
         /// <see cref="IContentResolver"/>s.
         /// </summary>
-        /// <param name="readers">The <see cref="IContentReader"/> s to use.</param>
-        /// <param name="resolvers">The <see cref="IContentResolver"/> s to use.</param>
+        /// <param name="readers">The <see cref="IContentReader"/>s to use.</param>
+        /// <param name="resolvers">The <see cref="IContentResolver"/>s to use.</param>
         /// <remarks>
-        /// The <see cref="ContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> s and
-        /// <see cref="IContentResolver"/> s (in case it implements IDisposable) on its disposal.
+        /// The <see cref="ContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/>s and
+        /// <see cref="IContentResolver"/>s (in case it implements IDisposable) on its disposal.
         /// </remarks>
         public ContentManager(IEnumerable<IContentReader> readers, IEnumerable<IContentResolver> resolvers)
         {
@@ -143,7 +143,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a
@@ -255,7 +255,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Disposes the <see cref="IContentManager"/> disposing of all of the <see cref="IContentReader"/> s and
+        /// Disposes the <see cref="IContentManager"/> disposing of all of the <see cref="IContentReader"/>s and
         /// <see cref="IContentResolver"/>s.
         /// </summary>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
@@ -469,7 +469,7 @@ namespace LightClaw.Engine.IO
             }
 
             /// <summary>
-            /// Gets the <see cref="ResourceKey"/> s hash code.
+            /// Gets the <see cref="ResourceKey"/>s hash code.
             /// </summary>
             /// <returns>The hash code.</returns>
             public override int GetHashCode()

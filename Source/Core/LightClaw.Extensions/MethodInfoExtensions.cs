@@ -21,11 +21,11 @@ namespace LightClaw.Extensions
         /// <returns>The created delegate.</returns>
         [Pure]
         public static T CreateDelegate<T>(this MethodInfo mInfo)
-            where T : Delegate
         {
             Contract.Requires<ArgumentNullException>(mInfo != null);
+            Contract.Requires<ArgumentException>(typeof(Delegate).IsAssignableFrom(typeof(T)));
 
-            return (T)mInfo.CreateDelegate(typeof(T));
+            return (T)((object)mInfo.CreateDelegate(typeof(T)));
         }
 
         /// <summary>
@@ -37,11 +37,11 @@ namespace LightClaw.Extensions
         /// <returns>The created delegate.</returns>
         [Pure]
         public static T CreateDelegate<T>(this MethodInfo mInfo, object target)
-            where T : Delegate
         {
             Contract.Requires<ArgumentNullException>(mInfo != null);
+            Contract.Requires<ArgumentException>(typeof(Delegate).IsAssignableFrom(typeof(T)));
 
-            return (T)mInfo.CreateDelegate(typeof(T), target);
+            return (T)((object)mInfo.CreateDelegate(typeof(T), target));
         }
     }
 }

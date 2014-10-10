@@ -66,7 +66,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="assetType">The <see cref="Type"/> of asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a

@@ -11,8 +11,8 @@ namespace LightClaw.Engine.IO
     /// Instructs the <see cref="ContentManager"/> to use the specified <see cref="IContentReader"/> to read an asset.
     /// </summary>
     /// <remarks>
-    /// The registered <see cref="IContentReader"/> s take precedence over the <see cref="IContentReader"/> specified
-    /// via the attribute. If the registered <see cref="IContentReader"/> s fail to deserialize the asset, the specified
+    /// The registered <see cref="IContentReader"/>s take precedence over the <see cref="IContentReader"/> specified
+    /// via the attribute. If the registered <see cref="IContentReader"/>s fail to deserialize the asset, the specified
     /// <see cref="IContentReader"/> will be used.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]

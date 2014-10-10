@@ -17,17 +17,18 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
-        private const string vertexShaderSource = 
+        private const string vertexShaderSource =
 @"#version 400
 
 in vec3 inVertexPosition;
+in vec3 inVertexColor;
 
-out vec4 vertexColor
+out vec4 vertexColor;
 
 void main(void)
 {
-	gl_Position = inVertexPosition;
-	vertexColor = vec4(1, 0, 0, 0);
+	gl_Position = vec4(inVertexPosition, 1.0f);
+	vertexColor = vec4(inVertexColor, 1.0f);
 }";
 
         private const string fragmentShaderSource =
@@ -35,7 +36,7 @@ void main(void)
 
 in vec4 vertexColor;
 
-out vec3 finalColor;
+out vec4 finalColor;
 
 void main(void)
 {
@@ -83,23 +84,24 @@ void main(void)
             this.vertexBuffer = BufferObject.Create(
                 new[] 
                 { 
-                    -1.0f, -1.0f, 0.0f,
-                    1.0f, -1.0f, 0.0f,
-                    0.0f,  1.0f, 0.0f,
+                    -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
                 }, 
                 BufferTarget.ArrayBuffer, 
                 BufferUsageHint.StaticDraw
             );
-            this.indexBuffer = BufferObject.Create(new int[] { 1, 2, 3 }, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
+            this.indexBuffer = BufferObject.Create(new ushort[] { 1, 2, 3 }, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
 
             BufferDescription desc = new BufferDescription(
                 this.vertexBuffer,
-                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
+                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 24, 0),
+                new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 24, 12)
             );
             this.vao = new VertexArrayObject(this.indexBuffer, desc);
             Shader[] shaders = new Shader[] 
             { 
-                new Shader(vertexShaderSource, ShaderType.VertexShader, new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position)),
+                new Shader(vertexShaderSource, ShaderType.VertexShader, new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)),
                 new Shader(fragmentShaderSource, ShaderType.FragmentShader)
             };
             this.program = new ShaderProgram(shaders);

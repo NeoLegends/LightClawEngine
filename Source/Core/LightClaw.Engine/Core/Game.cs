@@ -196,6 +196,7 @@ namespace LightClaw.Engine.Core
         protected virtual void OnLoad()
         {
             this.SceneManager.Load();
+            this.SceneManager.Enable();
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);

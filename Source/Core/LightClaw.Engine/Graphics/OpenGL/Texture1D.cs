@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public Texture1D(TextureDescription description)
             : base(description)
         {
-            Contract.Requires<ArgumentException>(IsTexture1DTarget(description.Target));
+            Contract.Requires<ArgumentException>(description.Target.IsTexture1DTarget());
         }
 
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
@@ -62,14 +62,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }
-        }
-
-        [Pure]
-        public static bool IsTexture1DTarget(TextureTarget target)
-        {
-            Contract.Ensures(!Contract.Result<bool>() || Enum.IsDefined(typeof(TextureTarget1d), target));
-
-            return (target == TextureTarget.Texture1D) || (target == TextureTarget.ProxyTexture1D);
         }
     }
 }

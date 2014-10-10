@@ -21,13 +21,13 @@ namespace LightClaw.Engine.Logging
         public string Message { get; private set; }
 
         /// <summary>
-        /// The <see cref="Exception"/> 's inner exception.
+        /// The <see cref="Exception"/>'s inner exception.
         /// </summary>
         [DataMember]
         public ExceptionInfo InnerException { get; private set; }
 
         /// <summary>
-        /// If the exception was an <see cref="AggregateException"/> , this contains its inner exceptions.
+        /// If the exception was an <see cref="AggregateException"/>, this contains its inner exceptions.
         /// </summary>
         [DataMember]
         public ExceptionInfo[] InnerExceptions { get; private set; }

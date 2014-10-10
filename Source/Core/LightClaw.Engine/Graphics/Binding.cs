@@ -29,10 +29,20 @@ namespace LightClaw.Engine.Graphics
         /// Initializes a new <see cref="Binding"/>.
         /// </summary>
         /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
+        public Binding(IBindable bindable)
+            : this(bindable, true)
+        {
+            Contract.Requires<ArgumentNullException>(bindable != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Binding"/>.
+        /// </summary>
+        /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
         /// <param name="bindImmediately">
-        /// Indicates whether to bind the element upon creation of this struct. Defaults to true.
+        /// Indicates whether to bind the element upon creation of this struct.
         /// </param>
-        public Binding(IBindable bindable, bool bindImmediately = true)
+        public Binding(IBindable bindable, bool bindImmediately)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);
 
@@ -52,19 +62,19 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Unbinds the <see cref="IBindable"/>.
-        /// </summary>
-        public void Unbind()
-        {
-            this.bindable.Unbind();
-        }
-
-        /// <summary>
         /// Disposes the <see cref="Binding"/> unbinding the <see cref="IBindable"/>.
         /// </summary>
         void IDisposable.Dispose()
         {
             this.Unbind();
+        }
+
+        /// <summary>
+        /// Unbinds the <see cref="IBindable"/>.
+        /// </summary>
+        public void Unbind()
+        {
+            this.bindable.Unbind();
         }
     }
 }

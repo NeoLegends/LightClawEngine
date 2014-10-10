@@ -12,11 +12,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClass(typeof(Texture3DBaseContracts))]
     public abstract class Texture3DBase : Texture
     {
-        protected Texture3DBase(TextureDescription description)
-            : base(description)
-        {
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget3d), description.Target));
-        }
+        protected Texture3DBase(TextureDescription description) : base(description) { }
 
         public void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
             where T : struct

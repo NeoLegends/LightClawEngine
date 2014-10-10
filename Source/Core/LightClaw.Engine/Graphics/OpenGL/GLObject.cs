@@ -114,15 +114,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Retreives the <see cref="GLObject"/> 's handle via implicit conversion.
+        /// Retreives the <see cref="GLObject"/>'s handle via implicit conversion.
         /// </summary>
         /// <param name="glObject">The <see cref="GLObject"/> to obtain the handle of.</param>
-        /// <returns>
-        /// The <see cref="GLObject"/> 's handle or <c>0</c> , if <paramref name="glObject"/> was <c>null</c>.
-        /// </returns>
+        /// <returns>The <see cref="GLObject"/>'s handle.</returns>
         public static implicit operator int(GLObject glObject)
         {
-            return (glObject != null) ? glObject.Handle : 0;
+            Contract.Requires<ArgumentNullException>(glObject != null);
+
+            return glObject.Handle;
         }
     }
 }

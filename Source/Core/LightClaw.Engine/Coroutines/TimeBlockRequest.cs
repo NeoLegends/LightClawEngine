@@ -28,7 +28,7 @@ namespace LightClaw.Engine.Coroutines
         public long BlockingTicks { get; private set; }
 
         /// <summary>
-        /// The time (as <see cref="TimeSpan"/> ) that should pass until the coroutine can be executed again.
+        /// The time (as <see cref="TimeSpan"/>) that should pass until the coroutine can be executed again.
         /// </summary>
         public TimeSpan BlockingTime
         {
@@ -52,7 +52,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="ticks">The amount of ticks the <see cref="TimeBlockRequest"/> blocks execution.</param>
         /// <remarks>
-        /// Using the other constructor (accepting a <see cref="TimeSpan"/> ) is the preferred way of initializing the
+        /// Using the other constructor (accepting a <see cref="TimeSpan"/>) is the preferred way of initializing the
         /// <see cref="TimeBlockRequest"/>. It uses ticks internally for an efficient implementation, but representing
         /// time as <see cref="TimeSpan"/> is much more natural (and readable / maintainable).
         /// </remarks>
@@ -109,7 +109,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="TimeBlockRequest"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(TimeBlockRequest left, TimeBlockRequest right)
         {
             return left.Equals(right);
@@ -120,7 +120,7 @@ namespace LightClaw.Engine.Coroutines
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="TimeBlockReqeust"/>s are inequal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="TimeBlockRequest"/>s are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(TimeBlockRequest left, TimeBlockRequest right)
         {
             return !(left == right);

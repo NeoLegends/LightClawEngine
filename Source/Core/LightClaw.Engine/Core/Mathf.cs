@@ -319,7 +319,7 @@ namespace LightClaw.Engine.Core
         /// <param name="number">The number to test.</param>
         /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
         /// <remarks>
-        /// This function is expensive (lots of divisions (worst case Sqrt( <paramref name="number"/> ) - 2), one
+        /// This function is expensive (lots of divisions (worst case Sqrt( <paramref name="number"/>) - 2), one
         /// Math.Sqrt). Call only if absolutely required.
         /// </remarks>
         public static bool IsPrime(int number)

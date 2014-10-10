@@ -9,8 +9,8 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Represents an <see cref="IContentReader"/> that can read all primitive types ( <see cref="Type.IsPrimitive"/> ),
-    /// <see cref="String"/> s and <see cref="Decimal"/>s.
+    /// Represents an <see cref="IContentReader"/> that can read all primitive types ( <see cref="Type.IsPrimitive"/>),
+    /// <see cref="String"/>s and <see cref="Decimal"/>s.
     /// </summary>
     public class PrimitiveReader : IContentReader
     {
@@ -19,7 +19,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="assetType">The type of the asset that is about to be read.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/> ,
+        /// <c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>,
         /// otherwise <c>false</c>.
         /// </returns>
         public bool CanRead(Type assetType)
@@ -33,7 +33,7 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <remarks>
         /// This method accepts an <see cref="Encoding"/> via <see cref="ContentReadParameters.Parameter"/>. If
-        /// <see cref="ContentReadParameters.Parameter"/> is <c>null</c> , <see cref="PrimitiveReader"/> will fall back
+        /// <see cref="ContentReadParameters.Parameter"/> is <c>null</c>, <see cref="PrimitiveReader"/> will fall back
         /// to <see cref="Encoding.UTF8"/>.
         /// </remarks>
         /// <param name="parameters">

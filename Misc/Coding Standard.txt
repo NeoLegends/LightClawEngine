@@ -83,6 +83,11 @@ CODING STANDARD:
 		      // ...
 		  });
 		- Body brackets shall not be indented
+        
+    Exceptions:
+        - When creating custom exceptions with custom properties, use the "Data"-dictionary from the Exception base class
+          as backing store. This has the advantage that property values will be serialized automatically and we don't need
+          to bother implementing deserialization callbacks.
 
     Write abbreviations like this:
 		- ID -> Id
@@ -105,13 +110,14 @@ CODING STANDARD:
         5. Constructors
         6. Public Methods
             - Sort by alphabet, if it makes sense, or by purpose->alphabet.
-            - Overloads calling one base method shall go above the aforementioned base method
+            - Overloads calling one base method shall go above the base method
         7. Internal methods
         8. Protected methods
         9. Private methods
         10. Contract Invariant method
         11. Static methods (same order like non-static methods in respect to the accessibility)
         12. Overloaded operators
+        13. Nested classes
 		
 	Contracts:
         - Use one contract call per condition

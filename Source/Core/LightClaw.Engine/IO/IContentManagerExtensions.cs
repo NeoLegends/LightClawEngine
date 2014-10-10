@@ -54,7 +54,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">The <see cref="IContentManager"/> to load the asset.</param>
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a generic texture class. It needs information about 
@@ -80,7 +80,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">The <see cref="IContentManager"/> to load the asset.</param>
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a
@@ -134,7 +134,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">The <see cref="IContentManager"/> to load the asset.</param>
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a
@@ -167,7 +167,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">The <see cref="IContentManager"/> to load the asset.</param>
         /// <param name="resourceString">The resource string of the asset to load.</param>
         /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/> s to provide them with additional
+        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
         /// Imagine a content reader reading texture files to a
@@ -198,7 +198,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Registers a bunch of <see cref="IContentReader"/> s in the <see cref="IContentManager"/>.
+        /// Registers a bunch of <see cref="IContentReader"/>s in the <see cref="IContentManager"/>.
         /// </summary>
         /// <remarks>
         /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentReader"/> (in case
@@ -207,7 +207,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">
         /// The <see cref="IContentManager"/> to register the <paramref name="readers"/> in.
         /// </param>
-        /// <param name="readers">The <see cref="IContentReader"/> s to register.</param>
+        /// <param name="readers">The <see cref="IContentReader"/>s to register.</param>
         public static void Register(this IContentManager contentManager, IEnumerable<IContentReader> readers)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
@@ -220,7 +220,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Registers a bunch of <see cref="IContentResolver"/> s in the <see cref="IContentManager"/>.
+        /// Registers a bunch of <see cref="IContentResolver"/>s in the <see cref="IContentManager"/>.
         /// </summary>
         /// <remarks>
         /// The <see cref="IContentManager"/> will assume ownage and dispose the <see cref="IContentResolver"/> (in case
@@ -229,7 +229,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">
         /// The <see cref="IContentManager"/> to register the <paramref name="resolvers"/> in.
         /// </param>
-        /// <param name="readers">The <see cref="IContentResolver"/> s to register.</param>
+        /// <param name="readers">The <see cref="IContentResolver"/>s to register.</param>
         public static void Register(this IContentManager contentManager, IEnumerable<IContentResolver> resolvers)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);

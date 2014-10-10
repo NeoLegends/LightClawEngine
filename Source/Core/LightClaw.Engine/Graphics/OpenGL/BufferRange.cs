@@ -59,38 +59,38 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Checks whether the current instance is equal to the specified <see cref="BufferRange"/>.
         /// </summary>
         /// <param name="other">The <see cref="BufferRange"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="BufferRange"/> s are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="BufferRange"/>s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(BufferRange other)
         {
             return (this.Start == other.Start) && (this.Length == other.Length);
         }
 
         /// <summary>
-        /// Gets the <see cref="BufferRange"/> 's hash code.
+        /// Gets the <see cref="BufferRange"/>'s hash code.
         /// </summary>
-        /// <returns>The <see cref="BufferRange"/> 's hash code.</returns>
+        /// <returns>The <see cref="BufferRange"/>'s hash code.</returns>
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.Start, this.Length);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="BufferRange"/> s are equal.
+        /// Checks whether two <see cref="BufferRange"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="BufferRange"/> s are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="BufferRange"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(BufferRange left, BufferRange right)
         {
             return left.Equals(right);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="BufferRange"/> s are inequal.
+        /// Checks whether two <see cref="BufferRange"/>s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="BufferRange"/> s are inequal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="BufferRange"/>s are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(BufferRange left, BufferRange right)
         {
             return !(left == right);

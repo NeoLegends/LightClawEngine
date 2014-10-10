@@ -47,7 +47,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ImmutableArray<Shader> _Shaders;
 
         /// <summary>
-        /// The <see cref="Shader"/> s the <see cref="ShaderProgram"/> consists of.
+        /// The <see cref="Shader"/>s the <see cref="ShaderProgram"/> consists of.
         /// </summary>
         public ImmutableArray<Shader> Shaders
         {
@@ -72,7 +72,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ImmutableDictionary<string, Uniform> _Uniforms;
 
         /// <summary>
-        /// The <see cref="Uniform"/> s of the <see cref="ShaderProgram"/>.
+        /// The <see cref="Uniform"/>s of the <see cref="ShaderProgram"/>.
         /// </summary>
         public ImmutableDictionary<string, Uniform> Uniforms
         {
@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Initializes a new <see cref="ShaderProgram"/> from a set of <see cref="Shader"/>s.
         /// </summary>
-        /// <param name="shaders">The <see cref="Shader"/> s to initialize from.</param>
+        /// <param name="shaders">The <see cref="Shader"/>s to initialize from.</param>
         public ShaderProgram(params Shader[] shaders)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
@@ -134,12 +134,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
                                 s.AttachTo(this);
                             }
 
-                            foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
-                            {
-                                GL.BindAttribLocation(this, desc.Location, desc.Name);
-                            }
                             GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
                             GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
+                            foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
+                            {
+                                desc.ApplyIn(this);
+                            }
                             GL.LinkProgram(this);
 
                             int result;

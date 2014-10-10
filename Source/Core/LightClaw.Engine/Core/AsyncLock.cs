@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <remarks>
     /// Always make sure to release lock via <see cref="M:AsyncLockReleaser.Release"/> or
-    /// <see cref="M:AsyncLockReleaser.Dispose"/> , otherwise the lock will not be released and deadlocks will occur.
+    /// <see cref="M:AsyncLockReleaser.Dispose"/>, otherwise the lock will not be released and deadlocks will occur.
     /// </remarks>
     /// <example>
     /// <code>
@@ -141,7 +141,7 @@ namespace LightClaw.Engine.Core
         /// The struct used to release the previously acquired lock. Usable via using-pattern.
         /// </summary>
         /// <remarks>
-        /// Always make sure to release lock via <see cref="M:Release"/> or <see cref="M:Dispose"/> , otherwise the lock
+        /// Always make sure to release lock via <see cref="M:Release"/> or <see cref="M:Dispose"/>, otherwise the lock
         /// will not be released and deadlocks will occur.
         /// </remarks>
         public struct AsyncLockReleaser : IDisposable

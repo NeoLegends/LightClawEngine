@@ -1042,7 +1042,7 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="Byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="Byte"/> to create the <see cref="Color"/> from.</param>
-        /// <param name="alpha">The <see cref="Color"/> s alpha.</param>
+        /// <param name="alpha">The <see cref="Color"/>s alpha.</param>
         public Color(float value, float alpha)
             : this(ToByte(value), ToByte(value), ToByte(value), ToByte(alpha))
         {
@@ -1052,7 +1052,7 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="Byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="Byte"/> to create the <see cref="Color"/> from.</param>
-        /// <param name="alpha">The <see cref="Color"/> s alpha.</param>
+        /// <param name="alpha">The <see cref="Color"/>s alpha.</param>
         public Color(byte value, byte alpha)
             : this(value, value, value, alpha)
         {

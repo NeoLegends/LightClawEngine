@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Contains extension methods to various OpenGL enums.
     /// </summary>
+    [Pure]
     public static class EnumExtensions
     {
+        #region ActiveUniformType
+
         /// <summary>
         /// Checks whether the specified <see cref="ActiveUniformType"/> is a matrix.
         /// </summary>
@@ -117,6 +121,66 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     return false;
             }
         }
+
+        #endregion
+
+        #region TextureTarget
+
+        public static bool IsTexture1DTarget(this TextureTarget target)
+        {
+            return (target == TextureTarget.Texture1D) || (target == TextureTarget.ProxyTexture1D);
+        }
+
+        public static bool IsTexture1DArrayTarget(this TextureTarget target)
+        {
+            return (target == TextureTarget.Texture1DArray) || (target == TextureTarget.Texture1DArray);
+        }
+
+        public static bool IsTexture2DTarget(this TextureTarget target)
+        {
+            switch (target)
+            {
+                case TextureTarget.Texture2D:
+                case TextureTarget.Texture2DMultisample:
+                case TextureTarget.TextureCubeMap:
+                case TextureTarget.ProxyTextureCubeMap:
+                case TextureTarget.ProxyTexture2D:
+                case TextureTarget.ProxyTexture2DMultisample:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsTexture2DArrayTarget(this TextureTarget target)
+        {
+            switch (target)
+            {
+                case TextureTarget.Texture2DArray:
+                case TextureTarget.Texture2DMultisampleArray:
+                case TextureTarget.ProxyTexture2DArray:
+                case TextureTarget.ProxyTexture2DMultisampleArray:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsTexture3DTarget(this TextureTarget target)
+        {
+            switch (target)
+            {
+                case TextureTarget.Texture3D:
+                case TextureTarget.ProxyTexture3D:
+                case TextureTarget.TextureCubeMap:
+                case TextureTarget.ProxyTextureCubeMap:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Converts a <see cref="BufferAccess"/> into a <see cref="BufferAccessMask"/>.

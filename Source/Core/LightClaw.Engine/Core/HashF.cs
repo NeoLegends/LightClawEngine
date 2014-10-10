@@ -29,13 +29,13 @@ namespace LightClaw.Engine.Core
     /// All calls will be inlined, so there really is no performance penalty in calling the method multiple times.
     /// </para>
     /// <para>
-    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/> ,
+    /// If there's the need to compute the hash codes of the values inside an array or a <see cref="IEnumerable{T}"/>,
     /// there is an overload for that. Just make sure the elements inside the collection do not change as this would
     /// render the previously computed hash code invalid. As hash codes are not allowed to change over the lifetime of
     /// the object you will break the universe. :)
     /// </para>
     /// <para>
-    /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/> ):
+    /// Hashes will be computed using the following method (see <see href="http://stackoverflow.com/a/263416"/>):
     /// <code>
     /// unchecked
     /// {
@@ -95,7 +95,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the item.</typeparam>
         /// <param name="item">The item to get the hash code of.</param>
-        /// <returns>The <paramref name="item"/>s hash code or <c>0</c> , if <paramref name="item"/> was null.</returns>
+        /// <returns>The <paramref name="item"/>s hash code or <c>0</c>, if <paramref name="item"/> was null.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T item)
         {
@@ -204,13 +204,13 @@ namespace LightClaw.Engine.Core
         /// <typeparam name="T3">The type of the third element.</typeparam>
         /// <typeparam name="T4">The type of the fourth element.</typeparam>
         /// <typeparam name="T5">The type of the fifth element.</typeparam>
-        /// <typeparam name="T5">The type of the sixth element.</typeparam>
+        /// <typeparam name="T6">The type of the sixth element.</typeparam>
         /// <param name="first">The first element.</param>
         /// <param name="second">The second element.</param>
         /// <param name="third">The third element.</param>
         /// <param name="fourth">The fourth element.</param>
         /// <param name="fifth">The fifth element.</param>
-        /// <param name="fifth">The sixth element.</param>
+        /// <param name="sixth">The sixth element.</param>
         /// <returns>The hash code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T1, T2, T3, T4, T5, T6>(T1 first, T2 second, T3 third, T4 fourth, T5 fifth, T6 sixth)
@@ -231,7 +231,7 @@ namespace LightClaw.Engine.Core
         /// Gets the hash codes of all elements inside the <paramref name="collection"/>.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of collection to get the hash codes for.</typeparam>
-        /// <param name="array">The collection to get the hash codes from.</param>
+        /// <param name="collection">The collection to get the hash codes from.</param>
         /// <returns>The combined hash code or <c>0</c> if the <paramref name="collection"/> was <c>null</c>.</returns>
         public static int GetHashCode<T>(IEnumerable<T> collection)
         {

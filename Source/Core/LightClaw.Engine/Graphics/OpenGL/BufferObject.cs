@@ -123,10 +123,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Gets all of the <see cref="BufferObject"/> s data.
+        /// Gets all of the <see cref="BufferObject"/>s data.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
-        /// <returns>The <see cref="BufferObject"/> s data.</returns>
+        /// <returns>The <see cref="BufferObject"/>s data.</returns>
         public T[] Get<T>()
             where T : struct
         {
@@ -134,12 +134,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Gets a range of the <see cref="BufferObject"/> s data.
+        /// Gets a range of the <see cref="BufferObject"/>s data.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of result to read the data into.</typeparam>
         /// <param name="offset">The starting index.</param>
         /// <param name="count">The amount of bytes to read.</param>
-        /// <returns>The <see cref="BufferObject"/> s data.</returns>
+        /// <returns>The <see cref="BufferObject"/>s data.</returns>
         public T[] GetRange<T>(int offset, int count)
             where T : struct
         {
@@ -211,7 +211,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="BufferObject"/> 's contents.
+        /// Updates the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -230,7 +230,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="BufferObject"/> 's contents.
+        /// Updates the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -249,7 +249,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Sets a range of the <see cref="BufferObject"/> 's contents.
+        /// Sets a range of the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -269,7 +269,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates a range of the <see cref="BufferObject"/> 's contents.
+        /// Updates a range of the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the new data.</typeparam>
         /// <param name="data">The data itself.</param>
@@ -289,7 +289,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="BufferObject"/> 's contents.
+        /// Updates the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
         /// <param name="sizeInBytes">The size of the data in bytes.</param>
@@ -304,7 +304,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Updates the <see cref="BufferObject"/> 's contents.
+        /// Updates the <see cref="BufferObject"/>'s contents.
         /// </summary>
         /// <param name="data">The data itself.</param>
         /// <param name="sizeInBytes">The size of the data in bytes.</param>

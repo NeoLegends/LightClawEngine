@@ -146,6 +146,7 @@ namespace LightClaw.Engine.Core
                     {
                         Logger.Debug(() => "Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/A", i));
                         this.scenes.Add(i, s);
+                        s.Enable();
                         Logger.Debug(() => "Scene inserted successfully.");
                         return i;
                     }

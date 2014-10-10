@@ -190,7 +190,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets the <see cref="Matrix"/> ' determinant.
+        /// Gets the <see cref="Matrix"/>' determinant.
         /// </summary>
         public float Determinant
         {

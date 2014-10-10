@@ -57,7 +57,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="other">The <see cref="SamplerParameterDescription"/> to test against.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c>.
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/>s are equal, otherwise <c>false</c>.
         /// </returns>
         public bool Equals(SamplerParameterDescription other)
         {
@@ -65,21 +65,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Gets the <see cref="SamplerParameterDescription"/> 's hash code.
+        /// Gets the <see cref="SamplerParameterDescription"/>'s hash code.
         /// </summary>
-        /// <returns>The <see cref="SamplerParameterDescription"/> 's hash code.</returns>
+        /// <returns>The <see cref="SamplerParameterDescription"/>'s hash code.</returns>
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.ParameterName, this.Value);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="SamplerParameterDescription"/> s are equal.
+        /// Checks whether two <see cref="SamplerParameterDescription"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are equal, otherwise <c>false</c>.
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/>s are equal, otherwise <c>false</c>.
         /// </returns>
         public static bool operator ==(SamplerParameterDescription left, SamplerParameterDescription right)
         {
@@ -87,12 +87,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Checks whether two <see cref="SamplerParameterDescription"/> s are inequal.
+        /// Checks whether two <see cref="SamplerParameterDescription"/>s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns>
-        /// <c>true</c> if the <see cref="SamplerParameterDescription"/> s are inequal, otherwise <c>false</c>.
+        /// <c>true</c> if the <see cref="SamplerParameterDescription"/>s are inequal, otherwise <c>false</c>.
         /// </returns>
         public static bool operator !=(SamplerParameterDescription left, SamplerParameterDescription right)
         {

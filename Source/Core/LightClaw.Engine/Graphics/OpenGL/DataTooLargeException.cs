@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class DataTooLargeException : InvalidOperationException
     {
         /// <summary>
-        /// The offset of the data to be set inside the <see cref="RangedBuffer"/> 's range.
+        /// The offset of the data to be set inside the <see cref="RangedBuffer"/>'s range.
         /// </summary>
         public int Offset
         {
@@ -89,7 +89,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// the range.
         /// </summary>
         /// <param name="sizeInBytes">The size of the data that was supposed to be set.</param>
-        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/> 's range.</param>
+        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/>'s range.</param>
         /// <param name="range">The range the buffer occupies of the underlying buffer.</param>
         public DataTooLargeException(int sizeInBytes, int offset, BufferRange range)
             : this(null, sizeInBytes, offset, range)
@@ -102,7 +102,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="sizeInBytes">The size of the data that was supposed to be set.</param>
-        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/> 's range.</param>
+        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/>'s range.</param>
         /// <param name="range">The range the buffer occupies of the underlying buffer.</param>
         public DataTooLargeException(string message, int sizeInBytes, int offset, BufferRange range)
             : this(message, null, sizeInBytes, offset, range)
@@ -126,7 +126,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="message">The exception message.</param>
         /// <param name="inner">The <see cref="Exception"/> that caused this exception to be thrown.</param>
         /// <param name="sizeInBytes">The size of the data that was supposed to be set.</param>
-        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/> 's range.</param>
+        /// <param name="offset">The offset of the data to be set inside the <see cref="RangedBuffer"/>'s range.</param>
         /// <param name="range">The range the buffer occupies of the underlying buffer.</param>
         public DataTooLargeException(string message, Exception inner, int sizeInBytes, int offset, BufferRange range)
             : this(message, inner)

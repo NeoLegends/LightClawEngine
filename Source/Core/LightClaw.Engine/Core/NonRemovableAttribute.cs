@@ -35,7 +35,7 @@ namespace LightClaw.Engine.Core
         /// The <see cref="GameObject"/> the <see cref="Component"/> is about to be removed from.
         /// </param>
         /// <returns>
-        /// <c>false</c> , as <see cref="NonRemovableAttribute"/> makes a <see cref="Component"/> non-removable.
+        /// <c>false</c>, as <see cref="NonRemovableAttribute"/> makes a <see cref="Component"/> non-removable.
         /// (obviously, lol)
         /// </returns>
         public override bool Validate(GameObject gameObjectToRemoveFrom)

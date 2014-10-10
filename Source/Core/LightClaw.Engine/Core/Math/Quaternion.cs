@@ -519,11 +519,11 @@ namespace LightClaw.Engine.Core
         /// </param>
         /// <param name="amount1">
         /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
-        /// <paramref name="value2"/> ).
+        /// <paramref name="value2"/>).
         /// </param>
         /// <param name="amount2">
         /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
-        /// <paramref name="value3"/> ).
+        /// <paramref name="value3"/>).
         /// </param>
         /// <param name="result">
         /// When the method completes, contains a new <see cref="Quaternion"/> containing the 4D Cartesian coordinates
@@ -552,11 +552,11 @@ namespace LightClaw.Engine.Core
         /// </param>
         /// <param name="amount1">
         /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
-        /// <paramref name="value2"/> ).
+        /// <paramref name="value2"/>).
         /// </param>
         /// <param name="amount2">
         /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
-        /// <paramref name="value3"/> ).
+        /// <paramref name="value3"/>).
         /// </param>
         /// <returns>A new <see cref="Quaternion"/> containing the 4D Cartesian coordinates of the specified point.</returns>
         public static Quaternion Barycentric(Quaternion value1, Quaternion value2, Quaternion value3, float amount1, float amount2)

@@ -131,25 +131,25 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// The <see cref="Vertex"/> 's position.
+        /// The <see cref="Vertex"/>'s position.
         /// </summary>
         [DataMember]
         public Vector3 Position;
 
         /// <summary>
-        /// The <see cref="Vertex"/> 's normal.
+        /// The <see cref="Vertex"/>'s normal.
         /// </summary>
         [DataMember]
         public Vector3 Normal;
 
         /// <summary>
-        /// The <see cref="Vertex"/> 's texture coordinates.
+        /// The <see cref="Vertex"/>'s texture coordinates.
         /// </summary>
         [DataMember]
         public Vector2 TexCoord;
 
         /// <summary>
-        /// The <see cref="Vertex"/> 's color.
+        /// The <see cref="Vertex"/>'s color.
         /// </summary>
         [DataMember]
         public Color Color;
@@ -157,10 +157,10 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="Vertex"/> from a position, a normal, a color and a texture coordinate.
         /// </summary>
-        /// <param name="position">The <see cref="Vertex"/> 's position.</param>
-        /// <param name="normal">The <see cref="Vertex"/> 's normal.</param>
-        /// <param name="texCoord">The <see cref="Vertex"/> 's texture coordinates.</param>
-        /// <param name="color">The <see cref="Vertex"/> 's color.</param>
+        /// <param name="position">The <see cref="Vertex"/>'s position.</param>
+        /// <param name="normal">The <see cref="Vertex"/>'s normal.</param>
+        /// <param name="texCoord">The <see cref="Vertex"/>'s texture coordinates.</param>
+        /// <param name="color">The <see cref="Vertex"/>'s color.</param>
         public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord, Color color)
         {
             this.Normal = normal;
@@ -186,7 +186,7 @@ namespace LightClaw.Engine.Graphics
         /// Checks whether the current instance is equal to the specified <see cref="Vertex"/>.
         /// </summary>
         /// <param name="other">The <see cref="Vertex"/> to test against.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) &&
@@ -194,31 +194,31 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Gets the <see cref="Vertex"/> 's hash code.
+        /// Gets the <see cref="Vertex"/>'s hash code.
         /// </summary>
-        /// <returns>The <see cref="Vertex"/> 's hash code.</returns>
+        /// <returns>The <see cref="Vertex"/>'s hash code.</returns>
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord, this.Color);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="Vertex"/> s are equal.
+        /// Checks whether two <see cref="Vertex"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are equal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(Vertex left, Vertex right)
         {
             return left.Equals(right);
         }
 
         /// <summary>
-        /// Checks whether two <see cref="Vertex"/> s are inequal.
+        /// Checks whether two <see cref="Vertex"/>s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
-        /// <returns><c>true</c> if the <see cref="Vertex"/> s are inequal, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="Vertex"/>s are inequal, otherwise <c>false</c>.</returns>
         public static bool operator !=(Vertex left, Vertex right)
         {
             return !(left == right);

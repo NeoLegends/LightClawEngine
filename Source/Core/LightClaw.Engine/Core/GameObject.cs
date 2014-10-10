@@ -159,7 +159,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/> , if possible, and sets
+        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/>, if possible, and sets
         /// <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>
         /// , if attachment fails.
         /// </summary>
@@ -227,7 +227,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to get.</typeparam>
         /// <returns>
-        /// The first <see cref="Component"/> of the specified <see cref="Type"/> , or <c>null</c> there was no match.
+        /// The first <see cref="Component"/> of the specified <see cref="Type"/>, or <c>null</c> there was no match.
         /// </returns>
         public T OfType<T>()
             where T : Component

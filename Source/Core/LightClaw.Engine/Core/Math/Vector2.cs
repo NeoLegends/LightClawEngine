@@ -569,11 +569,11 @@ namespace LightClaw.Engine.Core
         /// </param>
         /// <param name="amount1">
         /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
-        /// <paramref name="value2"/> ).
+        /// <paramref name="value2"/>).
         /// </param>
         /// <param name="amount2">
         /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
-        /// <paramref name="value3"/> ).
+        /// <paramref name="value3"/>).
         /// </param>
         /// <param name="result">
         /// When the method completes, contains the 2D Cartesian coordinates of the specified point.
@@ -599,11 +599,11 @@ namespace LightClaw.Engine.Core
         /// </param>
         /// <param name="amount1">
         /// Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in
-        /// <paramref name="value2"/> ).
+        /// <paramref name="value2"/>).
         /// </param>
         /// <param name="amount2">
         /// Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in
-        /// <paramref name="value3"/> ).
+        /// <paramref name="value3"/>).
         /// </param>
         /// <returns>A new <see cref="Vector2"/> containing the 2D Cartesian coordinates of the specified point.</returns>
         public static Vector2 Barycentric(Vector2 value1, Vector2 value2, Vector2 value3, float amount1, float amount2)

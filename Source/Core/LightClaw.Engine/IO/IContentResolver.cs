@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Represents an object that obtains <see cref="Stream"/> s around specified resource strings.
+    /// Represents an object that obtains <see cref="Stream"/>s around specified resource strings.
     /// </summary>
     /// <seealso cref="IContentManager"/>
     [ContractClass(typeof(IContentResolverContracts))]

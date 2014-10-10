@@ -152,11 +152,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public void Unbind()
-        {
-            GL.BindVertexArray(0);
-        }
-
         public void Initialize()
         {
             if (!this.IsInitialized)
@@ -166,8 +161,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     if (!this.IsInitialized)
                     {
                         this.Handle = GL.GenVertexArray();
-                        using (Binding vaoBinding = new Binding(this))
+                        try // Can't use Binding and using clause here because it causes a stackoverflow
                         {
+                            GL.BindVertexArray(this);
                             foreach (BufferDescription desc in this.VertexBuffers)
                             {
                                 using (Binding vboBinding = new Binding(desc.Buffer))
@@ -180,12 +176,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
                             }
                             this.IndexBuffer.Bind();
                         }
+                        finally
+                        {
+                            GL.BindVertexArray(0);
+                        }
                         this.IndexBuffer.Unbind();
 
                         this.IsInitialized = true;
                     }
                 }
             }
+        }
+
+        public void Unbind()
+        {
+            GL.BindVertexArray(0);
         }
 
         protected override void Dispose(bool disposing)

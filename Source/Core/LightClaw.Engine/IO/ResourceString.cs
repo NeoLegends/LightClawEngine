@@ -77,7 +77,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Gets the <see cref="ResourceString"/> s hash code.
+        /// Gets the <see cref="ResourceString"/>s hash code.
         /// </summary>
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
@@ -115,7 +115,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Checks whether two <see cref="ResourceString"/> s are equal.
+        /// Checks whether two <see cref="ResourceString"/>s are equal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
@@ -126,7 +126,7 @@ namespace LightClaw.Engine.IO
         }
 
         /// <summary>
-        /// Checks whether two <see cref="ResourceString"/> s are inequal.
+        /// Checks whether two <see cref="ResourceString"/>s are inequal.
         /// </summary>
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
@@ -193,7 +193,7 @@ namespace LightClaw.Engine.IO
             }
 
             /// <summary>
-            /// Writes the <paramref name="value"/> (which is a <see cref="ResourceString"/> ) into the
+            /// Writes the <paramref name="value"/> (which is a <see cref="ResourceString"/>) into the
             /// <paramref name="writer"/>.
             /// </summary>
             /// <param name="writer">The <see cref="JsonWriter"/> to write the data into.</param>
