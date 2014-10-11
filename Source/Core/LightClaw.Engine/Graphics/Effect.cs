@@ -124,17 +124,14 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            if (this.OwnsPasses)
             {
-                if (this.OwnsPasses)
+                foreach (EffectPass pass in this.Passes)
                 {
-                    foreach (EffectPass pass in this.Passes)
-                    {
-                        pass.Dispose();
-                    }
+                    pass.Dispose();
                 }
-                base.Dispose(disposing);
             }
+            base.Dispose(disposing);
         }
 
         protected abstract void OnUpdate(GameTime gameTime);

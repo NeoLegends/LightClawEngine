@@ -184,6 +184,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
+                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
+
                         this.Handle = GL.CreateShader(this.Type);
                         GL.ShaderSource(this, this.Source);
                         GL.CompileShader(this);
@@ -208,19 +210,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Disposes the <see cref="Shader"/>.
         /// </summary>
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            lock (this.initializationLock)
             {
-                lock (this.initializationLock)
+                if (this.IsInitialized)
                 {
-                    if (this.IsInitialized)
+                    try
                     {
                         GL.DeleteShader(this);
                     }
+                    catch (AccessViolationException ex)
+                    {
+                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(Shader).Name), ex, ex);
+                    }
                 }
-                base.Dispose(disposing);
             }
+            base.Dispose(disposing);
         }
 
         /// <summary>

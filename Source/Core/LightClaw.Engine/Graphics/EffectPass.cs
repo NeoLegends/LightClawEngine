@@ -121,15 +121,12 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            if (ownsProgram)
             {
-                if (ownsProgram)
-                {
-                    this.ShaderProgram.Dispose();
-                }
-
-                base.Dispose(disposing);
+                this.ShaderProgram.Dispose();
             }
+
+            base.Dispose(disposing);
         }
 
         [ContractInvariantMethod]

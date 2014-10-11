@@ -13,8 +13,8 @@ using log4net;
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// A lightweight component base class implementing essential services such as INotifyPropertyChanged and INameable.
-    /// Also provides a logger.
+    /// A lightweight component base class implementing essential services such as <see cref="INotifyPropertyChanged"/>
+    /// and <see cref="INameable"/>. Also provides a logger.
     /// </summary>
     [DataContract(IsReference = true)]
     public abstract class Entity : INameable, INotifyPropertyChanged
@@ -43,7 +43,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return _Name ?? (Name = this.GetType().FullName);
+                return _Name;
             }
             set
             {
@@ -98,8 +98,9 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Invokes the specified delegate via late binding.
+        /// Invokes the specified delegate via late binding. See remarks.
         /// </summary>
+        /// <remarks>Late binding is slow, avoid this method wherever possible.</remarks>
         /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
         /// <param name="parameters">Delegate parameters.</param>
         protected void Raise(Delegate del, params object[] parameters)

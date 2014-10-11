@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -68,7 +69,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                return this.IndexBuffer.Length;
+                return this.IndexBuffer.Length / this.IndexBufferType.GetElementSize();
             }
         }
 
@@ -146,9 +147,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             int drawCount = this.IndexCount - offset;
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, drawCount, drawCount))
-            using (Binding vaoBinding = new Binding(this))
             {
-                GL.DrawElements(this.DrawMode, this.IndexCount, this.IndexBufferType, offset);
+                GL.DrawElements(this.DrawMode, drawCount, this.IndexBufferType, offset);
             }
         }
 
@@ -160,6 +160,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
+                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
+
                         this.Handle = GL.GenVertexArray();
                         try // Can't use Binding and using clause here because it causes a stackoverflow
                         {
@@ -193,19 +195,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.BindVertexArray(0);
         }
 
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            lock (this.initializationLock)
             {
-                lock (this.initializationLock)
+                if (this.IsInitialized)
                 {
-                    if (this.IsInitialized)
+                    try
                     {
                         GL.DeleteVertexArray(this);
                     }
+                    catch (AccessViolationException ex)
+                    {
+                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(VertexArrayObject).Name), ex, ex);
+                    }
                 }
-                base.Dispose(disposing);
             }
+            base.Dispose(disposing);
         }
 
         [ContractInvariantMethod]

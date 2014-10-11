@@ -43,6 +43,8 @@ void main(void)
 	finalColor = vertexColor;
 }";
 
+        private int getErrorCount = 0;
+
         private IBuffer indexBuffer;
 
         private VertexArrayObject vao;
@@ -119,6 +121,10 @@ void main(void)
                 using (Binding vaoBinding = new Binding(vao))
                 {
                     vao.DrawIndexed();
+                    if (getErrorCount++ < 3)
+                    {
+                        Logger.Debug(e => "Current OpenGL error is: {0}".FormatWith(e), GLObject.GetError());
+                    }
                 }
             }
             base.OnDraw();

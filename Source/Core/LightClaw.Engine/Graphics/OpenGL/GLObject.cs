@@ -11,7 +11,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
-    /// Represents the base class for all OpenGL-wrapper-objects.
+    /// Represents the base class for all OpenGL wrapper objects.
     /// </summary>
     [DataContract]
     public abstract class GLObject : DisposableEntity, IGLObject
@@ -70,15 +70,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to free managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    this.Handle = 0;
-                }
-
-                base.Dispose(disposing);
+                this.Handle = 0;
             }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

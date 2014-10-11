@@ -175,7 +175,7 @@ namespace LightClaw.Engine.Core
         protected override void Dispose(bool disposing)
         {
             this.SceneManager.Dispose();
-            this.GameWindow.Dispose();
+            //this.GameWindow.Dispose();
 
             base.Dispose(disposing);
         }

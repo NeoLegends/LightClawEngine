@@ -127,7 +127,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                return serializer.Deserialize<int>(reader);
+                int location = serializer.Deserialize<int>(reader);
+                if (location < 0)
+                {
+                    throw new InvalidOperationException("The deserialized vertex attribute location was smaller than zero.");
+                }
+                return new VertexAttributeLocation(location);
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

@@ -9,11 +9,31 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     /// <summary>
-    /// Contains extension methods to various OpenGL enums.
+    /// Contains extension methods to various OpenGL enumerations.
     /// </summary>
     [Pure]
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Gets the size in machine units of the unit represented by the specified <paramref name="drawElementsType"/>.
+        /// </summary>
+        /// <param name="drawElementsType">The <see cref="DrawElementsType"/> to get the machine unit size from.</param>
+        /// <returns>The size of the specified element in machine units.</returns>
+        public static int GetElementSize(this DrawElementsType drawElementsType)
+        {
+            switch (drawElementsType)
+            {
+                case DrawElementsType.UnsignedByte:
+                    return sizeof(byte);
+                case DrawElementsType.UnsignedInt:
+                    return sizeof(uint);
+                case DrawElementsType.UnsignedShort:
+                    return sizeof(ushort);
+                default:
+                    throw new InvalidOperationException("The size of the index element cannot be determined. Enum value is invalid.");
+            }
+        }
+
         #region ActiveUniformType
 
         /// <summary>
@@ -126,16 +146,31 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         #region TextureTarget
 
+        /// <summary>
+        /// Checks whether the specified <see cref="TextureTarget"/> is a one-dimensional target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns><c>true</c> if <paramref name="target"/> is a one-dimensional target, otherwise <c>false</c>.</returns>
         public static bool IsTexture1DTarget(this TextureTarget target)
         {
             return (target == TextureTarget.Texture1D) || (target == TextureTarget.ProxyTexture1D);
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="TextureTarget"/> is a one-dimensional array target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns><c>true</c> if <paramref name="target"/> is a one-dimensional array target, otherwise <c>false</c>.</returns>
         public static bool IsTexture1DArrayTarget(this TextureTarget target)
         {
             return (target == TextureTarget.Texture1DArray) || (target == TextureTarget.Texture1DArray);
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="TextureTarget"/> is a two-dimensional target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns><c>true</c> if <paramref name="target"/> is a two-dimensional target, otherwise <c>false</c>.</returns>
         public static bool IsTexture2DTarget(this TextureTarget target)
         {
             switch (target)
@@ -152,6 +187,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="TextureTarget"/> is a two-dimensional array target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns><c>true</c> if <paramref name="target"/> is a two-dimensional array target, otherwise <c>false</c>.</returns>
         public static bool IsTexture2DArrayTarget(this TextureTarget target)
         {
             switch (target)
@@ -166,6 +206,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Checks whether the specified <see cref="TextureTarget"/> is a three-dimensional target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns><c>true</c> if <paramref name="target"/> is a three-dimensional target, otherwise <c>false</c>.</returns>
         public static bool IsTexture3DTarget(this TextureTarget target)
         {
             switch (target)

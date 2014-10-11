@@ -188,6 +188,7 @@
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\ILateUpdateable.cs" />
+    <Compile Include="Core\ThreadModeAttribute.cs" />
     <Compile Include="Core\WrongThreadException.cs" />
     <Compile Include="Core\ISceneManager.cs" />
     <Compile Include="Core\IUpdateable.cs" />

@@ -261,40 +261,37 @@ namespace LightClaw.Engine.IO
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            // Some funny ODE occurs here w/o the blocks. I wonder whether any of the readers / resolvers will be
+            // disposed before the ODE is thrown by the ConcurrentBag...?!
+            try
             {
-                // Some funny ODE occurs here w/o the blocks. I wonder whether any of the readers / resolvers will be
-                // disposed before the ODE is thrown by the ConcurrentBag...?!
-                try
+                IContentResolver resolver;
+                while (this.resolvers.TryTake(out resolver))
                 {
-                    IContentResolver resolver;
-                    while (this.resolvers.TryTake(out resolver))
+                    IDisposable disposableResolver = resolver as IDisposable;
+                    if (disposableResolver != null)
                     {
-                        IDisposable disposableResolver = resolver as IDisposable;
-                        if (disposableResolver != null)
-                        {
-                            disposableResolver.Dispose();
-                        }
+                        disposableResolver.Dispose();
                     }
                 }
-                catch (ObjectDisposedException) { }
-
-                try
-                {
-                    IContentReader reader;
-                    while (this.readers.TryTake(out reader))
-                    {
-                        IDisposable disposableReader = reader as IDisposable;
-                        if (disposableReader != null)
-                        {
-                            disposableReader.Dispose();
-                        }
-                    }
-                }
-                catch (ObjectDisposedException) { }
-
-                base.Dispose(disposing);
             }
+            catch (ObjectDisposedException) { }
+
+            try
+            {
+                IContentReader reader;
+                while (this.readers.TryTake(out reader))
+                {
+                    IDisposable disposableReader = reader as IDisposable;
+                    if (disposableReader != null)
+                    {
+                        disposableReader.Dispose();
+                    }
+                }
+            }
+            catch (ObjectDisposedException) { }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

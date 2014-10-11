@@ -124,7 +124,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (!this.IsInitialized)
                     {
-                        Logger.Debug(n => "Initializing shader program '{0}'.".FormatWith(n), this.Name ?? "N/A");
+                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
 
                         this.Handle = GL.CreateProgram();
                         try
@@ -184,19 +184,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Disposes the <see cref="ShaderProgram"/> freeing all OpenGL resources.
         /// </summary>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            lock (this.initializationLock)
             {
-                lock (this.initializationLock)
+                if (this.IsInitialized)
                 {
-                    if (this.IsInitialized)
+                    try
                     {
                         GL.DeleteProgram(this);
                     }
+                    catch (AccessViolationException ex)
+                    {
+                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(ShaderProgram).Name), ex, ex);
+                    }
                 }
-                base.Dispose(disposing);
             }
+            base.Dispose(disposing);
         }
 
         /// <summary>

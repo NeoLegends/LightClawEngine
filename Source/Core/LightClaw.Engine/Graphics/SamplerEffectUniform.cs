@@ -109,12 +109,9 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
-            {
-                this.TextureUnit.Dispose();
+            this.TextureUnit.Dispose();
 
-                base.Dispose(disposing);
-            }
+            base.Dispose(disposing);
         }
 
         protected override void OnInitialize()

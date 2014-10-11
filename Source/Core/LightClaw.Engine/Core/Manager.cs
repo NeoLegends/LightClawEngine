@@ -320,13 +320,10 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
-            {
-                this.IsEnabled = false;
-                this.IsLoaded = false;
+            this.IsEnabled = false;
+            this.IsLoaded = false;
 
-                base.Dispose(disposing);
-            }
+            base.Dispose(disposing);
         }
 
         /// <summary>

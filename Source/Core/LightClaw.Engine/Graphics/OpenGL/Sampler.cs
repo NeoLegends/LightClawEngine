@@ -145,17 +145,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            lock (this.initializationLock)
             {
-                lock (this.initializationLock)
+                if (this.IsInitialized)
                 {
-                    if (this.IsInitialized)
-                    {
-                        GL.DeleteSampler(this);
-                    }
+                    GL.DeleteSampler(this);
                 }
-                base.Dispose(disposing);
             }
+            base.Dispose(disposing);
         }
 
         /// <summary>

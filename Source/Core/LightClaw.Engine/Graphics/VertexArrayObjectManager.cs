@@ -102,26 +102,23 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            IBuffer indexBuffer = this.indexBuffer;
+            if (indexBuffer != null)
             {
-                IBuffer indexBuffer = this.indexBuffer;
-                if (indexBuffer != null)
-                {
-                    indexBuffer.Dispose();
-                }
-                IBuffer vertexBuffer = this.vertexBuffer;
-                if (vertexBuffer != null)
-                {
-                    vertexBuffer.Dispose();
-                }
-                VertexArrayObject vao = this.vertexArrayObject;
-                if (vao != null)
-                {
-                    vao.Dispose();
-                }
-
-                base.Dispose(disposing);
+                indexBuffer.Dispose();
             }
+            IBuffer vertexBuffer = this.vertexBuffer;
+            if (vertexBuffer != null)
+            {
+                vertexBuffer.Dispose();
+            }
+            VertexArrayObject vao = this.vertexArrayObject;
+            if (vao != null)
+            {
+                vao.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         private void SetBuffer<T>(T[] data, BufferTarget target, ref IBuffer buffer)

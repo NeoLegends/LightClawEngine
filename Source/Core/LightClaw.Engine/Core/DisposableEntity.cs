@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LightClaw.Engine.Core
@@ -21,7 +22,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private bool _IsDisposed = false;
+        private int _IsDisposed = 0;
 
         /// <summary>
         /// Indicates whether the instance has already been disposed or not.
@@ -31,11 +32,11 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return _IsDisposed;
+                return (_IsDisposed == 0);
             }
             private set
             {
-                this.SetProperty(ref _IsDisposed, value);
+                this.SetProperty(ref _IsDisposed, value ? 1 : 0);
             }
         }
 
@@ -60,7 +61,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         ~DisposableEntity()
         {
-            this.Dispose(false);
+            this.DisposeInternal(false);
         }
 
         /// <summary>
@@ -68,22 +69,21 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            this.DisposeInternal(true);
         }
 
         /// <summary>
-        /// Disposes the <see cref="DisposableEntity"/> releasing all unmanaged and, if specified, all managed resources.
+        /// Disposes the <see cref="DisposableEntity"/> releasing all unmanaged and, if specified, all managed resources. See remarks.
         /// </summary>
+        /// <remarks>
+        /// When overriding this method, DO NOT check <see cref="P:IsDisposed"/> and do nothing if it is true. <see cref="P:IsDisposed"/>
+        /// will be set to true with a thread-safe operation BEFORE this method will be called.
+        /// </remarks>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
-            {
-                this.Raise(this.Disposed, this.GetDisposedArgument());
-
-                this.IsDisposed = true;
-                GC.SuppressFinalize(this);
-            }
+            this.Raise(this.Disposed, this.GetDisposedArgument());
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -93,6 +93,18 @@ namespace LightClaw.Engine.Core
         protected virtual object GetDisposedArgument()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Callback for <see cref="M:Dispose()"/> and <see cref="M:Finalize"/>
+        /// </summary>
+        /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
+        private void DisposeInternal(bool disposing)
+        {
+            if (Interlocked.CompareExchange(ref _IsDisposed, 1, 0) == 0)
+            {
+                this.Dispose(disposing);
+            }
         }
     }
 }

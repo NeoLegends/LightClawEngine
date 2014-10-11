@@ -24,10 +24,7 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
-            {
-                base.Dispose(disposing);
-            }
+            base.Dispose(disposing);
         }
     }
 }

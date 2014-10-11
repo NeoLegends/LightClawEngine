@@ -157,12 +157,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Initialize()
         {
-            if (!this.IsInitialized) // Buffer name will be generated lazily in order to allow for multithreaded content loading
+            if (!this.IsInitialized)
             {
                 lock (this.nameGenerationLock)
                 {
                     if (!this.IsInitialized)
                     {
+                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
+
                         this.Handle = GL.GenBuffer();
                         this.IsInitialized = true;
                     }
@@ -181,14 +183,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Binds the buffer and maps it with the specified <paramref name="bufferAccess"/>.
+        /// Maps it with the specified <paramref name="bufferAccess"/>. See remarks.
         /// </summary>
-        /// <remarks>Important, this method binds the buffer!</remarks>
+        /// <remarks>Expects the buffer to be bound.</remarks>
         /// <param name="bufferAccess">A <see cref="BufferAccess"/> enum describing the access capabilities.</param>
         /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
         public IntPtr Map(BufferAccess bufferAccess)
         {
-            this.Bind();
             return GL.MapBuffer(this.Target, bufferAccess);
         }
 
@@ -207,7 +208,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Unmap()
         {
             GL.UnmapBuffer(this.Target);
-            this.Unbind();
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
             }
-            this.CalculateCount(sizeInBytes, 0);
+            this.Length = sizeInBytes;
         }
 
         /// <summary>
@@ -316,7 +316,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
             }
-            this.CalculateCount(sizeInBytes, offset);
+            int difference = (sizeInBytes - (this.Length - offset));
+            this.Length = this.Length + ((difference >= 0) ? difference : 0);
         }
 
         /// <summary>
@@ -326,38 +327,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            lock (this.nameGenerationLock)
             {
-                lock (this.nameGenerationLock)
+                if (this.IsInitialized)
                 {
-                    if (this.IsInitialized)
+                    try
                     {
-                        try
-                        {
-                            GL.DeleteBuffer(this);
-                        }
-                        catch (AccessViolationException ex)
-                        {
-                            Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(BufferObject).Name), ex, ex);
-                        }
+                        GL.DeleteBuffer(this);
+                    }
+                    catch (AccessViolationException ex)
+                    {
+                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(BufferObject).Name), ex, ex);
                     }
                 }
-                base.Dispose(disposing);
             }
-        }
-
-        /// <summary>
-        /// Recalculates the size of the <see cref="BufferObject"/> after a change.
-        /// </summary>
-        /// <param name="sizeOfNewData">The size of the new data in bytes.</param>
-        /// <param name="offset">The offset of the new data.</param>
-        private void CalculateCount(int sizeOfNewData, int offset)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(sizeOfNewData >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-
-            int difference = (sizeOfNewData - (this.Length - offset));
-            this.Length = this.Length + ((difference >= 0) ? difference : 0);
+            base.Dispose(disposing);
         }
 
         /// <summary>

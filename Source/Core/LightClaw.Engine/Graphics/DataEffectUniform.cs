@@ -253,16 +253,13 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            RangedBuffer ubo = this.Ubo;
+            if (ubo != null)
             {
-                RangedBuffer ubo = this.Ubo;
-                if (ubo != null)
-                {
-                    ubo.Dispose();
-                }
-
-                base.Dispose(disposing);
+                ubo.Dispose();
             }
+
+            base.Dispose(disposing);
         }
 
         protected override void OnInitialize()

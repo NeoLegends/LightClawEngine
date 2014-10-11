@@ -111,6 +111,7 @@ namespace LightClaw.Engine.Core
             finally
             {
                 LogManager.Shutdown();
+                DefaultIocContainer.Dispose();
             }
         }
     }
