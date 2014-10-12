@@ -32,7 +32,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (_IsDisposed == 0);
+                return (_IsDisposed == 1);
             }
             private set
             {
