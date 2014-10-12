@@ -108,13 +108,22 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private bool _SuppressDraw;
+
+        /// <summary>
         /// Indicates whether the drawing shall not be performed.
         /// </summary>
         public bool SuppressDraw
         {
             get
             {
-                return !this.GameWindow.Visible;
+                return _SuppressDraw || !this.GameWindow.Visible;
+            }
+            set
+            {
+                this.SetProperty(ref _SuppressDraw, value);
             }
         }
 
@@ -200,6 +209,8 @@ namespace LightClaw.Engine.Core
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
             GL.Viewport(0, 0, this.GameWindow.Width, this.GameWindow.Height);
         }
 

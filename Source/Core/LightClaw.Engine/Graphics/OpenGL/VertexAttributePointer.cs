@@ -67,7 +67,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 this.Stride,
                 this.Offset
             );
-            GL.DisableVertexAttribArray(this.Index);
+            //GL.DisableVertexAttribArray(this.Index);
         }
 
         public object Clone()

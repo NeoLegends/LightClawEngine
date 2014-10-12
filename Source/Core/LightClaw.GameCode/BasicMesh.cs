@@ -84,16 +84,20 @@ void main(void)
         protected override void OnLoad()
         {
             this.vertexBuffer = BufferObject.Create(
-                new[] 
-                { 
-                    -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                    1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-                    0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-                }, 
+                new[] { 
+                    -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                    1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                    1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                    -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+                },
                 BufferTarget.ArrayBuffer, 
                 BufferUsageHint.StaticDraw
             );
-            this.indexBuffer = BufferObject.Create(new ushort[] { 1, 2, 3 }, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
+            this.indexBuffer = BufferObject.Create(
+                new ushort[] { 2, 1, 0, 3, 2, 0 }, 
+                BufferTarget.ElementArrayBuffer, 
+                BufferUsageHint.StaticDraw
+            );
 
             BufferDescription desc = new BufferDescription(
                 this.vertexBuffer,
@@ -103,7 +107,12 @@ void main(void)
             this.vao = new VertexArrayObject(this.indexBuffer, desc);
             Shader[] shaders = new Shader[] 
             { 
-                new Shader(vertexShaderSource, ShaderType.VertexShader, new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)),
+                new Shader(
+                    vertexShaderSource, 
+                    ShaderType.VertexShader, 
+                    new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
+                    new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
+                ),
                 new Shader(fragmentShaderSource, ShaderType.FragmentShader)
             };
             this.program = new ShaderProgram(shaders);
@@ -121,9 +130,10 @@ void main(void)
                 using (Binding vaoBinding = new Binding(vao))
                 {
                     vao.DrawIndexed();
-                    if (getErrorCount++ < 3)
+                    if (getErrorCount < 3)
                     {
                         Logger.Debug(e => "Current OpenGL error is: {0}".FormatWith(e), GLObject.GetError());
+                        getErrorCount++;
                     }
                 }
             }
