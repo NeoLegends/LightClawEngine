@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -13,6 +14,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents a <see cref="SamplerParameterName"/>-value association.
     /// </summary>
     [DataContract]
+    [DebuggerDisplay("{ParameterName}: {Value}")]
     public struct SamplerParameterDescription : IEquatable<SamplerParameterDescription>
     {
         /// <summary>

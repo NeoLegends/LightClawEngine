@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    [DebuggerDisplay("Name = {Name}, Location = {Location}")]
     public class Uniform : Entity, IInitializable
     {
         private readonly object initializationLock = new object();
@@ -95,8 +97,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
+            Contract.Requires<ArgumentException>(program.Handle != 0);
 
             this.Location = location;
+            this.Program = program;
         }
 
         public void Initialize()
@@ -109,7 +113,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     {
                         int nameLength;
                         ActiveUniformType uniformType;
-                        this.Program.Initialize();
                         base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
                         this.Type = uniformType; // Set indirectly to fire event
 
@@ -247,7 +250,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Set(Matrix value, bool transpose)
         {
             this.Initialize();
-            GL.ProgramUniformMatrix4(this.Program, this.Location, 16, transpose, value.ToArray());
+            GL.ProgramUniformMatrix4(this.Program, this.Location, 1, transpose, value.ToArray());
         }
 
         public void Set(Matrix3x2 value)
@@ -258,7 +261,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Set(Matrix3x2 value, bool transpose)
         {
             this.Initialize();
-            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 16, transpose, value.ToArray());
+            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, value.ToArray());
         }
 
         public void Set(Matrix3x3 value)
@@ -269,7 +272,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Set(Matrix3x3 value, bool transpose)
         {
             this.Initialize();
-            GL.ProgramUniformMatrix3(this.Program, this.Location, 16, transpose, value.ToArray());
+            GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, value.ToArray());
         }
 
         public void Set(Matrix5x4 value)

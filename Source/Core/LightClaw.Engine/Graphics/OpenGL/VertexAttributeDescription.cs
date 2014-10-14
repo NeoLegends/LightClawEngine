@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,6 +12,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     [Serializable, DataContract]
+    [DebuggerDisplay("{Name}: {Location}")]
     public struct VertexAttributeDescription : ICloneable, IEquatable<VertexAttributeDescription>
     {
         public static VertexAttributeDescription[] Empty

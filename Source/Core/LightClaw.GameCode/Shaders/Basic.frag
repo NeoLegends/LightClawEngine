@@ -2,7 +2,7 @@
 
 in vec4 vertexColor;
 
-out vec3 finalColor;
+out vec4 finalColor;
 
 void main(void)
 {

@@ -9,7 +9,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Indicates a class' or a value types thread mode.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class ThreadModeAttribute : Attribute
     {
         /// <summary>

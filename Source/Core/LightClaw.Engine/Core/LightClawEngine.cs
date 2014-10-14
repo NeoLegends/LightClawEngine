@@ -67,9 +67,11 @@ namespace LightClaw.Engine.Core
         /// <param name="args">Command line arguments.</param>
         private static void Main(string[] args)
         {
-            logger.Info("LightClaw starting up.");
+            logger.Info(
+                "LightClaw starting up on {0}, {1} bit.".FormatWith(Environment.OSVersion.VersionString, Environment.Is64BitProcess ? "64" : "32")
+            );
 
-#if DESKTOP && !MONO
+#if DESKTOP
             string profileRoot = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "LightClaw",
@@ -96,10 +98,11 @@ namespace LightClaw.Engine.Core
                 }
 
                 logger.Info(s => "Initializing Game with start scene '{0}'.".FormatWith(s), startScene);
-                using (Game game = new Game(startScene))
+                //using ()
                 {
+                    Game game = new Game(startScene);
                     logger.Info("Game created, starting up.");
-                    DefaultIocContainer.RegisterInstance<Game>(game);
+                    DefaultIocContainer.RegisterInstance<IGame>(game);
                     game.Run();
                 }
             }

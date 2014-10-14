@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Represents an <see cref="IContentReader"/> that can read all primitive types ( <see cref="Type.IsPrimitive"/>),
+    /// Represents an <see cref="IContentReader"/> that can read all primitive types (<see cref="Type.IsPrimitive"/>),
     /// <see cref="String"/>s and <see cref="Decimal"/>s.
     /// </summary>
     public class PrimitiveReader : IContentReader
@@ -24,12 +25,12 @@ namespace LightClaw.Engine.IO
         /// </returns>
         public bool CanRead(Type assetType)
         {
-            return assetType.IsPrimitive || (assetType == typeof(string)) || (assetType == typeof(decimal));
+            return assetType.IsPrimitive || (assetType == typeof(string)) || (assetType == typeof(decimal)) || (assetType == typeof(byte[]));
         }
 
         /// <summary>
-        /// Asynchronously converts from the specified <paramref name="ContentReadParameters.AssetStream"/> into a
-        /// usable asset of type <paramref name="ContentReadParameters.AssetType"/>.
+        /// Asynchronously converts from the specified <see name="ContentReadParameters.AssetStream"/> into a
+        /// usable asset of type <see name="ContentReadParameters.AssetType"/>.
         /// </summary>
         /// <remarks>
         /// This method accepts an <see cref="Encoding"/> via <see cref="ContentReadParameters.Parameter"/>. If
@@ -42,7 +43,7 @@ namespace LightClaw.Engine.IO
         /// <returns>
         /// The deserialized asset or <c>null</c> if an error occured or the specified type of asset cannot be read.
         /// </returns>
-        public Task<object> ReadAsync(ContentReadParameters parameters)
+        public async Task<object> ReadAsync(ContentReadParameters parameters)
         {
             Encoding encoding = parameters.Parameter as Encoding;
             Type assetType = parameters.AssetType;
@@ -54,67 +55,67 @@ namespace LightClaw.Engine.IO
                     // Integers
                     if (assetType == typeof(byte))
                     {
-                        return Task.FromResult<object>(br.ReadByte());
+                        return br.ReadByte();
                     }
                     else if (assetType == typeof(sbyte))
                     {
-                        return Task.FromResult<object>(br.ReadSByte());
+                        return br.ReadSByte();
                     }
                     else if (assetType == typeof(short))
                     {
-                        return Task.FromResult<object>(br.ReadInt16());
+                        return br.ReadInt16();
                     }
                     else if (assetType == typeof(ushort))
                     {
-                        return Task.FromResult<object>(br.ReadUInt16());
+                        return br.ReadUInt16();
                     }
                     else if (assetType == typeof(int))
                     {
-                        return Task.FromResult<object>(br.ReadInt32());
+                        return br.ReadInt32();
                     }
                     else if (assetType == typeof(uint))
                     {
-                        return Task.FromResult<object>(br.ReadUInt32());
+                        return br.ReadUInt32();
                     }
                     else if (assetType == typeof(long))
                     {
-                        return Task.FromResult<object>(br.ReadInt64());
+                        return br.ReadInt64();
                     }
                     else if (assetType == typeof(ulong))
                     {
-                        return Task.FromResult<object>(br.ReadUInt64());
+                        return br.ReadUInt64();
                     }
 
                     // Floating point numbers
                     else if (assetType == typeof(float))
                     {
-                        return Task.FromResult<object>(br.ReadSingle());
+                        return br.ReadSingle();
                     }
                     else if (assetType == typeof(double))
                     {
-                        return Task.FromResult<object>(br.ReadDouble());
+                        return br.ReadDouble();
                     }
                     else if (assetType == typeof(decimal))
                     {
-                        return Task.FromResult<object>(br.ReadDecimal());
+                        return br.ReadDecimal();
                     }
 
                     // Rest
                     else if (assetType == typeof(bool))
                     {
-                        return Task.FromResult<object>(br.ReadBoolean());
+                        return br.ReadBoolean();
                     }
                     else if (assetType == typeof(char))
                     {
-                        return Task.FromResult<object>(br.ReadChar());
+                        return br.ReadChar();
                     }
                     else if (assetType == typeof(IntPtr))
                     {
-                        return Task.FromResult<object>(new IntPtr(br.ReadInt32()));
+                        return new IntPtr(br.ReadInt32());
                     }
                     else if (assetType == typeof(UIntPtr))
                     {
-                        return Task.FromResult<object>(new UIntPtr(br.ReadUInt32()));
+                        return new UIntPtr(br.ReadUInt32());
                     }
                 }
             }
@@ -123,11 +124,19 @@ namespace LightClaw.Engine.IO
                 using (StreamReader sr = new StreamReader(parameters.AssetStream, encoding ?? Encoding.UTF8))
                 {
                     parameters.CancellationToken.ThrowIfCancellationRequested();
-                    return sr.ReadToEndAsync().Upcast<string, object>();
+                    return await sr.ReadToEndAsync();
+                }
+            }
+            else if (assetType == typeof(byte[]))
+            {
+                using (MemoryStream ms = new MemoryStream(parameters.AssetStream.CanSeek ? MathF.ClampToInt32(parameters.AssetStream.Length) : 8192))
+                {
+                    await parameters.AssetStream.CopyToAsync(ms);
+                    return ms.ToArray();
                 }
             }
 
-            return Task.FromResult<object>(null);
+            return null;
         }
     }
 }

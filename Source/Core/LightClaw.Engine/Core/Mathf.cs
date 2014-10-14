@@ -41,7 +41,7 @@ namespace LightClaw.Engine.Core
             {
                 Contract.Assume(_ZeroThresholds.Length > 8);
 
-                return _ZeroThresholds[8]; // We want the backing field here to avoid the ToArray
+                return _ZeroThresholds[8]; // We want the backing field here to avoid the .ToArray
             }
         }
 
@@ -120,7 +120,47 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Clamps the value to the <see cref="Int32"/>-range.
+        /// Clamps the <paramref name="value"/> to the <see cref="Int16"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        public static short ClampToInt16(int value)
+        {
+            return (value <= short.MaxValue) ? (short)value : short.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the <paramref name="value"/> to the <see cref="Int16"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        public static short ClampToInt16(uint value)
+        {
+            return (value <= short.MaxValue) ? (short)value : short.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the <paramref name="value"/> to the <see cref="Int16"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        public static short ClampToInt16(long value)
+        {
+            return (value <= short.MaxValue) ? (short)value : short.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the <paramref name="value"/> to the <see cref="Int16"/>-range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <returns>The clamped value.</returns>
+        public static short ClampToInt16(ulong value)
+        {
+            return (ClampToInt64(value) <= short.MaxValue) ? (short)value : short.MaxValue;
+        }
+
+        /// <summary>
+        /// Clamps the <paramref name="value"/> to the <see cref="Int32"/>-range.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
@@ -130,7 +170,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Clamps the value to the <see cref="Int32"/>-range.
+        /// Clamps the <paramref name="value"/> to the <see cref="Int32"/>-range.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
@@ -141,7 +181,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Clamps the value to the <see cref="Int642"/>-range.
+        /// Clamps the <paramref name="value"/> to the <see cref="Int64"/>-range.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
@@ -186,6 +226,26 @@ namespace LightClaw.Engine.Core
                 b = rem;
             }
 
+            Contract.Assert(a != 0);
+            return a;
+        }
+
+        /// <summary>
+        /// Gets the biggest common divisor of two numbers.
+        /// </summary>
+        /// <param name="a">The first number.</param>
+        /// <param name="b">The second number.</param>
+        /// <returns>The greatest common divisor of the two numbers.</returns>
+        public static long GreatestCommonDivisor(long a, long b)
+        {
+            while (b > 0)
+            {
+                long rem = a % b;
+                a = b;
+                b = rem;
+            }
+
+            Contract.Assert(a != 0);
             return a;
         }
 
@@ -200,13 +260,23 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets the biggest common divisor of a range of numbers.
+        /// </summary>
+        /// <param name="values">The numbers.</param>
+        /// <returns>The greatest common divisor of the two numbers.</returns>
+        public static long GreatestCommonDivisor(IEnumerable<long> values)
+        {
+            return values.Aggregate((gcd, arg) => GreatestCommonDivisor(gcd, arg));
+        }
+
+        /// <summary>
         /// Checks whether the specified <paramref name="value"/> is almost one.
         /// </summary>
         /// <param name="value">The value to check for whether it is one.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
-        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>.
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostOne(double value)
         {
@@ -220,8 +290,8 @@ namespace LightClaw.Engine.Core
         /// <param name="decimalPlaceCount">The accuracy in decimal place counts.</param>
         /// <returns><c>true</c> if the value was one, otherwise <c>false</c>.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>
-        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 1</c>.
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostOne(double value, int decimalPlaceCount)
         {
@@ -236,8 +306,8 @@ namespace LightClaw.Engine.Core
         /// <param name="value">The value to check.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>
-        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>.
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostZero(double value)
         {
@@ -251,12 +321,13 @@ namespace LightClaw.Engine.Core
         /// <param name="decimalPlaceCount">The amount of accuracy in decimal places.</param>
         /// <returns>Whether the input number is almost zero or not.</returns>
         /// <remarks>
-        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>
-        /// . As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
+        /// As floating point arithmetic is always prone to subtle errors, use this method instead of <c>value == 0</c>.
+        /// As == checks for absolute equality it fails if there are small (usually negligible) inaccuracies involved.
         /// </remarks>
         public static bool IsAlmostZero(double value, int decimalPlaceCount)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0 && decimalPlaceCount < ZeroThresholds.Length);
+            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount < ZeroThresholds.Length);
 
             return (-ZeroThresholds[decimalPlaceCount] < value) && (value < ZeroThresholds[decimalPlaceCount]);
         }
@@ -269,6 +340,8 @@ namespace LightClaw.Engine.Core
         /// <returns>Whether n is dividable by the divisor.</returns>
         public static bool IsDivisorOf(int n, int divisor)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(divisor != 0);
+
             return (n % divisor == 0);
         }
 
@@ -319,8 +392,8 @@ namespace LightClaw.Engine.Core
         /// <param name="number">The number to test.</param>
         /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
         /// <remarks>
-        /// This function is expensive (lots of divisions (worst case Sqrt( <paramref name="number"/>) - 2), one
-        /// Math.Sqrt). Call only if absolutely required.
+        /// This function is expensive (lots of divisions (worst case Sqrt(<paramref name="number"/>) - 2), one Math.Sqrt).
+        /// Call only if absolutely required.
         /// </remarks>
         public static bool IsPrime(int number)
         {
@@ -531,7 +604,7 @@ namespace LightClaw.Engine.Core
         /// </example>
         public static int RoundToMultiple(int number, int factor)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(factor >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(factor > 0);
 
             return number + factor - 1 - (number - 1) % factor;
         }
@@ -558,7 +631,7 @@ namespace LightClaw.Engine.Core
         /// </example>
         public static long RoundToMultiple(long number, long factor)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(factor >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(factor > 0);
 
             return number + factor - 1 - (number - 1) % factor;
         }

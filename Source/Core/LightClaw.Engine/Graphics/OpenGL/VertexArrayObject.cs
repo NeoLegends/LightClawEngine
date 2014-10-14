@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    [DebuggerDisplay("Handle = {Handle}, Index Count = {IndexCount}, Draw Mode = {DrawMode}, Index Type = {IndexType}")]
     public class VertexArrayObject : GLObject, IBindable, IDrawable
     {
         private readonly object initializationLock = new object();
@@ -33,17 +35,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private DrawElementsType _IndexBufferType;
+        private DrawElementsType _IndexType;
 
-        public DrawElementsType IndexBufferType
+        public DrawElementsType IndexType
         {
             get
             {
-                return _IndexBufferType;
+                return _IndexType;
             }
             private set
             {
-                this.SetProperty(ref _IndexBufferType, value);
+                this.SetProperty(ref _IndexType, value);
             }
         }
 
@@ -69,7 +71,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                return this.IndexBuffer.Length / this.IndexBufferType.GetElementSize();
+                return this.IndexBuffer.Length / this.IndexType.GetElementSize();
             }
         }
 
@@ -121,7 +123,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             this.DrawMode = drawMode;
             this.IndexBuffer = indexBuffer;
-            this.IndexBufferType = indexBufferType;
+            this.IndexType = indexBufferType;
             this.VertexBuffers = buffers.ToImmutableArray();
         }
 
@@ -145,10 +147,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
 
-            int drawCount = this.IndexCount - offset;
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, drawCount, drawCount))
+            this.DrawIndexed(offset, this.IndexCount - offset);
+        }
+
+        public void DrawIndexed(int offset, int count)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
+
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, count, count))
             {
-                GL.DrawElements(this.DrawMode, drawCount, this.IndexBufferType, offset);
+                GL.DrawElements(this.DrawMode, count, this.IndexType, offset);
             }
         }
 

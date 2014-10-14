@@ -14,11 +14,10 @@ namespace LightClaw.Engine.Graphics
     /// Class that represents a color with RGBA data.
     /// </summary>
     [DataContract]
-    public struct Color : ICloneable,
+    public struct Color : ICloneable, IEquatable<Color>
 #if SYSTEMDRAWING_INTEROP
- IEquatable<System.Drawing.Color>,
+                          , IEquatable<System.Drawing.Color>
 #endif
- IEquatable<Color>
     {
         /// <summary>
         /// Gets the size in bytes of the <see cref="Color"/>-struct.

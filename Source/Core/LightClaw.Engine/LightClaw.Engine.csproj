@@ -122,7 +122,7 @@
     <GenerateDocumentation>true</GenerateDocumentation>
     <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeOnlyPublicSurface>True</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
     <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
@@ -225,7 +225,6 @@
     <Compile Include="Graphics\OpenGL\LinkingFailedException.cs" />
     <Compile Include="Graphics\OpenGL\OpenGLException.cs" />
     <Compile Include="Graphics\UniformBufferGroup.cs" />
-    <Compile Include="Graphics\VertexArrayObjectManager.cs" />
     <Compile Include="Graphics\OpenGL\CompilationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\VertexAttributeDescription.cs" />
     <Compile Include="Graphics\EffectData.cs" />
@@ -302,6 +301,8 @@
     <Compile Include="IO\SceneReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\InternalsVisibleToDryIocFactoryCompilerDynamicAssembly.cs" />
+    <Compile Include="Threading\Dispatcher.cs" />
+    <Compile Include="Threading\DispatcherPriority.cs" />
     <Compile Include="UI\Console.cs" />
     <Compile Include="UI\ConsoleWriter.cs" />
     <Compile Include="UI\DefaultCommands.cs" />

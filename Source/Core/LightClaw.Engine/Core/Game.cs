@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Platform;
@@ -16,7 +18,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a game.
     /// </summary>
-    public class Game : DisposableEntity
+    public class Game : DisposableEntity, IGame
     {
         // TODO: Abstract rendering from Game class, perhaps in some sort of component-like GameSystem-system. New
         //       renderer should also allow for multiple render targets, respectively cameras rendering to textures.
@@ -86,6 +88,30 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
+        private Dispatcher _GraphicsDispatcher = Dispatcher.Current;
+
+        /// <summary>
+        /// The <see cref="Dispatcher"/> used to submit work to the rendering thread.
+        /// </summary>
+        public Dispatcher UpdateDispatcher
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Dispatcher>() != null);
+
+                return _GraphicsDispatcher;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _GraphicsDispatcher, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ISceneManager _SceneManager;
 
         /// <summary>
@@ -119,7 +145,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return _SuppressDraw || !this.GameWindow.Visible;
+                return (_SuppressDraw || !this.GameWindow.Visible);
             }
             set
             {
@@ -130,31 +156,32 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
         /// </summary>
-        /// <param name="startScene">The resource string of the <see cref="Scene"/> to be loaded at startup.</param>
+        /// <param name="startScene">The <see cref="Scene"/> that will be run at startup.</param>
         public Game(ResourceString startScene)
+            : base(GeneralSettings.Default.GameName)
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
+            Contract.Requires<ArgumentNullException>(startScene != null);
 
-            this.Initialize();
+            if (!GLObject.IsOpenGLVersionSupported(new Version(4, 3)))
+            {
+                throw new NotSupportedException(
+                    "The required OpenGL-Version (4.3) is not supported by the current OS / hardware (max vesion {0}). LightClaw cannot run.".FormatWith(GLObject.MaxOpenGLVersion)
+                );
+            }
+
+            this.GameWindow.Closed += (s, e) => this.OnClosed();
+            this.GameWindow.Load += (s, e) => this.OnLoad();
+            this.GameWindow.Move += (s, e) => this.OnMove(this.GameWindow.Location);
+            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
+            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
+            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
+            this.GameWindow.Unload += (s, e) => this.OnUnload();
+
             Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
-            Logger.Debug(() => "Game successfully created.");
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Game"/> from the specified <paramref name="startScene"/>.
-        /// </summary>
-        /// <param name="startScene">The <see cref="Scene"/> that will be run at startup.</param>
-        public Game(Scene startScene)
-        {
-            Contract.Requires<ArgumentNullException>(startScene != null);
-
-            this.Initialize();
-            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s.Name), startScene);
-            this.SceneManager = new SceneManager(startScene);
-            this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
+            this.LoadIcon();
 
             Logger.Debug(() => "Game successfully created.");
         }
@@ -183,6 +210,7 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
+            this.UpdateDispatcher.Dispose();
             this.SceneManager.Dispose();
             //this.GameWindow.Dispose();
 
@@ -232,6 +260,7 @@ namespace LightClaw.Engine.Core
                 GL.Viewport(0, 0, this.GameWindow.Width, this.GameWindow.Height);
                 GL.ClearColor(Color.CornflowerBlue);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
                 this.SceneManager.Draw();
                 this.GameWindow.SwapBuffers();
             }
@@ -255,8 +284,10 @@ namespace LightClaw.Engine.Core
         {
             elapsedSinceLastUpdate = Math.Max(elapsedSinceLastUpdate, 0.0);
             GameTime currentGameTime = this.CurrentGameTime = this.CurrentGameTime + elapsedSinceLastUpdate;
+
             Contract.Assume(this.SceneManager != null);
             this.SceneManager.Update(currentGameTime);
+            this.UpdateDispatcher.Pop();
             this.SceneManager.LateUpdate();
         }
 
@@ -265,24 +296,14 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected virtual void OnUnload()
         {
-            this.SceneManager.Dispose();
+            this.Dispose();
         }
 
         /// <summary>
-        /// Initializes the game attaching the event handlers and loading the icon.
+        /// Loads the icon.
         /// </summary>
-        private void Initialize()
+        private void LoadIcon()
         {
-            this.Name = GeneralSettings.Default.GameName;
-
-            this.GameWindow.Closed += (s, e) => this.OnClosed();
-            this.GameWindow.Load += (s, e) => this.OnLoad();
-            this.GameWindow.Move += (s, e) => this.OnMove(this.GameWindow.Location);
-            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
-            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
-            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
-            this.GameWindow.Unload += (s, e) => this.OnUnload();
-
             Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
                                                               .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
             iconLoadTask.ContinueWith(
@@ -306,6 +327,7 @@ namespace LightClaw.Engine.Core
         private void ObjectInvariant()
         {
             Contract.Invariant(this._GameWindow != null);
+            Contract.Invariant(this._GraphicsDispatcher != null);
             Contract.Invariant(this._SceneManager != null);
         }
     }

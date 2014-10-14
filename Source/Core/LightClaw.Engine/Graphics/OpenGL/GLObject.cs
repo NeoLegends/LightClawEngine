@@ -24,7 +24,23 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Contains all supported OpenGL extensions.
         /// </summary>
-        private static string[] supportedExtensions;
+        private static List<string> supportedExtensions;
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
+        private static Version _MaxOpenGLVersion;
+
+        /// <summary>
+        /// Gets the maximum supported OpenGL version.
+        /// </summary>
+        public static Version MaxOpenGLVersion
+        {
+            get
+            {
+                return _MaxOpenGLVersion ?? (_MaxOpenGLVersion = new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion)));
+            }
+        }
 
         /// <summary>
         /// Backing field.
@@ -50,16 +66,27 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Initializes a new <see cref="GLObject"/>.
         /// </summary>
-        protected GLObject()
-        {
-        }
+        protected GLObject() { }
 
         /// <summary>
         /// Initializes a new <see cref="GLObject"/> setting the object's handle.
         /// </summary>
         /// <param name="handle">The object's associated OpenGL-handle.</param>
-        protected GLObject(int handle)
-            : this()
+        protected GLObject(int handle) : this(null, handle) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="GLObject"/> setting the object's name.
+        /// </summary>
+        /// <param name="name">The object's name.</param>
+        protected GLObject(string name) : base(name) { }
+
+        /// <summary>
+        /// Initializes a new <see cref="GLObject"/> setting the object's name and handle.
+        /// </summary>
+        /// <param name="handle">The object's associated OpenGL-handle.</param>
+        /// <param name="name">The object's name.</param>
+        protected GLObject(string name, int handle)
+            : base(name) 
         {
             this.Handle = handle;
         }
@@ -88,6 +115,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
+        /// Checks whether the specified <see cref="Version"/> is supported.
+        /// </summary>
+        /// <param name="version">The <see cref="Version"/> to check for.</param>
+        /// <returns><c>true</c> if the specified OpenGL Version is supported, otherwise <c>false</c>.</returns>
+        public static bool IsOpenGLVersionSupported(Version version)
+        {
+            return (MaxOpenGLVersion >= version);
+        }
+
+        /// <summary>
         /// Checks whether the specified OpenGL extension is supported.
         /// </summary>
         /// <param name="extensionName">The extension to check for.</param>
@@ -102,7 +139,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (supportedExtensions == null)
                     {
-                        supportedExtensions = GL.GetString(StringName.Extensions).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        supportedExtensions = new List<string>();
+                        int extensionCount = GL.GetInteger(GetPName.NumExtensions);
+                        for (int i = 0; i < extensionCount; i++)
+                        {
+                            supportedExtensions.Add(GL.GetString(StringNameIndexed.Extensions, i));
+                        }
                     }
                 }
             }

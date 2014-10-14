@@ -17,31 +17,10 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
-        private const string vertexShaderSource =
-@"#version 400
-
-in vec3 inVertexPosition;
-in vec3 inVertexColor;
-
-out vec4 vertexColor;
-
-void main(void)
-{
-	gl_Position = vec4(inVertexPosition, 1.0f);
-	vertexColor = vec4(inVertexColor, 1.0f);
-}";
-
-        private const string fragmentShaderSource =
-@"#version 400
-
-in vec4 vertexColor;
-
-out vec4 finalColor;
-
-void main(void)
-{
-	finalColor = vertexColor;
-}";
+        //private Matrix modelViewProjectionMatrix = 
+        //    Matrix.PerspectiveFovRH(MathF.DegreesToRadians(45), 16 / 9, 0.1f, 300f) *
+        //    Matrix.LookAtRH(new Vector3(3, 3, 3), Vector3.Zero, Vector3.Up) * 
+        //    Matrix.Identity;
 
         private int getErrorCount = 0;
 
@@ -105,17 +84,26 @@ void main(void)
                 new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 24, 12)
             );
             this.vao = new VertexArrayObject(this.indexBuffer, desc);
-            Shader[] shaders = new Shader[] 
-            { 
-                new Shader(
-                    vertexShaderSource, 
-                    ShaderType.VertexShader, 
-                    new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
-                    new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
-                ),
-                new Shader(fragmentShaderSource, ShaderType.FragmentShader)
-            };
-            this.program = new ShaderProgram(shaders);
+            IContentManager mgr = this.IocC.Resolve<IContentManager>();
+            Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
+            Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
+
+            Task.WhenAll(fragmentShaderSourceTask, vertexShaderSourceTask).ContinueWith(t =>
+            {
+                Shader[] shaders = new Shader[] 
+                { 
+                    new Shader(
+                        t.Result[1], 
+                        ShaderType.VertexShader, 
+                        new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
+                        new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
+                    ),
+                    new Shader(t.Result[0], ShaderType.FragmentShader)
+                };
+                this.program = new ShaderProgram(shaders);
+            });
+
+            Task.Run(() => this.IocC.Resolve<IGame>().UpdateDispatcher.Invoke(() => Logger.Info("Hello from the message pumped through the dispatcher!")));
 
             base.OnLoad();
         }
@@ -129,10 +117,15 @@ void main(void)
                 using (Binding programBinding = new Binding(program))
                 using (Binding vaoBinding = new Binding(vao))
                 {
+                    //program.Uniforms["mat_MVP"].Set(modelViewProjectionMatrix);
+                    //if (getErrorCount < 3)
+                    //{
+                    //    Logger.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
+                    //}
                     vao.DrawIndexed();
                     if (getErrorCount < 3)
                     {
-                        Logger.Debug(e => "Current OpenGL error is: {0}".FormatWith(e), GLObject.GetError());
+                        Logger.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
                         getErrorCount++;
                     }
                 }

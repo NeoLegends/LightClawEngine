@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL shader program.
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
+    [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Uniform Count = {Uniforms.Count}")]
     public class ShaderProgram : GLObject, IBindable, IInitializable
     {
         /// <summary>
@@ -78,7 +80,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
+                Contract.Ensures(!this.IsInitialized || Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
 
                 return _Uniforms;
             }
@@ -96,6 +98,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="shaders">The <see cref="Shader"/>s to initialize from.</param>
         public ShaderProgram(params Shader[] shaders)
+            : this(null, shaders)
+        {
+            Contract.Requires<ArgumentNullException>(shaders != null);
+            Contract.Requires<ArgumentException>(shaders.Any());
+            Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="ShaderProgram"/> from a set of <see cref="Shader"/>s.
+        /// </summary>
+        /// <param name="name">The <see cref="ShaderProgram"/>s name.</param>
+        /// <param name="shaders">The <see cref="Shader"/>s to initialize from.</param>
+        public ShaderProgram(string name, params Shader[] shaders)
+            : base(name)
         {
             Contract.Requires<ArgumentNullException>(shaders != null);
             Contract.Requires<ArgumentException>(shaders.Any());
@@ -111,6 +127,36 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.Initialize();
             GL.UseProgram(this);
+        }
+
+        /// <summary>
+        /// Gets the OpenGL info log. See remarks.
+        /// </summary>
+        /// <remarks>
+        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
+        /// commands to be executed synchronously. Use with caution.
+        /// </remarks>
+        /// <returns>The progam info log.</returns>
+        public string GetInfoLog()
+        {
+            return GL.GetProgramInfoLog(this);
+        }
+
+        /// <summary>
+        /// Queries the interface of the program. See remarks.
+        /// </summary>
+        /// <remarks>
+        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
+        /// commands to be executed synchronously. Use with caution.
+        /// </remarks>
+        /// <param name="programInterface">The interface to query.</param>
+        /// <param name="interfaceParameter">The name of the interface parameter to query.</param>
+        /// <returns>The value.</returns>
+        public int GetInterface(ProgramInterface programInterface, ProgramInterfaceParameter interfaceParameter)
+        {
+            int result;
+            GL.GetProgramInterface(this, programInterface, interfaceParameter, out result);
+            return result;
         }
 
         /// <summary>
@@ -146,7 +192,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                             GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
                             if (result == 0)
                             {
-                                string infoLog = GL.GetProgramInfoLog(this);
+                                string infoLog = this.GetInfoLog();
                                 string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
                                 Logger.Warn(message);
                                 throw new LinkingFailedException(message, infoLog, result);

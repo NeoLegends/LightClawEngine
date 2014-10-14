@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,6 +14,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents a data store on GPU memory.
     /// </summary>
+    /// <remarks>
+    /// <see cref="BufferObject"/> is named <see cref="BufferObject"/> because naming it "Buffer" would conflict
+    /// with <see cref="System.Buffer"/>. Visual Studio gets confused when setting breakpoints and you'd have to 
+    /// redefine it in every class you include the System-namespace anyway.
+    /// </remarks>
+    [DebuggerDisplay("Target = {Target}, Usage Hint = {Hint}, Length = {Length}")]
     public class BufferObject : GLObject, IBuffer, IInitializable
     {
         /// <summary>

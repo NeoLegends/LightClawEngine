@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL sampler, an object that stores texture sampling parameters.
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"/>
+    [DebuggerDisplay("Handle = {Handle}, Texture Unit = {TextureUnit}, Parameter Count = {Parameters.Length}")]
     public class Sampler : GLObject, IBindable, IInitializable
     {
         /// <summary>

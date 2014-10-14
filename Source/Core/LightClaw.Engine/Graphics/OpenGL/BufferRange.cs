@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
@@ -72,6 +74,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.Start, this.Length);
+        }
+
+        /// <summary>
+        /// Converts the <see cref="BufferRange"/> into a <see cref="String"/>.
+        /// </summary>
+        /// <returns>The <see cref="BufferRange"/> as <see cref="String"/>.</returns>
+        public override string ToString()
+        {
+            return "[{0}, {1})".FormatWith(this.Start, this.Start + this.Length);
         }
 
         /// <summary>

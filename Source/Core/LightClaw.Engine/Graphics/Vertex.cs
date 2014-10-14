@@ -37,7 +37,7 @@ namespace LightClaw.Engine.Graphics
 
         /// <summary> 
         /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see
-        /// cref="VertexPositionNormalTexCoord"/>. The configuration can be used for interleaved vertex data. 
+        /// cref="Vertex"/>. The configuration can be used for interleaved vertex data. 
         /// </summary>
         /// <remarks> 
         /// <para> 
@@ -45,7 +45,7 @@ namespace LightClaw.Engine.Graphics
         /// <list type="bullet"> 
         ///     <item> 
         ///         <description> 
-        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Vertex"/>
+        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Position"/>
         ///         </description> 
         ///     </item> 
         ///     <item>
@@ -89,7 +89,7 @@ namespace LightClaw.Engine.Graphics
         };
 
         /// <summary> 
-        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="VertexPositionNormalTexCoord"/>. 
+        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="Vertex"/>. 
         /// The configuration can be used together with multiple buffers storing the attributes. 
         /// </summary> 
         /// <remarks> 
@@ -98,7 +98,7 @@ namespace LightClaw.Engine.Graphics
         /// <list type="bullet"> 
         ///     <item> 
         ///         <description> 
-        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Vertex"/>
+        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Position"/>
         ///         </description> 
         ///     </item> 
         ///     <item>

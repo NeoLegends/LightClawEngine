@@ -14,31 +14,55 @@ namespace LightClaw.Engine.Core
     public static class ThreadF
     {
         /// <summary>
-        /// Checks whether the current thread is the main thread and throws a <see cref="WrongThreadException"/> if it
-        /// is not.
+        /// Checks whether the current thread is the specified thread.
         /// </summary>
-        /// <seealso cref="LightClawEngine.MainThreadId"/>
-        /// <seealso cref="WrongThreadException"/>
-        public static void AssertMainThread()
+        /// <param name="targetThread">The thread that should be the current one.</param>
+        /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
+        public static bool IsCurrentThread(Thread targetThread)
         {
-            if (!TryAssertMainThread())
-            {
-                throw new WrongThreadException(
-                    "The current ({0}) thread is not the main thread.".FormatWith(Thread.CurrentThread.ManagedThreadId),
-                    Thread.CurrentThread.ManagedThreadId,
-                    LightClawEngine.MainThreadId
-                );
-            }
+            return IsCurrentThread(targetThread.ManagedThreadId);
+        }
+
+        /// <summary>
+        /// Checks whether the current thread is the specified thread.
+        /// </summary>
+        /// <param name="targetThreadId">The ID of the thread that should be the current one.</param>
+        /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
+        public static bool IsCurrentThread(int targetThreadId)
+        {
+            return (Thread.CurrentThread.ManagedThreadId == targetThreadId);
+        }
+
+        /// <summary>
+        /// Checks whether the current thread is the main thread.
+        /// </summary>
+        /// <returns><c>true</c> if the current thread is the main thread, otherwise <c>false</c>.</returns>
+        /// <seealso cref="LightClawEngine.MainThreadId"/>
+        public static bool IsMainThread()
+        {
+            return IsCurrentThread(LightClawEngine.MainThreadId);
         }
 
         /// <summary>
         /// Checks whether the current thread is the specified thread and throws a <see cref="WrongThreadException"/> if
         /// it is not.
         /// </summary>
+        /// <param name="targetThread">The thread that should be the current one.</param>
         /// <seealso cref="WrongThreadException"/>
-        public static void AssertThread(int targetThreadId)
+        public static void ThrowIfNotCurrentThread(Thread targetThread)
         {
-            if (!TryAssertThread(targetThreadId))
+            ThrowIfNotCurrentThread(targetThread.ManagedThreadId);
+        }
+
+        /// <summary>
+        /// Checks whether the current thread is the specified thread and throws a <see cref="WrongThreadException"/> if
+        /// it is not.
+        /// </summary>
+        /// <param name="targetThreadId">The ID of the thread that should be the current one.</param>
+        /// <seealso cref="WrongThreadException"/>
+        public static void ThrowIfNotCurrentThread(int targetThreadId)
+        {
+            if (!IsCurrentThread(targetThreadId))
             {
                 throw new WrongThreadException(
                     "The current ({0}) thread is not the specified ({1}) thread.".FormatWith(Thread.CurrentThread.ManagedThreadId, targetThreadId),
@@ -49,22 +73,21 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Checks whether the current thread is the main thread.
+        /// Checks whether the current thread is the main thread and throws a <see cref="WrongThreadException"/> if it
+        /// is not.
         /// </summary>
-        /// <returns><c>true</c> if the current thread is the main thread, otherwise <c>false</c>.</returns>
         /// <seealso cref="LightClawEngine.MainThreadId"/>
-        public static bool TryAssertMainThread()
+        /// <seealso cref="WrongThreadException"/>
+        public static void ThrowIfNotMainThread()
         {
-            return TryAssertThread(LightClawEngine.MainThreadId);
-        }
-
-        /// <summary>
-        /// Checks whether the current thread is the specified thread.
-        /// </summary>
-        /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
-        public static bool TryAssertThread(int targetThreadId)
-        {
-            return (Thread.CurrentThread.ManagedThreadId == targetThreadId);
+            if (!IsMainThread())
+            {
+                throw new WrongThreadException(
+                    "The current ({0}) thread is not the main thread.".FormatWith(Thread.CurrentThread.ManagedThreadId),
+                    Thread.CurrentThread.ManagedThreadId,
+                    LightClawEngine.MainThreadId
+                );
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("LightClaw.Extensions")]
 [assembly: AssemblyProduct("LightClaw Engine")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("The extension method library of the LightClaw engine")]
+[assembly: AssemblyDescription("A library containing extension methods to various .NET types.")]
 [assembly: AssemblyCompany("LightClaw")]
 [assembly: AssemblyCopyright("Copyright 2014 © LightClaw Development Team")]
 [assembly: AssemblyTrademark("LightClaw")]

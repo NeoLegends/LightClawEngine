@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// the graphics pipeline to draw.
     /// </remarks>
     /// <seealso href="http://www.opengl.org/wiki/Shader"/>
+    [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Type = {Type}, Vertex Attribute Count = {VertexAttributeDescriptions.Length}")]
     public class Shader : GLObject, IInitializable
     {
         /// <summary>
@@ -103,14 +105,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableArray<VertexAttributeDescription>>() != null);
-
                 return _VertexAttributeDescriptions;
             }
             private set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-
                 this.SetProperty(ref _VertexAttributeDescriptions, value);
             }
         }
@@ -121,7 +119,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
         public Shader(string source, ShaderType type)
-            : this(source, type, VertexAttributeDescription.Empty)
+            : this(null, source, type)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Shader"/> without any vertex attributes.
+        /// </summary>
+        /// <param name="name">The <see cref="Shader"/>s name.</param>
+        /// <param name="source">The shader source code.</param>
+        /// <param name="type">The shader type.</param>
+        public Shader(string name, string source, ShaderType type)
+            : this(name, source, type, VertexAttributeDescription.Empty)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
@@ -137,6 +148,25 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// shader source.
         /// </param>
         public Shader(string source, ShaderType type, params VertexAttributeDescription[] vad)
+            : this(null, source, type, vad)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
+            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
+            Contract.Requires<ArgumentNullException>(vad != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Shader"/>.
+        /// </summary>
+        /// <param name="name">The <see cref="Shader"/>s name.</param>
+        /// <param name="source">The shader source code.</param>
+        /// <param name="type">The shader type.</param>
+        /// <param name="vad">
+        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
+        /// shader source.
+        /// </param>
+        public Shader(string name, string source, ShaderType type, params VertexAttributeDescription[] vad)
+            : base(name)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
@@ -237,7 +267,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private void ObjectInvariant()
         {
             Contract.Invariant(!string.IsNullOrWhiteSpace(this._Source));
-            Contract.Invariant(this._VertexAttributeDescriptions != null);
         }
     }
 }

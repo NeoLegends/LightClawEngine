@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using LightClaw.Engine.Core;
 using log4net.Core;
 using log4net.Layout;
 
@@ -15,12 +17,17 @@ namespace LightClaw.Engine.Logging
     /// <summary>
     /// Represents a log4net layout outputting the log data as XML.
     /// </summary>
-    public class XmlLayout : XmlLayoutBase
+    public class XmlLayout : XmlLayoutBase, INotifyPropertyChanged
     {
         /// <summary>
         /// The underlying <see cref="DataContractSerializer"/> serializing the data.
         /// </summary>
         private static readonly DataContractSerializer serializer = new DataContractSerializer(typeof(LoggingEventInfo));
+
+        /// <summary>
+        /// Notifies about changes in properties.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Backing field.
@@ -44,7 +51,7 @@ namespace LightClaw.Engine.Logging
             {
                 Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
 
-                _Capacity = value;
+                Entity.SetProperty(this, this.PropertyChanged, ref _Capacity, value);
             }
         }
 
