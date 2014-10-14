@@ -68,6 +68,7 @@ local.properties
 packages/
 ## TODO: If the tool you use requires repositories.config, also uncomment the next line
 !packages/repositories.config
+[Nn]u[Gg]et.exe
 
 # Visual C++ cache files
 ipch/
