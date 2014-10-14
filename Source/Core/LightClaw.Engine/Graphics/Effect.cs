@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Graphics
 
         public event EventHandler<ParameterEventArgs> LateUpdated;
 
-        protected readonly bool OwnsPasses;
+        protected bool OwnsPasses { get; private set; }
 
         private ImmutableArray<EffectPass> _Passes = ImmutableArray<EffectPass>.Empty;
 

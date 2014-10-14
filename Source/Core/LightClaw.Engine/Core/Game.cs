@@ -25,6 +25,11 @@ namespace LightClaw.Engine.Core
         //       (which then can be rendered afterwards into the scene)
 
         /// <summary>
+        /// The version of OpenGL to use for rendering.
+        /// </summary>
+        private static readonly Version OpenGLVersion = new Version(4, 4);
+
+        /// <summary>
         /// Backing field.
         /// </summary>
         private GameTime _CurrentGameTime;
@@ -54,9 +59,9 @@ namespace LightClaw.Engine.Core
             GeneralSettings.Default.WindowTitle,
             OpenTK.GameWindowFlags.Default,
             OpenTK.DisplayDevice.Default,
-            4, 4,
+            OpenGLVersion.Major, OpenGLVersion.Minor,
 #if DEBUG
- OpenTK.Graphics.GraphicsContextFlags.Debug
+            OpenTK.Graphics.GraphicsContextFlags.Debug
 #else
             OpenTK.Graphics.GraphicsContextFlags.Default
 #endif
@@ -162,10 +167,10 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            if (!GLObject.IsOpenGLVersionSupported(new Version(4, 3)))
+            if (!GLObject.IsOpenGLVersionSupported(OpenGLVersion))
             {
                 throw new NotSupportedException(
-                    "The required OpenGL-Version (4.3) is not supported by the current OS / hardware (max vesion {0}). LightClaw cannot run.".FormatWith(GLObject.MaxOpenGLVersion)
+                    "The required OpenGL-Version ({0}) is not supported by the current OS / hardware (max vesion {1}). LightClaw cannot run.".FormatWith(OpenGLVersion, GLObject.MaxOpenGLVersion)
                 );
             }
 

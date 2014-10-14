@@ -17,12 +17,72 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
-        //private Matrix modelViewProjectionMatrix = 
-        //    Matrix.PerspectiveFovRH(MathF.DegreesToRadians(45), 16 / 9, 0.1f, 300f) *
-        //    Matrix.LookAtRH(new Vector3(3, 3, 3), Vector3.Zero, Vector3.Up) * 
-        //    Matrix.Identity;
+        private static readonly float[] cubeData = new[]
+        {
+            -0.25f,  0.25f,  0.25f,
+             0.25f,  0.25f,  0.25f,
+             0.25f,  0.25f, -0.25f,
+            -0.25f,  0.25f, -0.25f,
+            
+            -0.25f,  -0.25f,  0.25f,
+             0.25f,  -0.25f,  0.25f,
+             0.25f,  -0.25f, -0.25f,
+            -0.25f,  -0.25f, -0.25f,
+        };
+
+        private static readonly float[] colorData = new[]
+        {
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+            0.5f, 0.0f, 0.5f,
+            
+            0.5f, 0.0f, 0.5f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+        };
+
+        private static readonly ushort[] indices = new ushort[]
+        {
+            // Top
+            0, 1, 2,
+            0, 2, 3,
+
+            // Front
+            0, 5, 1,
+            0, 4, 5,
+
+            // Right
+            1, 6, 2,
+            1, 6, 5,
+
+            // Left
+            0, 3, 7,
+            0, 5, 4,
+
+            // Back
+            2, 7, 3,
+            2, 6, 7
+        };
+
+        private static readonly OpenTK.Matrix4 openTKMVP = 
+            OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(70), 16 / 9, 0.01f, 100f) *
+            OpenTK.Matrix4.LookAt(new OpenTK.Vector3(3, 3, 3), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
+            OpenTK.Matrix4.CreateTranslation(0, 0, 0);
+
+        private static readonly Matrix modelViewProjectionMatrix = new Matrix(
+            openTKMVP.M11, openTKMVP.M12, openTKMVP.M13, openTKMVP.M14,
+            openTKMVP.M21, openTKMVP.M22, openTKMVP.M23, openTKMVP.M24,
+            openTKMVP.M31, openTKMVP.M32, openTKMVP.M33, openTKMVP.M34,
+            openTKMVP.M41, openTKMVP.M42, openTKMVP.M43, openTKMVP.M44
+        );
+
+        private bool bufferSet = false;
 
         private int getErrorCount = 0;
+
+        private IBuffer colorBuffer;
 
         private IBuffer indexBuffer;
 
@@ -40,6 +100,11 @@ namespace LightClaw.GameCode
             if (vao != null)
             {
                 vao.Dispose();
+            }
+            IBuffer cBuffer = this.colorBuffer;
+            if (cBuffer != null)
+            {
+                cBuffer.Dispose();
             }
             IBuffer iBuffer = this.indexBuffer;
             if (iBuffer != null)
@@ -62,28 +127,19 @@ namespace LightClaw.GameCode
 
         protected override void OnLoad()
         {
-            this.vertexBuffer = BufferObject.Create(
-                new[] { 
-                    -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                    1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-                    1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-                    -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-                },
-                BufferTarget.ArrayBuffer, 
-                BufferUsageHint.StaticDraw
-            );
-            this.indexBuffer = BufferObject.Create(
-                new ushort[] { 2, 1, 0, 3, 2, 0 }, 
-                BufferTarget.ElementArrayBuffer, 
-                BufferUsageHint.StaticDraw
-            );
+            this.indexBuffer = new BufferObject(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
+            this.colorBuffer = new BufferObject(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+            this.vertexBuffer = new BufferObject(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
 
-            BufferDescription desc = new BufferDescription(
+            BufferDescription vDesc = new BufferDescription(
                 this.vertexBuffer,
-                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 24, 0),
-                new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 24, 12)
+                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
             );
-            this.vao = new VertexArrayObject(this.indexBuffer, desc);
+            BufferDescription cDesc = new BufferDescription(
+                this.colorBuffer,
+                new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 0, 0)
+            );
+            this.vao = new VertexArrayObject(this.indexBuffer, vDesc, cDesc);
             IContentManager mgr = this.IocC.Resolve<IContentManager>();
             Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
             Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
@@ -110,6 +166,14 @@ namespace LightClaw.GameCode
 
         protected override void OnDraw()
         {
+            if (!bufferSet)
+            {
+                this.colorBuffer.Set(colorData);
+                this.indexBuffer.Set(indices);
+                this.vertexBuffer.Set(cubeData);
+                this.bufferSet = true;
+            }
+
             VertexArrayObject vao = this.vao;
             ShaderProgram program = this.program;
             if (vao != null && program != null)
@@ -117,11 +181,11 @@ namespace LightClaw.GameCode
                 using (Binding programBinding = new Binding(program))
                 using (Binding vaoBinding = new Binding(vao))
                 {
-                    //program.Uniforms["mat_MVP"].Set(modelViewProjectionMatrix);
-                    //if (getErrorCount < 3)
-                    //{
-                    //    Logger.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
-                    //}
+                    program.Uniforms["MVP"].Set(modelViewProjectionMatrix);
+                    if (getErrorCount < 3)
+                    {
+                        Logger.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
+                    }
                     vao.DrawIndexed();
                     if (getErrorCount < 3)
                     {
