@@ -98,11 +98,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="GameObjectTest.cs" />
-    <Compile Include="MathFTests.cs" />
-    <Compile Include="MeshDataTest.cs" />
+    <Compile Include="Core\GameObjectTest.cs" />
+    <Compile Include="Core\MathFTests.cs" />
+    <Compile Include="Core\MeshDataTest.cs" />
+    <Compile Include="Graphics\ColorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SceneLifecycleTests.cs" />
+    <Compile Include="Core\SceneLifecycleTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\LightClaw.Engine\LightClaw.Engine.csproj">
