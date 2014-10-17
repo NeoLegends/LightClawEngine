@@ -11,25 +11,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
-    public abstract class Texture : GLObject, IBindable, IInitializable
+    public abstract class Texture : GLObject, IBindable
     {
         private static readonly ILog staticLogger = LogManager.GetLogger(typeof(Texture));
 
         private readonly object initializationLock = new object();
-
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            protected set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         private TextureDescription _Description;
 
@@ -225,21 +211,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.BindTexture(this.Target, this);
         }
 
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        this.OnInitialize();
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
         public void Unbind()
         {
             this.Unbind(this.TextureUnit);
@@ -267,8 +238,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 base.Dispose(disposing);
             }
         }
-
-        protected abstract void OnInitialize();
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

@@ -16,32 +16,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"/>
     [DebuggerDisplay("Handle = {Handle}, Texture Unit = {TextureUnit}, Parameter Count = {Parameters.Length}")]
-    public class Sampler : GLObject, IBindable, IInitializable
+    public class Sampler : GLObject, IBindable
     {
         /// <summary>
         /// Used for access restriction to the initialization method.
         /// </summary>
         private readonly object initializationLock = new object();
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private bool _IsInitialized = false;
-
-        /// <summary>
-        /// Indicates whether the <see cref="Sampler"/> has already been initialized or not.
-        /// </summary>
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         /// <summary>
         /// Backing field.
@@ -111,29 +91,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes the <see cref="Sampler"/> setting the parameters.
-        /// </summary>
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        this.Handle = GL.GenSampler();
-                        foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
-                        {
-                            GL.SamplerParameter(this, description.ParameterName, description.Value);
-                        }
-
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Unbinds the <see cref="Sampler"/> from the <see cref="P:TextureUnit"/>.
         /// </summary>
         public void Unbind()
@@ -155,6 +112,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Initialization callback.
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            this.Handle = GL.GenSampler();
+            foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
+            {
+                GL.SamplerParameter(this, description.ParameterName, description.Value);
+            }
         }
 
         /// <summary>

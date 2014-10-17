@@ -12,7 +12,7 @@ namespace LightClaw.Engine.Core
     /// An error describing the condition when the current thread is not a specified thread.
     /// </summary>
     [Serializable]
-    public class WrongThreadException : ApplicationException
+    public class WrongThreadException : InvalidOperationException
     {
         /// <summary>
         /// The <see cref="System.Threading.Thread.ManagedThreadId"/> of the current thread.

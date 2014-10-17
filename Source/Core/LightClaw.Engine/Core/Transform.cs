@@ -28,11 +28,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
-        /// </summary>
-        private bool isDirty = true; // Transform values need to be calculated on start, even if we're not technically dirty.
-
-        /// <summary>
         /// Notifies about changes in the children collection.
         /// </summary>
         public event NotifyCollectionChangedEventHandler ChildrenChanged;
@@ -80,6 +75,26 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
+        private bool _IsDirty = true; // Transform values need to be calculated on start, even if we're not technically dirty.
+
+        /// <summary>
+        /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
+        /// </summary>
+        protected bool IsDirty
+        {
+            get
+            {
+                return _IsDirty;
+            }
+            set
+            {
+                this.SetProperty(ref _IsDirty, value);
+            }
+        }
+
+        /// <summary>
+        /// Backing field.
+        /// </summary>
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
 
         /// <summary>
@@ -118,7 +133,7 @@ namespace LightClaw.Engine.Core
                 Transform previous = this.Parent;
                 this.SetProperty(ref _Parent, value);
                 this.Raise(this.ParentChanged, value, previous);
-                this.isDirty = true;
+                this.IsDirty = true;
             }
         }
 
@@ -142,7 +157,7 @@ namespace LightClaw.Engine.Core
                 Vector3 previous = this.LocalPosition;
                 this.SetProperty(ref _LocalPosition, value);
                 this.Raise(this.LocalPositionChanged, value, previous);
-                this.isDirty = true;
+                this.IsDirty = true;
             }
         }
 
@@ -179,7 +194,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.isDirty) ? (_PositionMatrix = Matrix.Translation(this.Position)) : _PositionMatrix;
+                return (this.IsDirty) ? (_PositionMatrix = Matrix.Translation(this.Position)) : _PositionMatrix;
             }
         }
 
@@ -203,7 +218,7 @@ namespace LightClaw.Engine.Core
                 Quaternion previous = this.LocalRotation;
                 this.SetProperty(ref _LocalRotation, value);
                 this.Raise(this.LocalRotationChanged, value, previous);
-                this.isDirty = true;
+                this.IsDirty = true;
             }
         }
 
@@ -240,7 +255,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.isDirty) ? (_RotationMatrix = Matrix.RotationQuaternion(this.Rotation)) : _RotationMatrix; ;
+                return (this.IsDirty) ? (_RotationMatrix = Matrix.RotationQuaternion(this.Rotation)) : _RotationMatrix;
             }
         }
 
@@ -264,7 +279,7 @@ namespace LightClaw.Engine.Core
                 Vector3 previous = this.LocalScaling;
                 this.SetProperty(ref _LocalScaling, value);
                 this.Raise(this.LocalScalingChanged, previous, previous);
-                this.isDirty = true;
+                this.IsDirty = true;
             }
         }
 
@@ -301,7 +316,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.isDirty) ? (_ScalingMatrix = Matrix.Scaling(this.Scaling)) : _ScalingMatrix;
+                return (this.IsDirty) ? (_ScalingMatrix = Matrix.Scaling(this.Scaling)) : _ScalingMatrix;
             }
         }
 
@@ -337,7 +352,7 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.isDirty) ? (_ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix) : _ModelMatrix;
+                return (this.IsDirty) ? (_ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix) : _ModelMatrix;
             }
         }
 

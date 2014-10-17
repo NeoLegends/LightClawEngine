@@ -17,58 +17,64 @@ namespace LightClaw.GameCode
     [DataContract]
     public class BasicMesh : Component
     {
-        private static readonly float[] cubeData = new[]
+        private static readonly Vector3[] cubeData = new[]
         {
-            -0.25f,  0.25f,  0.25f,
-             0.25f,  0.25f,  0.25f,
-             0.25f,  0.25f, -0.25f,
-            -0.25f,  0.25f, -0.25f,
+            new Vector3(-0.5f,  0.5f, 0.0f),
+            new Vector3(-0.5f, -0.5f, 0.0f),
+            new Vector3( 0.5f, -0.5f, 0.0f),
+            new Vector3( 0.5f,  0.5f, 0.0f)
+            //new Vector3(-0.25f,  0.25f,  0.25f),
+            //new Vector3( 0.25f,  0.25f,  0.25f),
+            //new Vector3( 0.25f,  0.25f, -0.25f),
+            //new Vector3(-0.25f,  0.25f, -0.25f),
             
-            -0.25f,  -0.25f,  0.25f,
-             0.25f,  -0.25f,  0.25f,
-             0.25f,  -0.25f, -0.25f,
-            -0.25f,  -0.25f, -0.25f,
+            //new Vector3(-0.25f, -0.25f,  0.25f),
+            //new Vector3( 0.25f, -0.25f,  0.25f),
+            //new Vector3( 0.25f, -0.25f, -0.25f),
+            //new Vector3(-0.25f, -0.25f, -0.25f)
         };
 
-        private static readonly float[] colorData = new[]
+        private static readonly Vector3[] colorData = new[]
         {
-            1.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 1.0f,
-            0.5f, 0.0f, 0.5f,
+            new Vector3(1.0f, 0.0f, 0.0f),
+            new Vector3(0.0f, 1.0f, 0.0f),
+            new Vector3(0.0f, 0.0f, 1.0f),
+            new Vector3(0.5f, 0.0f, 0.5f),
             
-            0.5f, 0.0f, 0.5f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
+            //new Vector3(0.5f, 0.0f, 0.5f),
+            //new Vector3(0.0f, 0.0f, 1.0f),
+            //new Vector3(0.0f, 1.0f, 0.0f),
+            //new Vector3(1.0f, 0.0f, 0.0f),
         };
 
         private static readonly ushort[] indices = new ushort[]
         {
-            // Top
             0, 1, 2,
-            0, 2, 3,
+            0, 2, 3
+            //// Top
+            //0, 1, 2,
+            //0, 2, 3,
 
-            // Front
-            0, 5, 1,
-            0, 4, 5,
+            //// Front
+            //0, 5, 1,
+            //0, 4, 5,
 
-            // Right
-            1, 6, 2,
-            1, 6, 5,
+            //// Right
+            //1, 6, 2,
+            //1, 6, 5,
 
-            // Left
-            0, 3, 7,
-            0, 5, 4,
+            //// Left
+            //0, 3, 7,
+            //0, 5, 4,
 
-            // Back
-            2, 7, 3,
-            2, 6, 7
+            //// Back
+            //2, 7, 3,
+            //2, 6, 7
         };
 
         private static readonly OpenTK.Matrix4 openTKMVP = 
             OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(70), 16 / 9, 0.01f, 100f) *
-            OpenTK.Matrix4.LookAt(new OpenTK.Vector3(3, 3, 3), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
+            OpenTK.Matrix4.LookAt(new OpenTK.Vector3(3, 3, 2), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
             OpenTK.Matrix4.CreateTranslation(0, 0, 0);
 
         private static readonly Matrix modelViewProjectionMatrix = new Matrix(
@@ -168,6 +174,11 @@ namespace LightClaw.GameCode
         {
             if (!bufferSet)
             {
+                for (int i = 0; i < cubeData.Length; i++)
+                {
+                    Logger.Info((index, v) => "Vector {0} will be {1} after transformation.".FormatWith(index, v), i, modelViewProjectionMatrix * new Vector4(cubeData[i], 1.0f));
+                }
+
                 this.colorBuffer.Set(colorData);
                 this.indexBuffer.Set(indices);
                 this.vertexBuffer.Set(cubeData);
@@ -181,7 +192,7 @@ namespace LightClaw.GameCode
                 using (Binding programBinding = new Binding(program))
                 using (Binding vaoBinding = new Binding(vao))
                 {
-                    program.Uniforms["MVP"].Set(modelViewProjectionMatrix);
+                    //program.Uniforms["MVP"].Set(modelViewProjectionMatrix);
                     if (getErrorCount < 3)
                     {
                         Logger.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));

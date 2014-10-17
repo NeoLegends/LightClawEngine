@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents the base class for all OpenGL wrapper objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : DisposableEntity, IGLObject
+    public abstract class GLObject : InitializableEntity, IGLObject
     {
         /// <summary>
         /// A lock used to restrict access to the supported extensions-method.

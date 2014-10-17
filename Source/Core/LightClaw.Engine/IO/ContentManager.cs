@@ -191,7 +191,7 @@ namespace LightClaw.Engine.IO
 
                         // Try to deserialize using registered content readers
                         Logger.Debug(rs => "Stream around '{0}' obtained, obtaining reader...".FormatWith(rs), resourceString);
-                        IContentReader reader = this.GetReader(assetType);
+                        IContentReader reader = this.GetReader(assetType, parameter);
                         if (reader != null)
                         {
                             Logger.Debug((rs, at) => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(rs, at.FullName), resourceString, assetType);
@@ -299,11 +299,11 @@ namespace LightClaw.Engine.IO
         /// </summary>
         /// <param name="assetType">The <see cref="Type"/> of asset to get the <see cref="IContentReader"/> for.</param>
         /// <returns>The <see cref="IContentReader"/> for the asset of the specified <see cref="Type"/>.</returns>
-        private IContentReader GetReader(Type assetType)
+        private IContentReader GetReader(Type assetType, object parameter)
         {
             Contract.Requires<ArgumentNullException>(assetType != null);
 
-            IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType));
+            IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType, parameter));
             if (reader == null)
             {
                 Logger.Debug(t => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, t.FullName), assetType);
@@ -313,7 +313,7 @@ namespace LightClaw.Engine.IO
                     this.readers.Add(reader);
                 }
             }
-            return (reader != null && reader.CanRead(assetType)) ? reader : null;
+            return (reader != null && reader.CanRead(assetType, parameter)) ? reader : null;
         }
 
         /// <summary>

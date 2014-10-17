@@ -20,7 +20,7 @@ namespace LightClaw.Engine.IO
         /// <c>true</c> if the <see cref="IconReader"/> can read assets of the specified <see cref="Type"/>, otherwise
         /// <c>false</c>.
         /// </returns>
-        public bool CanRead(Type assetType)
+        public bool CanRead(Type assetType, object parameter)
         {
             return (assetType == typeof(Icon));
         }

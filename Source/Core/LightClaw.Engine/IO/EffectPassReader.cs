@@ -15,7 +15,7 @@ namespace LightClaw.Engine.IO
     {
         private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault();
 
-        public bool CanRead(Type assetType)
+        public bool CanRead(Type assetType, object parameter)
         {
             return (assetType == typeof(EffectPass));
         }

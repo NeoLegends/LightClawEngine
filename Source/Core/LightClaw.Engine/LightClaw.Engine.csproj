@@ -187,6 +187,7 @@
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\ILateUpdateable.cs" />
+    <Compile Include="Core\InitializableEntity.cs" />
     <Compile Include="Core\ThreadModeAttribute.cs" />
     <Compile Include="Core\WrongThreadException.cs" />
     <Compile Include="Core\ISceneManager.cs" />
@@ -235,7 +236,7 @@
     <Compile Include="Graphics\OpenGL\EnumExtensions.cs" />
     <Compile Include="Graphics\OpenGL\IBuffer.cs" />
     <Compile Include="Graphics\OpenGL\IGLObject.cs" />
-    <Compile Include="Graphics\IInitializable.cs" />
+    <Compile Include="Core\IInitializable.cs" />
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />

@@ -75,20 +75,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
-
         private ImmutableArray<BufferDescription> _VertexBuffers;
 
         public ImmutableArray<BufferDescription> VertexBuffers
@@ -131,6 +117,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.Initialize();
             GL.BindVertexArray(this);
+            this.EnableAttributeArrays();
         }
 
         void IDrawable.Draw()
@@ -161,46 +148,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
-
-                        this.Handle = GL.GenVertexArray();
-                        try // Can't use Binding and using clause here because it causes a stackoverflow
-                        {
-                            GL.BindVertexArray(this);
-                            foreach (BufferDescription desc in this.VertexBuffers)
-                            {
-                                using (Binding vboBinding = new Binding(desc.Buffer))
-                                {
-                                    foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
-                                    {
-                                        vertexPointer.Apply();
-                                    }
-                                }
-                            }
-                            this.IndexBuffer.Bind();
-                        }
-                        finally
-                        {
-                            GL.BindVertexArray(0);
-                        }
-                        this.IndexBuffer.Unbind();
-
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
         public void Unbind()
         {
+            this.DisableAttributeArrays();
             GL.BindVertexArray(0);
         }
 
@@ -222,6 +172,58 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
             base.Dispose(disposing);
+        }
+
+        protected override void OnInitialize()
+        {
+            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
+
+            this.Handle = GL.GenVertexArray();
+            try // Can't use Binding and using clause here because it causes a stackoverflow
+            {
+                GL.BindVertexArray(this);
+                foreach (BufferDescription desc in this.VertexBuffers)
+                {
+                    using (Binding vboBinding = new Binding(desc.Buffer))
+                    {
+                        foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                        {
+                            using (Binding pointerBinding = new Binding(vertexPointer))
+                            {
+                                vertexPointer.Apply();
+                            }
+                        }
+                    }
+                }
+                this.IndexBuffer.Bind();
+            }
+            finally
+            {
+                GL.BindVertexArray(0);
+            }
+            this.IndexBuffer.Unbind();
+        }
+
+        private void EnableAttributeArrays()
+        {
+            foreach (BufferDescription desc in this.VertexBuffers)
+            {
+                foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                {
+                    vertexPointer.Enable();
+                }
+            }
+        }
+
+        private void DisableAttributeArrays()
+        {
+            foreach (BufferDescription desc in this.VertexBuffers)
+            {
+                foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                {
+                    vertexPointer.Disable();
+                }
+            }
         }
 
         [ContractInvariantMethod]

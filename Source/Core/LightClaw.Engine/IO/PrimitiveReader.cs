@@ -19,11 +19,12 @@ namespace LightClaw.Engine.IO
         /// Checks whether the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>.
         /// </summary>
         /// <param name="assetType">The type of the asset that is about to be read.</param>
+        /// <param name="parameter">A parameter the client specifies when requesting an asset.</param>
         /// <returns>
         /// <c>true</c> if the <see cref="IContentReader"/> can read assets of the specified <see cref="Type"/>,
         /// otherwise <c>false</c>.
         /// </returns>
-        public bool CanRead(Type assetType)
+        public bool CanRead(Type assetType, object parameter)
         {
             return assetType.IsPrimitive || (assetType == typeof(string)) || (assetType == typeof(decimal)) || (assetType == typeof(byte[]));
         }

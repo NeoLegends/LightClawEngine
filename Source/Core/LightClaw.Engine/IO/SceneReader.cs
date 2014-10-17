@@ -17,10 +17,11 @@ namespace LightClaw.Engine.IO
         /// Checks whether the <see cref="SceneReader"/> can read assets of the specified <see cref="Type"/>.
         /// </summary>
         /// <param name="assetType">The <see cref="Type"/> to read.</param>
+        /// <param name="parameter">A parameter the client specifies when requesting an asset.</param>
         /// <returns>
         /// <c>true</c> if assets of the specified <paramref name="assetType"/> can be read, otherwise <c>false</c>.
         /// </returns>
-        public bool CanRead(Type assetType)
+        public bool CanRead(Type assetType, object parameter)
         {
             return (assetType == typeof(Scene));
         }
@@ -38,9 +39,9 @@ namespace LightClaw.Engine.IO
             {
                 return await Scene.Load(parameters.AssetStream);
             }
-            catch
+            catch (Exception ex)
             {
-                Logger.Warn(s => "Loading scene '{0}' from the compressed format failed, trying to load uncompressed...".FormatWith(s), parameters.ResourceString);
+                Logger.Warn((s, e) => "Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(s, ex.GetType().FullName), ex, parameters.ResourceString, ex);
             }
 
             try

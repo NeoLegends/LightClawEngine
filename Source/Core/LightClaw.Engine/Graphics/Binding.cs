@@ -15,9 +15,10 @@ namespace LightClaw.Engine.Graphics
     /// <code>
     /// using (GLBinding bufferBinding = new GLBinding(this.Buffer))
     /// {
-    ///     // Code interacting with bound shader
+    ///     // Code interacting with bound buffer
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     public struct Binding : IDisposable, IBindable
     {
         /// <summary>
@@ -39,9 +40,7 @@ namespace LightClaw.Engine.Graphics
         /// Initializes a new <see cref="Binding"/>.
         /// </summary>
         /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
-        /// <param name="bindImmediately">
-        /// Indicates whether to bind the element upon creation of this struct.
-        /// </param>
+        /// <param name="bindImmediately">Indicates whether to bind the element upon creation of this struct.</param>
         public Binding(IBindable bindable, bool bindImmediately)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);

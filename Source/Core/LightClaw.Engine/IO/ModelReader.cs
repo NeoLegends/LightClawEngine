@@ -8,7 +8,7 @@ namespace LightClaw.Engine.IO
 {
     public class ModelReader : IContentReader
     {
-        public bool CanRead(Type assetType)
+        public bool CanRead(Type assetType, object parameter)
         {
             throw new NotImplementedException();
         }

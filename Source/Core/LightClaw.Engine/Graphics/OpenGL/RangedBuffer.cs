@@ -86,20 +86,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Indicates whether the <see cref="RangedBuffer"/> is already initialized.
-        /// </summary>
-        /// <value>
-        /// As the <see cref="RangedBuffer"/> does not need to be initialized, it always returns <c>true</c>.
-        /// </value>
-        public bool IsInitialized
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        /// <summary>
         /// Backing field.
         /// </summary>
         private bool _OwnsBaseBuffer;
@@ -214,7 +200,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Bind()
         {
-            this.BaseBuffer.Initialize();
+            this.Initialize();
             GL.BindBufferRange(this.RangeTarget, this.Index, this.BaseBuffer.Handle, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
@@ -254,13 +240,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             where T : struct
         {
             return this.BaseBuffer.GetRange<T>(this.Range.Start + offset, count);
-        }
-
-        /// <summary>
-        /// Does nothing, <see cref="RangedBuffer"/> does not need to be initialized.
-        /// </summary>
-        public void Initialize()
-        {
         }
 
         /// <summary>
@@ -472,6 +451,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         protected override object GetDisposedArgument()
         {
             return this.Range;
+        }
+
+        /// <summary>
+        /// Initialization callback.
+        /// </summary>
+        protected override void OnInitialize() 
+        {
+            this.BaseBuffer.Initialize();
         }
 
         /// <summary>

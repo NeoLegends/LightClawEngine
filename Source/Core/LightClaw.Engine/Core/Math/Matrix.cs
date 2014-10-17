@@ -3311,7 +3311,7 @@ namespace LightClaw.Engine.Core
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>
-        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> ; otherwise,
+        /// <c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/> otherwise,
         /// <c>false</c>.
         /// </returns>
         public static bool operator ==(Matrix left, Matrix right)

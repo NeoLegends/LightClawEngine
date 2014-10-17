@@ -12,23 +12,9 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DebuggerDisplay("Name = {Name}, Location = {Location}")]
-    public class Uniform : Entity, IInitializable
+    public class Uniform : InitializableEntity
     {
         private readonly object initializationLock = new object();
-
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         private int _Location;
 
@@ -97,29 +83,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentNullException>(program != null);
             Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
-            Contract.Requires<ArgumentException>(program.Handle != 0);
 
             this.Location = location;
             this.Program = program;
-        }
-
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        int nameLength;
-                        ActiveUniformType uniformType;
-                        base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
-                        this.Type = uniformType; // Set indirectly to fire event
-
-                        this.IsInitialized = true;
-                    }
-                }
-            }
         }
 
         public void Set(int value)
@@ -283,6 +249,19 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform4(this.Program, this.Location + 8, value.M31, value.M32, value.M33, value.M34);
             GL.ProgramUniform4(this.Program, this.Location + 12, value.M41, value.M42, value.M43, value.M44);
             GL.ProgramUniform4(this.Program, this.Location + 16, value.M51, value.M52, value.M53, value.M54);
+        }
+
+        protected override void OnInitialize()
+        {
+            if (this.Program.Handle == 0)
+            {
+                throw new InvalidOperationException("The {0} must have a name before the {1} can be initialized.".FormatWith(typeof(ShaderProgram).Name, typeof(Uniform).Name));
+            }
+
+            int nameLength;
+            ActiveUniformType uniformType;
+            base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
+            this.Type = uniformType; // Set indirectly to fire event
         }
 
         [ContractInvariantMethod]

@@ -16,32 +16,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
     [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Uniform Count = {Uniforms.Count}")]
-    public class ShaderProgram : GLObject, IBindable, IInitializable
+    public class ShaderProgram : GLObject, IBindable
     {
         /// <summary>
         /// The object used to lock access to <see cref="M:Initialize"/>.
         /// </summary>
         private readonly object initializationLock = new object();
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private bool _IsInitialized;
-
-        /// <summary>
-        /// Indicates whether the instance has already been initialized.
-        /// </summary>
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         /// <summary>
         /// Backing field.
@@ -160,65 +140,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes the <see cref="ShaderProgram"/> compiling and linking the <see cref="Shader"/>s.
-        /// </summary>
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
-
-                        this.Handle = GL.CreateProgram();
-                        try
-                        {
-                            foreach (Shader s in this.Shaders)
-                            {
-                                s.AttachTo(this);
-                            }
-
-                            GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
-                            GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
-                            foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
-                            {
-                                desc.ApplyIn(this);
-                            }
-                            GL.LinkProgram(this);
-
-                            int result;
-                            GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
-                            if (result == 0)
-                            {
-                                string infoLog = this.GetInfoLog();
-                                string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
-                                Logger.Warn(message);
-                                throw new LinkingFailedException(message, infoLog, result);
-                            }
-
-                            int uniformCount = 0;
-                            GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
-                            this.Uniforms = Enumerable.Range(0, uniformCount)
-                                                      .Select(uniformIndex => new Uniform(this, uniformIndex))
-                                                      .ToImmutableDictionary(uniform => uniform.Name);
-                        }
-                        finally
-                        {
-                            foreach (Shader s in this.Shaders)
-                            {
-                                s.DetachFrom(this);
-                            }
-                        }
-
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Unbinds the <see cref="ShaderProgram"/> from the graphics context.
         /// </summary>
         public void Unbind()
@@ -248,6 +169,54 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Initialization callback.
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
+
+            this.Handle = GL.CreateProgram();
+            try
+            {
+                foreach (Shader s in this.Shaders)
+                {
+                    s.AttachTo(this);
+                }
+
+                GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
+                GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
+                foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
+                {
+                    desc.ApplyIn(this);
+                }
+                GL.LinkProgram(this);
+
+                int result;
+                GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
+                if (result == 0)
+                {
+                    string infoLog = this.GetInfoLog();
+                    string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
+                    Logger.Warn(message);
+                    throw new LinkingFailedException(message, infoLog, result);
+                }
+
+                int uniformCount = 0;
+                GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
+                this.Uniforms = Enumerable.Range(0, uniformCount)
+                                            .Select(uniformIndex => new Uniform(this, uniformIndex))
+                                            .ToImmutableDictionary(uniform => uniform.Name);
+            }
+            finally
+            {
+                foreach (Shader s in this.Shaders)
+                {
+                    s.DetachFrom(this);
+                }
+            }
         }
 
         /// <summary>

@@ -21,32 +21,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// </remarks>
     /// <seealso href="http://www.opengl.org/wiki/Shader"/>
     [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Type = {Type}, Vertex Attribute Count = {VertexAttributeDescriptions.Length}")]
-    public class Shader : GLObject, IInitializable
+    public class Shader : GLObject
     {
         /// <summary>
         /// Used to restrict access to the initialization method.
         /// </summary>
         private readonly object initializationLock = new object();
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private bool _IsInitialized;
-
-        /// <summary>
-        /// Indicates whether the <see cref="Shader"/> has already been initialized or not.
-        /// </summary>
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
 
         /// <summary>
         /// Backing field.
@@ -204,39 +184,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes the <see cref="Shader"/>.
-        /// </summary>
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
-
-                        this.Handle = GL.CreateShader(this.Type);
-                        GL.ShaderSource(this, this.Source);
-                        GL.CompileShader(this);
-
-                        int result;
-                        GL.GetShader(this, ShaderParameter.CompileStatus, out result);
-                        if (result == 0)
-                        {
-                            string infoLog = GL.GetShaderInfoLog(this);
-                            string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
-                            Logger.Warn(message);
-                            throw new CompilationFailedException(message, infoLog, result);
-                        }
-
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Disposes the <see cref="Shader"/>.
         /// </summary>
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
@@ -258,6 +205,28 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Initialization callback.
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
+
+            this.Handle = GL.CreateShader(this.Type);
+            GL.ShaderSource(this, this.Source);
+            GL.CompileShader(this);
+
+            int result;
+            GL.GetShader(this, ShaderParameter.CompileStatus, out result);
+            if (result == 0)
+            {
+                string infoLog = GL.GetShaderInfoLog(this);
+                string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
+                Logger.Warn(message);
+                throw new CompilationFailedException(message, infoLog, result);
+            }
         }
 
         /// <summary>

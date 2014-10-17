@@ -16,7 +16,7 @@ namespace LightClaw.Engine.Threading
     /// <summary>
     /// Represents a sink used to dispatch work onto another thread.
     /// </summary>
-    [ThreadMode(ThreadMode.Safe | ThreadMode.Affine)]
+    [ThreadMode(ThreadMode.Safe)]
     public class Dispatcher : DisposableEntity
     {
         /// <summary>
@@ -317,8 +317,13 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
-        /// Executes the work on the current thread until all queues are empty.
+        /// Executes the work on the current thread until all queues are empty. See remarks.
         /// </summary>
+        /// <remarks>
+        /// This method may only be executed from the thread the <see cref="Dispatcher"/> was created on. Otherwise an exception
+        /// will be thrown.
+        /// </remarks>
+        [ThreadMode(ThreadMode.Affine)]
         public void Pop()
         {
             ThreadF.ThrowIfNotCurrentThread(this.Thread);
@@ -329,7 +334,12 @@ namespace LightClaw.Engine.Threading
         /// <summary>
         /// Synchronously executes the work on the current thread either until all queues are empty or until the time has run out.
         /// </summary>
+        /// <remarks>
+        /// This method may only be executed from the thread the <see cref="Dispatcher"/> was created on. Otherwise an exception
+        /// will be thrown.
+        /// </remarks>
         /// <param name="targetTime">The approximate time the <see cref="Dispatcher"/> is allowed to execute.</param>
+        [ThreadMode(ThreadMode.Affine)]
         public void Pop(TimeSpan targetTime)
         {
             ThreadF.ThrowIfNotCurrentThread(this.Thread);
@@ -350,6 +360,7 @@ namespace LightClaw.Engine.Threading
         /// Disposes the <see cref="Dispatcher"/> unregistering it from the dictionary.
         /// </summary>
         /// <param name="disposing"><c>true</c> if managed resources should be disposed.</param>
+        [ThreadMode(ThreadMode.Affine)]
         protected override void Dispose(bool disposing)
         {
             Dispatcher outObject;

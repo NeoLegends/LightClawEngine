@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 {
     [Serializable, DataContract]
     [DebuggerDisplay("Index = {Index}, Size = {Size}, Type = {Type}, Stride = {Stride}, Offset = {Offset}, Normalize = {Normalize}")]
-    public struct VertexAttributePointer : ICloneable, IEquatable<VertexAttributePointer>
+    public struct VertexAttributePointer : IBindable, ICloneable, IEquatable<VertexAttributePointer>
     {
         [DataMember]
         public VertexAttributeLocation Index { get; private set; }
@@ -60,7 +60,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public void Apply()
         {
-            GL.EnableVertexAttribArray(this.Index);
             GL.VertexAttribPointer(
                 this.Index,
                 this.Size,
@@ -69,12 +68,26 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 this.Stride,
                 this.Offset
             );
-            //GL.DisableVertexAttribArray(this.Index);
+        }
+
+        void IBindable.Bind()
+        {
+            this.Enable();
         }
 
         public object Clone()
         {
             return new VertexAttributePointer(this.Index, this.Size, this.Type, this.Normalize, this.Stride, this.Offset);
+        }
+
+        public void Disable()
+        {
+            GL.DisableVertexAttribArray(this.Index);
+        }
+
+        public void Enable()
+        {
+            GL.EnableVertexAttribArray(this.Index);
         }
 
         public override bool Equals(object obj)
@@ -95,6 +108,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public override int GetHashCode()
         {
             return HashF.GetHashCode(this.Index, this.Normalize, this.Offset, this.Size, this.Stride, this.Type);
+        }
+
+        void IBindable.Unbind()
+        {
+            this.Disable();
         }
 
         public static bool operator ==(VertexAttributePointer left, VertexAttributePointer right)

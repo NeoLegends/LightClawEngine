@@ -20,7 +20,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// redefine it in every class you include the System-namespace anyway.
     /// </remarks>
     [DebuggerDisplay("Target = {Target}, Usage Hint = {Hint}, Length = {Length}")]
-    public class BufferObject : GLObject, IBuffer, IInitializable
+    public class BufferObject : GLObject, IBuffer
     {
         /// <summary>
         /// Used for restricting access to the name generation process.
@@ -157,26 +157,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Initializes the <see cref="BufferObject"/>.
-        /// </summary>
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.nameGenerationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
-
-                        this.Handle = GL.GenBuffer();
-                        this.IsInitialized = true;
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -349,6 +329,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Initialization callback.
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
+
+            this.Handle = GL.GenBuffer();
         }
 
         /// <summary>
