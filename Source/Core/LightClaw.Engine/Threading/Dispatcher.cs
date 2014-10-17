@@ -14,29 +14,16 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.Threading
 {
     /// <summary>
-    /// Represents a sink used to dispatch work onto another thread.
+    /// Represents a sink used to dispatch work onto another thread. See remarks.
     /// </summary>
+    /// <remarks>
+    /// Neither execution order nor execution time is deterministic, at least from the <see cref="Dispatcher"/>s point
+    /// of view. It depends on the instance that created the <see cref="Dispatcher"/> when the enqueued will be executed.
+    /// </remarks>
     [ThreadMode(ThreadMode.Safe)]
+    [DebuggerDisplay("Thread = {Thread.ManagedThreadId}, Queue Count = {qeues.Count}")]
     public class Dispatcher : DisposableEntity
     {
-        /// <summary>
-        /// All currently existing <see cref="Dispatcher"/>s with their respective threads.
-        /// </summary>
-        private static readonly ConcurrentDictionary<Thread, Dispatcher> dispatchers = new ConcurrentDictionary<Thread, Dispatcher>();
-
-        /// <summary>
-        /// Gets the <see cref="Dispatcher"/> for the current <see cref="Thread"/> and creates one, if it doesn't exist.
-        /// </summary>
-        public static Dispatcher Current
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<Dispatcher>() != null);
-
-                return dispatchers.GetOrAdd(Thread.CurrentThread, t => new Dispatcher());
-            }
-        }
-
         /// <summary>
         /// The work queues.
         /// </summary>
@@ -50,7 +37,7 @@ namespace LightClaw.Engine.Threading
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Thread _Thread = Thread.CurrentThread;
+        private readonly Thread _Thread = Thread.CurrentThread;
 
         /// <summary>
         /// The <see cref="Thread"/> the <see cref="Dispatcher"/> is associated with.
@@ -62,12 +49,6 @@ namespace LightClaw.Engine.Threading
                 Contract.Ensures(Contract.Result<Thread>() != null);
 
                 return _Thread;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _Thread, value);
             }
         }
 
@@ -357,14 +338,12 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
-        /// Disposes the <see cref="Dispatcher"/> unregistering it from the dictionary.
+        /// Disposes the <see cref="Dispatcher"/>.
         /// </summary>
         /// <param name="disposing"><c>true</c> if managed resources should be disposed.</param>
         [ThreadMode(ThreadMode.Affine)]
         protected override void Dispose(bool disposing)
         {
-            Dispatcher outObject;
-            dispatchers.TryRemove(this.Thread, out outObject);
             this.Pop();
             base.Dispose(disposing);
         }
@@ -378,57 +357,6 @@ namespace LightClaw.Engine.Threading
             {
                 throw new ObjectDisposedException(typeof(Dispatcher).Name);
             }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Dispatcher"/> for the specified <paramref name="thread"/>.
-        /// </summary>
-        /// <param name="thread">The <see cref="Thread"/> to obtain the <see cref="Dispatcher"/> of.</param>
-        /// <returns>The <see cref="Dispatcher"/> of the target thread.</returns>
-        /// <exception cref="KeyNotFoundException">The <see cref="Dispatcher"/> for the specified <see cref="Thread"/> was not yet created.</exception>
-        public static Dispatcher GetDispatcher(Thread thread)
-        {
-            Contract.Requires<ArgumentNullException>(thread != null);
-
-            return dispatchers[thread];
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Dispatcher"/> for the specified <paramref name="threadId"/>.
-        /// </summary>
-        /// <param name="threadId">The ID of the <see cref="Thread"/> to obtain the <see cref="Dispatcher"/> of.</param>
-        /// <returns>The <see cref="Dispatcher"/> of the target thread.</returns>
-        /// <exception cref="InvalidOperationException">The <see cref="Dispatcher"/> for the specified <see cref="Thread"/> was not yet created.</exception>
-        public static Dispatcher GetDispatcher(int threadId)
-        {
-            return dispatchers.First(kvp => kvp.Key.ManagedThreadId == threadId).Value;
-        }
-
-        /// <summary>
-        /// Tries to get the <see cref="Dispatcher"/> for the specified <paramref name="thread"/>.
-        /// </summary>
-        /// <param name="thread">The <see cref="Thread"/> to obtain the <see cref="Dispatcher"/> of.</param>
-        /// <param name="result">The <see cref="Dispatcher"/> for the specified <paramref name="thread"/>, if the method succeeds.</param>
-        /// <returns><c>true</c> if the <see cref="Dispatcher"/> could be obtained, otherwise <c>false</c>.</returns>
-        public static bool TryGetDispatcher(Thread thread, out Dispatcher result)
-        {
-            Contract.Requires<ArgumentNullException>(thread != null);
-            Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out result) != null);
-
-            return dispatchers.TryGetValue(thread, out result);
-        }
-
-        /// <summary>
-        /// Tries to get the <see cref="Dispatcher"/> for the specified <paramref name="threadId"/>.
-        /// </summary>
-        /// <param name="threadId">The <see cref="Thread"/> to obtain the <see cref="Dispatcher"/> of.</param>
-        /// <param name="result">The <see cref="Dispatcher"/> for the specified <paramref name="threadId"/>, if the method succeeds.</param>
-        /// <returns><c>true</c> if the <see cref="Dispatcher"/> could be obtained, otherwise <c>false</c>.</returns>
-        public static bool TryGetDispatcher(int threadId, out Dispatcher result)
-        {
-            Contract.Ensures(!Contract.Result<bool>() || Contract.ValueAtReturn(out result) != null);
-
-            return (result = dispatchers.FirstOrDefault(kvp => kvp.Key.ManagedThreadId == threadId).Value) != null;
         }
     }
 }

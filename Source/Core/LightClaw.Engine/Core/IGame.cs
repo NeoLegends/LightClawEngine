@@ -24,9 +24,9 @@ namespace LightClaw.Engine.Core
         IGameWindow GameWindow { get; }
 
         /// <summary>
-        /// The <see cref="Dispatcher"/> used to submit work to the update thread.
+        /// The <see cref="Dispatcher"/> used to submit work to the thread the OpenGL context was created on.
         /// </summary>
-        Dispatcher UpdateDispatcher { get; }
+        Dispatcher GraphicsDispatcher { get; }
 
         /// <summary>
         /// The <see cref="ISceneManager"/> managing the currently running <see cref="Scene"/>s.

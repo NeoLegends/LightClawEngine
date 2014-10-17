@@ -222,6 +222,7 @@
     <Compile Include="Core\Transform.cs" />
     <Compile Include="Core\ValueChangedEventArgs.cs" />
     <Compile Include="Graphics\OpenGL\BufferMapping.cs" />
+    <Compile Include="Graphics\OpenGL\GLBool.cs" />
     <Compile Include="Graphics\OpenGL\LinkingFailedException.cs" />
     <Compile Include="Graphics\OpenGL\OpenGLException.cs" />
     <Compile Include="Graphics\UniformBufferGroup.cs" />

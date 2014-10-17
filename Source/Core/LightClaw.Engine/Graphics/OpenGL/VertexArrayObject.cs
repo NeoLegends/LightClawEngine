@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
@@ -163,7 +164,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        GL.DeleteVertexArray(this);
+                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(vao => GL.DeleteVertexArray(vao), this, Threading.DispatcherPriority.Background);
                     }
                     catch (AccessViolationException ex)
                     {

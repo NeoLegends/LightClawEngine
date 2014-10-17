@@ -165,7 +165,7 @@ namespace LightClaw.GameCode
                 this.program = new ShaderProgram(shaders);
             });
 
-            Task.Run(() => this.IocC.Resolve<IGame>().UpdateDispatcher.Invoke(() => Logger.Info("Hello from the message pumped through the dispatcher!")));
+            Task.Run(() => this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(() => Logger.Info("Hello from the message pumped through the dispatcher!")));
 
             base.OnLoad();
         }

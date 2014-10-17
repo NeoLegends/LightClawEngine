@@ -419,6 +419,38 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Checks whether the specified number is a prime number.
+        /// </summary>
+        /// <param name="number">The number to test.</param>
+        /// <returns><c>true</c> if the specified number is prime, otherwise <c>false</c>.</returns>
+        /// <remarks>
+        /// This function is expensive (lots of divisions (worst case Sqrt(<paramref name="number"/>) - 2), one Math.Sqrt).
+        /// Call only if absolutely required.
+        /// </remarks>
+        public static bool IsPrime(long number)
+        {
+            if (number == 1)
+            {
+                return false;
+            }
+            if (number == 2)
+            {
+                return true;
+            }
+
+            long boundary = (long)Math.Floor(Math.Sqrt(number));
+            for (long i = 2; i <= boundary; i++)
+            {
+                if (number % i == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Checks whether the specified number is a power of two.
         /// </summary>
         /// <param name="value">The value to check.</param>

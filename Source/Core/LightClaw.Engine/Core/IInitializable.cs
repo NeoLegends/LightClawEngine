@@ -21,7 +21,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// <para>
-        /// Calling an instances methods before <see cref="M:Initialize"/> has been called shall trigger initialization.
+        /// Calling an instances methods before <see cref="M:Initialize"/> has been called shall trigger automatic initialization.
         /// </para>
         /// <para>
         /// Additional calls to <see cref="M:Initialize"/> shall be ignored.

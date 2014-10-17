@@ -93,12 +93,12 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Dispatcher _GraphicsDispatcher = Dispatcher.Current;
+        private Dispatcher _GraphicsDispatcher = new Dispatcher();
 
         /// <summary>
         /// The <see cref="Dispatcher"/> used to submit work to the rendering thread.
         /// </summary>
-        public Dispatcher UpdateDispatcher
+        public Dispatcher GraphicsDispatcher
         {
             get
             {
@@ -215,8 +215,8 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            this.UpdateDispatcher.Dispose();
             this.SceneManager.Dispose();
+            this.GraphicsDispatcher.Dispose();
             //this.GameWindow.Dispose();
 
             base.Dispose(disposing);
@@ -292,7 +292,7 @@ namespace LightClaw.Engine.Core
 
             Contract.Assume(this.SceneManager != null);
             this.SceneManager.Update(currentGameTime);
-            this.UpdateDispatcher.Pop();
+            this.GraphicsDispatcher.Pop(); // Calculate time for dispatcher using delta time in the future
             this.SceneManager.LateUpdate();
         }
 

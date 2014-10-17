@@ -6,6 +6,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -160,7 +162,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        GL.DeleteProgram(this);
+                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(sp => GL.DeleteProgram(sp), this, Threading.DispatcherPriority.Background);
                     }
                     catch (AccessViolationException ex)
                     {
@@ -196,19 +198,19 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 int result;
                 GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
-                if (result == 0)
+                if (result == GLBool.False)
                 {
                     string infoLog = this.GetInfoLog();
                     string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
-                    Logger.Warn(message);
+                    Logger.Error(message);
                     throw new LinkingFailedException(message, infoLog, result);
                 }
 
                 int uniformCount = 0;
                 GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
                 this.Uniforms = Enumerable.Range(0, uniformCount)
-                                            .Select(uniformIndex => new Uniform(this, uniformIndex))
-                                            .ToImmutableDictionary(uniform => uniform.Name);
+                                          .Select(uniformIndex => new Uniform(this, uniformIndex))
+                                          .ToImmutableDictionary(uniform => uniform.Name);
             }
             finally
             {

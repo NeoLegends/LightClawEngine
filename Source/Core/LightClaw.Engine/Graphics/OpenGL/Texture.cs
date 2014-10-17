@@ -4,7 +4,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
 using LightClaw.Engine.Configuration;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using log4net;
 using OpenTK.Graphics.OpenGL4;
@@ -226,13 +228,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void Dispose(bool disposing)
         {
-            if (this.IsDisposed)
+            if (!this.IsDisposed)
             {
                 lock (this.initializationLock)
                 {
                     if (this.IsInitialized)
                     {
-                        GL.DeleteTexture(this);
+                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(t => GL.DeleteTexture(t), this, Threading.DispatcherPriority.Background);
                     }
                 }
                 base.Dispose(disposing);

@@ -6,6 +6,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -196,7 +198,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        GL.DeleteShader(this);
+                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(s => GL.DeleteShader(s), this, Threading.DispatcherPriority.Background);
                     }
                     catch (AccessViolationException ex)
                     {
@@ -220,11 +222,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             int result;
             GL.GetShader(this, ShaderParameter.CompileStatus, out result);
-            if (result == 0)
+            if (result == GLBool.False)
             {
                 string infoLog = GL.GetShaderInfoLog(this);
                 string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
-                Logger.Warn(message);
+                Logger.Error(message);
                 throw new CompilationFailedException(message, infoLog, result);
             }
         }
