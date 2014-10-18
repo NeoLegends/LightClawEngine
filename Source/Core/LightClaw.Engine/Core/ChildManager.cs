@@ -16,6 +16,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <typeparam name="T">The <see cref="Type"/> of children to manage.</typeparam>
     [DataContract]
+    [ThreadMode(true)]
     public abstract class ChildManager<T> : Manager
         where T : IControllable, IDrawable
     {

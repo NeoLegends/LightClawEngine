@@ -14,6 +14,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a subdivison of a <see cref="Scene"/>. Hosts multiple <see cref="Component"/>s.
     /// </summary>
+    [ThreadMode(true)]
     [DataContract(IsReference = true), JsonObject]
     public sealed class GameObject : ListChildManager<Component>
     {

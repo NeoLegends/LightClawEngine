@@ -11,6 +11,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Reference implementation of <see cref="IControllable"/> and <see cref="IDrawable"/>.
     /// </summary>
+    [ThreadMode(true)]
     [DataContract(IsReference = true)]
     public abstract class Manager : DisposableEntity, IDrawable, IControllable, INameable
     {
@@ -106,7 +107,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private bool _IsEnabled = false;
+        private volatile bool _IsEnabled = false;
 
         /// <summary>
         /// Indicates whether the instance is enabled or not.
@@ -120,14 +121,15 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
-                this.SetProperty(ref _IsEnabled, value);
+                _IsEnabled = value;
+                this.RaisePropertyChanged();
             }
         }
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private bool _IsLoaded = false;
+        private volatile bool _IsLoaded = false;
 
         /// <summary>
         /// Indicates whether the instance is loaded or not.
@@ -141,7 +143,8 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
-                this.SetProperty(ref _IsLoaded, value);
+                _IsLoaded = value;
+                this.RaisePropertyChanged();
             }
         }
 
@@ -160,6 +163,8 @@ namespace LightClaw.Engine.Core
             : base(name)
         {
         }
+
+        // Need volatile backing field for double-checked locking to work
 
         /// <summary>
         /// Enables the instance.
@@ -303,15 +308,6 @@ namespace LightClaw.Engine.Core
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Converts the <see cref="Manager"/> into a <see cref="String"/>.
-        /// </summary>
-        /// <returns>The <see cref="Manager"/> as <see cref="String"/>.</returns>
-        public override string ToString()
-        {
-            return this.Name ?? base.ToString();
         }
 
         /// <summary>

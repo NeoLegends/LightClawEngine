@@ -22,7 +22,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     [ContentReader(typeof(SceneReader))]
     [DataContract(IsReference = true), JsonObject]
-    public class Scene : ListChildManager<GameObject>, ICloneable, IDrawable
+    public class Scene : ListChildManager<GameObject>, IDrawable
     {
         /// <summary>
         /// A static logger instance.
@@ -158,24 +158,6 @@ namespace LightClaw.Engine.Core
                 gameObject.Scene = null;
             }
             base.Clear();
-        }
-
-        /// <summary>
-        /// Creates a flat copy of the <see cref="Scene"/>.
-        /// </summary>
-        /// <returns>The newly created <see cref="Scene"/>.</returns>
-        public object Clone()
-        {
-            GameObject[] items;
-            lock (this.Items)
-            {
-                items = this.Items.ToArray();
-            }
-            return new Scene(items)
-            {
-                Name = this.Name,
-                SuppressDraw = this.SuppressDraw
-            };
         }
 
         /// <summary>

@@ -236,6 +236,25 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Disposes all contained scenes.
+        /// </summary>
+        /// <param name="disposing">The scenes to dispose.</param>
+        protected override void Dispose(bool disposing)
+        {
+            lock (this.scenes)
+            {
+                this.workingCopy.AddRange(this.scenes.Values);
+                this.scenes.Clear();
+            }
+            foreach (Scene s in this.workingCopy)
+            {
+                s.Dispose();
+            }
+            this.workingCopy.Clear();
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
         /// Implementation of <see cref="M:Enable"/>.
         /// </summary>
         protected override void OnEnable()

@@ -11,6 +11,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <remarks>This class is thread-safe.</remarks>
     [Pure]
+    [ThreadMode(true)]
     public static class MathF
     {
         /// <summary>

@@ -16,6 +16,7 @@ namespace LightClaw.Engine.Core
     /// A lightweight component base class implementing essential services such as <see cref="INotifyPropertyChanged"/>
     /// and <see cref="INameable"/>. Also provides a logger.
     /// </summary>
+    [ThreadMode(true)]
     [DataContract(IsReference = true)]
     public abstract class Entity : INameable, INotifyPropertyChanged
     {

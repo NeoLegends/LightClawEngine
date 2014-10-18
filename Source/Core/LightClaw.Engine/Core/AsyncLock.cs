@@ -23,6 +23,7 @@ namespace LightClaw.Engine.Core
     /// }
     /// </code></example>
     /// <seealso cref="SemaphoreSlim"/>
+    [ThreadMode(true)]
     public class AsyncLock
     {
         /// <summary>

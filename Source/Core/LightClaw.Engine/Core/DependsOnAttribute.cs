@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,28 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The dependencies of the <see cref="Component"/>.
         /// </summary>
-        public IEnumerable<Type> Dependencies { get; private set; }
+        public ImmutableArray<Type> Dependencies { get; private set; }
+
+        /// <summary>
+        /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
+        /// </summary>
+        /// <param name="dependency1">The first dependency.</param>
+        public DependsOnAttribute(Type dependency1) : this(new[] { dependency1 }) { }
+
+        /// <summary>
+        /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
+        /// </summary>
+        /// <param name="dependency1">The first dependency.</param>
+        /// <param name="dependency2">The second dependency.</param>
+        public DependsOnAttribute(Type dependency1, Type dependency2) : this(new[] { dependency1, dependency2 }) { }
+
+        /// <summary>
+        /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
+        /// </summary>
+        /// <param name="dependency1">The first dependency.</param>
+        /// <param name="dependency2">The second dependency.</param>
+        /// <param name="dependency3">The third dependency.</param>
+        public DependsOnAttribute(Type dependency1, Type dependency2, Type dependency3) : this(new[] { dependency1, dependency2, dependency3 }) { }
 
         /// <summary>
         /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
@@ -33,7 +55,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentException>(dependencies.All(dependency => dependency != null));
             Contract.Requires<ArgumentException>(dependencies.All(dependency => typeof(Component).IsAssignableFrom(dependency)));
 
-            this.Dependencies = dependencies.Distinct();
+            this.Dependencies = dependencies.Distinct().ToImmutableArray();
         }
 
         /// <summary>

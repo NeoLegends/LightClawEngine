@@ -80,11 +80,7 @@ namespace LightClaw.Engine.Core
         /// will be set to true with a thread-safe operation BEFORE this method will be called.
         /// </remarks>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            this.Raise(this.Disposed, this.GetDisposedArgument());
-            GC.SuppressFinalize(this);
-        }
+        protected virtual void Dispose(bool disposing) { }
 
         /// <summary>
         /// Gets the event arguments for <see cref="E:Disposed"/>.
@@ -104,6 +100,8 @@ namespace LightClaw.Engine.Core
             if (Interlocked.CompareExchange(ref _IsDisposed, 1, 0) == 0)
             {
                 this.Dispose(disposing);
+                this.Raise(this.Disposed, this.GetDisposedArgument());
+                GC.SuppressFinalize(this);
             }
         }
     }

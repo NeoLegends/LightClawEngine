@@ -43,19 +43,18 @@ namespace LightClaw.Engine.Core
     public enum ThreadMode
     {
         /// <summary>
-        /// The instance not thread-safe. Thus, the caller has to make sure the instance will only be
+        /// The method not thread-safe. Thus, the caller has to make sure the instance will only be
         /// accessed by one thread at a time.
         /// </summary>
         Unsafe = 0,
 
         /// <summary>
-        /// The instance is thread safe and can be used from multiple threads at the same time.
+        /// The method is thread safe and can be used from multiple threads at the same time.
         /// </summary>
         Safe = 1,
 
         /// <summary>
-        /// The instance is thread-affine, it detects which threads are currently executing and protects itself from
-        /// problems.
+        /// The method is thread-affine, it detects which threads are currently executing and protects itself from problems.
         /// </summary>
         Affine = 2,
 
@@ -75,6 +74,8 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>
         /// If there was no direct specification on the method itself, the declaring type of the method will be searched.
+        /// Nested types do not inherit the <see cref="ThreadMode"/> from their declaring types. You will need to re-declare
+        /// their mode.
         /// </remarks>
         /// <param name="mInfo">The method to get the <see cref="ThreadMode"/> of.</param>
         /// <returns>The methods <see cref="ThreadMode"/> or <see cref="ThreadMode.Unspecified"/> if the mode was not explicitly set.</returns>
