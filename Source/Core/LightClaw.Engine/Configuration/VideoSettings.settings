@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LightClaw.Engine.Configuration" GeneratedClassName="VideoSettings">
   <Profiles />
   <Settings>
-    <Setting Name="VSync" Type="OpenTK.VSyncMode" Scope="User">
-      <Value Profile="(Default)">Adaptive</Value>
-    </Setting>
     <Setting Name="Width" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">1280</Value>
     </Setting>
@@ -13,9 +10,6 @@
     </Setting>
     <Setting Name="WindowState" Type="OpenTK.WindowState" Scope="User">
       <Value Profile="(Default)">Normal</Value>
-    </Setting>
-    <Setting Name="LimitFPS" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FPSLimit" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">60</Value>
@@ -31,6 +25,12 @@
     </Setting>
     <Setting Name="LoDAggressiveness" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="VSync" Type="OpenTK.VSyncMode" Scope="User">
+      <Value Profile="(Default)">Off</Value>
+    </Setting>
+    <Setting Name="LimitFPS" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

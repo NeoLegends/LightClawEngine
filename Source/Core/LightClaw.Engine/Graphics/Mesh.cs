@@ -82,7 +82,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
-            Logger.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
+            Log.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
 
             this.Name = resourceString;
             this.ResourceString = resourceString;
@@ -93,72 +93,77 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         protected override void OnDraw()
         {
-            Model model = this.Model;
-            if (model != null)
+            try
             {
-                model.Draw();
+                Model model = this.Model;
+                if (model != null)
+                {
+                    model.Draw();
+                }
             }
-
-            base.OnDraw();
+            finally
+            {
+                base.OnDraw();
+            }
         }
 
         /// <summary>
         /// Asynchronously loads the <see cref="Model"/> into the <see cref="Mesh"/>.
         /// </summary>
         /// <remarks>Drawing and updating will be performed when the mesh is loaded successfully.</remarks>
-        protected override void OnLoad()
+        protected override async void OnLoad()
         {
-            Logger.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
+            Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
 
-            IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
-            if (contentManager == null)
+            try
             {
-                Logger.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
-                return;
+                if (this.Model != null)
+                {
+                    IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
+                    if (contentManager == null)
+                    {
+                        Log.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
+                        return;
+                    }
+
+                    try
+                    {
+                        this.Model = await contentManager.LoadAsync<Model>(this.ResourceString).ConfigureAwait(false);
+                        Log.Debug(() => "Mesh '{0}' loaded successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(
+                            "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.".FormatWith(
+                                ex.GetType().FullName,
+                                this.Name ?? this.ResourceString
+                            ), 
+                            ex
+                        );
+                    }
+                }
             }
-
-            Model model = this.Model;
-            Task<Model> meshTask = (model != null) ? Task.FromResult(model) : contentManager.LoadAsync<Model>(this.ResourceString, true);
-            meshTask.ContinueWith(t =>
+            finally
             {
-                this.Model = t.Result;
-                Logger.Debug(() => "Mesh '{0}' loaded successfully.");
-            }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously);
-            meshTask.ContinueWith(
-                t => Logger.Error(() => "Mesh '{0}' could not be loaded, it will not be rendered.".FormatWith(this.Name ?? this.ResourceString), t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
-            );
-
-            base.OnLoad();
+                base.OnLoad();
+            }
         }
 
         /// <summary>
         /// Updates the <see cref="Model"/>.
         /// </summary>
         /// <param name="gameTime">The current game time.</param>
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
-            Model model = this.Model;
-            if (model != null)
+            try
             {
-                model.Update(gameTime);
+                Model model = this.Model;
+                return (model != null) ? model.Update(gameTime, pass) : true;
             }
-
-            base.OnUpdate(gameTime);
-        }
-
-        /// <summary>
-        /// Late-updates the <see cref="Model"/>.
-        /// </summary>
-        protected override void OnLateUpdate()
-        {
-            Model model = this.Model;
-            if (model != null)
+            finally
             {
-                model.LateUpdate();
+                base.OnUpdate(gameTime, pass);
             }
-
-            base.OnLateUpdate();
         }
     }
 }

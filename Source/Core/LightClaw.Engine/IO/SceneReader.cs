@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                Logger.Warn((s, e) => "Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(s, ex.GetType().FullName), ex, parameters.ResourceString, ex);
+                Log.Warn("Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
             }
 
             try
@@ -52,9 +52,9 @@ namespace LightClaw.Engine.IO
                 }
                 return await Scene.LoadRaw(parameters.AssetStream);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn((rs, ex) => "Loading the scene '{0}' uncompressed failed as well. An exception of type '{1}' occured.".FormatWith(ex.GetType().FullName), exception, parameters.ResourceString, exception);
+                Log.Warn("Loading the scene '{0}' uncompressed failed as well. An exception of type '{1}' occured.".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
                 return null;
             }
         }

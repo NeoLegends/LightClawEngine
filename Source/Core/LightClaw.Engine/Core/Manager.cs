@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.Threading;
 
 namespace LightClaw.Engine.Core
 {
@@ -13,6 +15,7 @@ namespace LightClaw.Engine.Core
     /// </summary>
     [ThreadMode(true)]
     [DataContract(IsReference = true)]
+    [ContractClass(typeof(ManagerContracts))]
     public abstract class Manager : DisposableEntity, IDrawable, IControllable, INameable
     {
         /// <summary>
@@ -84,25 +87,15 @@ namespace LightClaw.Engine.Core
         /// Notifies about the start of the updating process.
         /// </summary>
         /// <remarks>Raised before any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updating;
+        public event EventHandler<UpdateEventArgs> Updating;
 
         /// <summary>
         /// Notifies about the finsih of the updating process.
         /// </summary>
         /// <remarks>Raised after any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updated;
+        public event EventHandler<UpdateEventArgs> Updated;
 
-        /// <summary>
-        /// Notifies about the start of the late updating process.
-        /// </summary>
-        /// <remarks>Raised before any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdating;
-
-        /// <summary>
-        /// Notifies about the finsih of the late updating process.
-        /// </summary>
-        /// <remarks>Raised after any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdated;
+        // Need volatile backing field for double-checked locking to work
 
         /// <summary>
         /// Backing field.
@@ -163,8 +156,6 @@ namespace LightClaw.Engine.Core
             : base(name)
         {
         }
-
-        // Need volatile backing field for double-checked locking to work
 
         /// <summary>
         /// Enables the instance.
@@ -273,7 +264,8 @@ namespace LightClaw.Engine.Core
         /// Updates the instance with the specified <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        public void Update(GameTime gameTime)
+        /// <param name="pass">The updating pass.</param>
+        public bool Update(GameTime gameTime, int pass)
         {
             if (this.IsLoaded && this.IsEnabled)
             {
@@ -281,33 +273,20 @@ namespace LightClaw.Engine.Core
                 {
                     if (this.IsLoaded && this.IsEnabled)
                     {
-                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+                        try
                         {
-                            this.OnUpdate(gameTime);
+                            this.Raise(this.Updating, gameTime, pass);
+                            return this.OnUpdate(gameTime, pass);
+                        }
+                        finally
+                        {
+                            this.Raise(this.Updated, gameTime, pass);
                         }
                     }
                 }
             }
-        }
 
-        /// <summary>
-        /// Updates the instance.
-        /// </summary>
-        public void LateUpdate()
-        {
-            if (this.IsLoaded && this.IsEnabled)
-            {
-                lock (this.stateLock)
-                {
-                    if (this.IsLoaded && this.IsEnabled)
-                    {
-                        using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
-                        {
-                            this.OnLateUpdate();
-                        }
-                    }
-                }
-            }
+            return true;
         }
 
         /// <summary>
@@ -350,11 +329,27 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Callback called during <see cref="M:Update"/> to add custom functionality.
         /// </summary>
-        protected abstract void OnUpdate(GameTime gameTime);
+        protected abstract bool OnUpdate(GameTime gameTime, int pass);
+    }
 
-        /// <summary>
-        /// Callback called during <see cref="M:LateUpdate"/> to add custom functionality.
-        /// </summary>
-        protected abstract void OnLateUpdate();
+    [ContractClassFor(typeof(Manager))]
+    abstract class ManagerContracts : Manager
+    {
+        protected override void OnEnable() { }
+
+        protected override void OnDisable() { }
+
+        protected override void OnDraw() { }
+
+        protected override void OnLoad() { }
+
+        protected override void OnReset() { }
+
+        protected override bool OnUpdate(GameTime gameTime, int pass)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(pass >= 0);
+
+            return false;
+        }
     }
 }

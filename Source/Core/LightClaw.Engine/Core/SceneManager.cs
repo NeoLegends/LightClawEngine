@@ -60,7 +60,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
-            Logger.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
+            Log.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
             this.Load(1, startScene).Wait(); // Load into slot one to prevent instant-overdraw by a newly loaded scene
         }
 
@@ -72,7 +72,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(startScene != null);
 
-            Logger.Info(() => "Initializing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
+            Log.Info(() => "Initializing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
             this.Load(0, startScene);
         }
 
@@ -132,7 +132,7 @@ namespace LightClaw.Engine.Core
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
         public int Load(int slot, Scene s)
         {
-            Logger.Info(() => "Loading a new scene into position {0}.".FormatWith(slot));
+            Log.Info(() => "Loading a new scene into position {0}.".FormatWith(slot));
 
             if (this.IsLoaded && !s.IsLoaded)
             {
@@ -144,21 +144,21 @@ namespace LightClaw.Engine.Core
                 {
                     try
                     {
-                        Logger.Debug(() => "Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/A", i));
+                        Log.Debug(() => "Trying to insert scene '{0}' into position {1}.".FormatWith(s.Name ?? "N/A", i));
                         this.scenes.Add(i, s);
                         s.Enable();
-                        Logger.Debug(() => "Scene inserted successfully.");
+                        Log.Debug(() => "Scene inserted successfully.");
                         return i;
                     }
                     catch (ArgumentException)
                     {
-                        Logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
+                        Log.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
                     }
                 }
 
                 // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its
                 // already taken ;)
-                Logger.Warn(() => "Scene insertion failed, all slots below were taken.");
+                Log.Warn(() => "Scene insertion failed, all slots below were taken.");
                 throw new InvalidOperationException("Scene insertion failed, all slots below were taken.");
             }
         }
@@ -181,7 +181,7 @@ namespace LightClaw.Engine.Core
         [ContractVerification(false)] // Contracts show some obscure warning about a constant value. If sb is smarter than me and knows how to properly get rid of the warning, please do.
         public int Move(int slot, int newSlot)
         {
-            Logger.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
+            Log.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
 
             lock (this.scenes)
             {
@@ -192,18 +192,18 @@ namespace LightClaw.Engine.Core
                     {
                         try
                         {
-                            Logger.Debug(() => "Trying to move scene to {0}.".FormatWith(i));
+                            Log.Debug(() => "Trying to move scene to {0}.".FormatWith(i));
                             this.scenes.Add(i, scene);
-                            Logger.Debug(() => "Scene moved.");
+                            Log.Debug(() => "Scene moved.");
                             return i;
                         }
                         catch (ArgumentException)
                         {
-                            Logger.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
+                            Log.Debug(() => "Position {0} taken, incrementing...".FormatWith(i));
                         }
                     }
 
-                    Logger.Warn(() => "All slots below taken, scene could not be moved. Reinserting into old position.");
+                    Log.Warn(() => "All slots below taken, scene could not be moved. Reinserting into old position.");
                     this.scenes[slot] = scene;
                 }
                 return slot;
@@ -217,7 +217,7 @@ namespace LightClaw.Engine.Core
         /// <returns><c>true</c> if a <see cref="Scene"/> was unloaded, otherwise <c>false</c>.</returns>
         public bool Unload(int slot)
         {
-            Logger.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));
+            Log.Debug(() => "Unloading scene from position {0}.".FormatWith(slot));
 
             Scene s = null;
             bool result;
@@ -227,11 +227,11 @@ namespace LightClaw.Engine.Core
             }
             if (s != null)
             {
-                Logger.Debug(() => "Disposing scene...");
+                Log.Debug(() => "Disposing scene...");
                 s.Dispose();
             }
 
-            Logger.Debug(() => result ? "Scene unloaded from position {0}.".FormatWith(slot) : "Scene could not be removed.");
+            Log.Debug(() => result ? "Scene unloaded from position {0}.".FormatWith(slot) : "Scene could not be removed.");
             return result;
         }
 
@@ -307,7 +307,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            Logger.Info(() => "Loading scene manager.");
+            Log.Info(() => "Loading scene manager.");
 
             lock (this.scenes)
             {
@@ -319,7 +319,7 @@ namespace LightClaw.Engine.Core
             }
             this.workingCopy.Clear();
 
-            Logger.Info(() => "Scene manager loaded.");
+            Log.Info(() => "Scene manager loaded.");
         }
 
         /// <summary>
@@ -341,33 +341,19 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Implementation of <see cref="M:Update"/>.
         /// </summary>
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
             lock (this.scenes)
             {
                 this.workingCopy.AddRange(this.scenes.Values);
             }
+            bool result = true;
             foreach (Scene s in this.workingCopy)
             {
-                s.Update(gameTime);
+                result &= s.Update(gameTime, pass);
             }
             this.workingCopy.Clear();
-        }
-
-        /// <summary>
-        /// Implementation of <see cref="M:LateUpdate"/>.
-        /// </summary>
-        protected override void OnLateUpdate()
-        {
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.LateUpdate();
-            }
-            this.workingCopy.Clear();
+            return result;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Core
+namespace LightClaw.Engine.Threading
 {
     /// <summary>
     /// Indicates a classes or a value types <see cref="ThreadMode"/>.

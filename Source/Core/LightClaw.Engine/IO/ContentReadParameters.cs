@@ -16,12 +16,12 @@ namespace LightClaw.Engine.IO
     public sealed class ContentReadParameters : ICloneable, IEquatable<ContentReadParameters>
     {
         /// <summary>
-        /// The <see cref="Type"/> of asset to read.
+        /// A <see cref="Stream"/> of the asset's data.
         /// </summary>
         public Stream AssetStream { get; private set; }
 
         /// <summary>
-        /// A <see cref="Stream"/> of the asset's data.
+        /// The <see cref="Type"/> of asset to read.
         /// </summary>
         public Type AssetType { get; private set; }
 

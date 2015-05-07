@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
             Contract.Requires<ArgumentNullException>(rootPath != null);
 
             this.RootPath = rootPath;
-            Logger.Debug(path => "Initialized a new {0}. Root path will be '{1}'.".FormatWith(typeof(FileSystemContentResolver).Name, path), rootPath);
+            Log.Debug(() => "Initialized a new {0}. Root path will be '{1}'.".FormatWith(typeof(FileSystemContentResolver).Name, rootPath));
         }
 
         /// <summary>
@@ -74,17 +74,17 @@ namespace LightClaw.Engine.IO
                     writable ? FileAccess.ReadWrite : FileAccess.Read
                 );
             }
-            catch (DirectoryNotFoundException exception)
+            catch (DirectoryNotFoundException ex)
             {
-                Logger.Warn(rs => "The directory containing asset '{0}' could not be found. Returning null.".FormatWith(rs), exception, resourceString);
+                Log.Warn("The directory containing asset '{0}' could not be found. Returning null.".FormatWith(resourceString), ex);
             }
-            catch (FileNotFoundException exception)
+            catch (FileNotFoundException ex)
             {
-                Logger.Warn(rs => "The file of asset '{0}' could not be found. Returning null.".FormatWith(rs), exception, resourceString);
+                Log.Warn("The file of asset '{0}' could not be found. Returning null.".FormatWith(resourceString), ex);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn((ex, rs) => "An error of type '{0}' occured while obtaining the stream to asset '{1}'. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName, rs), exception, exception, resourceString);
+                Log.Warn("An error of type '{0}' occured while obtaining the stream to asset '{1}'. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName, resourceString), ex);
             }
             return Task.FromResult(result);
         }

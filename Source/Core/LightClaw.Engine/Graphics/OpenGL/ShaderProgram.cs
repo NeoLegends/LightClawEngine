@@ -162,11 +162,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(sp => GL.DeleteProgram(sp), this, Threading.DispatcherPriority.Background);
+                        GL.DeleteProgram(this);
                     }
                     catch (AccessViolationException ex)
                     {
-                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(ShaderProgram).Name), ex, ex);
+                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
                     }
                 }
             }
@@ -178,7 +178,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         protected override void OnInitialize()
         {
-            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
+            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
 
             this.Handle = GL.CreateProgram();
             try
@@ -202,7 +202,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     string infoLog = this.GetInfoLog();
                     string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
-                    Logger.Error(message);
+                    Log.Error(message);
                     throw new LinkingFailedException(message, infoLog, result);
                 }
 

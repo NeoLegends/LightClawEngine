@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a three-dimensional polygon model.
     /// </summary>
-    public class Model : Entity, IDrawable, IEnumerable<ModelPart>, IUpdateable, ILateUpdateable
+    public class Model : Entity, IDrawable, IEnumerable<ModelPart>, IUpdateable
     {
         /// <summary>
         /// Notifies about a change in the <see cref="P:Component"/>.
@@ -36,25 +36,13 @@ namespace LightClaw.Engine.Graphics
         /// Notifies about the start of the updating process.
         /// </summary>
         /// <remarks>Raised before any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updating;
+        public event EventHandler<UpdateEventArgs> Updating;
 
         /// <summary>
         /// Notifies about the finish of the updating process.
         /// </summary>
         /// <remarks>Raised after any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updated;
-
-        /// <summary>
-        /// Notifies about the start of the late updating process.
-        /// </summary>
-        /// <remarks>Raised before any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdating;
-
-        /// <summary>
-        /// Notifies about the finish of the late updating process.
-        /// </summary>
-        /// <remarks>Raised after any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdated;
+        public event EventHandler<UpdateEventArgs> Updated;
 
         /// <summary>
         /// Backing field.
@@ -178,34 +166,24 @@ namespace LightClaw.Engine.Graphics
         /// Updates the model.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        public void Update(GameTime gameTime)
+        public bool Update(GameTime gameTime, int pass)
         {
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+            try
             {
+                this.Raise(this.Updating, gameTime, pass);
+                bool result = true;
                 foreach (ModelPart part in this.ModelParts)
                 {
                     if (part != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
                     {
-                        part.Update(gameTime);
+                        result &= part.Update(gameTime, pass);
                     }
                 }
+                return result;
             }
-        }
-
-        /// <summary>
-        /// Late-updates the <see cref="Model"/>.
-        /// </summary>
-        public void LateUpdate()
-        {
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
+            finally
             {
-                foreach (ModelPart part in this.ModelParts)
-                {
-                    if (part != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
-                    {
-                        part.LateUpdate();
-                    }
-                }
+                this.Raise(this.Updated, gameTime, pass);
             }
         }
     }

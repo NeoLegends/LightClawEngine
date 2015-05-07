@@ -25,7 +25,7 @@ namespace LightClaw.Engine.IO
         private readonly ConcurrentDictionary<ResourceString, AsyncLock> assetLocks = new ConcurrentDictionary<ResourceString, AsyncLock>();
 
         /// <summary>
-        /// Represents the asset cache. Assets are cached using weak references to reduce memory pressure.
+        /// Represents the asset cache. Assets are cached using weak references.
         /// </summary>
         private readonly ConcurrentDictionary<ResourceKey, WeakReference<object>> cachedAssets = new ConcurrentDictionary<ResourceKey, WeakReference<object>>();
 
@@ -98,7 +98,7 @@ namespace LightClaw.Engine.IO
         public async Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
+            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             {
                 return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString, token)).AnyAsync(b => b);
             }
@@ -116,9 +116,9 @@ namespace LightClaw.Engine.IO
         public async Task<Stream> GetStreamAsync(ResourceString resourceString, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            Logger.Debug(rs => "Obtaining stream around '{0}'.".FormatWith(rs), resourceString);
+            Log.Debug(() => "Obtaining stream around '{0}'.".FormatWith(resourceString));
 
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
+            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.StreamObtaining, this.StreamObtained, resourceString, resourceString))
             {
                 try
@@ -128,7 +128,7 @@ namespace LightClaw.Engine.IO
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Logger.Warn(rs => "No writable stream around '{0}' found.".FormatWith(rs), resourceString);
+                    Log.Warn(() => "No writable stream around '{0}' found.".FormatWith(resourceString));
                     throw new FileNotFoundException(
                         "No writable stream was found. If reading is required only, consider registering an IContentReader in combination with LoadAsync.",
                         ex
@@ -146,9 +146,8 @@ namespace LightClaw.Engine.IO
         /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
         /// information about the asset being read. 
         /// <example> 
-        /// Imagine a content reader reading texture files to a
-        /// generic texture class. It needs information about the file type of the image to load to be able to properly
-        /// load it. 
+        /// Imagine a content reader reading texture files to a generic texture class. It needs information about
+        /// the file type of the image to load to be able to load it properly. 
         /// </example>
         /// </param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation of the content loading process.</param>
@@ -156,14 +155,14 @@ namespace LightClaw.Engine.IO
         /// Indicates whether to force-load the asset from the disk and bypass any caching structures.
         /// </param>
         /// <returns>The loaded asset.</returns>
-        /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
+        /// <exception cref="AssetNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
         public async Task<object> LoadAsync(ResourceString resourceString, Type assetType, object parameter, CancellationToken token, bool forceReload)
         {
             token.ThrowIfCancellationRequested();
-            Logger.Debug((at, rs) => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(at.AssemblyQualifiedName, rs), assetType, resourceString);
+            Log.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
-            using (var releaser = await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
+            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
                 WeakReference<object> cachedAsset = null;
@@ -173,41 +172,41 @@ namespace LightClaw.Engine.IO
                     !this.cachedAssets.TryGetValue(new ResourceKey(resourceString, assetType), out cachedAsset) || // no cache available or
                     !cachedAsset.TryGetTarget(out asset)) // weak reference to cached asset collected.
                 {
-                    Logger.Debug(
-                        (fr, rs) => ((fr ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(rs),
-                        forceReload, resourceString
+                    Log.Debug(
+                        () => ((forceReload ? "Reload of '{0}' forced" : "No cached version of '{0}' available") + ", obtaining stream...").FormatWith(resourceString)
                     );
                     token.ThrowIfCancellationRequested();
+                    
                     using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false, token))
                                                                     .FirstFinishedOrDefaultAsync(s => s != null))
                     {
                         // If the stream could not be found, throw exception
                         if (assetStream == null)
                         {
-                            string message = "Asset '{0}' could not be found.".FormatWith(resourceString);
-                            Logger.Warn(message);
-                            throw new FileNotFoundException(message);
+                            AssetNotFoundException ex = new AssetNotFoundException(resourceString, assetType);
+                            Log.Warn("Asset '{0}' could not be found.".FormatWith(resourceString), ex);
+                            throw ex;
                         }
 
                         // Try to deserialize using registered content readers
-                        Logger.Debug(rs => "Stream around '{0}' obtained, obtaining reader...".FormatWith(rs), resourceString);
+                        Log.Debug(() => "Stream around '{0}' obtained, obtaining reader...".FormatWith(resourceString));
                         IContentReader reader = this.GetReader(assetType, parameter);
                         if (reader != null)
                         {
-                            Logger.Debug((rs, at) => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(rs, at.FullName), resourceString, assetType);
+                            Log.Trace(() => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(resourceString, assetType.FullName));
                             token.ThrowIfCancellationRequested();
                             asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter));
                         }
                         else
                         {
-                            Logger.Debug(at => "{0} for asset type '{1}' could not be obtained.".FormatWith(typeof(IContentReader).Name, at.FullName), assetType);
+                            Log.Trace(() => "{0} for asset type '{1}' could not be obtained.".FormatWith(typeof(IContentReader).Name, assetType.FullName));
                         }
 
                         // If no content reader was able to deserialize the asset, forget it and throw exception
                         if (asset == null)
                         {
                             string message = "Asset '{0}' could not be deserialized.".FormatWith(resourceString);
-                            Logger.Warn(message);
+                            Log.Warn(message);
                             throw new InvalidOperationException(message);
                         }
                     }
@@ -217,11 +216,11 @@ namespace LightClaw.Engine.IO
                 }
                 else
                 {
-                    Logger.Debug(rs => "Cached version of '{0}' available, returning that instead.".FormatWith(rs), resourceString);
+                    Log.Trace(() => "Cached version of '{0}' available, returning that instead.".FormatWith(resourceString));
                     // Remark for the future: No need to use cachedAsset.TryGetTarget, we've already called it inside the if.
                 }
 
-                Logger.Debug(rs => "Asset '{0}' loaded successfully.".FormatWith(rs), resourceString);
+                Log.Debug(() => "Asset '{0}' loaded successfully.".FormatWith(resourceString));
                 return asset;
             }
         }
@@ -306,7 +305,7 @@ namespace LightClaw.Engine.IO
             IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType, parameter));
             if (reader == null)
             {
-                Logger.Debug(t => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, t.FullName), assetType);
+                Log.Debug(() => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, assetType.FullName));
                 ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
                 if (attr != null && (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
                 {

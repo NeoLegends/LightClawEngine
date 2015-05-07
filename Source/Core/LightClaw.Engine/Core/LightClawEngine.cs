@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.IO;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
-using log4net;
+using NLog;
 
 namespace LightClaw.Engine.Core
 {
@@ -24,7 +25,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A <see cref="ILog"/> used to track application messages.
         /// </summary>
-        private static readonly ILog logger = LogManager.GetLogger(typeof(LightClawEngine));
+        private static readonly Logger logger = LogManager.GetLogger(typeof(LightClawEngine).FullName);
 
         /// <summary>
         /// Backign field.
@@ -68,7 +69,7 @@ namespace LightClaw.Engine.Core
         private static void Main(string[] args)
         {
             logger.Info(
-                "LightClaw starting up on {0}, {1} bit.".FormatWith(Environment.OSVersion.VersionString, Environment.Is64BitProcess ? "64" : "32")
+                () => "LightClaw starting up on {0}, {1} bit.".FormatWith(Environment.OSVersion.VersionString, Environment.Is64BitProcess ? "64" : "32")
             );
 
 #if DESKTOP
@@ -78,43 +79,43 @@ namespace LightClaw.Engine.Core
                 "ProfileOptimization"
             );
 
-            logger.Info(pr => "Initializing profile optimization. Profile root will be '{0}'.".FormatWith(pr), profileRoot);
+            logger.Info(() => "Initializing profile optimization. Profile root will be '{0}'.".FormatWith(profileRoot));
             Directory.CreateDirectory(profileRoot);
             ProfileOptimization.SetProfileRoot(profileRoot);
 
             string profile = Assembly.GetExecutingAssembly().GetName().FullName;
-            logger.Info(p => "Enabling profile '{0}'.".FormatWith(p), profile);
+            logger.Info(() => "Enabling profile '{0}'.".FormatWith(profile));
             ProfileOptimization.StartProfile(profile);
 #endif
 
+            MainThreadId = Thread.CurrentThread.ManagedThreadId;
+
             try
             {
-                MainThreadId = Thread.CurrentThread.ManagedThreadId;
-
                 string startScene = GeneralSettings.Default.StartScene;
                 if (startScene == null)
                 {
                     throw new NullReferenceException("Start scene settings entry was null.");
                 }
 
-                logger.Info(s => "Initializing Game with start scene '{0}'.".FormatWith(s), startScene);
-                //using ()
+                logger.Info("Initializing Game with start scene '{0}'.".FormatWith(startScene));
+                using (Game game = new Game(startScene))
                 {
-                    Game game = new Game(startScene);
                     logger.Info("Game created, starting up.");
                     DefaultIocContainer.RegisterInstance<IGame>(game);
                     game.Run();
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                logger.Fatal(ex => "An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), exception, exception);
+                logger.Fatal("An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
                 throw;
             }
             finally
             {
                 LogManager.Shutdown();
                 DefaultIocContainer.Dispose();
+                Dispatcher.Current.Dispose();
             }
         }
     }

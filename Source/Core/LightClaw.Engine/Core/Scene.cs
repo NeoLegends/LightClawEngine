@@ -12,8 +12,8 @@ using DryIoc;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
-using log4net;
 using Newtonsoft.Json;
+using NLog;
 
 namespace LightClaw.Engine.Core
 {
@@ -27,7 +27,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A static logger instance.
         /// </summary>
-        private static readonly ILog staticLogger = LogManager.GetLogger(typeof(Scene));
+        private static readonly Logger staticLogger = LogManager.GetLogger(typeof(Scene).Name);
 
         /// <summary>
         /// A common <see cref="JsonSerializer"/> used to save / load the <see cref="Scene"/>.
@@ -85,7 +85,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public Scene()
         {
-            Logger.Info(() => "Initializing a new scene.");
+            Log.Info(() => "Initializing a new scene.");
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanWrite);
 
-            Logger.Info(l => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(l), level);
+            Log.Info(() => "Saving scene in a compressed format by redirecting scene data to a compression stream (level '{0}')...".FormatWith(level));
 
             using (DeflateStream deflateStream = new DeflateStream(s, level, true))
             {
@@ -294,7 +294,7 @@ namespace LightClaw.Engine.Core
 
             return Task.Run(() =>
             {
-                Logger.Info(() => "Saving scene to a stream.");
+                Log.Info(() => "Saving scene to a stream.");
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
                 using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 1024, true))
@@ -304,7 +304,7 @@ namespace LightClaw.Engine.Core
                     //new NetDataContractSerializer().WriteObject(s, this); // Check whether we can switch to Json.NET here
                 }
 
-                Logger.Info(() => "Scene saved.");
+                Log.Info(() => "Scene saved.");
             });
         }
 
@@ -331,7 +331,6 @@ namespace LightClaw.Engine.Core
         {
             if (!this.SuppressDraw)
             {
-                ThreadF.ThrowIfNotMainThread();
                 base.OnDraw();
             }
         }
@@ -355,17 +354,11 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Implementation of <see cref="M:Update"/>.
         /// </summary>
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
-            Parallel.ForEach(this.Items, item => item.Update(gameTime));
-        }
-
-        /// <summary>
-        /// Implementation of <see cref="M:LateUpdate"/>.
-        /// </summary>
-        protected override void OnLateUpdate()
-        {
-            Parallel.ForEach(this.Items, item => item.LateUpdate());
+            bool result = true;
+            Parallel.ForEach(this.Items, item => result &= item.Update(gameTime, pass));
+            return result;
         }
 
         /// <summary>
@@ -425,12 +418,12 @@ namespace LightClaw.Engine.Core
             sceneLoadingTask.ContinueWith(
                 t =>
                 {
-                    staticLogger.Info(scene => "Scene '{0}' loaded.".FormatWith((scene != null) ? scene.Name : "N/A"), t.Result);
+                    staticLogger.Info(() => "Scene '{0}' loaded.".FormatWith((t.Result != null) ? t.Result.Name : "N/A"));
                     return t.Result;
                 }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
             );
             sceneLoadingTask.ContinueWith(
-                t => staticLogger.Warn(scene => "Scene loading failed.".FormatWith(scene.Name), t.Exception, t.Result), 
+                t => staticLogger.Warn("Scene loading failed.", t.Exception), 
                 TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
             );
             return sceneLoadingTask;

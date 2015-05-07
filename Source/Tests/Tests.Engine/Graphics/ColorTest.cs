@@ -12,10 +12,11 @@ namespace Tests.Graphics
         public void ColorSaveAndLoadHexString()
         {
             string colorAsHex = Color.Blue.HexCode;
+
             Color loadedFromHex = new Color(colorAsHex);
 
             Console.WriteLine("Values from hex - R: {0}, G: {1}, B: {2}, A: {3}".FormatWith(loadedFromHex.R, loadedFromHex.G, loadedFromHex.B, loadedFromHex.A));
-            Assert.AreEqual(loadedFromHex.B, byte.MaxValue);
+            Assert.AreEqual(Color.Blue, loadedFromHex);
         }
 
         [TestMethod]

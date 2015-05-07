@@ -165,7 +165,7 @@ namespace LightClaw.GameCode
                 this.program = new ShaderProgram(shaders);
             });
 
-            Task.Run(() => this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(() => Logger.Info("Hello from the message pumped through the dispatcher!")));
+            Task.Run(() => this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(() => Log.Info("Hello from the message pumped through the dispatcher!")));
 
             base.OnLoad();
         }
@@ -176,7 +176,7 @@ namespace LightClaw.GameCode
             {
                 for (int i = 0; i < cubeData.Length; i++)
                 {
-                    Logger.Info((index, v) => "Vector {0} will be {1} after transformation.".FormatWith(index, v), i, modelViewProjectionMatrix * new Vector4(cubeData[i], 1.0f));
+                    Log.Info((index, v) => "Vector {0} will be {1} after transformation.".FormatWith(index, v), i, modelViewProjectionMatrix * new Vector4(cubeData[i], 1.0f));
                 }
 
                 this.colorBuffer.Set(colorData);
@@ -195,12 +195,12 @@ namespace LightClaw.GameCode
                     //program.Uniforms["MVP"].Set(modelViewProjectionMatrix);
                     if (getErrorCount < 3)
                     {
-                        Logger.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
+                        Log.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
                     }
                     vao.DrawIndexed();
                     if (getErrorCount < 3)
                     {
-                        Logger.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
+                        Log.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
                         getErrorCount++;
                     }
                 }

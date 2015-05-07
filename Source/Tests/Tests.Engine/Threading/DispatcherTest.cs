@@ -13,55 +13,19 @@ namespace Tests.Core.Threading
     public class DispatcherTest
     {
         [TestMethod]
-        public void TestDispatcherSpeedLong()
+        public void TestDispatcherSpeed()
         {
-            Dispatcher dispatcher = new Dispatcher();
-
-            TimeSpan elapsedWithFor = TimeSpan.Zero;
-            TimeSpan elapsedWithDispatcher = TimeSpan.Zero;
-            int count = 100;
-            int runs = 10;
-
-            Stopwatch st = Stopwatch.StartNew();
-
-            for (int z = 0; z < runs; z++)
-            {
-                st.Restart();
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                for (int i = 0; i < count; i++)
-                {
-                    long primeNumber = FindPrimeNumber(i * 100);
-                }
-
-                elapsedWithFor += st.Elapsed;
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                st.Restart();
-                for (int i = 0; i < count; i++)
-                {
-                    dispatcher.Invoke(j => FindPrimeNumber(j * 100), i);
-                }
-                dispatcher.Pop();
-                
-                elapsedWithDispatcher += st.Elapsed;
-            }
-
-            Console.WriteLine("Calculating prime numbers (long operation) with a for loop took {0} ticks on average.", (double)elapsedWithFor.Ticks / runs);
-            Console.WriteLine("Calculating prime numbers (long operation) with the dispatcher took {0} ticks on average. This is {1} times the original time.", 
-                (double)elapsedWithDispatcher.Ticks / runs, 
-                (double)elapsedWithDispatcher.Ticks / (double)elapsedWithFor.Ticks
-            );
+            ExecuteDispatcherTest(d => d.Invoke(ShortFunction));
         }
 
         [TestMethod]
-        public void TestDispatcherSpeedShort()
+        public void TestDispatcherSpeedInvokeSlim()
         {
-            Dispatcher dispatcher = new Dispatcher();
+            ExecuteDispatcherTest(d => d.InvokeSlim(ShortFunction));
+        }
 
+        private static void ExecuteDispatcherTest(Action<Dispatcher> dispatcherFunction)
+        {
             TimeSpan elapsedWithFor = TimeSpan.Zero;
             TimeSpan elapsedWithDispatcher = TimeSpan.Zero;
             int count = 1000000;
@@ -84,51 +48,27 @@ namespace Tests.Core.Threading
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
+                Dispatcher dispatcher = Dispatcher.Current;
                 for (int i = 0; i < count; i++)
                 {
-                    dispatcher.Invoke(ShortFunction);
+                    dispatcherFunction(dispatcher);
                 }
+                dispatcher.Dispose();
                 st.Restart();
-                dispatcher.Pop();
+                dispatcher.Run();
 
                 elapsedWithDispatcher += st.Elapsed;
             }
 
-            Console.WriteLine("Executing the short function with for times took {1} on average.", 
+            Console.WriteLine("Executing the short function with for times took {1} on average.",
                 count,
                 (double)elapsedWithFor.Ticks / runs
             );
-            Console.WriteLine("Executing the short function with the dispatcher took {1} on average. This is {2} times longer than with for.", 
-                count, 
-                (double)elapsedWithDispatcher.Ticks / runs, 
+            Console.WriteLine("Executing the short function with the dispatcher took {1} on average. This is {2} times longer than with for.",
+                count,
+                (double)elapsedWithDispatcher.Ticks / runs,
                 (double)elapsedWithDispatcher.Ticks / (double)elapsedWithFor.Ticks
             );
-        }
-
-        private static long FindPrimeNumber(int n)
-        {
-            int count = 0;
-            long a = 2;
-            while (count < n)
-            {
-                long b = 2;
-                int prime = 1;
-                while (b * b <= a)
-                {
-                    if (a % b == 0)
-                    {
-                        prime = 0;
-                        break;
-                    }
-                    b++;
-                }
-                if (prime > 0)
-                {
-                    count++;
-                }
-                a++;
-            }
-            return (--a);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

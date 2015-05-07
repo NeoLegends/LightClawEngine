@@ -7,8 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
-using log4net;
+using NLog;
 
 namespace LightClaw.Engine.Core
 {
@@ -26,10 +27,29 @@ namespace LightClaw.Engine.Core
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
+        /// Backing field.
+        /// </summary>
+        private Logger _Log;
+
+        /// <summary>
         /// An instance of <see cref="ILog"/> used to track application events.
         /// </summary>
         [IgnoreDataMember]
-        protected ILog Logger { get; set; }
+        protected Logger Log
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Logger>() != null);
+
+                return _Log;
+            }
+            set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                _Log = value;
+            }
+        }
 
         /// <summary>
         /// Backing field.
@@ -83,9 +103,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected Entity()
         {
-            Type entityType = this.GetType();
-            this.Logger = LogManager.GetLogger(entityType);
-            Logger.Debug(type => "Initializing a new entity of type '{0}'.".FormatWith(type.FullName), entityType);
+            this.Log = LogManager.GetLogger(this.GetType().FullName);
         }
 
         /// <summary>
@@ -96,22 +114,6 @@ namespace LightClaw.Engine.Core
             : this()
         {
             this.Name = name;
-        }
-
-        /// <summary>
-        /// Invokes the specified delegate via late binding. See remarks.
-        /// </summary>
-        /// <remarks>Late binding is slow, avoid this method wherever possible.</remarks>
-        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
-        /// <param name="parameters">Delegate parameters.</param>
-        protected void Raise(Delegate del, params object[] parameters)
-        {
-            Contract.Requires<ArgumentNullException>(parameters != null);
-
-            if (del != null)
-            {
-                del.DynamicInvoke(parameters);
-            }
         }
 
         /// <summary>
@@ -140,6 +142,31 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Raises the specified <paramref name="handler"/>.
         /// </summary>
+        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
+        /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
+        protected void Raise(EventHandler<UpdateEventArgs> handler, GameTime gameTime, int pass)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(pass >= 0);
+
+            if (handler != null)
+            {
+                handler(this, new UpdateEventArgs(gameTime, pass));
+            }
+        }
+
+        /// <summary>
+        /// Raises the specified <paramref name="handler"/>.
+        /// </summary>
+        /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
+        /// <param name="args">Arguments for creation of a new <see cref="ParameterEventArgs"/>.</param>
+        protected void Raise<T>(EventHandler<T> handler, T args)
+        {
+            this.Raise(handler, args);
+        }
+
+        /// <summary>
+        /// Raises the specified <paramref name="handler"/>.
+        /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of value that changed.</typeparam>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="newValue">The value of the variable after the change.</param>
@@ -149,6 +176,22 @@ namespace LightClaw.Engine.Core
             if (handler != null)
             {
                 handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
+            }
+        }
+
+        /// <summary>
+        /// Invokes the specified delegate via late binding. See remarks.
+        /// </summary>
+        /// <remarks>Late binding is slow, avoid this method wherever possible.</remarks>
+        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
+        /// <param name="parameters">Delegate parameters.</param>
+        protected void RaiseDynamic(Delegate del, params object[] parameters)
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null);
+
+            if (del != null)
+            {
+                del.DynamicInvoke(parameters);
             }
         }
 
@@ -202,7 +245,7 @@ namespace LightClaw.Engine.Core
         private void ObjectInvariant()
         {
             Contract.Invariant(this._IocC != null);
-            Contract.Invariant(this.Logger != null);
+            Contract.Invariant(this._Log != null);
         }
 
         /// <summary>

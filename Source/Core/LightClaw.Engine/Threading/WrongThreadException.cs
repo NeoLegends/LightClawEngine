@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Core
+namespace LightClaw.Engine.Threading
 {
     /// <summary>
     /// An error describing the condition when the current thread is not a specified thread.

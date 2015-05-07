@@ -198,11 +198,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(s => GL.DeleteShader(s), this, Threading.DispatcherPriority.Background);
+                        GL.DeleteShader(this);
                     }
                     catch (AccessViolationException ex)
                     {
-                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(Shader).Name), ex, ex);
+                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Shader).Name), ex);
                     }
                 }
             }
@@ -214,7 +214,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         protected override void OnInitialize()
         {
-            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
+            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
 
             this.Handle = GL.CreateShader(this.Type);
             GL.ShaderSource(this, this.Source);
@@ -226,7 +226,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 string infoLog = GL.GetShaderInfoLog(this);
                 string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
-                Logger.Error(message);
+                Log.Error(message);
                 throw new CompilationFailedException(message, infoLog, result);
             }
         }

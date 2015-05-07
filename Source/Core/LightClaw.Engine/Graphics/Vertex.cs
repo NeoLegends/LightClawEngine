@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a vertex storing position, normal and texture coordinates.
     /// </summary>
-    [DataContract]
+    [Serializable, DataContract]
     [StructLayout(LayoutKind.Sequential)] // Even though sequential is default, specify for clarity
     public struct Vertex
     {
@@ -78,59 +78,6 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private static readonly VertexAttributePointer[] _VAPMultipleBuffers = new VertexAttributePointer[]
-        {
-            new VertexAttributePointer(VertexAttributeLocation.Position, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
-            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
-            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.Float, false, 0, 0),
-            new VertexAttributePointer(VertexAttributeLocation.Color, 4, OpenTK.Graphics.OpenGL4.VertexAttribPointerType.UnsignedByte, false, 0, 0)
-        };
-
-        /// <summary> 
-        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see cref="Vertex"/>. 
-        /// The configuration can be used together with multiple buffers storing the attributes. 
-        /// </summary> 
-        /// <remarks> 
-        /// <para> 
-        /// Attribute location in GLSL will be assumed as follows: 
-        /// <list type="bullet"> 
-        ///     <item> 
-        ///         <description> 
-        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Position"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description> 
-        ///             Vertex Normal (3 float): <see cref="VertexAttributeLocation.Normals"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description> 
-        ///             Texture Coordinates (2 float): <see cref="VertexAttributeLocation.TexCoords"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description>
-        ///             Color (4 unsigned byte): <see cref="VertexAttributeLocation.Color"/> 
-        ///         </description> 
-        ///     </item> 
-        /// </list> 
-        /// </para> 
-        /// </remarks>
-        public static VertexAttributePointer[] VAPMultipleBuffers
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
-                Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
-
-                return _VAPMultipleBuffers.ToArray();
-            }
-        }
-
-        /// <summary>
         /// The <see cref="Vertex"/>'s position.
         /// </summary>
         [DataMember]
@@ -155,6 +102,30 @@ namespace LightClaw.Engine.Graphics
         public Color Color;
 
         /// <summary>
+        /// The first bone weighting.
+        /// </summary>
+        [DataMember]
+        public BoneWeighting BoneWeight0;
+
+        /// <summary>
+        /// The second bone weighting.
+        /// </summary>
+        [DataMember]
+        public BoneWeighting BoneWeight1;
+
+        /// <summary>
+        /// The third bone weighting.
+        /// </summary>
+        [DataMember]
+        public BoneWeighting BoneWeight2;
+
+        /// <summary>
+        /// The fourth bone weighting.
+        /// </summary>
+        [DataMember]
+        public BoneWeighting BoneWeight3;
+
+        /// <summary>
         /// Initializes a new <see cref="Vertex"/> from a position, a normal, a color and a texture coordinate.
         /// </summary>
         /// <param name="position">The <see cref="Vertex"/>'s position.</param>
@@ -162,6 +133,7 @@ namespace LightClaw.Engine.Graphics
         /// <param name="texCoord">The <see cref="Vertex"/>'s texture coordinates.</param>
         /// <param name="color">The <see cref="Vertex"/>'s color.</param>
         public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord, Color color)
+            : this()
         {
             this.Normal = normal;
             this.Position = position;

@@ -83,13 +83,13 @@ namespace LightClaw.Engine.Graphics
                     }
                     else
                     {
-                        Logger.Warn(() => "The texture unit of the sampler to bind ({0}) didn't match the texture unit of the texture ({1}). The sampler will not be bound.".FormatWith(sampler.TextureUnit, texture.TextureUnit));
+                        Log.Warn(() => "The texture unit of the sampler to bind ({0}) didn't match the texture unit of the texture ({1}). The sampler will not be bound.".FormatWith(sampler.TextureUnit, texture.TextureUnit));
                     }
                 }
             }
             else
             {
-                Logger.Warn(() => "Texture to bind to the sampler in the shader was null and thus will not be bound. This is presumably unwanted behaviour!");
+                Log.Warn(() => "Texture to bind to the sampler in the shader was null and thus will not be bound. This is presumably unwanted behaviour!");
             }
         }
 

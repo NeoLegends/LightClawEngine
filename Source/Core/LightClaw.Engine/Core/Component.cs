@@ -71,11 +71,9 @@ namespace LightClaw.Engine.Core
         /// Callback when the <see cref="Component"/> is updates with the specified <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        protected override void OnUpdate(GameTime gameTime) { }
-
-        /// <summary>
-        /// Callback when the <see cref="Component"/> is late-updated.
-        /// </summary>
-        protected override void OnLateUpdate() { }
+        protected override bool OnUpdate(GameTime gameTime, int pass) 
+        {
+            return true;
+        }
     }
 }

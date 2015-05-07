@@ -164,11 +164,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     try
                     {
-                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(vao => GL.DeleteVertexArray(vao), this, Threading.DispatcherPriority.Background);
+                        GL.DeleteVertexArray(this);
                     }
                     catch (AccessViolationException ex)
                     {
-                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(VertexArrayObject).Name), ex, ex);
+                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(VertexArrayObject).Name), ex);
                     }
                 }
             }
@@ -177,7 +177,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void OnInitialize()
         {
-            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
+            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
 
             this.Handle = GL.GenVertexArray();
             try // Can't use Binding and using clause here because it causes a stackoverflow

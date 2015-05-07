@@ -82,10 +82,23 @@ namespace LightClaw.Engine.Core
             unchecked
             {
                 int finalHash = 0;
-                foreach (int hash in hashes)
+
+                IList<int> list = hashes as IList<int>;
+                if (list != null)
                 {
-                    finalHash = finalHash * HashFactor + hash;
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        finalHash = finalHash * HashFactor + list[i];
+                    }
                 }
+                else
+                {
+                    foreach (int hash in hashes)
+                    {
+                        finalHash = finalHash * HashFactor + hash;
+                    }
+                }
+
                 return finalHash;
             }
         }
@@ -238,36 +251,23 @@ namespace LightClaw.Engine.Core
             if (collection != null)
             {
                 int finalHash = HashStart;
-                foreach (T item in collection)
-                {
-                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(item));
-                }
-                return finalHash;
-            }
-            else
-            {
-                return 0;
-            }
-        }
 
-        /// <summary>
-        /// Gets the hash codes of all elements inside the <paramref name="array"/>.
-        /// </summary>
-        /// <remarks>
-        /// No parameter array to avoid accidental use of this method which performs worse than the generic methods.
-        /// </remarks>
-        /// <typeparam name="T">The <see cref="Type"/> of array to get the hash codes for.</typeparam>
-        /// <param name="array">The array to get the hash codes from.</param>
-        /// <returns>The combined hash code or <c>0</c> if the <paramref name="array"/> was <c>null</c>.</returns>
-        public static int GetHashCode<T>(T[] array)
-        {
-            if (array != null)
-            {
-                int finalHash = HashStart;
-                for (int i = 0; i < array.Length; i++)
+                IList<T> list = collection as IList<T>;
+                if (list != null) // Iterating via for-loop is faster than foreach
                 {
-                    finalHash = unchecked(finalHash * HashFactor + GetHashCode(array[i]));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        finalHash = unchecked(finalHash * HashFactor + GetHashCode(list[i]));
+                    }
                 }
+                else
+                {
+                    foreach (T item in collection)
+                    {
+                        finalHash = unchecked(finalHash * HashFactor + GetHashCode(item));
+                    }
+                }
+
                 return finalHash;
             }
             else

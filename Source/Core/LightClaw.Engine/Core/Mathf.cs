@@ -11,7 +11,6 @@ namespace LightClaw.Engine.Core
     /// </summary>
     /// <remarks>This class is thread-safe.</remarks>
     [Pure]
-    [ThreadMode(true)]
     public static class MathF
     {
         /// <summary>
@@ -135,6 +134,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
+        [CLSCompliant(false)]
         public static short ClampToInt16(uint value)
         {
             return (value <= short.MaxValue) ? (short)value : short.MaxValue;
@@ -155,6 +155,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="value">The value to clamp.</param>
         /// <returns>The clamped value.</returns>
+        [CLSCompliant(false)]
         public static short ClampToInt16(ulong value)
         {
             return (ClampToInt64(value) <= short.MaxValue) ? (short)value : short.MaxValue;

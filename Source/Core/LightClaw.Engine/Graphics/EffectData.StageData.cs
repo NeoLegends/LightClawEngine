@@ -36,9 +36,7 @@ namespace LightClaw.Engine.Graphics
             [DataMember]
             public string ColorAttribute { get; private set; }
 
-            private StageData()
-            {
-            }
+            private StageData() { }
 
             public StageData(ResourceString source)
                 : this(source, null, null, null, null, null, null)
@@ -119,6 +117,12 @@ namespace LightClaw.Engine.Graphics
                 );
             }
 
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.Source != null);
+            }
+
             public static bool operator ==(StageData left, StageData right)
             {
                 if (ReferenceEquals(left, right))
@@ -132,12 +136,6 @@ namespace LightClaw.Engine.Graphics
             public static bool operator !=(StageData left, StageData right)
             {
                 return !(left == right);
-            }
-
-            [ContractInvariantMethod]
-            private void ObjectInvariant()
-            {
-                Contract.Invariant(this.Source != null);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics
     /// Represents a subdivision of the <see cref="Model"/>-class allowing for different shaders on the same
     /// <see cref="Model"/>.
     /// </summary>
-    public class ModelPart : Entity, IDrawable, IUpdateable, ILateUpdateable
+    public class ModelPart : Entity, IDrawable, IUpdateable
     {
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -42,25 +42,13 @@ namespace LightClaw.Engine.Graphics
         /// Notifies about the start of the updating process.
         /// </summary>
         /// <remarks>Raised before any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updating;
+        public event EventHandler<UpdateEventArgs> Updating;
 
         /// <summary>
         /// Notifies about the finsih of the updating process.
         /// </summary>
         /// <remarks>Raised after any updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> Updated;
-
-        /// <summary>
-        /// Notifies about the start of the late updating process.
-        /// </summary>
-        /// <remarks>Raised before any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdating;
-
-        /// <summary>
-        /// Notifies about the finsih of the late updating process.
-        /// </summary>
-        /// <remarks>Raised after any late updating operations.</remarks>
-        public event EventHandler<ParameterEventArgs> LateUpdated;
+        public event EventHandler<UpdateEventArgs> Updated;
 
         /// <summary>
         /// Notifies about changes in the <see cref="VertexArrayObject"/>.
@@ -185,34 +173,26 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Updates the <see cref="ModelPart"/> updating the <see cref="Material"/>.
+        /// Updates the <see cref="ModelPart"/> updating the <see cref="ModelEffect"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        public void Update(GameTime gameTime)
+        public bool Update(GameTime gameTime, int pass)
         {
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Updating, this.Updated))
+            try
             {
+                this.Raise(this.Updating, gameTime, pass);
                 ModelEffect effect = this.Effect;
                 if (effect != null)
                 {
-                    effect.Update(gameTime);
+                    return effect.Update(gameTime, pass);
                 }
             }
-        }
+            finally
+            {
+                this.Raise(this.Updated, gameTime, pass);
+            }
 
-        /// <summary>
-        /// Late-updates the <see cref="ModelPart"/>.
-        /// </summary>
-        public void LateUpdate()
-        {
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.LateUpdating, this.LateUpdated))
-            {
-                ModelEffect effect = this.Effect;
-                if (effect != null)
-                {
-                    effect.LateUpdate();
-                }
-            }
+            return true;
         }
     }
 }

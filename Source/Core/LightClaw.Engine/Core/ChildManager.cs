@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Core
@@ -135,23 +136,14 @@ namespace LightClaw.Engine.Core
         /// Callback updating the children with the specified <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
+            bool result = true;
             foreach (T item in this.Items)
             {
-                item.Update(gameTime);
+                result &= item.Update(gameTime, pass);
             }
-        }
-
-        /// <summary>
-        /// Callback triggering the late update in all children.
-        /// </summary>
-        protected override void OnLateUpdate()
-        {
-            foreach (T item in this.Items)
-            {
-                item.LateUpdate();
-            }
+            return result;
         }
 
         /// <summary>

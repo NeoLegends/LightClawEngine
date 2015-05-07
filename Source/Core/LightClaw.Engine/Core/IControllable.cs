@@ -9,7 +9,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Defines a mechanism to control an item in the scene hierarchy.
     /// </summary>
-    public interface IControllable : IDisposable, ILateUpdateable, IUpdateable
+    public interface IControllable : IDisposable, IUpdateable
     {
         /// <summary>
         /// Notifies about the start of the enabling process.

@@ -93,30 +93,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Dispatcher _GraphicsDispatcher = new Dispatcher();
-
-        /// <summary>
-        /// The <see cref="Dispatcher"/> used to submit work to the rendering thread.
-        /// </summary>
-        public Dispatcher GraphicsDispatcher
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<Dispatcher>() != null);
-
-                return _GraphicsDispatcher;
-            }
-            set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _GraphicsDispatcher, value);
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private ISceneManager _SceneManager;
 
         /// <summary>
@@ -182,13 +158,13 @@ namespace LightClaw.Engine.Core
             this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
             this.GameWindow.Unload += (s, e) => this.OnUnload();
 
-            Logger.Debug(s => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, s), startScene);
+            Log.Debug(() => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, startScene));
             this.SceneManager = new SceneManager(startScene);
             this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
 
             this.LoadIcon();
 
-            Logger.Debug(() => "Game successfully created.");
+            Log.Debug(() => "Game successfully created.");
         }
 
         /// <summary>
@@ -199,11 +175,10 @@ namespace LightClaw.Engine.Core
             bool limitFps = VideoSettings.Default.LimitFPS;
             double maxFrameRate = VideoSettings.Default.FPSLimit;
 
-            Logger.Info(
-                (fpsLimited, frameRate) => fpsLimited ?
-                    "Entering game loop. FPS will be limited to {0}.".FormatWith(frameRate) :
-                    "Entering game loop with unlimited frame rate.",
-                limitFps, maxFrameRate
+            Log.Info(
+                () => limitFps ?
+                    "Entering game loop. FPS will be limited to {0}.".FormatWith(maxFrameRate) :
+                    "Entering game loop with unlimited frame rate."
             );
 
             this.GameWindow.Run(limitFps ? maxFrameRate : 0.0);
@@ -216,7 +191,6 @@ namespace LightClaw.Engine.Core
         protected override void Dispose(bool disposing)
         {
             this.SceneManager.Dispose();
-            this.GraphicsDispatcher.Dispose();
             //this.GameWindow.Dispose();
 
             base.Dispose(disposing);
@@ -227,7 +201,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected virtual void OnClosed()
         {
-            Logger.Info(() => "Closing game window.");
+            Log.Info(() => "Closing game window.");
 
             this.Dispose();
         }
@@ -291,9 +265,7 @@ namespace LightClaw.Engine.Core
             GameTime currentGameTime = this.CurrentGameTime = this.CurrentGameTime + elapsedSinceLastUpdate;
 
             Contract.Assume(this.SceneManager != null);
-            this.SceneManager.Update(currentGameTime);
-            this.GraphicsDispatcher.Pop(); // Calculate time for dispatcher using delta time in the future
-            this.SceneManager.LateUpdate();
+            //this.SceneManager.Update(currentGameTime);
         }
 
         /// <summary>
@@ -307,22 +279,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Loads the icon.
         /// </summary>
-        private void LoadIcon()
+        private async void LoadIcon()
         {
-            Task<System.Drawing.Icon> iconLoadTask = this.IocC.Resolve<IContentManager>()
-                                                              .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
-            iconLoadTask.ContinueWith(
-                t =>
-                {
-                    this.GameWindow.Icon = t.Result;
-                    Logger.Debug(iconPath => "Icon '{0}' loaded successfully.".FormatWith(iconPath), GeneralSettings.Default.IconPath);
-                },
-                TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
-            );
-            iconLoadTask.ContinueWith(
-                t => Logger.Warn(ex => "Icon loading failed. An exception of type '{0}' occured.".FormatWith(ex.GetType().AssemblyQualifiedName), t.Exception, t.Exception),
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
-            );
+            try
+            {
+                this.GameWindow.Icon = await this.IocC.Resolve<IContentManager>()
+                                                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An error of type {0} occured while loading the game's icon.".FormatWith(ex.GetType().FullName), ex);
+            }
         }
 
         /// <summary>
@@ -332,7 +299,6 @@ namespace LightClaw.Engine.Core
         private void ObjectInvariant()
         {
             Contract.Invariant(this._GameWindow != null);
-            Contract.Invariant(this._GraphicsDispatcher != null);
             Contract.Invariant(this._SceneManager != null);
         }
     }

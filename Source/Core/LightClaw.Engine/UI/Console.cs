@@ -130,12 +130,19 @@ namespace LightClaw.Engine.UI
             base.OnDraw();
         }
 
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
-            if (this.IsShown)
+            try
             {
+                if (this.IsShown)
+                {
+                }
+                return true;
             }
-            base.OnUpdate(gameTime);
+            finally
+            {
+                base.OnUpdate(gameTime, pass);
+            }
         }
 
         [ContractInvariantMethod]

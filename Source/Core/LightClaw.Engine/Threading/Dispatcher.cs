@@ -5,39 +5,69 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
+using NLog;
 
 namespace LightClaw.Engine.Threading
 {
     /// <summary>
-    /// Represents a sink used to dispatch work onto another thread. See remarks.
+    /// Represents a message pump.
     /// </summary>
-    /// <remarks>
-    /// Neither execution order nor execution time is deterministic, at least from the <see cref="Dispatcher"/>s point
-    /// of view. It depends on the instance that created the <see cref="Dispatcher"/> when the enqueued will be executed.
-    /// </remarks>
     [ThreadMode(ThreadMode.Safe)]
     [DebuggerDisplay("Thread = {Thread.ManagedThreadId}, Queue Count = {qeues.Count}")]
     public class Dispatcher : DisposableEntity
     {
         /// <summary>
-        /// The work queues.
+        /// All living dispatchers.
         /// </summary>
-        private readonly ConcurrentDictionary<DispatcherPriority, ConcurrentQueue<Task>> queues = new ConcurrentDictionary<DispatcherPriority, ConcurrentQueue<Task>>();
+        private static readonly ConcurrentDictionary<Thread, Dispatcher> dispatchers = new ConcurrentDictionary<Thread, Dispatcher>();
 
         /// <summary>
-        /// A <see cref="Stopwatch"/> used to measure execution time.
+        /// Gets the <see cref="Dispatcher"/> for the current thread.
         /// </summary>
-        private readonly Stopwatch stopWatch = new Stopwatch();
+        public static Dispatcher Current
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Dispatcher>() != null);
+
+                return dispatchers.GetOrAdd(Thread.CurrentThread, t => new Dispatcher(t));
+            }
+        }
+
+        /// <summary>
+        /// The work queues.
+        /// </summary>
+        private readonly SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>> queues = new SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>>(
+            new Dictionary<DispatcherPriority, ConcurrentQueue<Action>>
+            {
+                { DispatcherPriority.Immediate, new ConcurrentQueue<Action>() },
+                { DispatcherPriority.High, new ConcurrentQueue<Action>() },
+                { DispatcherPriority.Normal, new ConcurrentQueue<Action>() },
+                { DispatcherPriority.Background, new ConcurrentQueue<Action>() },
+            },
+            new ReverseComparer<DispatcherPriority>()
+        );
+
+        /// <summary>
+        /// The <see cref="AutoResetEvent"/> used to trigger when new operations have arrived.
+        /// </summary>
+        private readonly AutoResetEvent resetEvent = new AutoResetEvent(false);
+
+        /// <summary>
+        /// Occurs when a exception was raised inside the dispatcher loop.
+        /// </summary>
+        public event EventHandler<UnhandledDispatcherExceptionEventArgs> UnhandledException;
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private readonly Thread _Thread = Thread.CurrentThread;
+        private readonly Thread _Thread;
 
         /// <summary>
         /// The <see cref="Thread"/> the <see cref="Dispatcher"/> is associated with.
@@ -55,7 +85,13 @@ namespace LightClaw.Engine.Threading
         /// <summary>
         /// Initializes a new <see cref="Dispatcher"/>.
         /// </summary>
-        public Dispatcher() { }
+        /// <param name="t">The <see cref="Thread"/> to initialize from.</param>
+        private Dispatcher(Thread t)
+        {
+            Contract.Requires<ArgumentNullException>(t != null);
+
+            this._Thread = t;
+        }
 
         /// <summary>
         /// Asynchronously invokes the specified <see cref="Action"/> with normal priority on the target thread.
@@ -95,9 +131,7 @@ namespace LightClaw.Engine.Threading
             Contract.Requires<ArgumentNullException>(action != null);
             this.CheckDisposed();
 
-            Task task = new Task(action, token);
-            this.queues.GetOrAdd(priority, p => new ConcurrentQueue<Task>()).Enqueue(task);
-            return task;
+            return this.Invoke(() => { action(); return true; }, priority, token);
         }
 
         /// <summary>
@@ -115,7 +149,7 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
-        /// Asynchronously invokes the specified  parameterized <see cref="Action"/> with the specified <paramref name="priority"/> on the
+        /// Asynchronously invokes the specified parameterized <see cref="Action"/> with the specified <paramref name="priority"/> on the
         /// target thread.
         /// </summary>
         /// <typeparam name="TParam">The <see cref="Type"/> of the parameter.</typeparam>
@@ -145,9 +179,7 @@ namespace LightClaw.Engine.Threading
             Contract.Requires<ArgumentNullException>(action != null);
             this.CheckDisposed();
 
-            Task task = new Task(o => action((TParam)o), param, token);
-            this.queues.GetOrAdd(priority, p => new ConcurrentQueue<Task>()).Enqueue(task);
-            return task;
+            return this.Invoke(() => action(param), priority, token);
         }
 
         /// <summary>
@@ -187,14 +219,36 @@ namespace LightClaw.Engine.Threading
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
         /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
-        public Task<TResult> Invoke<TResult>(Func<TResult> func, DispatcherPriority priority, CancellationToken token)
+        public async Task<TResult> Invoke<TResult>(Func<TResult> func, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(func != null);
             this.CheckDisposed();
 
-            Task<TResult> task = new Task<TResult>(func, token);
-            this.queues.GetOrAdd(priority, p => new ConcurrentQueue<Task>()).Enqueue(task);
-            return task;
+            if (priority == DispatcherPriority.Immediate)
+            {
+                return func();
+            }
+            else
+            {
+                TaskCompletionSource<TResult> tcs = new TaskCompletionSource<TResult>();
+                using (token.Register(() => tcs.TrySetCanceled()))
+                {
+                    this.GetPriorityQueue(priority).Enqueue(() =>
+                    {
+                        try
+                        {
+                            tcs.TrySetResult(func());
+                        }
+                        catch (Exception ex)
+                        {
+                            tcs.TrySetException(ex);
+                        }
+                    });
+                    this.resetEvent.Set();
+
+                    return await tcs.Task;
+                }
+            }
         }
 
         /// <summary>
@@ -245,14 +299,13 @@ namespace LightClaw.Engine.Threading
             Contract.Requires<ArgumentNullException>(func != null);
             this.CheckDisposed();
 
-            Task<TResult> task = new Task<TResult>(o => func((TParam)o), param, token);
-            this.queues.GetOrAdd(priority, p => new ConcurrentQueue<Task>()).Enqueue(task);
-            return task;
+            return this.Invoke(() => func(param), priority, token);
         }
 
         /// <summary>
         /// Asynchronously invokes the specified delegate on the target thread with late binding.
         /// </summary>
+        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
         /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
         /// <param name="parameters">Delegate parameters.</param>
         /// <returns>The value returned by the <see cref="Delegate"/>.</returns>
@@ -268,6 +321,7 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified delegate on the target thread with the specified <paramref name="priority"/> 
         /// with late binding.
         /// </summary>
+        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
         /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
         /// <param name="parameters">Delegate parameters.</param>
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
@@ -284,6 +338,7 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified delegate on the target thread with the specified <paramref name="priority"/> 
         /// with late binding and allows for cancellation.
         /// </summary>
+        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
         /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
         /// <param name="parameters">Delegate parameters.</param>
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
@@ -298,42 +353,115 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
-        /// Executes the work on the current thread until all queues are empty. See remarks.
+        /// Asynchronously invokes the specified <see cref="Action"/> with normal priority on the target thread.
+        /// Does not return a <see cref="Task"/> in order to improve execution time.
         /// </summary>
-        /// <remarks>
-        /// This method may only be executed from the thread the <see cref="Dispatcher"/> was created on. Otherwise an exception
-        /// will be thrown.
-        /// </remarks>
-        [ThreadMode(ThreadMode.Affine)]
-        public void Pop()
+        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <param name="action">The action to invoke.</param>
+        public void InvokeSlim(Action action)
         {
-            ThreadF.ThrowIfNotCurrentThread(this.Thread);
+            Contract.Requires<ArgumentNullException>(action != null);
 
-            this.Pop(Timeout.InfiniteTimeSpan);
+            this.InvokeSlim(action, DispatcherPriority.Normal);
         }
 
         /// <summary>
-        /// Synchronously executes the work on the current thread either until all queues are empty or until the time has run out.
+        /// Asynchronously invokes the specified <see cref="Action"/> with the specified <paramref name="priority"/> on the target thread.
+        /// Does not return a <see cref="Task"/> in order to improve execution time.
+        /// </summary>
+        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="priority">The priority of the action to run.</param>
+        public void InvokeSlim(Action action, DispatcherPriority priority)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+            this.CheckDisposed();
+
+            if (priority == DispatcherPriority.Immediate)
+            {
+                action();
+            }
+            else
+            {
+                this.GetPriorityQueue(priority).Enqueue(action);
+                this.resetEvent.Set();
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously invokes the specified parameterized <see cref="Action"/> with normal priority on the target thread.
+        /// Does not return a <see cref="Task"/> in order to improve execution time.
+        /// </summary>
+        /// <typeparam name="TParam">The <see cref="Type"/> of the parameter.</typeparam>
+        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="param">The parameter value.</param>
+        public void InvokeSlim<TParam>(Action<TParam> action, TParam param)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            this.InvokeSlim(action, param, DispatcherPriority.Normal);
+        }
+
+        /// <summary>
+        /// Asynchronously invokes the specified parameterized <see cref="Action"/> with the specified <paramref name="priority"/> on the
+        /// target thread. Does not return a <see cref="Task"/> in order to improve execution time.
+        /// </summary>
+        /// <typeparam name="TParam">The <see cref="Type"/> of the parameter.</typeparam>
+        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="param">The parameter value.</param>
+        /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
+        public void InvokeSlim<TParam>(Action<TParam> action, TParam param, DispatcherPriority priority)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            this.InvokeSlim(() => action(param), priority);
+        }
+
+        /// <summary>
+        /// Starts the dispatcher loop.
         /// </summary>
         /// <remarks>
         /// This method may only be executed from the thread the <see cref="Dispatcher"/> was created on. Otherwise an exception
         /// will be thrown.
         /// </remarks>
-        /// <param name="targetTime">The approximate time the <see cref="Dispatcher"/> is allowed to execute.</param>
         [ThreadMode(ThreadMode.Affine)]
-        public void Pop(TimeSpan targetTime)
+        public void Run()
         {
             ThreadF.ThrowIfNotCurrentThread(this.Thread);
 
-            this.stopWatch.Restart();
-            foreach (ConcurrentQueue<Task> taskQueue in this.queues.OrderByDescending(kvp => kvp.Key).Select(kvp => kvp.Value))
+            SynchronizationContext currentContext = SynchronizationContext.Current;
+            try
             {
-                Task task = null;
-#warning There might be a better way to check for infinity on a timespan than < 0
-                while ((this.stopWatch.Elapsed < targetTime || targetTime < TimeSpan.Zero) && taskQueue.TryDequeue(out task))
+                SynchronizationContext.SetSynchronizationContext(new LightClawSynchronizationContext());
+
+                while (!this.IsDisposed)
                 {
-                    task.RunSynchronously();
+                    NativeMessage msg;
+                    if (PeekMessage(out msg, IntPtr.Zero, 0, 0, 0, 1))
+                    {
+                        TranslateMessage(ref msg);
+                        DispatchMessage(ref msg);
+                    }
+                    else
+                    {
+                        if (this.resetEvent.WaitOne(0))
+                        {
+                            this.RunInternal();
+                        }
+                    }
                 }
+
+                // Empty the execution stack if we're disposed.
+                while (!this.queues.Values.All(q => q.IsEmpty))
+                {
+                    this.RunInternal();
+                }
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(currentContext);
             }
         }
 
@@ -344,13 +472,17 @@ namespace LightClaw.Engine.Threading
         [ThreadMode(ThreadMode.Affine)]
         protected override void Dispose(bool disposing)
         {
-            this.Pop();
-            base.Dispose(disposing);
+            try
+            {
+                Dispatcher outVal;
+                dispatchers.TryRemove(this.Thread, out outVal);
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
-        /// <summary>
-        /// Checks whether the <see cref="Dispatcher"/> has been disposed and throws an exception.
-        /// </summary>
         private void CheckDisposed()
         {
             if (this.IsDisposed)
@@ -358,5 +490,74 @@ namespace LightClaw.Engine.Threading
                 throw new ObjectDisposedException(typeof(Dispatcher).Name);
             }
         }
+
+        private ConcurrentQueue<Action> GetPriorityQueue(DispatcherPriority priority)
+        {
+            ConcurrentQueue<Action> queue;
+            if (!this.queues.TryGetValue(priority, out queue))
+            {
+                throw new ArgumentException("Parameter priority was not one of the predefined values!");
+            }
+            return queue;
+        }
+
+        private void RunInternal()
+        {
+            List<Action> actions = null; // Do not allocate the list, if we can avoid it
+            foreach (ConcurrentQueue<Action> queue in this.queues.Values)
+            {
+                Action action;
+                while (queue.TryDequeue(out action))
+                {
+                    if (action != null)
+                    {
+                        if (actions == null)
+                        {
+                            actions = new List<Action>(32);
+                        }
+                        actions.Add(action);
+                    }
+                }
+
+                if (actions != null)
+                {
+                    for (int i = 0; i < actions.Count; i++)
+                    {
+                        try
+                        {
+                            actions[i].Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            UnhandledDispatcherExceptionEventArgs e = new UnhandledDispatcherExceptionEventArgs(ex);
+                            this.Raise(this.UnhandledException, e);
+                            this.Log.Error(
+                                "An {0}exception of type '{1}' was thrown inside the {2}.".FormatWith(
+                                    e.IsHandled ? string.Empty : "unhandled ",
+                                    ex.GetType().FullName,
+                                    typeof(Dispatcher).Name
+                                ),
+                                ex
+                            );
+                            if (!e.IsHandled)
+                            {
+                                throw;
+                            }
+                        }
+                    }
+
+                    actions.Clear();
+                }
+            }
+        }
+
+        [DllImport("user32.dll")]
+        static extern IntPtr DispatchMessage([In] ref NativeMessage message);
+            
+        [DllImport("user32.dll")]
+        private static extern bool PeekMessage([Out] out NativeMessage message, IntPtr windowPtr, uint filter, uint filterMin, uint filterMax, uint remove);
+
+        [DllImport("user32.dll")]
+        private static extern bool TranslateMessage([In] ref NativeMessage message);
     }
 }

@@ -28,6 +28,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public static readonly VertexAttributeLocation Color = new VertexAttributeLocation(5);
 
+        public static readonly VertexAttributeLocation BoneWeight0 = new VertexAttributeLocation(6);
+
+        public static readonly VertexAttributeLocation BoneWeight1 = new VertexAttributeLocation(7);
+
+        public static readonly VertexAttributeLocation BoneWeight2 = new VertexAttributeLocation(8);
+
+        public static readonly VertexAttributeLocation BoneWeight3 = new VertexAttributeLocation(9);
+
         [DataMember]
         public int Location { get; private set; }
 

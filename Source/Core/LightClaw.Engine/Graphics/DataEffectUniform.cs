@@ -100,7 +100,7 @@ namespace LightClaw.Engine.Graphics
             }
             else
             {
-                Logger.Warn(un => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(un), this.Uniform.Name);
+                Log.Warn(() => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(this.Uniform.Name));
             }
         }
 
@@ -163,9 +163,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
+                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -186,9 +186,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
+                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -210,9 +210,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
+                Log.Warn( "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }
@@ -235,9 +235,9 @@ namespace LightClaw.Engine.Graphics
                 }
                 return false;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Warn(ex => "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), exception, exception);
+                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
                 return false;
             }
         }

@@ -119,7 +119,7 @@ namespace LightClaw.Engine.Coroutines
         /// Updates all coroutines and removes the ones that have finished execution.
         /// </summary>
         /// <param name="gameTime">The current game time.</param>
-        protected override void OnUpdate(GameTime gameTime)
+        protected override bool OnUpdate(GameTime gameTime, int pass)
         {
             IEnumerable<ICoroutineContext> contexts = this.contexts;
             if (contexts != null)
@@ -127,7 +127,7 @@ namespace LightClaw.Engine.Coroutines
                 lock (contexts)
                 {
 #pragma warning disable 0728
-                    contexts = contexts.ToArray();
+                    contexts = contexts.ToList();
 #pragma warning restore 0728
                 }
 
@@ -142,6 +142,8 @@ namespace LightClaw.Engine.Coroutines
                     }
                 }
             }
+
+            return true;
         }
     }
 }

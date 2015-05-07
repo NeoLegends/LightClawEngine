@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LightClaw.Engine.Core;
 using LightClaw.Extensions;
 
-namespace LightClaw.Engine.Core
+namespace LightClaw.Engine.Threading
 {
     /// <summary>
     /// Contains methods helping with deciding whether the calling thread is valid for the actions to execute.

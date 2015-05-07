@@ -8,14 +8,14 @@ using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
-using log4net;
+using NLog;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     public abstract class Texture : GLObject, IBindable
     {
-        private static readonly ILog staticLogger = LogManager.GetLogger(typeof(Texture));
+        private static readonly Logger staticLogger = LogManager.GetLogger(typeof(Texture).Name);
 
         private readonly object initializationLock = new object();
 
@@ -168,8 +168,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 float anisoLevel = Math.Min(requestedAnisoLevel, maxSupportedAnisoLevel);
 
                 staticLogger.Info(
-                    (al, msal, ral) => "Anisotropic level will be {0} (maximum supported by hardware: {1}, requested through settings: {2}).".FormatWith(al, msal, ral),
-                    anisoLevel, maxSupportedAnisoLevel, requestedAnisoLevel
+                    () => "Anisotropic level will be {0} (maximum supported by hardware: {1}, requested through settings: {2}).".FormatWith(anisoLevel, maxSupportedAnisoLevel, requestedAnisoLevel)
                 );
 
                 GL.TexParameter(TextureTarget.Texture1D, anisoParameterName, anisoLevel);
@@ -234,7 +233,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     if (this.IsInitialized)
                     {
-                        this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(t => GL.DeleteTexture(t), this, Threading.DispatcherPriority.Background);
+                        GL.DeleteTexture(this);
                     }
                 }
                 base.Dispose(disposing);

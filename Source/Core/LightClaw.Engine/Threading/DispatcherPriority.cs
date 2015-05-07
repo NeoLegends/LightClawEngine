@@ -25,6 +25,11 @@ namespace LightClaw.Engine.Threading
         /// <summary>
         /// The task has high priority, it will be amongst the first to be executed on the next round.
         /// </summary>
-        High = 2
+        High = 2,
+
+        /// <summary>
+        /// Highest priority, the action will be executed immediately.
+        /// </summary>
+        Immediate = 3
     }
 }

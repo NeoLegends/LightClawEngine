@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Coroutines
     /// <summary>
     /// Represents a controller for the execution of a coroutine.
     /// </summary>
-    public class CoroutineContext : ICoroutineContext, IUpdateable
+    public class CoroutineContext : Entity, ICoroutineContext, IUpdateable
     {
         /// <summary>
         /// The coroutine to execute.
@@ -38,72 +38,68 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Backing field.
         /// </summary>
-        private EventHandler<ParameterEventArgs> _Updating;
+        private EventHandler<UpdateEventArgs> _Updating;
 
         /// <summary>
         /// Occurs before the coroutine is being updated.
         /// </summary>
-        event EventHandler<ParameterEventArgs> IUpdateable.Updating // Uses lock-free reference implementation of auto events
+        event EventHandler<UpdateEventArgs> IUpdateable.Updating // Uses lock-free reference implementation of auto events
         {
             add
             {
-                EventHandler<ParameterEventArgs> current;
-                EventHandler<ParameterEventArgs> original;
+                EventHandler<UpdateEventArgs> current;
+                EventHandler<UpdateEventArgs> original;
                 do
                 {
                     original = _Updating;
-                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Combine(original, value);
+                    EventHandler<UpdateEventArgs> updated = (EventHandler<UpdateEventArgs>)Delegate.Combine(original, value);
                     current = Interlocked.CompareExchange(ref _Updating, updated, original);
-                }
-                while (current != original);
+                } while (current != original);
             }
             remove
             {
-                EventHandler<ParameterEventArgs> current;
-                EventHandler<ParameterEventArgs> original;
+                EventHandler<UpdateEventArgs> current;
+                EventHandler<UpdateEventArgs> original;
                 do
                 {
                     original = _Updating;
-                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Remove(original, value);
+                    EventHandler<UpdateEventArgs> updated = (EventHandler<UpdateEventArgs>)Delegate.Remove(original, value);
                     current = Interlocked.CompareExchange(ref _Updating, updated, original);
-                }
-                while (current != original);
+                } while (current != original);
             }
         }
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private EventHandler<ParameterEventArgs> _Updated;
+        private EventHandler<UpdateEventArgs> _Updated;
 
         /// <summary>
         /// Occurs after the coroutine is was updated.
         /// </summary>
-        event EventHandler<ParameterEventArgs> IUpdateable.Updated // Uses lock-free reference implementation of auto events
+        event EventHandler<UpdateEventArgs> IUpdateable.Updated // Uses lock-free reference implementation of auto events
         {
             add
             {
-                EventHandler<ParameterEventArgs> current;
-                EventHandler<ParameterEventArgs> original;
+                EventHandler<UpdateEventArgs> current;
+                EventHandler<UpdateEventArgs> original;
                 do
                 {
                     original = _Updated;
-                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Combine(original, value);
+                    EventHandler<UpdateEventArgs> updated = (EventHandler<UpdateEventArgs>)Delegate.Combine(original, value);
                     current = Interlocked.CompareExchange(ref _Updated, updated, original);
-                }
-                while (current != original);
+                } while (current != original);
             }
             remove
             {
-                EventHandler<ParameterEventArgs> current;
-                EventHandler<ParameterEventArgs> original;
+                EventHandler<UpdateEventArgs> current;
+                EventHandler<UpdateEventArgs> original;
                 do
                 {
                     original = _Updated;
-                    EventHandler<ParameterEventArgs> updated = (EventHandler<ParameterEventArgs>)Delegate.Remove(original, value);
+                    EventHandler<UpdateEventArgs> updated = (EventHandler<UpdateEventArgs>)Delegate.Remove(original, value);
                     current = Interlocked.CompareExchange(ref _Updated, updated, original);
-                }
-                while (current != original);
+                } while (current != original);
             }
         }
 
@@ -192,19 +188,13 @@ namespace LightClaw.Engine.Coroutines
         /// Updates the <see cref="CoroutineContext"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        void IUpdateable.Update(GameTime gameTime)
+        bool IUpdateable.Update(GameTime gameTime, int pass)
         {
-            EventHandler<ParameterEventArgs> handler = this._Updating;
-            if (handler != null)
-            {
-                handler(this, ParameterEventArgs.Default);
-            }
-            bool result = this.Step();
-            handler = this._Updated;
-            if (handler != null)
-            {
-                handler(this, new ParameterEventArgs(result));
-            }
+            this.Raise(this._Updating, gameTime, pass);
+            this.Step();
+            this.Raise(this._Updated, gameTime, pass);
+
+            return true;
         }
 
         /// <summary>

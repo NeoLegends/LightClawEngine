@@ -50,26 +50,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Backing field.
         /// </summary>
-        private bool _IsInitialized;
-
-        /// <summary>
-        /// Indicates whether the <see cref="BufferObject"/> is already initialized and has got a name.
-        /// </summary>
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private int _Length;
 
         /// <summary>
@@ -324,7 +304,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     }
                     catch (AccessViolationException ex)
                     {
-                        Logger.Warn(e => "An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(e.GetType().Name, typeof(BufferObject).Name), ex, ex);
+                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(BufferObject).Name), ex);
                     }
                 }
             }
@@ -336,7 +316,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         protected override void OnInitialize()
         {
-            Logger.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
+            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
 
             this.Handle = GL.GenBuffer();
         }

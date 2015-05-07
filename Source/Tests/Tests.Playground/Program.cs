@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics;
 using LightClaw.GameCode;
+using Newtonsoft.Json;
 
 namespace Tests.Playground
 {
@@ -13,35 +15,23 @@ namespace Tests.Playground
     {
         static void Main(string[] args)
         {
-            Scene s = new Scene(
-                "TestScene",
-                new GameObject(
-                    new BasicMesh()
-                )
+            EffectData data = new EffectData(
+                new EffectData.StageSources(
+                    new EffectData.StageData("Test/Basic.frag"),
+                    new EffectData.StageData("Test/Basic.vert", "inVertexPosition", "inVertexTexCoord", "inVertexNormals", "inVertexBinormals", "inVertexTangent", "inVertexColor")
+                ),
+                new[] { "mat_MVP" }
             );
 
-            Directory.CreateDirectory(".\\Game");
-            using (FileStream fs = File.Create(".\\Game\\Start.lcs"))
+            using (FileStream fs = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "EffectData.json"), FileMode.Create, FileAccess.ReadWrite))
+            using (StreamWriter sw = new StreamWriter(fs))
             {
-                try
+                new JsonSerializer()
                 {
-                    s.SaveAsync(fs).Wait();
-                }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                }
-            }
-            using (FileStream fs = File.Create(".\\Game\\StartRaw.lcs"))
-            {
-                try
-                {
-                    s.SaveRawAsync(fs).Wait();
-                }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                }
+                    DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.IgnoreAndPopulate,
+                    Formatting = Newtonsoft.Json.Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore
+                }.Serialize(sw, data);
             }
 
             Console.WriteLine("Finished");

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TeamServer", "TeamServer", "{6C2D2FAD-4F1A-44CD-8B3F-8E6D72B3F479}"
 EndProject
@@ -21,13 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.Editor", "Core\Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.GameCode", "Core\LightClaw.GameCode\LightClaw.GameCode.csproj", "{728730F7-FC8E-4B4F-996D-1001B3D4CD0C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9D0D0CC5-0395-42BA-8928-E07BA732146E}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightClaw.Extensions", "Core\LightClaw.Extensions\LightClaw.Extensions.csproj", "{FD0E2831-4A34-44D8-BE62-10A0CF38FCB3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F51A43E7-D24D-4F57-ACDF-19E91A2C98F1}"
@@ -37,6 +30,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Utilities", "Tests\Tests.Utilities\Tests.Utilities.csproj", "{6DFD6D54-456C-4B65-94ED-AC8E38BF36CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Playground", "Tests\Tests.Playground\Tests.Playground.csproj", "{443507C8-88E3-4062-BC4C-9D48829A176C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EAD97B13-4BB2-480A-9E65-64C2BF6EDA82}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -686,10 +686,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         public static float Distance(Vector2 value1, Vector2 value2)
         {
-            float x = value1.X - value2.X;
-            float y = value1.Y - value2.Y;
-
-            return (float)Math.Sqrt((x * x) + (y * y));
+            return (float)Math.Sqrt(DistanceSquared(value1, value2));
         }
 
         /// <summary>
