@@ -93,17 +93,10 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         protected override void OnDraw()
         {
-            try
+            Model model = this.Model;
+            if (model != null)
             {
-                Model model = this.Model;
-                if (model != null)
-                {
-                    model.Draw();
-                }
-            }
-            finally
-            {
-                base.OnDraw();
+                model.Draw();
             }
         }
 
@@ -115,37 +108,30 @@ namespace LightClaw.Engine.Graphics
         {
             Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
 
-            try
+            if (this.Model != null)
             {
-                if (this.Model != null)
+                IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
+                if (contentManager == null)
                 {
-                    IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
-                    if (contentManager == null)
-                    {
-                        Log.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
-                        return;
-                    }
-
-                    try
-                    {
-                        this.Model = await contentManager.LoadAsync<Model>(this.ResourceString).ConfigureAwait(false);
-                        Log.Debug(() => "Mesh '{0}' loaded successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(
-                            "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.".FormatWith(
-                                ex.GetType().FullName,
-                                this.Name ?? this.ResourceString
-                            ), 
-                            ex
-                        );
-                    }
+                    Log.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
+                    return;
                 }
-            }
-            finally
-            {
-                base.OnLoad();
+
+                try
+                {
+                    this.Model = await contentManager.LoadAsync<Model>(this.ResourceString).ConfigureAwait(false);
+                    Log.Debug(() => "Mesh '{0}' loaded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(
+                        "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.".FormatWith(
+                            ex.GetType().FullName,
+                            this.Name ?? this.ResourceString
+                        ), 
+                        ex
+                    );
+                }
             }
         }
 
@@ -155,15 +141,8 @@ namespace LightClaw.Engine.Graphics
         /// <param name="gameTime">The current game time.</param>
         protected override bool OnUpdate(GameTime gameTime, int pass)
         {
-            try
-            {
-                Model model = this.Model;
-                return (model != null) ? model.Update(gameTime, pass) : true;
-            }
-            finally
-            {
-                base.OnUpdate(gameTime, pass);
-            }
+            Model model = this.Model;
+            return (model != null) ? model.Update(gameTime, pass) : true;
         }
     }
 }

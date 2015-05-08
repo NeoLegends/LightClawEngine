@@ -135,7 +135,7 @@ namespace LightClaw.Engine.Core
         {
             if (handler != null)
             {
-                handler(this, args ?? ParameterEventArgs.Default);
+                this.Raise<ParameterEventArgs>(handler, args ?? ParameterEventArgs.Default);
             }
         }
 
@@ -150,7 +150,7 @@ namespace LightClaw.Engine.Core
 
             if (handler != null)
             {
-                handler(this, new UpdateEventArgs(gameTime, pass));
+                this.Raise(handler, new UpdateEventArgs(gameTime, pass));
             }
         }
 
@@ -161,7 +161,10 @@ namespace LightClaw.Engine.Core
         /// <param name="args">Arguments for creation of a new <see cref="ParameterEventArgs"/>.</param>
         protected void Raise<T>(EventHandler<T> handler, T args)
         {
-            this.Raise(handler, args);
+            if (handler != null)
+            {
+                handler(this, args);
+            }
         }
 
         /// <summary>
@@ -175,7 +178,7 @@ namespace LightClaw.Engine.Core
         {
             if (handler != null)
             {
-                handler(this, new ValueChangedEventArgs<T>(newValue, oldValue));
+                this.Raise(handler, new ValueChangedEventArgs<T>(newValue, oldValue));
             }
         }
 

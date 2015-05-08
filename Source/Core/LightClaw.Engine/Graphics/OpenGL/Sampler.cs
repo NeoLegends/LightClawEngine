@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -104,14 +105,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            lock (this.initializationLock)
+            try
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    GL.DeleteSampler(this);
+                    if (this.IsInitialized && !this.IsDisposed)
+                    {
+                        this.Dispatcher.InvokeSlim(this.DeleteSampler, DispatcherPriority.Background);
+                    }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -123,6 +130,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
             {
                 GL.SamplerParameter(this, description.ParameterName, description.Value);
+            }
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteSampler()
+        {
+            try
+            {
+                GL.DeleteSampler(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Sampler).Name), ex);
             }
         }
 

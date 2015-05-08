@@ -55,6 +55,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets the amount of stored items.
         /// </summary>
+        [IgnoreDataMember]
         public int Count
         {
             get
@@ -67,6 +68,7 @@ namespace LightClaw.Engine.Core
         /// Indicates whether the <see cref="ListChildManager{T}"/> is readonly.
         /// </summary>
         /// <value><c>false</c></value>
+        [IgnoreDataMember]
         bool ICollection<T>.IsReadOnly
         {
             get

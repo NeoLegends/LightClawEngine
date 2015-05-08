@@ -62,6 +62,11 @@ namespace LightClaw.Engine.Core
             );
         }
 
+        public void Start()
+        {
+
+        }
+
         /// <summary>
         /// Main entry point.
         /// </summary>
@@ -87,7 +92,6 @@ namespace LightClaw.Engine.Core
             logger.Info(() => "Enabling profile '{0}'.".FormatWith(profile));
             ProfileOptimization.StartProfile(profile);
 #endif
-
             MainThreadId = Thread.CurrentThread.ManagedThreadId;
 
             try

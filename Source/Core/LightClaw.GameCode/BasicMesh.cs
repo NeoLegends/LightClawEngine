@@ -9,6 +9,7 @@ using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -84,8 +85,6 @@ namespace LightClaw.GameCode
             openTKMVP.M41, openTKMVP.M42, openTKMVP.M43, openTKMVP.M44
         );
 
-        private bool bufferSet = false;
-
         private int getErrorCount = 0;
 
         private IBuffer colorBuffer;
@@ -131,11 +130,13 @@ namespace LightClaw.GameCode
             base.Dispose(disposing);
         }
 
-        protected override void OnLoad()
+        protected override async void OnLoad()
         {
-            this.indexBuffer = new BufferObject(BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticDraw);
-            this.colorBuffer = new BufferObject(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
-            this.vertexBuffer = new BufferObject(BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
+
+            this.indexBuffer = BufferObject.Create(indices, BufferTarget.ElementArrayBuffer);
+            this.colorBuffer = BufferObject.Create(colorData, BufferTarget.ArrayBuffer);
+            this.vertexBuffer = BufferObject.Create(cubeData, BufferTarget.ArrayBuffer);
 
             BufferDescription vDesc = new BufferDescription(
                 this.vertexBuffer,
@@ -146,45 +147,30 @@ namespace LightClaw.GameCode
                 new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 0, 0)
             );
             this.vao = new VertexArrayObject(this.indexBuffer, vDesc, cDesc);
+
             IContentManager mgr = this.IocC.Resolve<IContentManager>();
             Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
             Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
 
-            Task.WhenAll(fragmentShaderSourceTask, vertexShaderSourceTask).ContinueWith(t =>
-            {
-                Shader[] shaders = new Shader[] 
-                { 
-                    new Shader(
-                        t.Result[1], 
-                        ShaderType.VertexShader, 
-                        new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
-                        new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
-                    ),
-                    new Shader(t.Result[0], ShaderType.FragmentShader)
-                };
-                this.program = new ShaderProgram(shaders);
-            });
+            await Task.WhenAll(fragmentShaderSourceTask, vertexShaderSourceTask);
 
-            Task.Run(() => this.IocC.Resolve<IGame>().GraphicsDispatcher.Invoke(() => Log.Info("Hello from the message pumped through the dispatcher!")));
+            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
 
-            base.OnLoad();
+            Shader[] shaders = new Shader[] 
+            { 
+                new Shader(
+                    vertexShaderSourceTask.Result, 
+                    ShaderType.VertexShader, 
+                    new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
+                    new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
+                ),
+                new Shader(fragmentShaderSourceTask.Result, ShaderType.FragmentShader)
+            };
+            this.program = new ShaderProgram(shaders);
         }
 
         protected override void OnDraw()
         {
-            if (!bufferSet)
-            {
-                for (int i = 0; i < cubeData.Length; i++)
-                {
-                    Log.Info((index, v) => "Vector {0} will be {1} after transformation.".FormatWith(index, v), i, modelViewProjectionMatrix * new Vector4(cubeData[i], 1.0f));
-                }
-
-                this.colorBuffer.Set(colorData);
-                this.indexBuffer.Set(indices);
-                this.vertexBuffer.Set(cubeData);
-                this.bufferSet = true;
-            }
-
             VertexArrayObject vao = this.vao;
             ShaderProgram program = this.program;
             if (vao != null && program != null)

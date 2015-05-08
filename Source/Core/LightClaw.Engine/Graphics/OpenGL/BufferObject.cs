@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -291,24 +293,22 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Disposes the <see cref="BufferObject"/> removing it from the GPU memory.
         /// </summary>
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
-        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            lock (this.nameGenerationLock)
+            try
             {
-                if (this.IsInitialized)
+                lock (this.nameGenerationLock)
                 {
-                    try
+                    if (this.IsInitialized && !this.IsDisposed)
                     {
-                        GL.DeleteBuffer(this);
-                    }
-                    catch (AccessViolationException ex)
-                    {
-                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(BufferObject).Name), ex);
+                        this.Dispatcher.InvokeSlim(this.DeleteBuffer, DispatcherPriority.Background);
                     }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -319,6 +319,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Log.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
 
             this.Handle = GL.GenBuffer();
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteBuffer()
+        {
+            try
+            {
+                GL.DeleteBuffer(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(BufferObject).Name), ex);
+            }
         }
 
         /// <summary>

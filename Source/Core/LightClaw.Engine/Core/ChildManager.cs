@@ -64,17 +64,25 @@ namespace LightClaw.Engine.Core
             this.Items.AddRange(items);
         }
 
+        // For loops in here for maximum performance.
+
         /// <summary>
         /// Disposes the <see cref="ChildManager{T}"/> disposing all of its children.
         /// </summary>
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            foreach (T item in this.Items)
+            try
             {
-                item.Dispose();
+                for (int i = 0; i < this.Items.Count; i++)
+                {
+                    this.Items[i].Dispose();
+                }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -82,9 +90,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnEnable()
         {
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                item.Enable();
+                this.Items[i].Enable();
             }
         }
 
@@ -93,9 +101,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDisable()
         {
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                item.Disable();
+                this.Items[i].Disable();
             }
         }
 
@@ -104,9 +112,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDraw()
         {
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                item.Draw();
+                this.Items[i].Draw();
             }
         }
 
@@ -115,9 +123,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                item.Load();
+                this.Items[i].Load();
             }
         }
 
@@ -126,9 +134,9 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnReset()
         {
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                item.Reset();
+                this.Items[i].Reset();
             }
         }
 
@@ -139,9 +147,9 @@ namespace LightClaw.Engine.Core
         protected override bool OnUpdate(GameTime gameTime, int pass)
         {
             bool result = true;
-            foreach (T item in this.Items)
+            for (int i = 0; i < this.Items.Count; i++)
             {
-                result &= item.Update(gameTime, pass);
+                result &= this.Items[i].Update(gameTime, pass);
             }
             return result;
         }

@@ -87,7 +87,7 @@ namespace LightClaw.Engine.Core
         /// <remarks>
         /// Preferrably, loading will be done asynchronous and calls to other methods shall be ignored until loading is done.
         ///
-        /// Calls to <see cref="M:Load"/> shall be ignored if the instance is already loaded.
+        /// Calls to <see cref="M:LoadAsync"/> shall be ignored if the instance is already loaded.
         /// </remarks>
         void Load();
 

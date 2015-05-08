@@ -11,7 +11,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents a <see cref="Game"/>.
     /// </summary>
-    public interface IGame : IDisposable, INameable
+    public interface IGame : IDispatcherObject, IDisposable, INameable
     {
         /// <summary>
         /// The current game time.

@@ -19,9 +19,11 @@ namespace LightClaw.Engine.Threading
     /// Represents a message pump.
     /// </summary>
     [ThreadMode(ThreadMode.Safe)]
-    [DebuggerDisplay("Thread = {Thread.ManagedThreadId}, Queue Count = {qeues.Count}")]
+    [DebuggerDisplay("Thread: {Thread.ManagedThreadId}, Count: {Count}")]
     public class Dispatcher : DisposableEntity
     {
+        private const int PM_REMOVE = 1;
+
         /// <summary>
         /// All living dispatchers.
         /// </summary>
@@ -55,6 +57,11 @@ namespace LightClaw.Engine.Threading
         );
 
         /// <summary>
+        /// Indicates whether the <see cref="Dispatcher"/> is currently running.
+        /// </summary>
+        private int isRunning = 0;
+
+        /// <summary>
         /// The <see cref="AutoResetEvent"/> used to trigger when new operations have arrived.
         /// </summary>
         private readonly AutoResetEvent resetEvent = new AutoResetEvent(false);
@@ -63,6 +70,17 @@ namespace LightClaw.Engine.Threading
         /// Occurs when a exception was raised inside the dispatcher loop.
         /// </summary>
         public event EventHandler<UnhandledDispatcherExceptionEventArgs> UnhandledException;
+
+        /// <summary>
+        /// The amount of items to be processed.
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return this.queues.Values.Sum(q => q.Count);
+            }
+        }
 
         /// <summary>
         /// Backing field.
@@ -233,7 +251,7 @@ namespace LightClaw.Engine.Threading
                 TaskCompletionSource<TResult> tcs = new TaskCompletionSource<TResult>();
                 using (token.Register(() => tcs.TrySetCanceled()))
                 {
-                    this.GetPriorityQueue(priority).Enqueue(() =>
+                    this.InvokeSlim(() =>
                     {
                         try
                         {
@@ -243,8 +261,7 @@ namespace LightClaw.Engine.Threading
                         {
                             tcs.TrySetException(ex);
                         }
-                    });
-                    this.resetEvent.Set();
+                    }, priority);
 
                     return await tcs.Task;
                 }
@@ -356,7 +373,10 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified <see cref="Action"/> with normal priority on the target thread.
         /// Does not return a <see cref="Task"/> in order to improve execution time.
         /// </summary>
-        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <remarks>
+        /// Warning: If <paramref name="action"/> throws an exception, <see cref="E:UnhandledException"/> will be raised.
+        /// If none of the event handlers handles the event, the application will crash.
+        /// </remarks>
         /// <param name="action">The action to invoke.</param>
         public void InvokeSlim(Action action)
         {
@@ -369,7 +389,10 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified <see cref="Action"/> with the specified <paramref name="priority"/> on the target thread.
         /// Does not return a <see cref="Task"/> in order to improve execution time.
         /// </summary>
-        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
+        /// <remarks>
+        /// Warning: If <paramref name="action"/> throws an exception, <see cref="E:UnhandledException"/> will be raised.
+        /// If none of the event handlers handles the event, the application will crash.
+        /// </remarks>
         /// <param name="action">The action to invoke.</param>
         /// <param name="priority">The priority of the action to run.</param>
         public void InvokeSlim(Action action, DispatcherPriority priority)
@@ -392,8 +415,11 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified parameterized <see cref="Action"/> with normal priority on the target thread.
         /// Does not return a <see cref="Task"/> in order to improve execution time.
         /// </summary>
+        /// <remarks>
+        /// Warning: If <paramref name="action"/> throws an exception, <see cref="E:UnhandledException"/> will be raised.
+        /// If none of the event handlers handles the event, the application will crash.
+        /// </remarks>
         /// <typeparam name="TParam">The <see cref="Type"/> of the parameter.</typeparam>
-        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
         /// <param name="action">The action to invoke.</param>
         /// <param name="param">The parameter value.</param>
         public void InvokeSlim<TParam>(Action<TParam> action, TParam param)
@@ -407,8 +433,11 @@ namespace LightClaw.Engine.Threading
         /// Asynchronously invokes the specified parameterized <see cref="Action"/> with the specified <paramref name="priority"/> on the
         /// target thread. Does not return a <see cref="Task"/> in order to improve execution time.
         /// </summary>
+        /// <remarks>
+        /// Warning: If <paramref name="action"/> throws an exception, <see cref="E:UnhandledException"/> will be raised.
+        /// If none of the event handlers handles the event, the application will crash.
+        /// </remarks>
         /// <typeparam name="TParam">The <see cref="Type"/> of the parameter.</typeparam>
-        /// <remarks>Warning: If <paramref name="action"/> throws an exception, it will cause the application to crash.</remarks>
         /// <param name="action">The action to invoke.</param>
         /// <param name="param">The parameter value.</param>
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
@@ -434,35 +463,34 @@ namespace LightClaw.Engine.Threading
             SynchronizationContext currentContext = SynchronizationContext.Current;
             try
             {
-                SynchronizationContext.SetSynchronizationContext(new LightClawSynchronizationContext());
+                SynchronizationContext.SetSynchronizationContext(new LightClawSynchronizationContext(this));
+                this.isRunning = 1;
 
-                while (!this.IsDisposed)
+                while (!this.IsDisposed && this.isRunning != 0)
                 {
-                    NativeMessage msg;
-                    if (PeekMessage(out msg, IntPtr.Zero, 0, 0, 0, 1))
-                    {
-                        TranslateMessage(ref msg);
-                        DispatchMessage(ref msg);
-                    }
-                    else
-                    {
-                        if (this.resetEvent.WaitOne(0))
-                        {
-                            this.RunInternal();
-                        }
-                    }
+                    this.resetEvent.WaitOne();
+                    this.ExecuteStack();
                 }
 
                 // Empty the execution stack if we're disposed.
-                while (!this.queues.Values.All(q => q.IsEmpty))
+                int tries = 0; // Make sure we don't get stuck in infinite loops
+                while (!this.queues.Values.All(q => q.IsEmpty) && tries ++ < 5)
                 {
-                    this.RunInternal();
+                    this.ExecuteStack();
                 }
             }
             finally
             {
                 SynchronizationContext.SetSynchronizationContext(currentContext);
             }
+        }
+
+        /// <summary>
+        /// Stops a running dispatcher loop.
+        /// </summary>
+        public void Stop()
+        {
+            this.isRunning = 0;
         }
 
         /// <summary>
@@ -501,7 +529,7 @@ namespace LightClaw.Engine.Threading
             return queue;
         }
 
-        private void RunInternal()
+        private void ExecuteStack()
         {
             List<Action> actions = null; // Do not allocate the list, if we can avoid it
             foreach (ConcurrentQueue<Action> queue in this.queues.Values)
@@ -513,7 +541,7 @@ namespace LightClaw.Engine.Threading
                     {
                         if (actions == null)
                         {
-                            actions = new List<Action>(32);
+                            actions = new List<Action>();
                         }
                         actions.Add(action);
                     }
@@ -550,14 +578,5 @@ namespace LightClaw.Engine.Threading
                 }
             }
         }
-
-        [DllImport("user32.dll")]
-        static extern IntPtr DispatchMessage([In] ref NativeMessage message);
-            
-        [DllImport("user32.dll")]
-        private static extern bool PeekMessage([Out] out NativeMessage message, IntPtr windowPtr, uint filter, uint filterMin, uint filterMax, uint remove);
-
-        [DllImport("user32.dll")]
-        private static extern bool TranslateMessage([In] ref NativeMessage message);
     }
 }

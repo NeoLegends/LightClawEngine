@@ -67,7 +67,7 @@ namespace LightClaw.Engine.Threading
     /// <summary>
     /// Contains extension methods to <see cref="MethodInfo"/>.
     /// </summary>
-    public static class MethodInfoExtensions
+    public static class MemberInfoExtensions
     {
         /// <summary>
         /// Gets a methods <see cref="ThreadMode"/>. See remarks.
@@ -79,7 +79,7 @@ namespace LightClaw.Engine.Threading
         /// </remarks>
         /// <param name="mInfo">The method to get the <see cref="ThreadMode"/> of.</param>
         /// <returns>The methods <see cref="ThreadMode"/> or <see cref="ThreadMode.Unspecified"/> if the mode was not explicitly set.</returns>
-        public static ThreadMode GetThreadMode(this MethodInfo mInfo)
+        public static ThreadMode GetThreadMode(this MemberInfo mInfo)
         {
             Contract.Requires<ArgumentNullException>(mInfo != null);
 
@@ -90,9 +90,14 @@ namespace LightClaw.Engine.Threading
             }
             else
             {
-                attr = mInfo.DeclaringType.GetCustomAttribute<ThreadModeAttribute>();
-                return (attr != null) ? attr.Mode : ThreadMode.Unspecified;
+                Type declaringType = mInfo.DeclaringType;
+                if (declaringType != null)
+                {
+                    return declaringType.GetThreadMode();
+                }
             }
+
+            return ThreadMode.Unspecified;
         }
     }
 }

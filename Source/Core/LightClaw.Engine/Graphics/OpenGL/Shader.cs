@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -192,21 +193,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            lock (this.initializationLock)
+            try
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    try
+                    if (this.IsInitialized && !this.IsDisposed)
                     {
-                        GL.DeleteShader(this);
-                    }
-                    catch (AccessViolationException ex)
-                    {
-                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Shader).Name), ex);
+                        this.Dispatcher.InvokeSlim(this.DeleteShader, DispatcherPriority.Background);
                     }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -228,6 +228,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 string message = "{0} could not be compiled. Info log: '{1}'.".FormatWith(typeof(Shader).Name, infoLog);
                 Log.Error(message);
                 throw new CompilationFailedException(message, infoLog, result);
+            }
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteShader()
+        {
+            try
+            {
+                GL.DeleteShader(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Shader).Name), ex);
             }
         }
 

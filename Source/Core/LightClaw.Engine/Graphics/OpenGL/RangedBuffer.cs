@@ -436,12 +436,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to release managed resources.</param>
         protected override void Dispose(bool disposing)
         {
-            if (this.OwnsBaseBuffer)
+            try
             {
-                this.BaseBuffer.Dispose();
+                if (this.OwnsBaseBuffer)
+                {
+                    this.BaseBuffer.Dispose();
+                }
             }
-
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>

@@ -186,12 +186,13 @@
     <Compile Include="Core\DisposableEntity.cs" />
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
+    <Compile Include="Threading\DispatcherObjectExtensions.cs" />
+    <Compile Include="Threading\IDispatcherObject.cs" />
     <Compile Include="Core\IGame.cs" />
     <Compile Include="Core\InitializableEntity.cs" />
     <Compile Include="Core\Math\Point.cs" />
     <Compile Include="Core\UpdateEventArgs.cs" />
     <Compile Include="IO\AssetNotFoundException.cs" />
-    <Compile Include="Threading\NativeMessage.cs" />
     <Compile Include="Threading\ThreadModeAttribute.cs" />
     <Compile Include="Threading\WrongThreadException.cs" />
     <Compile Include="Core\ISceneManager.cs" />

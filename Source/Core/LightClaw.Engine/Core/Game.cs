@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
@@ -30,6 +32,21 @@ namespace LightClaw.Engine.Core
         private static readonly Version OpenGLVersion = new Version(4, 4);
 
         /// <summary>
+        /// Used for avoiding creating a new object every tick.
+        /// </summary>
+        private readonly Action cachedOnTickAction;
+
+        /// <summary>
+        /// The maximum time for a single frame.
+        /// </summary>
+        private readonly TimeSpan frameDuration = TimeSpan.FromMilliseconds(1000.0 / (double)VideoSettings.Default.FPSLimit);
+
+        /// <summary>
+        /// The system tick count before the update has occured.
+        /// </summary>
+        private long preUpdateTime = 0L;
+
+        /// <summary>
         /// Backing field.
         /// </summary>
         private GameTime _CurrentGameTime;
@@ -49,6 +66,19 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        private Dispatcher _Dispatcher = Dispatcher.Current;
+
+        /// <summary>
+        /// Gets the <see cref="Dispatcher"/> associated with the <see cref="Game"/>.
+        /// </summary>
+        public Dispatcher Dispatcher
+        {
+            get
+            {
+                return _Dispatcher;
+            }
+        }
+
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -65,7 +95,7 @@ namespace LightClaw.Engine.Core
 #else
             OpenTK.Graphics.GraphicsContextFlags.Default
 #endif
-)
+        )
         {
             WindowState = VideoSettings.Default.WindowState,
             VSync = VideoSettings.Default.VSync
@@ -150,17 +180,18 @@ namespace LightClaw.Engine.Core
                 );
             }
 
-            this.GameWindow.Closed += (s, e) => this.OnClosed();
-            this.GameWindow.Load += (s, e) => this.OnLoad();
-            this.GameWindow.Move += (s, e) => this.OnMove(this.GameWindow.Location);
-            this.GameWindow.RenderFrame += (s, e) => this.OnRender();
-            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
-            this.GameWindow.UpdateFrame += (s, e) => this.OnUpdate(e.Time);
-            this.GameWindow.Unload += (s, e) => this.OnUnload();
+            this.cachedOnTickAction = new Action(this.OnTick);
 
+            this.GameWindow.Closed += (s, e) => this.OnClosed();
+            this.GameWindow.Move += (s, e) => this.OnMove(this.GameWindow.Location);
+            this.GameWindow.Resize += (s, e) => this.OnResize(this.GameWindow.Width, this.GameWindow.Height);
+            this.GameWindow.Unload += (s, e) => this.OnUnload();
+            
             Log.Debug(() => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, startScene));
             this.SceneManager = new SceneManager(startScene);
-            this.IocC.RegisterInstance<ISceneManager>(this.SceneManager);
+            
+            this.IocC.RegisterInstance(this.SceneManager);
+            this.IocC.RegisterInstance(this.Dispatcher);
 
             this.LoadIcon();
 
@@ -181,7 +212,19 @@ namespace LightClaw.Engine.Core
                     "Entering game loop with unlimited frame rate."
             );
 
-            this.GameWindow.Run(limitFps ? maxFrameRate : 0.0);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+
+            SynchronizationContext.SetSynchronizationContext(new LightClawSynchronizationContext());
+            this.SceneManager.Load();
+            this.SceneManager.Enable();
+
+            this.GameWindow.Visible = true;
+
+            this.Dispatcher.InvokeSlim(this.OnTick);
+            this.Dispatcher.Run();
         }
 
         /// <summary>
@@ -190,10 +233,15 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            this.SceneManager.Dispose();
-            //this.GameWindow.Dispose();
-
-            base.Dispose(disposing);
+            try
+            {
+                this.Dispatcher.Stop();
+                this.SceneManager.Dispose();
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -204,21 +252,6 @@ namespace LightClaw.Engine.Core
             Log.Info(() => "Closing game window.");
 
             this.Dispose();
-        }
-
-        /// <summary>
-        /// Callback for <see cref="E:IGameWindow.Load"/>.
-        /// </summary>
-        protected virtual void OnLoad()
-        {
-            this.SceneManager.Load();
-            this.SceneManager.Enable();
-
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthFunc(DepthFunction.Less);
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-            GL.Viewport(0, 0, this.GameWindow.Width, this.GameWindow.Height);
         }
 
         /// <summary>
@@ -259,13 +292,12 @@ namespace LightClaw.Engine.Core
         /// Callback for <see cref="E:IGameWindow.UpdateFrame"/>.
         /// </summary>
         /// <param name="elapsedSinceLastUpdate">The time that passed since the last call to this callback.</param>
-        protected virtual void OnUpdate(double elapsedSinceLastUpdate)
+        protected virtual void OnUpdate(TimeSpan elapsedSinceLastUpdate)
         {
-            elapsedSinceLastUpdate = Math.Max(elapsedSinceLastUpdate, 0.0);
             GameTime currentGameTime = this.CurrentGameTime = this.CurrentGameTime + elapsedSinceLastUpdate;
 
-            Contract.Assume(this.SceneManager != null);
-            //this.SceneManager.Update(currentGameTime);
+            int pass = 0;
+            while (!this.SceneManager.Update(currentGameTime, pass++)) { }
         }
 
         /// <summary>
@@ -290,6 +322,26 @@ namespace LightClaw.Engine.Core
             {
                 Log.Warn("An error of type {0} occured while loading the game's icon.".FormatWith(ex.GetType().FullName), ex);
             }
+        }
+
+        private void OnTick()
+        {
+            this.GameWindow.ProcessEvents();
+            
+            long previousPreUpdateTime = Interlocked.Exchange(ref this.preUpdateTime, Stopwatch.GetTimestamp());
+            TimeSpan elapsedSinceLastUpdate = TimeSpan.FromTicks((previousPreUpdateTime != 0L) ? this.preUpdateTime - previousPreUpdateTime : 0L);
+
+            this.OnUpdate(elapsedSinceLastUpdate);
+            this.OnRender();
+
+            TimeSpan timeSinceUpdate = TimeSpan.FromTicks(Stopwatch.GetTimestamp() - this.preUpdateTime);
+            TimeSpan timeToSleep = frameDuration - timeSinceUpdate;
+            if (timeToSleep > TimeSpan.Zero)
+            {
+                Thread.Sleep(timeToSleep);
+            }
+
+            this.Dispatcher.InvokeSlim(this.cachedOnTickAction); // Small perf hack
         }
 
         /// <summary>

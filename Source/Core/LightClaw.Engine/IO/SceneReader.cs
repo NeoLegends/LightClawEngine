@@ -41,7 +41,7 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                Log.Warn("Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
+                Log.Info("Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
             }
 
             try

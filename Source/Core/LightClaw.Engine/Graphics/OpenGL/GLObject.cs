@@ -5,7 +5,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using DryIoc;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -14,7 +16,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents the base class for all OpenGL wrapper objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : InitializableEntity, IGLObject
+    public abstract class GLObject : InitializableEntity, IDispatcherObject, IGLObject
     {
         /// <summary>
         /// A lock used to restrict access to the supported extensions-method.
@@ -24,11 +26,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Contains all supported OpenGL extensions.
         /// </summary>
-        private static List<string> supportedExtensions;
+        private static volatile List<string> supportedExtensions;
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private static Version _MaxOpenGLVersion;
 
         /// <summary>
@@ -42,9 +41,24 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        private Dispatcher _Dispatcher;
+
         /// <summary>
-        /// Backing field.
+        /// The <see cref="Dispatcher"/> used to dispatch graphics events.
         /// </summary>
+        [IgnoreDataMember]
+        public Dispatcher Dispatcher
+        {
+            get
+            {
+                return _Dispatcher;
+            }
+            private set
+            {
+                _Dispatcher = value;
+            }
+        }
+
         private int _Handle;
 
         /// <summary>
@@ -66,7 +80,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Initializes a new <see cref="GLObject"/>.
         /// </summary>
-        protected GLObject() { }
+        protected GLObject() : this(null, 0) { }
 
         /// <summary>
         /// Initializes a new <see cref="GLObject"/> setting the object's handle.
@@ -78,7 +92,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Initializes a new <see cref="GLObject"/> setting the object's name.
         /// </summary>
         /// <param name="name">The object's name.</param>
-        protected GLObject(string name) : base(name) { }
+        protected GLObject(string name) : this(name, 0) { }
 
         /// <summary>
         /// Initializes a new <see cref="GLObject"/> setting the object's name and handle.
@@ -88,6 +102,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         protected GLObject(string name, int handle)
             : base(name) 
         {
+            this.Dispatcher = this.IocC.Resolve<Dispatcher>();
             this.Handle = handle;
         }
 
@@ -149,7 +164,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 }
             }
 
-            return supportedExtensions.Contains(extensionName);
+            return supportedExtensions.Contains(extensionName, StringComparer.InvariantCultureIgnoreCase);
         }
 
         /// <summary>

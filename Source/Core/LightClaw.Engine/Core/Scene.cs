@@ -336,14 +336,6 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Implementation of <see cref="M:Load"/>.
-        /// </summary>
-        protected override void OnLoad()
-        {
-            Parallel.ForEach(this.Items, item => item.Load());
-        }
-
-        /// <summary>
         /// Implementation of <see cref="M:Reset"/>.
         /// </summary>
         protected override void OnReset()
@@ -405,28 +397,24 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(s != null);
             Contract.Requires<ArgumentException>(s.CanRead);
 
-            Task<Scene> sceneLoadingTask = Task.Run(() =>
+            return Task.Run(() =>
             {
-                staticLogger.Info("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
+                try
+                {
+                    staticLogger.Debug("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
 
-                using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 1024, true))
-                using (JsonTextReader jtr = new JsonTextReader(sr) { CloseInput = false })
-                {
-                    return serializer.Deserialize<Scene>(jtr);
+                    using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 1024, true))
+                    using (JsonTextReader jtr = new JsonTextReader(sr) { CloseInput = false })
+                    {
+                        return serializer.Deserialize<Scene>(jtr);
+                    }
                 }
-            });
-            sceneLoadingTask.ContinueWith(
-                t =>
+                catch (Exception ex)
                 {
-                    staticLogger.Info(() => "Scene '{0}' loaded.".FormatWith((t.Result != null) ? t.Result.Name : "N/A"));
-                    return t.Result;
-                }, TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously
-            );
-            sceneLoadingTask.ContinueWith(
-                t => staticLogger.Warn("Scene loading failed.", t.Exception), 
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously
-            );
-            return sceneLoadingTask;
+                    staticLogger.Warn("Scene loading failed. An error of type {0} occured.".FormatWith(ex.GetType().Name), ex);
+                }
+                return null;
+            });
         }
     }
 }

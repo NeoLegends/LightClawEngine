@@ -159,33 +159,21 @@ namespace LightClaw.Engine.Core
             return false;
         }
 
-        void IControllable.Enable()
-        {
-        }
+        void IControllable.Enable() { }
 
-        void IControllable.Disable()
-        {
-        }
+        void IControllable.Disable() { }
 
-        void IControllable.Load()
-        {
-        }
+        void IControllable.Load() { }
 
-        void IControllable.Reset()
-        {
-        }
+        void IControllable.Reset() { }
 
         bool IUpdateable.Update(GameTime gameTime, int pass)
         {
             return false;
         }
 
-        void IDisposable.Dispose()
-        {
-        }
+        void IDisposable.Dispose() { }
 
-        void Graphics.IDrawable.Draw()
-        {
-        }
+        void Graphics.IDrawable.Draw() { }
     }
 }

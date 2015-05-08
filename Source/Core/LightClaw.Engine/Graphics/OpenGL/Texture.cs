@@ -227,16 +227,33 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.IsDisposed)
+            try
             {
                 lock (this.initializationLock)
                 {
-                    if (this.IsInitialized)
+                    if (this.IsInitialized && !this.IsDisposed)
                     {
-                        GL.DeleteTexture(this);
+                        this.Dispatcher.InvokeSlim(this.DeleteTexture);
                     }
                 }
+            }
+            finally
+            {
                 base.Dispose(disposing);
+            }
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteTexture()
+        {
+            try
+            {
+                GL.DeleteTexture(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
             }
         }
 

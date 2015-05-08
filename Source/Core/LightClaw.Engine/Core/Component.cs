@@ -14,6 +14,8 @@ namespace LightClaw.Engine.Core
     [DataContract(IsReference = true), JsonObject]
     public abstract class Component : Manager
     {
+        private static readonly Task finishedTask = Task.FromResult(true);
+
         /// <summary>
         /// Notifies when the owning <see cref="GameObject"/> changed.
         /// </summary>

@@ -26,16 +26,16 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// The time in seconds that passed since the last call to <see cref="IUpdateable.Update"/>.
+        /// The time that passed since the last call to <see cref="IUpdateable.Update"/>.
         /// </summary>
         [DataMember]
-        public double ElapsedSinceLastUpdate { get; private set; }
+        public TimeSpan ElapsedSinceLastUpdate { get; private set; }
 
         /// <summary>
-        /// The game's total running time in seconds.
+        /// The game's total running time.
         /// </summary>
         [DataMember]
-        public double TotalGameTime { get; private set; }
+        public TimeSpan TotalGameTime { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="GameTime"/> setting the delta time and the total game time.
@@ -44,11 +44,11 @@ namespace LightClaw.Engine.Core
         /// The time in seconds that passed since the last call to <see cref="IUpdateable.Update"/>.
         /// </param>
         /// <param name="totalTime">The game's total running time in seconds.</param>
-        public GameTime(double elapsedSinceUpdate, double totalTime)
+        public GameTime(TimeSpan elapsedSinceUpdate, TimeSpan totalTime)
             : this()
         {
-            Contract.Requires<ArgumentOutOfRangeException>(elapsedSinceUpdate >= 0.0);
-            Contract.Requires<ArgumentOutOfRangeException>(totalTime >= 0.0);
+            Contract.Requires<ArgumentOutOfRangeException>(elapsedSinceUpdate >= TimeSpan.Zero);
+            Contract.Requires<ArgumentOutOfRangeException>(totalTime >= TimeSpan.Zero);
 
             this.ElapsedSinceLastUpdate = elapsedSinceUpdate;
             this.TotalGameTime = totalTime;
@@ -83,8 +83,7 @@ namespace LightClaw.Engine.Core
         /// <returns><c>true</c> if both instances are the same, otherwise <c>false</c>.</returns>
         public bool Equals(GameTime other)
         {
-            return MathF.AlmostEquals(this.ElapsedSinceLastUpdate, other.ElapsedSinceLastUpdate) &&
-                   MathF.AlmostEquals(this.TotalGameTime, other.TotalGameTime);
+            return (this.ElapsedSinceLastUpdate == other.ElapsedSinceLastUpdate) && (this.TotalGameTime == other.TotalGameTime);
         }
 
         /// <summary>
@@ -100,11 +99,28 @@ namespace LightClaw.Engine.Core
         /// Adds the specified time that <paramref name="elapsedSinceLastUpdate"/> to the <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The <see cref="GameTime"/> to add to.</param>
-        /// <param name="elapsedSinceLastUpdate">The time that elapsed since the last update call.</param>
+        /// <param name="elapsedSinceLastUpdate">The time (in seconds) that elapsed since the last update call.</param>
         /// <returns>A newly created game time with the new values.</returns>
         public static GameTime operator +(GameTime gameTime, double elapsedSinceLastUpdate)
         {
             Contract.Requires<ArgumentOutOfRangeException>(elapsedSinceLastUpdate >= 0.0);
+
+            TimeSpan elapsed = TimeSpan.FromSeconds(elapsedSinceLastUpdate);
+            return new GameTime(
+                elapsed,
+                gameTime.TotalGameTime + elapsed
+            );
+        }
+
+        /// <summary>
+        /// Adds the specified time that <paramref name="elapsedSinceLastUpdate"/> to the <see cref="GameTime"/>.
+        /// </summary>
+        /// <param name="gameTime">The <see cref="GameTime"/> to add to.</param>
+        /// <param name="elapsedSinceLastUpdate">The time that elapsed since the last update call.</param>
+        /// <returns>A newly created game time with the new values.</returns>
+        public static GameTime operator +(GameTime gameTime, TimeSpan elapsedSinceLastUpdate)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(elapsedSinceLastUpdate >= TimeSpan.Zero);
 
             return new GameTime(
                 elapsedSinceLastUpdate,
@@ -132,16 +148,6 @@ namespace LightClaw.Engine.Core
         public static bool operator !=(GameTime left, GameTime right)
         {
             return !(left == right);
-        }
-
-        /// <summary>
-        /// Contains Contract.Invariant-definitions.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.ElapsedSinceLastUpdate >= 0.0);
-            Contract.Invariant(this.TotalGameTime >= 0.0);
         }
     }
 }

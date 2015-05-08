@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -156,21 +157,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            lock (this.initializationLock)
+            try
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    try
+                    if (this.IsInitialized && !this.IsDisposed)
                     {
-                        GL.DeleteProgram(this);
-                    }
-                    catch (AccessViolationException ex)
-                    {
-                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
+                        this.Dispatcher.InvokeSlim(this.DeleteShaderProgram, DispatcherPriority.Background);
                     }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>
@@ -218,6 +218,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     s.DetachFrom(this);
                 }
+            }
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteShaderProgram()
+        {
+            try
+            {
+                GL.DeleteProgram(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
             }
         }
 

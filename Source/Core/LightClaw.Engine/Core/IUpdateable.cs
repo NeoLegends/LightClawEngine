@@ -29,7 +29,8 @@ namespace LightClaw.Engine.Core
         /// Updates the instance with the specified <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        /// <param name="pass"></param>
+        /// <param name="pass">The current updating pass.</param>
+        /// <returns><c>true</c> if the <see cref="IUpdateable"/> has finished updating, otherwise <c>false</c>.</returns>
         bool Update(GameTime gameTime, int pass);
     }
 

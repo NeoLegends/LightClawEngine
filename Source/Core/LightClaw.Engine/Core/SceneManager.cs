@@ -28,11 +28,6 @@ namespace LightClaw.Engine.Core
         private readonly SortedDictionary<int, Scene> scenes = new SortedDictionary<int, Scene>();
 
         /// <summary>
-        /// A working copy of the scenes to work with.
-        /// </summary>
-        private readonly List<Scene> workingCopy = new List<Scene>();
-
-        /// <summary>
         /// Gets the <see cref="Scene"/> at the specified <paramref name="slot"/>
         /// </summary>
         /// <param name="slot">The slot of the <see cref="Scene"/> to retreive.</param>
@@ -132,7 +127,7 @@ namespace LightClaw.Engine.Core
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
         public int Load(int slot, Scene s)
         {
-            Log.Info(() => "Loading a new scene into position {0}.".FormatWith(slot));
+            Log.Debug(() => "Loading a new scene into position {0}.".FormatWith(slot));
 
             if (this.IsLoaded && !s.IsLoaded)
             {
@@ -241,17 +236,18 @@ namespace LightClaw.Engine.Core
         /// <param name="disposing">The scenes to dispose.</param>
         protected override void Dispose(bool disposing)
         {
-            lock (this.scenes)
+            try
             {
-                this.workingCopy.AddRange(this.scenes.Values);
-                this.scenes.Clear();
+                lock (this.scenes)
+                {
+                    this.DoForAll(s => s.Dispose());
+                    this.scenes.Clear();
+                }
             }
-            foreach (Scene s in this.workingCopy)
+            finally
             {
-                s.Dispose();
+                base.Dispose(disposing);
             }
-            this.workingCopy.Clear();
-            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -259,15 +255,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnEnable()
         {
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.Enable();
-            }
-            this.workingCopy.Clear();
+            this.DoForAll(s => s.Enable());
         }
 
         /// <summary>
@@ -275,15 +263,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDisable()
         {
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.Disable();
-            }
-            this.workingCopy.Clear();
+            this.DoForAll(s => s.Disable());
         }
 
         /// <summary>
@@ -291,15 +271,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnDraw()
         {
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.Draw();
-            }
-            this.workingCopy.Clear();
+            this.DoForAll(s => s.Draw());
         }
 
         /// <summary>
@@ -307,19 +279,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
-            Log.Info(() => "Loading scene manager.");
-
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.Load();
-            }
-            this.workingCopy.Clear();
-
-            Log.Info(() => "Scene manager loaded.");
+            this.DoForAll(s => s.Load());
         }
 
         /// <summary>
@@ -327,15 +287,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnReset()
         {
-            lock (this.scenes)
-            {
-                this.workingCopy.AddRange(this.scenes.Values);
-            }
-            foreach (Scene s in this.workingCopy)
-            {
-                s.Reset();
-            }
-            this.workingCopy.Clear();
+            this.DoForAll(s => s.Reset());
         }
 
         /// <summary>
@@ -343,17 +295,44 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override bool OnUpdate(GameTime gameTime, int pass)
         {
+            bool result = true;
+            this.DoForAll(s => result &= s.Update(gameTime, pass));
+            return result;
+        }
+
+        private void DoForAll(Action<Scene> action)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            List<Scene> workingCopy = null;
+            Scene scene = null;
             lock (this.scenes)
             {
-                this.workingCopy.AddRange(this.scenes.Values);
+                // If we have only one scene, don't create a list. Call the action directly on it instead.
+                if (this.scenes.Count > 1)
+                {
+                    (workingCopy = new List<Scene>()).AddRange(this.scenes.Values);
+                }
+                else
+                {
+                    scene = this.scenes.Values.FirstOrDefault();
+                }
             }
-            bool result = true;
-            foreach (Scene s in this.workingCopy)
+
+            if (workingCopy != null)
             {
-                result &= s.Update(gameTime, pass);
+                for (int i = 0; i < workingCopy.Count; i++)
+                {
+                    action(workingCopy[i]);
+                }
             }
-            this.workingCopy.Clear();
-            return result;
+            else
+            {
+                if (scene != null)
+                {
+                    action(scene);
+                }
+            }
         }
     }
 }

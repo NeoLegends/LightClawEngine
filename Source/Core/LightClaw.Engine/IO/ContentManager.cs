@@ -162,7 +162,7 @@ namespace LightClaw.Engine.IO
             token.ThrowIfCancellationRequested();
             Log.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
-            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
+            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync().ConfigureAwait(false))
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
                 WeakReference<object> cachedAsset = null;
@@ -178,7 +178,8 @@ namespace LightClaw.Engine.IO
                     token.ThrowIfCancellationRequested();
                     
                     using (Stream assetStream = await this.resolvers.Select(resolver => resolver.GetStreamAsync(resourceString, false, token))
-                                                                    .FirstFinishedOrDefaultAsync(s => s != null))
+                                                                    .FirstFinishedOrDefaultAsync(s => s != null)
+                                                                    .ConfigureAwait(false))
                     {
                         // If the stream could not be found, throw exception
                         if (assetStream == null)
@@ -189,13 +190,14 @@ namespace LightClaw.Engine.IO
                         }
 
                         // Try to deserialize using registered content readers
-                        Log.Debug(() => "Stream around '{0}' obtained, obtaining reader...".FormatWith(resourceString));
+                        Log.Trace(() => "Stream around '{0}' obtained, obtaining reader...".FormatWith(resourceString));
                         IContentReader reader = this.GetReader(assetType, parameter);
                         if (reader != null)
                         {
                             Log.Trace(() => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(resourceString, assetType.FullName));
                             token.ThrowIfCancellationRequested();
-                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter));
+                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter))
+                                                .ConfigureAwait(false);
                         }
                         else
                         {

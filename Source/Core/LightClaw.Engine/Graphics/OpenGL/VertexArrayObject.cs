@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -134,6 +135,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void DrawIndexed(int offset)
         {
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(offset <= this.IndexCount);
 
             this.DrawIndexed(offset, this.IndexCount - offset);
         }
@@ -155,24 +157,22 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.BindVertexArray(0);
         }
 
-        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            lock (this.initializationLock)
+            try
             {
-                if (this.IsInitialized)
+                lock (this.initializationLock)
                 {
-                    try
+                    if (this.IsInitialized && !this.IsDisposed)
                     {
-                        GL.DeleteVertexArray(this);
-                    }
-                    catch (AccessViolationException ex)
-                    {
-                        Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(VertexArrayObject).Name), ex);
+                        this.Dispatcher.InvokeSlim(this.DeleteVertexArrayObject, DispatcherPriority.Background);
                     }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         protected override void OnInitialize()
@@ -180,7 +180,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Log.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
 
             this.Handle = GL.GenVertexArray();
-            try // Can't use Binding and using clause here because it causes a stackoverflow
+
+            // Can't use Binding and using clause here because it causes a stack overflow (Bindable.Bind -> Initialize)
+            try
             {
                 GL.BindVertexArray(this);
                 foreach (BufferDescription desc in this.VertexBuffers)
@@ -224,6 +226,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 {
                     vertexPointer.Disable();
                 }
+            }
+        }
+
+        [System.Security.SecurityCritical]
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        private void DeleteVertexArrayObject()
+        {
+            try
+            {
+                GL.DeleteVertexArray(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(VertexArrayObject).Name), ex);
             }
         }
 

@@ -45,7 +45,7 @@ namespace LightClaw.Engine.Threading
 
         public override void Send(SendOrPostCallback d, object state)
         {
-            this.dispatcher.InvokeSlim(new Action<object>(d), state, DispatcherPriority.Immediate);
+            this.dispatcher.Invoke(new Action<object>(d), DispatcherPriority.Immediate).Wait();
         }
     }
 }
