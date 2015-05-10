@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
+using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DebuggerDisplay("Name = {Name}, Location = {Location}")]
-    public class Uniform : InitializableEntity
+    public class Uniform : DispatcherEntity
     {
         private readonly object initializationLock = new object();
 
@@ -38,7 +41,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                this.Initialize();
                 return base.Name;
             }
             set
@@ -86,105 +88,110 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             this.Location = location;
             this.Program = program;
+
+            int nameLength;
+            ActiveUniformType uniformType;
+            base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
+            this.Type = uniformType; // Set indirectly to fire event
         }
 
         public void Set(int value)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
         [CLSCompliant(false)]
-        public void Set(uint value1)
+        public void Set(uint value)
         {
-            this.Initialize();
-            GL.ProgramUniform1(this.Program, this.Location, value1);
+            this.VerifyAccess();
+            GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
         public void Set(float value)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
         public void Set(double value)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
         public void Set(int value1, int value2)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
         public void Set(float value1, float value2)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
         public void Set(double value1, double value2)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
         public void Set(int value1, int value2, int value3)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
         public void Set(float value1, float value2, float value3)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
         public void Set(double value1, double value2, double value3)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
         public void Set(int value1, int value2, int value3, int value4)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3, uint value4)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
         public void Set(float value1, float value2, float value3, float value4)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
         public void Set(double value1, double value2, double value3, double value4)
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
@@ -208,15 +215,43 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Set(value.X, value.Y, value.Z, value.W);
         }
 
-        public void Set(Matrix value)
+        public void Set(Matrix2 value)
         {
             this.Set(value, false);
         }
 
-        public void Set(Matrix value, bool transpose)
+        public unsafe void Set(Matrix2 value, bool transpose)
         {
-            this.Initialize();
-            GL.ProgramUniformMatrix4(this.Program, this.Location, 1, transpose, value.ToArray());
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
+        }
+
+        public void Set(Matrix2x3 value)
+        {
+            this.Set(value, false);
+        }
+
+        public unsafe void Set(Matrix2x3 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix2x3(this.Program, this.Location, 1, transpose, pValue);
+        }
+
+        public void Set(Matrix2x4 value)
+        {
+            this.Set(value, false);
+        }
+
+        public unsafe void Set(Matrix2x4 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix2x4(this.Program, this.Location, 1, transpose, pValue);
         }
 
         public void Set(Matrix3x2 value)
@@ -224,44 +259,77 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Set(value, false);
         }
 
-        public void Set(Matrix3x2 value, bool transpose)
+        public unsafe void Set(Matrix3x2 value, bool transpose)
         {
-            this.Initialize();
-            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, value.ToArray());
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
         }
 
-        public void Set(Matrix3x3 value)
+        public void Set(Matrix3 value)
         {
             this.Set(value, false);
         }
 
-        public void Set(Matrix3x3 value, bool transpose)
+        public unsafe void Set(Matrix3 value, bool transpose)
         {
-            this.Initialize();
-            GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, value.ToArray());
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, pValue);
         }
 
-        public void Set(Matrix5x4 value)
+        public void Set(Matrix3x4 value)
         {
-            this.Initialize();
-            GL.ProgramUniform4(this.Program, this.Location, value.M11, value.M12, value.M13, value.M14);
-            GL.ProgramUniform4(this.Program, this.Location + 4, value.M21, value.M22, value.M23, value.M24);
-            GL.ProgramUniform4(this.Program, this.Location + 8, value.M31, value.M32, value.M33, value.M34);
-            GL.ProgramUniform4(this.Program, this.Location + 12, value.M41, value.M42, value.M43, value.M44);
-            GL.ProgramUniform4(this.Program, this.Location + 16, value.M51, value.M52, value.M53, value.M54);
+            this.Set(value, false);
         }
 
-        protected override void OnInitialize()
+        public unsafe void Set(Matrix3x4 value, bool transpose)
         {
-            if (this.Program.Handle == 0)
-            {
-                throw new InvalidOperationException("The {0} must have a name before the {1} can be initialized.".FormatWith(typeof(ShaderProgram).Name, typeof(Uniform).Name));
-            }
+            this.VerifyAccess();
 
-            int nameLength;
-            ActiveUniformType uniformType;
-            base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
-            this.Type = uniformType; // Set indirectly to fire event
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix3x4(this.Program, this.Location, 1, transpose, pValue);
+        }
+
+        public void Set(Matrix4x2 value)
+        {
+            this.Set(value, false);
+        }
+
+        public unsafe void Set(Matrix4x2 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix4x2(this.Program, this.Location, 1, transpose, pValue);
+        }
+
+        public void Set(Matrix4x3 value)
+        {
+            this.Set(value, false);
+        }
+
+        public unsafe void Set(Matrix4x3 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix4x3(this.Program, this.Location, 1, transpose, pValue);
+        }
+
+        public void Set(Matrix4 value)
+        {
+            this.Set(value, false);
+        }
+
+        public unsafe void Set(Matrix4 value, bool transpose)
+        {
+            this.VerifyAccess();
+            
+            float* pValue = (float*)&value;
+            GL.ProgramUniformMatrix4(this.Program, this.Location, 1, transpose, pValue);
         }
 
         [ContractInvariantMethod]

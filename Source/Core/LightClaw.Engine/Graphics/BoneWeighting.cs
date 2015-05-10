@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using LightClaw.Engine.Core;
 namespace LightClaw.Engine.Graphics
 {
     [Serializable, DataContract]
+    [StructLayout(LayoutKind.Sequential)]
     public struct BoneWeighting : ICloneable, IEquatable<BoneWeighting>
     {
         [DataMember]

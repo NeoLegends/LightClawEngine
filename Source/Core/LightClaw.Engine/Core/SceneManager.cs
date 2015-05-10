@@ -56,7 +56,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(startScene));
 
             Log.Info(() => "Initializing scene manager from resource string '{0}'.".FormatWith(startScene));
-            this.Load(1, startScene).Wait(); // Load into slot one to prevent instant-overdraw by a newly loaded scene
+            this.LoadAsync(1, startScene).Wait(); // Load into slot one to prevent instant-overdraw by a newly loaded scene
         }
 
         /// <summary>
@@ -92,24 +92,6 @@ namespace LightClaw.Engine.Core
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
-        }
-
-        /// <summary>
-        /// Asynchronously loads a <see cref="Scene"/> from the specified <paramref name="resourceString"/>.
-        /// </summary>
-        /// <param name="slot">The slot to load the <see cref="Scene"/> into.</param>
-        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
-        /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
-        /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
-        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
-        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
-        /// that are not supposed to overdraw it.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
-        public async Task<int> Load(int slot, ResourceString resourceString)
-        {
-            return this.Load(slot, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString));
         }
 
         /// <summary>
@@ -151,11 +133,27 @@ namespace LightClaw.Engine.Core
                     }
                 }
 
-                // Very unlikely to happen, except for sb wanting to have their scene at int.MinValue + 1 and its
-                // already taken ;)
                 Log.Warn(() => "Scene insertion failed, all slots below were taken.");
                 throw new InvalidOperationException("Scene insertion failed, all slots below were taken.");
             }
+        }
+
+        /// <summary>
+        /// Asynchronously loads a <see cref="Scene"/> from the specified <paramref name="resourceString"/>.
+        /// </summary>
+        /// <param name="slot">The slot to load the <see cref="Scene"/> into.</param>
+        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
+        /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
+        /// <remarks>
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
+        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
+        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
+        /// that are not supposed to overdraw it.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
+        public async Task<int> LoadAsync(int slot, ResourceString resourceString)
+        {
+            return this.Load(slot, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -220,7 +218,7 @@ namespace LightClaw.Engine.Core
             {
                 result = this.scenes.TryGetValue(slot, out s) ? this.scenes.Remove(slot) : false;
             }
-            if (s != null)
+            if (result && s != null)
             {
                 Log.Debug(() => "Disposing scene...");
                 s.Dispose();

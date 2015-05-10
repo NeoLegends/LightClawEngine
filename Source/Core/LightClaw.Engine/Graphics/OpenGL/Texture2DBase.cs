@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -12,7 +13,38 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClass(typeof(Texture2DBaseContracts))]
     public abstract class Texture2DBase : Texture
     {
-        protected Texture2DBase(TextureDescription description) : base(description) { }
+        protected Texture2DBase(TextureDescription description)
+            : base(description)
+        {
+            this.VerifyAccess();
+
+            using (Binding textureBinding = new Binding(this))
+            {
+                switch (this.Target)
+                {
+                    case TextureTarget.Texture2DMultisample:
+                    case TextureTarget.ProxyTexture2DMultisample:
+                        GL.TexStorage2DMultisample(
+                            (TextureTargetMultisample2d)this.Target,
+                            this.MultisamplingLevels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
+                            this.Height,
+                            false
+                        );
+                        break;
+                    default:
+                        GL.TexStorage2D(
+                            (TextureTarget2d)this.Target,
+                            this.Levels,
+                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.Width,
+                            this.Height
+                        );
+                        break;
+                }
+            }
+        }
 
         public void Set<T>(T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
             where T : struct
@@ -42,45 +74,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         public abstract void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level);
-
-        protected override void OnInitialize()
-        {
-            using (Binding textureBinding = new Binding(this))
-            {
-                switch (this.Target)
-                {
-                    case TextureTarget.Texture2DMultisample:
-                    case TextureTarget.ProxyTexture2DMultisample:
-                        GL.TexStorage2DMultisample(
-                            (TextureTargetMultisample2d)this.Target,
-                            this.MultisamplingLevels,
-                            (SizedInternalFormat)this.PixelInternalFormat,
-                            this.Width,
-                            this.Height,
-                            false
-                        );
-                        break;
-                    default:
-                        GL.TexStorage2D(
-                            (TextureTarget2d)this.Target,
-                            this.Levels,
-                            (SizedInternalFormat)this.PixelInternalFormat,
-                            this.Width,
-                            this.Height
-                        );
-                        break;
-                }
-            }
-        }
     }
 
     [ContractClassFor(typeof(Texture2DBase))]
     internal abstract class Texture2DBaseContracts : Texture2DBase
     {
-        public Texture2DBaseContracts()
-            : base(new TextureDescription())
-        {
-        }
+        public Texture2DBaseContracts() : base(new TextureDescription()) { }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {

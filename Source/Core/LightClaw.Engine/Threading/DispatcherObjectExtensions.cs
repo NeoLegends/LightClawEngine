@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,7 @@ namespace LightClaw.Engine.Threading
         /// Throws, if the specified <paramref name="dispatcherObject"/> may not be accessed from the calling thread.
         /// </summary>
         /// <param name="dispatcherObject">The <see cref="IDispatcherObject"/> to check.</param>
+        [Conditional("DEBUG")]
         public static void VerifyAccess(this IDispatcherObject dispatcherObject)
         {
             Contract.Requires<ArgumentNullException>(dispatcherObject != null);

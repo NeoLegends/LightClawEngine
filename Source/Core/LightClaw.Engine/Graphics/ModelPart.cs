@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics
     /// Represents a subdivision of the <see cref="Model"/>-class allowing for different shaders on the same
     /// <see cref="Model"/>.
     /// </summary>
-    public class ModelPart : Entity, IDrawable, IUpdateable
+    public class ModelPart : Entity, IDrawable
     {
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -37,18 +37,6 @@ namespace LightClaw.Engine.Graphics
         /// Notifies about changes in the parent <see cref="Model"/>.
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<Model>> ModelChanged;
-
-        /// <summary>
-        /// Notifies about the start of the updating process.
-        /// </summary>
-        /// <remarks>Raised before any updating operations.</remarks>
-        public event EventHandler<UpdateEventArgs> Updating;
-
-        /// <summary>
-        /// Notifies about the finsih of the updating process.
-        /// </summary>
-        /// <remarks>Raised after any updating operations.</remarks>
-        public event EventHandler<UpdateEventArgs> Updated;
 
         /// <summary>
         /// Notifies about changes in the <see cref="VertexArrayObject"/>.
@@ -131,9 +119,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/>.
         /// </summary>
-        public ModelPart()
-        {
-        }
+        public ModelPart() { }
 
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
@@ -170,29 +156,6 @@ namespace LightClaw.Engine.Graphics
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Updates the <see cref="ModelPart"/> updating the <see cref="ModelEffect"/>.
-        /// </summary>
-        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        public bool Update(GameTime gameTime, int pass)
-        {
-            try
-            {
-                this.Raise(this.Updating, gameTime, pass);
-                ModelEffect effect = this.Effect;
-                if (effect != null)
-                {
-                    return effect.Update(gameTime, pass);
-                }
-            }
-            finally
-            {
-                this.Raise(this.Updated, gameTime, pass);
-            }
-
-            return true;
         }
     }
 }

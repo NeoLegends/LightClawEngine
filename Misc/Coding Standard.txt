@@ -3,6 +3,7 @@ CODING STANDARD:
 		- Always use this.XXX to access instance-scoped variables and methods
 		- All structs should be immutable, except if they are used as parameter-structs (Exceptions if absolutely required possible)
         - Separate everything by one newline
+        - Always use brackets
 
     Types:
         - One type per file (except for delegates, enums and subclasses)
@@ -20,7 +21,7 @@ CODING STANDARD:
         - protected <type> SomeFloat;
         - internal <type> SomeFloat;
         - public <type> SomeFloat;
-		- Do not use var-keyword, except for exceptionally long and awful variable names! (by that I mean I used it 3 and only 3 times in LightClaw!)
+		- Do not use var-keyword, except for exceptionally long and awful variable names!
 		- Avoid creating public static readonly fields, create properties instead
         - Use readonly whereever possible. If a field will only be used and never set, make it readonly. (except for backing fields, ofc)
         
@@ -49,7 +50,7 @@ CODING STANDARD:
         - <method>(..., float someFloat, float someFloat2 = 1.0f)
 
     If-statements:
-        - Always use brackets! (except for short if-then-throw statements / guard clauses)
+        - Always use brackets!
         - if (...)
           {
               // ...
@@ -130,4 +131,4 @@ CODING STANDARD:
 		- Interface Contract definitions shall be made in the same file with an internal abstract class named <InterfaceName>Contracts
 			- internal abstract class IUpdateableContracts : IUpdateable { /* Class code */ }
 	
-    XML-COMMENT EVERYTHING (IN ENGLISH), INCLUDING PRIVATE MEMBERS !!! (Backing fields shall be commented with "Backing field.")
+    XML-COMMENT EVERYTHING (IN ENGLISH), INCLUDING PRIVATE MEMBERS !!! Backing fields do not need to be named.

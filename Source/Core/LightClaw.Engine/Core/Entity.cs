@@ -121,6 +121,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="args">Arguments for creation of a new <see cref="ParameterEventArgs"/>.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise(EventHandler<ParameterEventArgs> handler, object args)
         {
             this.Raise(handler, new ParameterEventArgs(args));
@@ -131,6 +132,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise(EventHandler<ParameterEventArgs> handler, ParameterEventArgs args = null)
         {
             if (handler != null)
@@ -144,11 +146,10 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise(EventHandler<UpdateEventArgs> handler, GameTime gameTime, int pass)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(pass >= 0);
-
-            if (handler != null)
+            if (handler != null && (pass >= 0))
             {
                 this.Raise(handler, new UpdateEventArgs(gameTime, pass));
             }
@@ -159,6 +160,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="args">Arguments for creation of a new <see cref="ParameterEventArgs"/>.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise<T>(EventHandler<T> handler, T args)
         {
             if (handler != null)
@@ -174,6 +176,7 @@ namespace LightClaw.Engine.Core
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
         /// <param name="newValue">The value of the variable after the change.</param>
         /// <param name="oldValue">The value of the variable before the change.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise<T>(EventHandler<ValueChangedEventArgs<T>> handler, T newValue, T oldValue)
         {
             if (handler != null)
@@ -188,6 +191,7 @@ namespace LightClaw.Engine.Core
         /// <remarks>Late binding is slow, avoid this method wherever possible.</remarks>
         /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
         /// <param name="parameters">Delegate parameters.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void RaiseDynamic(Delegate del, params object[] parameters)
         {
             Contract.Requires<ArgumentNullException>(parameters != null);
@@ -204,6 +208,7 @@ namespace LightClaw.Engine.Core
         /// <param name="propertyName">
         /// The property name that changed. Leave this blank, it will be filled out by the compiler.
         /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             RaisePropertyChanged(this, this.PropertyChanged, propertyName);
@@ -218,6 +223,7 @@ namespace LightClaw.Engine.Core
         /// <param name="propertyName">
         /// The property name that changed. Leave this blank, it will be filled out by the compiler.
         /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
             SetProperty(this, this.PropertyChanged, ref location, newValue, propertyName);
@@ -257,6 +263,7 @@ namespace LightClaw.Engine.Core
         /// <param name="sender">The object whose property was changed.</param>
         /// <param name="handler">The <see cref="PropertyChangedEventHandler"/> to raise.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RaisePropertyChanged(object sender, PropertyChangedEventHandler handler, [CallerMemberName] string propertyName = null)
         {
             if (handler != null)
@@ -274,6 +281,7 @@ namespace LightClaw.Engine.Core
         /// <param name="location">The backing field of the property to set.</param>
         /// <param name="newValue">The properties new value.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetProperty<T>(object sender, PropertyChangedEventHandler handler, ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
             location = newValue;

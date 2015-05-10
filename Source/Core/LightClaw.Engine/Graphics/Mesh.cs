@@ -49,13 +49,13 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private string _ResourceString;
+        private ResourceString _ResourceString;
 
         /// <summary>
         /// The resource string of the model to be drawn.
         /// </summary>
         [DataMember]
-        public string ResourceString
+        public ResourceString ResourceString
         {
             get
             {
@@ -70,9 +70,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="Mesh"/>. Constructor required for serialization.
         /// </summary>
-        private Mesh()
-        {
-        }
+        private Mesh() { }
 
         /// <summary>
         /// Initializes a new <see cref="Mesh"/> and sets the resource string of the model to load.
@@ -108,7 +106,7 @@ namespace LightClaw.Engine.Graphics
         {
             Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
 
-            if (this.Model != null)
+            if (this.Model == null)
             {
                 IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
                 if (contentManager == null)
@@ -133,16 +131,6 @@ namespace LightClaw.Engine.Graphics
                     );
                 }
             }
-        }
-
-        /// <summary>
-        /// Updates the <see cref="Model"/>.
-        /// </summary>
-        /// <param name="gameTime">The current game time.</param>
-        protected override bool OnUpdate(GameTime gameTime, int pass)
-        {
-            Model model = this.Model;
-            return (model != null) ? model.Update(gameTime, pass) : true;
         }
     }
 }

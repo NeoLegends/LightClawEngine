@@ -61,6 +61,26 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
+        /// Checks whether the specified <see cref="ActiveUniformType"/> is a primitive value like an int, a float, etc..
+        /// </summary>
+        /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
+        /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is primitive value.</returns>
+        public static bool IsPrimitiveValue(this ActiveUniformType type)
+        {
+            switch (type)
+            {
+                case ActiveUniformType.Bool:
+                case ActiveUniformType.Double:
+                case ActiveUniformType.Float:
+                case ActiveUniformType.Int:
+                case ActiveUniformType.UnsignedInt:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
         /// Checks whether the specified <see cref="ActiveUniformType"/> is a sampler.
         /// </summary>
         /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>

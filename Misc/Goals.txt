@@ -13,6 +13,7 @@ REQUIREMENTS:
 			- Each class serves exactly ONE purpose. 
 			- Complete your task by creating additional classes for different purposes.
 				- Do not hesitate using subclasses or substructs, if necessary.
+        - Use for loops instead of foreach for performance (especially inside of the rendering code! foreach allocates objects, for does not!)
         
     LightClaw.Engine
         - (Multiplatform-capabilities (Windows, Mac OS X, Linux, Android, iOS, Xbox 360 / One, Ps Vita, WP8))

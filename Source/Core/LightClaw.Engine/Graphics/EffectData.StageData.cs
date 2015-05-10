@@ -85,8 +85,7 @@ namespace LightClaw.Engine.Graphics
                 if (ReferenceEquals(obj, this))
                     return true;
 
-                StageData data = obj as StageData;
-                return (data != null) ? this.Equals(data) : false;
+                return this.Equals(obj as StageData);
             }
 
             public bool Equals(StageData other)

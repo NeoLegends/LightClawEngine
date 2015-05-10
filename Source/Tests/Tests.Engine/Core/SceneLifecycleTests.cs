@@ -10,6 +10,7 @@ using LightClaw.Engine.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
+using OpenTK;
 using Tests.Utilities;
 
 namespace Tests.Core

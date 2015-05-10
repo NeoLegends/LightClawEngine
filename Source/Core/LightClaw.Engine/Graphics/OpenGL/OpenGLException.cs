@@ -52,18 +52,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Initializes a new <see cref="OpenGLException"/>.
         /// </summary>
-        protected OpenGLException()
-        {
-        }
+        protected OpenGLException() { }
 
         /// <summary>
         /// Initializes a new <see cref="OpenGLException"/> and sets the message.
         /// </summary>
         /// <param name="message">The exception message.</param>
-        protected OpenGLException(string message)
-            : base(message)
-        {
-        }
+        protected OpenGLException(string message) : base(message) { }
 
         /// <summary>
         /// Initializes a new <see cref="OpenGLException"/> and sets the message and the OpenGL info log.
@@ -104,19 +99,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="inner">The <see cref="Exception"/> that lead to this exception being thrown.</param>
-        protected OpenGLException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
+        protected OpenGLException(string message, Exception inner) : base(message, inner) { }
 
         /// <summary>
         /// Initializes a new <see cref="CompilationFailedException"/> after deserialization.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/>.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected OpenGLException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+        protected OpenGLException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }

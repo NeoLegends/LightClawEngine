@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -15,6 +16,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             : base(description)
         {
             Contract.Requires<ArgumentException>(description.Target.IsTexture1DTarget());
+
+            this.VerifyAccess();
+            using (Binding textureBinding = new Binding(this))
+            {
+                GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
+            }
         }
 
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
@@ -49,18 +56,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(xOffset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
 
-            this.Initialize();
+            this.VerifyAccess();
             using (Binding textureBinding = new Binding(this))
             {
                 GL.TexSubImage1D(this.Target, level, xOffset, width, pixelFormat, pixelType, data);
-            }
-        }
-
-        protected override void OnInitialize()
-        {
-            using (Binding textureBinding = new Binding(this))
-            {
-                GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }
         }
     }

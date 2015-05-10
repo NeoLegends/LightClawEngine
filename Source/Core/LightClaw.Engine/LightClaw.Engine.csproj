@@ -91,16 +91,16 @@
     <CodeContractsLibPaths />
     <CodeContractsExtraRewriteOptions />
     <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
+    <CodeContractsSQLServerOption>MORITZ-PC</CodeContractsSQLServerOption>
     <CodeContractsBaseLineFile>..\..\baseline.xml</CodeContractsBaseLineFile>
-    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>2</CodeContractsAnalysisWarningLevel>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
@@ -108,6 +108,7 @@
     <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
     <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
     <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -155,7 +156,7 @@
     <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>2</CodeContractsAnalysisWarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
     <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
@@ -183,14 +184,14 @@
     <Compile Include="Core\ChildManager.cs" />
     <Compile Include="Core\Component.cs" />
     <Compile Include="Core\ComponentValidatorAttribute.cs" />
+    <Compile Include="Core\DispatcherEntity.cs" />
     <Compile Include="Core\DisposableEntity.cs" />
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Threading\DispatcherObjectExtensions.cs" />
     <Compile Include="Threading\IDispatcherObject.cs" />
     <Compile Include="Core\IGame.cs" />
-    <Compile Include="Core\InitializableEntity.cs" />
-    <Compile Include="Core\Math\Point.cs" />
+    <Compile Include="Core\Point.cs" />
     <Compile Include="Core\UpdateEventArgs.cs" />
     <Compile Include="IO\AssetNotFoundException.cs" />
     <Compile Include="Threading\ThreadModeAttribute.cs" />
@@ -205,14 +206,6 @@
     <Compile Include="Core\INameable.cs" />
     <Compile Include="Core\ListChildManager.cs" />
     <Compile Include="Core\MathF.cs" />
-    <Compile Include="Core\Math\Matrix.cs" />
-    <Compile Include="Core\Math\Matrix3x2.cs" />
-    <Compile Include="Core\Math\Matrix3x3.cs" />
-    <Compile Include="Core\Math\Matrix5x4.cs" />
-    <Compile Include="Core\Math\Quaternion.cs" />
-    <Compile Include="Core\Math\Vector2.cs" />
-    <Compile Include="Core\Math\Vector3.cs" />
-    <Compile Include="Core\Math\Vector4.cs" />
     <Compile Include="Core\NonRemovableAttribute.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\ParameterEventArgsRaiser.cs" />
@@ -243,7 +236,6 @@
     <Compile Include="Graphics\OpenGL\EnumExtensions.cs" />
     <Compile Include="Graphics\OpenGL\IBuffer.cs" />
     <Compile Include="Graphics\OpenGL\IGLObject.cs" />
-    <Compile Include="Core\IInitializable.cs" />
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />

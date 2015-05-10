@@ -396,6 +396,167 @@ namespace LightClaw.Engine.Core
             }
         }
 
+#if DEBUG
+#pragma warning disable 0168 // Unused variable if we're in DEBUG mode
+#endif
+
+        /// <summary>
+        /// Callback enabling all children.
+        /// </summary>
+        protected override void OnEnable()
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        this.Items[i].Enable();
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while disabling a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Callback disabling all children.
+        /// </summary>
+        protected override void OnDisable()
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        this.Items[i].Disable();
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while disabling a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Callback drawing all children.
+        /// </summary>
+        protected override void OnDraw()
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        this.Items[i].Draw();
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while drawing a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Callback loading all children.
+        /// </summary>
+        protected override void OnLoad()
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        this.Items[i].Load();
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while loading a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Callback resetting all children.
+        /// </summary>
+        protected override void OnReset()
+        {
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        this.Items[i].Reset();
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while resetting a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+        }
+
+        /// <summary>
+        /// Callback updating the children with the specified <see cref="GameTime"/>.
+        /// </summary>
+        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
+        protected override bool OnUpdate(GameTime gameTime, int pass)
+        {
+            bool result = true;
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                try
+                {
+                    if (this.Items[i] != null)
+                    {
+                        result &= this.Items[i].Update(gameTime, pass);
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    throw;
+#else
+                    Log.Error("An error of type {0} occured while updating a {1} of a {2}".FormatWith(ex.GetType().FullName, typeof(Component).Name, typeof(GameObject).Name), ex);
+#endif
+                }
+            }
+            return result;
+        }
+
+#if DEBUG
+#pragma warning restore 0168
+#endif
+
         /// <summary>
         /// Ensures that the specified <see cref="Component"/> can be attached.
         /// </summary>

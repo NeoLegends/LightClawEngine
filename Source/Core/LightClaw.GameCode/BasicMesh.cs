@@ -11,6 +11,7 @@ using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
 using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
+using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.GameCode
@@ -73,17 +74,10 @@ namespace LightClaw.GameCode
             //2, 6, 7
         };
 
-        private static readonly OpenTK.Matrix4 openTKMVP = 
-            OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(70), 16 / 9, 0.01f, 100f) *
-            OpenTK.Matrix4.LookAt(new OpenTK.Vector3(3, 3, 2), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
-            OpenTK.Matrix4.CreateTranslation(0, 0, 0);
-
-        private static readonly Matrix modelViewProjectionMatrix = new Matrix(
-            openTKMVP.M11, openTKMVP.M12, openTKMVP.M13, openTKMVP.M14,
-            openTKMVP.M21, openTKMVP.M22, openTKMVP.M23, openTKMVP.M24,
-            openTKMVP.M31, openTKMVP.M32, openTKMVP.M33, openTKMVP.M34,
-            openTKMVP.M41, openTKMVP.M42, openTKMVP.M43, openTKMVP.M44
-        );
+        private static readonly Matrix4 openTKMVP = 
+            Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(70), 16 / 9, 0.01f, 100f) *
+            Matrix4.LookAt(new OpenTK.Vector3(3, 3, 2), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
+            Matrix4.CreateTranslation(0, 0, 0);
 
         private int getErrorCount = 0;
 

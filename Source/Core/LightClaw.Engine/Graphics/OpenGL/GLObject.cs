@@ -16,7 +16,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents the base class for all OpenGL wrapper objects.
     /// </summary>
     [DataContract]
-    public abstract class GLObject : InitializableEntity, IDispatcherObject, IGLObject
+    public abstract class GLObject : DispatcherEntity, IGLObject
     {
         /// <summary>
         /// A lock used to restrict access to the supported extensions-method.
@@ -38,24 +38,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             get
             {
                 return _MaxOpenGLVersion ?? (_MaxOpenGLVersion = new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion)));
-            }
-        }
-
-        private Dispatcher _Dispatcher;
-
-        /// <summary>
-        /// The <see cref="Dispatcher"/> used to dispatch graphics events.
-        /// </summary>
-        [IgnoreDataMember]
-        public Dispatcher Dispatcher
-        {
-            get
-            {
-                return _Dispatcher;
-            }
-            private set
-            {
-                _Dispatcher = value;
             }
         }
 
@@ -102,7 +84,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         protected GLObject(string name, int handle)
             : base(name) 
         {
-            this.Dispatcher = this.IocC.Resolve<Dispatcher>();
             this.Handle = handle;
         }
 
@@ -112,12 +93,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to free managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            try
             {
-                this.Handle = 0;
+                if (disposing)
+                {
+                    this.Handle = 0;
+                }
             }
-
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>

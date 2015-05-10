@@ -25,11 +25,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class BufferObject : GLObject, IBuffer
     {
         /// <summary>
-        /// Used for restricting access to the name generation process.
-        /// </summary>
-        private readonly object nameGenerationLock = new object();
-
-        /// <summary>
         /// Backing field.
         /// </summary>
         private BufferUsageHint _Hint;
@@ -98,6 +93,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </param>
         public BufferObject(BufferTarget target, BufferUsageHint hint)
         {
+            this.VerifyAccess();
+
+            this.Handle = GL.GenBuffer();
             this.Hint = hint;
             this.Target = target;
         }
@@ -107,7 +105,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Bind()
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.BindBuffer(this.Target, this);
         }
 
@@ -132,6 +130,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public T[] GetRange<T>(int offset, int count)
             where T : struct
         {
+            this.VerifyAccess();
+
             T[] results = new T[count];
             using (Binding bufferBinding = new Binding(this))
             {
@@ -159,6 +159,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>An <see cref="IntPtr"/> pointing to the data inside the buffer.</returns>
         public IntPtr Map(BufferAccess bufferAccess)
         {
+            this.VerifyAccess();
             return GL.MapBuffer(this.Target, bufferAccess);
         }
 
@@ -167,6 +168,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Unbind()
         {
+            this.VerifyAccess();
             GL.BindBuffer(this.Target, 0);
         }
 
@@ -176,6 +178,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <remarks>Important, this method expects the current buffer to be bound.</remarks>
         public void Unmap()
         {
+            this.VerifyAccess();
             GL.UnmapBuffer(this.Target);
         }
 
@@ -264,7 +267,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="sizeInBytes">The size of the data in bytes.</param>
         public virtual void Set(IntPtr data, int sizeInBytes)
         {
-            this.Initialize();
+            this.VerifyAccess();
+
             using (Binding bufferBinding = new Binding(this))
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
@@ -280,7 +284,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="offset">The offset in bytes to start applying the new data at.</param>
         public virtual void SetRange(IntPtr data, int offset, int sizeInBytes)
         {
-            this.Initialize();
+            this.VerifyAccess();
+
             using (Binding bufferBinding = new Binding(this))
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
@@ -295,35 +300,19 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            try
+            if (this.CheckAccess())
             {
-                lock (this.nameGenerationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteBuffer, DispatcherPriority.Background);
-                    }
-                }
+                this.DeleteBuffer(disposing);
             }
-            finally
+            else
             {
-                base.Dispose(disposing);
+                this.Dispatcher.InvokeSlim(this.DeleteBuffer, disposing, DispatcherPriority.Background);
             }
-        }
-
-        /// <summary>
-        /// Initialization callback.
-        /// </summary>
-        protected override void OnInitialize()
-        {
-            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(BufferObject).Name));
-
-            this.Handle = GL.GenBuffer();
         }
 
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteBuffer()
+        private void DeleteBuffer(bool disposing)
         {
             try
             {
@@ -332,6 +321,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(BufferObject).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

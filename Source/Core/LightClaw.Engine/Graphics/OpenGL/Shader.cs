@@ -27,11 +27,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class Shader : GLObject
     {
         /// <summary>
-        /// Used to restrict access to the initialization method.
-        /// </summary>
-        private readonly object initializationLock = new object();
-
-        /// <summary>
         /// Backing field.
         /// </summary>
         private string _Source;
@@ -155,66 +150,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
             Contract.Requires<ArgumentNullException>(vad != null);
 
+            this.VerifyAccess();
+
             this.Source = source;
             this.Type = type;
             this.VertexAttributeDescriptions = vad.ToImmutableArray();
-        }
-
-        /// <summary>
-        /// Attaches the <see cref="Shader"/> to the specified <see cref="ShaderProgram"/>.
-        /// </summary>
-        /// <remarks>Triggers initialization.</remarks>
-        /// <param name="program">The <see cref="ShaderProgram"/> to attach the shader to.</param>
-        public void AttachTo(ShaderProgram program)
-        {
-            Contract.Requires<ArgumentNullException>(program != null);
-
-            this.Initialize();
-            GL.AttachShader(program, this);
-        }
-
-        /// <summary>
-        /// Detaches the <see cref="Shader"/> from the specified <see cref="ShaderProgram"/>.
-        /// </summary>
-        /// <remarks>Triggers initialization.</remarks>
-        /// <param name="program">The <see cref="ShaderProgram"/> to detach from.</param>
-        public void DetachFrom(ShaderProgram program)
-        {
-            Contract.Requires<ArgumentNullException>(program != null);
-
-            this.Initialize();
-            GL.DetachShader(program, this);
-        }
-
-        /// <summary>
-        /// Disposes the <see cref="Shader"/>.
-        /// </summary>
-        /// <param name="disposing">Indicates whether to release managed resources as well.</param>
-        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                lock (this.initializationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteShader, DispatcherPriority.Background);
-                    }
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
-        }
-
-        /// <summary>
-        /// Initialization callback.
-        /// </summary>
-        protected override void OnInitialize()
-        {
-            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(Shader).Name));
 
             this.Handle = GL.CreateShader(this.Type);
             GL.ShaderSource(this, this.Source);
@@ -231,9 +171,52 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Attaches the <see cref="Shader"/> to the specified <see cref="ShaderProgram"/>.
+        /// </summary>
+        /// <remarks>Triggers initialization.</remarks>
+        /// <param name="program">The <see cref="ShaderProgram"/> to attach the shader to.</param>
+        public void AttachTo(ShaderProgram program)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+
+            this.VerifyAccess();
+            GL.AttachShader(program, this);
+        }
+
+        /// <summary>
+        /// Detaches the <see cref="Shader"/> from the specified <see cref="ShaderProgram"/>.
+        /// </summary>
+        /// <remarks>Triggers initialization.</remarks>
+        /// <param name="program">The <see cref="ShaderProgram"/> to detach from.</param>
+        public void DetachFrom(ShaderProgram program)
+        {
+            Contract.Requires<ArgumentNullException>(program != null);
+
+            this.VerifyAccess();
+            GL.DetachShader(program, this);
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="Shader"/>.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to release managed resources as well.</param>
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        protected override void Dispose(bool disposing)
+        {
+            if (this.CheckAccess())
+            {
+                this.DeleteShader(disposing);
+            }
+            else
+            {
+                this.Dispatcher.InvokeSlim(this.DeleteShader, disposing, DispatcherPriority.Background);
+            }
+        }
+
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteShader()
+        private void DeleteShader(bool disposing)
         {
             try
             {
@@ -242,6 +225,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Shader).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

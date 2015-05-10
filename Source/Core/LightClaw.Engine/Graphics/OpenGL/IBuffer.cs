@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL buffer, data in video memory.
     /// </summary>
     [ContractClass(typeof(IBufferContracts))]
-    public interface IBuffer : IBindable, IGLObject, IInitializable
+    public interface IBuffer : IBindable, IGLObject
     {
         /// <summary>
         /// Gets the length of the buffer.
@@ -158,14 +158,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        bool IInitializable.IsInitialized
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         BufferTarget IBuffer.Target
         {
             get
@@ -237,10 +229,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         void IBindable.Bind()
-        {
-        }
-
-        void IInitializable.Initialize()
         {
         }
 

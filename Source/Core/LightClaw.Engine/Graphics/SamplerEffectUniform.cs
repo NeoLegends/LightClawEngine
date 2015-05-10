@@ -93,6 +93,11 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public void Set(Sampler sampler)
+        {
+            this.Sampler = sampler;
+        }
+
         public override void Unbind()
         {
             Texture texture = this.Texture;
@@ -112,10 +117,6 @@ namespace LightClaw.Engine.Graphics
             this.TextureUnit.Dispose();
 
             base.Dispose(disposing);
-        }
-
-        protected override void OnInitialize()
-        {
         }
 
         [ContractInvariantMethod]

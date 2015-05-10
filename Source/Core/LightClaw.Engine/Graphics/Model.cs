@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a three-dimensional polygon model.
     /// </summary>
-    public class Model : Entity, IDrawable, IEnumerable<ModelPart>, IUpdateable
+    public class Model : Entity, IDrawable, IReadOnlyList<ModelPart>
     {
         /// <summary>
         /// Notifies about a change in the <see cref="P:Component"/>.
@@ -31,18 +31,6 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <remarks>Raised after any binding / drawing operations.</remarks>
         public event EventHandler<ParameterEventArgs> Drawn;
-
-        /// <summary>
-        /// Notifies about the start of the updating process.
-        /// </summary>
-        /// <remarks>Raised before any updating operations.</remarks>
-        public event EventHandler<UpdateEventArgs> Updating;
-
-        /// <summary>
-        /// Notifies about the finish of the updating process.
-        /// </summary>
-        /// <remarks>Raised after any updating operations.</remarks>
-        public event EventHandler<UpdateEventArgs> Updated;
 
         /// <summary>
         /// Backing field.
@@ -66,6 +54,14 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return this.ModelParts.Count;
+            }
+        }
+
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -85,6 +81,14 @@ namespace LightClaw.Engine.Graphics
                 Contract.Requires<ArgumentNullException>(value != null);
 
                 this.SetProperty(ref _ModelParts, value);
+            }
+        }
+
+        public ModelPart this[int index]
+        {
+            get
+            {
+                return this.ModelParts[index];
             }
         }
 
@@ -134,11 +138,12 @@ namespace LightClaw.Engine.Graphics
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                foreach (ModelPart modelPart in this)
+                for (int i = 0; i < this.Count; i++)
                 {
-                    if (modelPart != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
+                    ModelPart part = this[i];
+                    if (part != null)
                     {
-                        modelPart.Draw();
+                        part.Draw();
                     }
                 }
             }
@@ -160,31 +165,6 @@ namespace LightClaw.Engine.Graphics
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
-        }
-
-        /// <summary>
-        /// Updates the model.
-        /// </summary>
-        /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
-        public bool Update(GameTime gameTime, int pass)
-        {
-            try
-            {
-                this.Raise(this.Updating, gameTime, pass);
-                bool result = true;
-                foreach (ModelPart part in this.ModelParts)
-                {
-                    if (part != null) // Don't use .FilterNull here as the simple if check is MUCH faster.
-                    {
-                        result &= part.Update(gameTime, pass);
-                    }
-                }
-                return result;
-            }
-            finally
-            {
-                this.Raise(this.Updated, gameTime, pass);
-            }
         }
     }
 }

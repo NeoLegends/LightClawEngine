@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
@@ -14,11 +15,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             : base(description)
         {
             Contract.Requires<ArgumentException>(description.Target.IsTexture3DTarget());
+
+            this.VerifyAccess();
         }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
         {
-            this.Initialize();
+            this.VerifyAccess();
+
             using (Binding texture2dBinding = new Binding(this))
             {
                 GL.TexSubImage3D(this.Target, level, xOffset, yOffset, zOffset, width, height, depth, pixelFormat, pixelType, data);

@@ -35,7 +35,7 @@ namespace LightClaw.Engine.Threading
 
         public override SynchronizationContext CreateCopy()
         {
-            return this;
+            return new LightClawSynchronizationContext(this.dispatcher, this.priority);
         }
 
         public override void Post(SendOrPostCallback d, object state)

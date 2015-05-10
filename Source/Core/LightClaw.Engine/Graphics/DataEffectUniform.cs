@@ -7,271 +7,215 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
+using OpenTK;
 
 namespace LightClaw.Engine.Graphics
 {
-    public class DataEffectUniform : EffectUniform, IBindable
+    public class DataEffectUniform : EffectUniform
     {
-        private UniformBufferGroup _BufferGroup;
-
-        public UniformBufferGroup BufferGroup
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<UniformBufferGroup>() != null);
-
-                return _BufferGroup;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(value != null);
-
-                this.SetProperty(ref _BufferGroup, value);
-            }
-        }
-
-        private int _Size;
-
-        public int Size
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() > 0);
-
-                return _Size;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value > 0);
-
-                this.SetProperty(ref _Size, value);
-            }
-        }
-
-        private RangedBuffer _Ubo;
-
-        public RangedBuffer Ubo
-        {
-            get
-            {
-                return _Ubo;
-            }
-            private set
-            {
-                this.SetProperty(ref _Ubo, value);
-            }
-        }
-
-        public int UboBindingIndex
-        {
-            get
-            {
-                RangedBuffer ubo = this.Ubo;
-                return (ubo != null) ? this.Ubo.Index : -1;
-            }
-        }
-
-        public DataEffectUniform(EffectPass pass, Uniform uniform, int size)
-            : this(pass, uniform, UniformBufferGroup.Default, size)
-        {
-            Contract.Requires<ArgumentNullException>(pass != null);
-            Contract.Requires<ArgumentNullException>(uniform != null);
-            Contract.Requires<ArgumentOutOfRangeException>(size > 0);
-        }
-
-        public DataEffectUniform(EffectPass pass, Uniform uniform, UniformBufferGroup group, int size)
+        public DataEffectUniform(EffectPass pass, Uniform uniform)
             : base(pass, uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(uniform != null);
-            Contract.Requires<ArgumentNullException>(group != null);
-            Contract.Requires<ArgumentOutOfRangeException>(size > 0);
-
-            this.BufferGroup = group;
-            this.Size = size;
         }
 
-        public override void Bind()
+        public void Set(int value)
         {
-            RangedBuffer buffer = this.Ubo;
-            if (buffer != null)
-            {
-                buffer.Bind();
-            }
-            else
-            {
-                Log.Warn(() => "The buffer of value uniform '{0}' to bind is null. This is presumably unwanted behaviour!".FormatWith(this.Uniform.Name));
-            }
+            this.Uniform.Set(value);
         }
 
-        public void Set<T>(T value)
-            where T : struct
+        [CLSCompliant(false)]
+        public void Set(uint value)
         {
-            if (!this.TrySet(value))
-            {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
-            }
+            this.Uniform.Set(value);
         }
 
-        public void Set<T>(T value, int index)
-            where T : struct
+        public void Set(float value)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            if (!this.TrySet(value, index))
-            {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
-            }
+            this.Uniform.Set(value);
         }
 
-        public void Set<T>(T[] values)
-            where T : struct
+        public void Set(double value)
         {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentException>(values.Length > 0);
-
-            if (!this.TrySet(values))
-            {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
-            }
+            this.Uniform.Set(value);
         }
 
-        public void Set<T>(T[] values, int index)
-            where T : struct
+        public void Set(int value1, int value2)
         {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentException>(values.Length > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            if (!this.TrySet(values, index))
-            {
-                throw new InvalidOperationException("Something bad happened while setting the data in the {0}.".FormatWith(typeof(DataEffectUniform).Name));
-            }
+            this.Uniform.Set(value1, value2);
         }
 
-        public bool TrySet<T>(T value)
-            where T : struct
+        [CLSCompliant(false)]
+        public void Set(uint value1, uint value2)
         {
-            this.Initialize();
-            try
-            {
-                RangedBuffer buffer = this.Ubo;
-                if (buffer != null)
-                {
-                    buffer.Set(value);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
-                return false;
-            }
+            this.Uniform.Set(value1, value2);
         }
 
-        public bool TrySet<T>(T value, int index)
-            where T : struct
+        public void Set(float value1, float value2)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            this.Initialize();
-            try
-            {
-                RangedBuffer buffer = this.Ubo;
-                if (buffer != null)
-                {
-                    buffer.SetRange(value, Marshal.SizeOf(typeof(T)) * index);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
-                return false;
-            }
+            this.Uniform.Set(value1, value2);
         }
 
-        public bool TrySet<T>(T[] values)
-            where T : struct
+        public void Set(double value1, double value2)
         {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentException>(values.Length > 0);
-
-            this.Initialize();
-            try
-            {
-                RangedBuffer buffer = this.Ubo;
-                if (buffer != null)
-                {
-                    buffer.Set(values);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn( "An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
-                return false;
-            }
+            this.Uniform.Set(value1, value2);
         }
 
-        public bool TrySet<T>(T[] values, int index)
-            where T : struct
+        public void Set(int value1, int value2, int value3)
         {
-            Contract.Requires<ArgumentNullException>(values != null);
-            Contract.Requires<ArgumentException>(values.Length > 0);
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            this.Initialize();
-            try
-            {
-                RangedBuffer buffer = this.Ubo;
-                if (buffer != null)
-                {
-                    buffer.SetRange(values, Marshal.SizeOf(typeof(T)) * index);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("An exception of type '{0}' was thrown while setting the data in a {1}.".FormatWith(ex.GetType().AssemblyQualifiedName, typeof(DataEffectUniform).Name), ex);
-                return false;
-            }
+            this.Uniform.Set(value1, value2, value3);
         }
 
-        public override void Unbind()
+        [CLSCompliant(false)]
+        public void Set(uint value1, uint value2, uint value3)
         {
-            RangedBuffer buffer = this.Ubo;
-            if (buffer != null)
-            {
-                buffer.Unbind();
-            }
+            this.Uniform.Set(value1, value2, value3);
         }
 
-        protected override void Dispose(bool disposing)
+        public void Set(float value1, float value2, float value3)
         {
-            RangedBuffer ubo = this.Ubo;
-            if (ubo != null)
-            {
-                ubo.Dispose();
-            }
-
-            base.Dispose(disposing);
+            this.Uniform.Set(value1, value2, value3);
         }
 
-        protected override void OnInitialize()
+        public void Set(double value1, double value2, double value3)
         {
-            throw new NotImplementedException();
+            this.Uniform.Set(value1, value2, value3);
         }
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
+        public void Set(int value1, int value2, int value3, int value4)
         {
-            Contract.Invariant(this._BufferGroup != null);
-            Contract.Invariant(this._Size > 0);
+            this.Uniform.Set(value1, value2, value3, value4);
         }
+
+        [CLSCompliant(false)]
+        public void Set(uint value1, uint value2, uint value3, uint value4)
+        {
+            this.Uniform.Set(value1, value2, value3, value4);
+        }
+
+        public void Set(float value1, float value2, float value3, float value4)
+        {
+            this.Uniform.Set(value1, value2, value3, value4);
+        }
+
+        public void Set(double value1, double value2, double value3, double value4)
+        {
+            this.Uniform.Set(value1, value2, value3, value4);
+        }
+
+        public void Set(Vector2 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public void Set(Vector3 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public void Set(Vector4 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public void Set(Quaternion value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public void Set(Matrix2 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix2 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix2x3 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix2x3 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix2x4 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix2x4 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix3x2 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix3x2 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix3 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix3 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix3x4 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix3x4 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix4x2 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix4x2 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix4x3 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix4x3 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public void Set(Matrix4 value)
+        {
+            this.Uniform.Set(value);
+        }
+
+        public unsafe void Set(Matrix4 value, bool transpose)
+        {
+            this.Uniform.Set(value, transpose);
+        }
+
+        public override void Bind() { }
+
+        public override void Unbind() { }
     }
 }

@@ -17,8 +17,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DebuggerDisplay("Handle = {Handle}, Index Count = {IndexCount}, Draw Mode = {DrawMode}, Index Type = {IndexType}")]
     public class VertexArrayObject : GLObject, IBindable, IDrawable
     {
-        private readonly object initializationLock = new object();
-
         public event EventHandler<ParameterEventArgs> Drawing;
 
         public event EventHandler<ParameterEventArgs> Drawn;
@@ -109,75 +107,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
             Contract.Requires<ArgumentException>(indexBuffer.Target == BufferTarget.ElementArrayBuffer);
 
+            this.VerifyAccess();
+
             this.DrawMode = drawMode;
             this.IndexBuffer = indexBuffer;
             this.IndexType = indexBufferType;
             this.VertexBuffers = buffers.ToImmutableArray();
-        }
-
-        public void Bind()
-        {
-            this.Initialize();
-            GL.BindVertexArray(this);
-            this.EnableAttributeArrays();
-        }
-
-        void IDrawable.Draw()
-        {
-            this.DrawIndexed();
-        }
-
-        public void DrawIndexed()
-        {
-            this.DrawIndexed(0);
-        }
-
-        public void DrawIndexed(int offset)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(offset <= this.IndexCount);
-
-            this.DrawIndexed(offset, this.IndexCount - offset);
-        }
-
-        public void DrawIndexed(int offset, int count)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
-
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, count, count))
-            {
-                GL.DrawElements(this.DrawMode, count, this.IndexType, offset);
-            }
-        }
-
-        public void Unbind()
-        {
-            this.DisableAttributeArrays();
-            GL.BindVertexArray(0);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                lock (this.initializationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteVertexArrayObject, DispatcherPriority.Background);
-                    }
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
-        }
-
-        protected override void OnInitialize()
-        {
-            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(VertexArrayObject).Name));
 
             this.Handle = GL.GenVertexArray();
 
@@ -207,31 +142,89 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.IndexBuffer.Unbind();
         }
 
+        public void Bind()
+        {
+            this.VerifyAccess();
+            GL.BindVertexArray(this);
+            this.EnableAttributeArrays();
+        }
+
+        void IDrawable.Draw()
+        {
+            this.DrawIndexed();
+        }
+
+        public void DrawIndexed()
+        {
+            this.DrawIndexed(0);
+        }
+
+        public void DrawIndexed(int offset)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(offset <= this.IndexCount);
+
+            this.DrawIndexed(offset, this.IndexCount - offset);
+        }
+
+        public void DrawIndexed(int offset, int count)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
+
+            this.VerifyAccess();
+            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn, count, count))
+            {
+                GL.DrawElements(this.DrawMode, count, this.IndexType, offset);
+            }
+        }
+
+        public void Unbind()
+        {
+            this.VerifyAccess();
+            this.DisableAttributeArrays();
+            GL.BindVertexArray(0);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (this.CheckAccess())
+            {
+                this.DeleteVertexArrayObject(disposing);
+            }
+            else
+            {
+                this.Dispatcher.InvokeSlim(this.DeleteVertexArrayObject, disposing, DispatcherPriority.Background);
+            }
+        }
+
         private void EnableAttributeArrays()
         {
-            foreach (BufferDescription desc in this.VertexBuffers)
+            // Use for loops for performance
+            for (int i = 0; i < this.VertexBuffers.Length; i++)
             {
-                foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                for (int j = 0; j < this.VertexBuffers[i].VertexAttributePointers.Length; j++)
                 {
-                    vertexPointer.Enable();
+                    this.VertexBuffers[i].VertexAttributePointers[j].Enable();
                 }
             }
         }
 
         private void DisableAttributeArrays()
         {
-            foreach (BufferDescription desc in this.VertexBuffers)
+            // Use for loops for performance
+            for (int i = 0; i < this.VertexBuffers.Length; i++)
             {
-                foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                for (int j = 0; j < this.VertexBuffers[i].VertexAttributePointers.Length; j++)
                 {
-                    vertexPointer.Disable();
+                    this.VertexBuffers[i].VertexAttributePointers[j].Disable();
                 }
             }
         }
 
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteVertexArrayObject()
+        private void DeleteVertexArrayObject(bool disposing)
         {
             try
             {
@@ -240,6 +233,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(VertexArrayObject).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

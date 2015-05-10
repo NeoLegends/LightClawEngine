@@ -20,11 +20,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class Sampler : GLObject, IBindable
     {
         /// <summary>
-        /// Used for access restriction to the initialization method.
-        /// </summary>
-        private readonly object initializationLock = new object();
-
-        /// <summary>
         /// Backing field.
         /// </summary>
         private ImmutableArray<SamplerParameterDescription> _Parameters;
@@ -78,8 +73,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(parameters != null);
 
+            this.VerifyAccess();
+
             this.TextureUnit = textureUnit;
             this.Parameters = parameters.ToImmutableArray();
+
+            this.Handle = GL.GenSampler();
+            foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
+            {
+                GL.SamplerParameter(this, description.ParameterName, description.Value);
+            }
         }
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Bind()
         {
-            this.Initialize();
+            this.VerifyAccess();
             GL.BindSampler(this.TextureUnit, this);
         }
 
@@ -96,6 +99,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Unbind()
         {
+            this.VerifyAccess();
             GL.BindSampler(this.TextureUnit, 0);
         }
 
@@ -105,37 +109,19 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            try
+            if (this.CheckAccess())
             {
-                lock (this.initializationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteSampler, DispatcherPriority.Background);
-                    }
-                }
+                this.DeleteSampler(disposing);
             }
-            finally
+            else
             {
-                base.Dispose(disposing);
-            }
-        }
-
-        /// <summary>
-        /// Initialization callback.
-        /// </summary>
-        protected override void OnInitialize()
-        {
-            this.Handle = GL.GenSampler();
-            foreach (SamplerParameterDescription description in this.Parameters.EnsureNonNull())
-            {
-                GL.SamplerParameter(this, description.ParameterName, description.Value);
+                this.Dispatcher.InvokeSlim(this.DeleteSampler, disposing, DispatcherPriority.Background);
             }
         }
 
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteSampler()
+        private void DeleteSampler(bool disposing)
         {
             try
             {
@@ -144,6 +130,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Sampler).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

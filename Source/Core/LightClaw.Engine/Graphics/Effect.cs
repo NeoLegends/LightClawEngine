@@ -12,12 +12,8 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
-    public abstract class Effect : DisposableEntity, IEnumerable<EffectPass>, IUpdateable
+    public abstract class Effect : DisposableEntity, IEnumerable<EffectPass>
     {
-        public event EventHandler<UpdateEventArgs> Updating;
-
-        public event EventHandler<UpdateEventArgs> Updated;
-
         protected bool OwnsPasses { get; private set; }
 
         private ImmutableArray<EffectPass> _Passes = ImmutableArray<EffectPass>.Empty;
@@ -40,10 +36,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Effect()
-            : this(false)
-        {
-        }
+        protected Effect() : this(false) { }
 
         protected Effect(bool ownsPasses)
         {
@@ -86,19 +79,6 @@ namespace LightClaw.Engine.Graphics
             return this.GetEnumerator();
         }
 
-        public bool Update(GameTime gameTime, int pass)
-        {
-            try
-            {
-                this.Raise(this.Updating, gameTime, pass);
-                return this.OnUpdate(gameTime, pass);
-	        }
-	        finally
-	        {
-                this.Raise(this.Updated, gameTime, pass);
-	        }
-        }
-
         public bool TryApply(int index)
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
@@ -117,33 +97,27 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (this.OwnsPasses)
+            try
             {
-                foreach (EffectPass pass in this.Passes)
+                if (this.OwnsPasses)
                 {
-                    pass.Dispose();
+                    foreach (EffectPass pass in this.Passes)
+                    {
+                        pass.Dispose();
+                    }
                 }
             }
-            base.Dispose(disposing);
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
-
-        protected abstract bool OnUpdate(GameTime gameTime, int pass);
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Passes != null);
             Contract.Invariant(this._Passes.All(pass => pass != null));
-        }
-    }
-
-    abstract class EffectContracts : Effect
-    {
-        protected override bool OnUpdate(GameTime gameTime, int pass)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(pass >= 0);
-
-            return false;
         }
     }
 }

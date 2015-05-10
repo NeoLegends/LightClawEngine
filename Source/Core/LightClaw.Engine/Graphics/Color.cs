@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using OpenTK;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -971,10 +972,7 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="System.Drawing.Color"/>
         /// </summary>
         /// <param name="color">The <see cref="System.Drawing.Color"/> to create the <see cref="Color"/> from</param>
-        public Color(System.Drawing.Color color)
-            : this(color.R, color.G, color.B, color.A)
-        {
-        }
+        public Color(System.Drawing.Color color) : this(color.R, color.G, color.B, color.A) { }
 
 #endif
 
@@ -982,19 +980,13 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="Vector3"/>.
         /// </summary>
         /// <param name="vec">The <see cref="Vector3"/> to create the <see cref="Color"/> from.</param>
-        public Color(Vector3 vec)
-            : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z))
-        {
-        }
+        public Color(Vector3 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z)) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Vector4"/>.
         /// </summary>
         /// <param name="vec">The <see cref="Vector4"/> to create the <see cref="Color"/> from.</param>
-        public Color(Vector4 vec)
-            : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W))
-        {
-        }
+        public Color(Vector4 vec) : this(ToByte(vec.X), ToByte(vec.Y), ToByte(vec.Z), ToByte(vec.W)) { }
 
         /// <summary>
         /// Initializes a new <see cref="Color"/> from the specified hex string.
@@ -1023,39 +1015,27 @@ namespace LightClaw.Engine.Graphics
         /// Creates a new <see cref="Color"/> from the given <see cref="Single"/>.
         /// </summary>
         /// <param name="value">The <see cref="Single"/> to create the <see cref="Color"/> from.</param>
-        public Color(float value)
-            : this(ToByte(value))
-        {
-        }
+        public Color(float value) : this(ToByte(value)) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="Byte"/> to create the <see cref="Color"/> from.</param>
-        public Color(byte value)
-            : this(value, value, value)
-        {
-        }
+        public Color(byte value) : this(value, value, value) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="Byte"/> to create the <see cref="Color"/> from.</param>
         /// <param name="alpha">The <see cref="Color"/>s alpha.</param>
-        public Color(float value, float alpha)
-            : this(ToByte(value), ToByte(value), ToByte(value), ToByte(alpha))
-        {
-        }
+        public Color(float value, float alpha) : this(ToByte(value), ToByte(value), ToByte(value), ToByte(alpha)) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Byte"/>.
         /// </summary>
         /// <param name="value">The <see cref="Byte"/> to create the <see cref="Color"/> from.</param>
         /// <param name="alpha">The <see cref="Color"/>s alpha.</param>
-        public Color(byte value, byte alpha)
-            : this(value, value, value, alpha)
-        {
-        }
+        public Color(byte value, byte alpha) : this(value, value, value, alpha) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Single"/>s.
@@ -1063,10 +1043,7 @@ namespace LightClaw.Engine.Graphics
         /// <param name="r">Red color value.</param>
         /// <param name="g">Green color value.</param>
         /// <param name="b">Blue color Value.</param>
-        public Color(float r, float g, float b)
-            : this(ToByte(r), ToByte(g), ToByte(b))
-        {
-        }
+        public Color(float r, float g, float b) : this(ToByte(r), ToByte(g), ToByte(b)) { }
 
         /// <summary>
         /// Initializes a new instance of class <see cref="Color"/> and sets the alpha to 255 (opaque).
@@ -1074,10 +1051,7 @@ namespace LightClaw.Engine.Graphics
         /// <param name="r">Red color value.</param>
         /// <param name="g">Green color value.</param>
         /// <param name="b">Blue color Value.</param>
-        public Color(byte r, byte g, byte b)
-            : this(r, g, b, 255)
-        {
-        }
+        public Color(byte r, byte g, byte b) : this(r, g, b, 255) { }
 
         /// <summary>
         /// Creates a new <see cref="Color"/> from the given <see cref="Single"/>s.
@@ -1086,10 +1060,7 @@ namespace LightClaw.Engine.Graphics
         /// <param name="g">Green color value.</param>
         /// <param name="b">Blue color Value.</param>
         /// <param name="a">Alpha value.</param>
-        public Color(float r, float g, float b, float a)
-            : this(ToByte(r), ToByte(g), ToByte(b), ToByte(a))
-        {
-        }
+        public Color(float r, float g, float b, float a) : this(ToByte(r), ToByte(g), ToByte(b), ToByte(a)) { }
 
         /// <summary>
         /// Initializes a new instance of class <see cref="Color"/>.

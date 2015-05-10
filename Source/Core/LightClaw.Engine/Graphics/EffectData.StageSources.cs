@@ -70,14 +70,15 @@ namespace LightClaw.Engine.Graphics
                 if (ReferenceEquals(obj, this))
                     return true;
 
-                StageSources sources = obj as StageSources;
-                return (sources != null) ? this.Equals(sources) : false;
+                return this.Equals(obj as StageSources);
             }
 
             public bool Equals(StageSources other)
             {
                 if (ReferenceEquals(other, null))
                     return false;
+                if (ReferenceEquals(other, this))
+                    return true;
 
                 return (this.Fragment == other.Fragment) && (this.Vertex == other.Vertex) &&
                        (this.TessControl == other.TessControl) && (this.TessEval == other.TessEval) &&

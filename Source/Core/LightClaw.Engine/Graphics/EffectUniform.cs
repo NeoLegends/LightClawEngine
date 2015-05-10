@@ -10,24 +10,8 @@ using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
-    public abstract class EffectUniform : DisposableEntity, IBindable, IInitializable
+    public abstract class EffectUniform : DispatcherEntity, IBindable
     {
-        private readonly object initializationLock = new object();
-
-        private bool _IsInitialized;
-
-        public bool IsInitialized
-        {
-            get
-            {
-                return _IsInitialized;
-            }
-            private set
-            {
-                this.SetProperty(ref _IsInitialized, value);
-            }
-        }
-
         public int Location
         {
             get
@@ -93,24 +77,7 @@ namespace LightClaw.Engine.Graphics
 
         public abstract void Bind();
 
-        public void Initialize()
-        {
-            if (!this.IsInitialized)
-            {
-                lock (this.initializationLock)
-                {
-                    if (!this.IsInitialized)
-                    {
-                        this.OnInitialize();
-                        this.IsInitialized = true;
-                    }
-                }
-            }
-        }
-
         public abstract void Unbind();
-
-        protected abstract void OnInitialize();
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

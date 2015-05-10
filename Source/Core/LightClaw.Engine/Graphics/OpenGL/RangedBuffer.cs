@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -188,6 +189,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentNullException>(baseBuffer != null);
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
+            this.VerifyAccess();
+
             this.BaseBuffer = baseBuffer;
             this.Index = index;
             this.OwnsBaseBuffer = ownsBaseBuffer;
@@ -200,7 +203,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Bind()
         {
-            this.Initialize();
+            this.VerifyAccess();
+
             GL.BindBufferRange(this.RangeTarget, this.Index, this.BaseBuffer.Handle, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
@@ -209,6 +213,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         public void Unbind()
         {
+            this.VerifyAccess();
+
             GL.BindBufferRange(this.RangeTarget, this.Index, 0, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
         }
 
@@ -274,6 +280,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <seealso cref="BufferAccess"/>
         public IntPtr Map(BufferAccess access)
         {
+            this.VerifyAccess();
+
             this.Bind();
             return GL.MapBufferRange(this.Target, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length, access.ToAccessMask());
         }
@@ -284,6 +292,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <remarks>This method expects the current <see cref="IBuffer"/> to be bound.</remarks>
         public void Unmap()
         {
+            this.VerifyAccess();
+
             GL.UnmapBuffer(this.Target);
             this.Unbind();
         }
@@ -421,7 +431,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Zeros-out the <see cref="RangedBuffer"/>.
         /// </summary>
         /// <returns>The <see cref="RangedBuffer"/> itself.</returns>
-        public RangedBuffer Zeroed()
+        public RangedBuffer ZeroOut()
         {
             byte[] zeros = new byte[Math.Max(this.Range.Length, 1)];
             zeros.Initialize();
@@ -456,14 +466,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         protected override object GetDisposedArgument()
         {
             return this.Range;
-        }
-
-        /// <summary>
-        /// Initialization callback.
-        /// </summary>
-        protected override void OnInitialize() 
-        {
-            this.BaseBuffer.Initialize();
         }
 
         /// <summary>

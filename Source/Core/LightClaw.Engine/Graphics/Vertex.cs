@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
+using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
@@ -27,12 +28,16 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private static readonly VertexAttributePointer[] _VAPInterleaved = new[]
+        private static readonly VertexAttributePointer[] _Interleaved = new[]
         {
             new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, SizeInBytes, 0),
             new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, SizeInBytes, 12),
             new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, SizeInBytes, 24),
-            new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 32)
+            new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 32),
+            new VertexAttributePointer(VertexAttributeLocation.BoneWeight0, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 36),
+            new VertexAttributePointer(VertexAttributeLocation.BoneWeight1, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 44),
+            new VertexAttributePointer(VertexAttributeLocation.BoneWeight2, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 52),
+            new VertexAttributePointer(VertexAttributeLocation.BoneWeight3, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 60),
         };
 
         /// <summary> 
@@ -66,14 +71,14 @@ namespace LightClaw.Engine.Graphics
         /// </list> 
         /// </para> 
         /// </remarks>
-        public static VertexAttributePointer[] VAPInterleaved
+        public static VertexAttributePointer[] Interleaved
         {
             get
             {
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
                 Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
 
-                return _VAPInterleaved.ToArray();
+                return _Interleaved.ToArray();
             }
         }
 
@@ -162,7 +167,9 @@ namespace LightClaw.Engine.Graphics
         public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) &&
-                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color);
+                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color) &&
+                   (this.BoneWeight0 == other.BoneWeight0) && (this.BoneWeight1 == other.BoneWeight1) &&
+                   (this.BoneWeight2 == other.BoneWeight2) && (this.BoneWeight3 == other.BoneWeight3);
         }
 
         /// <summary>
@@ -171,7 +178,10 @@ namespace LightClaw.Engine.Graphics
         /// <returns>The <see cref="Vertex"/>'s hash code.</returns>
         public override int GetHashCode()
         {
-            return HashF.GetHashCode(this.Position, this.Normal, this.TexCoord, this.Color);
+            return HashF.GetHashCode(
+                this.Position, this.Normal, this.TexCoord, this.Color,
+                HashF.GetHashCode(this.BoneWeight0, this.BoneWeight1, this.BoneWeight2, this.BoneWeight3)
+            );
         }
 
         /// <summary>

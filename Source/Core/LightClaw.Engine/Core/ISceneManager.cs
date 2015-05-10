@@ -23,22 +23,20 @@ namespace LightClaw.Engine.Core
         Scene this[int slot] { get; }
 
         /// <summary>
-        /// Asynchronously loads a <see cref="Scene"/> from the specified resource string into the specified position.
-        /// </summary>
-        /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
-        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
-        /// <returns>
-        /// <c>true</c> if the <see cref="Scene"/> could be inserted at the specified position, otherwise <c>false</c>.
-        /// </returns>
-        Task<int> Load(int slot, ResourceString resourceString);
-
-        /// <summary>
         /// Loads the specified <see cref="Scene"/> into the specified position.
         /// </summary>
         /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
         /// <param name="s">The <see cref="Scene"/> to load.</param>
-        /// <returns><c>true</c> if the <see cref="Scene"/> could be inserted, otherwise <c>false</c>.</returns>
+        /// <returns>The slot the scene was finally inserted into.</returns>
         int Load(int slot, Scene s);
+
+        /// <summary>
+        /// Asynchronously loads a <see cref="Scene"/> from the specified resource string into the specified position.
+        /// </summary>
+        /// <param name="slot">The index to load the <see cref="Scene"/> into.</param>
+        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
+        /// <returns>The slot the scene was finally inserted into.</returns>
+        Task<int> LoadAsync(int slot, ResourceString resourceString);
 
         /// <summary>
         /// Moves the <see cref="Scene"/> from the specified index to the new index.
@@ -125,7 +123,7 @@ namespace LightClaw.Engine.Core
             return null;
         }
 
-        Task<int> ISceneManager.Load(int slot, ResourceString resourceString)
+        Task<int> ISceneManager.LoadAsync(int slot, ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentOutOfRangeException>(slot >= 0);

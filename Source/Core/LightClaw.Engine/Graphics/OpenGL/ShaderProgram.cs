@@ -22,11 +22,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public class ShaderProgram : GLObject, IBindable
     {
         /// <summary>
-        /// The object used to lock access to <see cref="M:Initialize"/>.
-        /// </summary>
-        private readonly object initializationLock = new object();
-
-        /// <summary>
         /// Backing field.
         /// </summary>
         private ImmutableArray<Shader> _Shaders;
@@ -63,7 +58,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                Contract.Ensures(!this.IsInitialized || Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
 
                 return _Uniforms;
             }
@@ -100,87 +95,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(shaders.Any());
             Contract.Requires<ArgumentException>(shaders.All(shader => shader != null));
 
-            this.Shaders = shaders.ToImmutableArray();
-        }
-
-        /// <summary>
-        /// Binds the <see cref="ShaderProgram"/> to the graphics context.
-        /// </summary>
-        public void Bind()
-        {
-            this.Initialize();
-            GL.UseProgram(this);
-        }
-
-        /// <summary>
-        /// Gets the OpenGL info log. See remarks.
-        /// </summary>
-        /// <remarks>
-        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
-        /// commands to be executed synchronously. Use with caution.
-        /// </remarks>
-        /// <returns>The progam info log.</returns>
-        public string GetInfoLog()
-        {
-            return GL.GetProgramInfoLog(this);
-        }
-
-        /// <summary>
-        /// Queries the interface of the program. See remarks.
-        /// </summary>
-        /// <remarks>
-        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
-        /// commands to be executed synchronously. Use with caution.
-        /// </remarks>
-        /// <param name="programInterface">The interface to query.</param>
-        /// <param name="interfaceParameter">The name of the interface parameter to query.</param>
-        /// <returns>The value.</returns>
-        public int GetInterface(ProgramInterface programInterface, ProgramInterfaceParameter interfaceParameter)
-        {
-            int result;
-            GL.GetProgramInterface(this, programInterface, interfaceParameter, out result);
-            return result;
-        }
-
-        /// <summary>
-        /// Unbinds the <see cref="ShaderProgram"/> from the graphics context.
-        /// </summary>
-        public void Unbind()
-        {
-            GL.UseProgram(0);
-        }
-
-        /// <summary>
-        /// Disposes the <see cref="ShaderProgram"/> freeing all OpenGL resources.
-        /// </summary>
-        /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
-        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                lock (this.initializationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteShaderProgram, DispatcherPriority.Background);
-                    }
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
-        }
-
-        /// <summary>
-        /// Initialization callback.
-        /// </summary>
-        protected override void OnInitialize()
-        {
-            Log.Debug(() => "Initializing {0}.".FormatWith(typeof(ShaderProgram).Name));
+            this.VerifyAccess();
 
             this.Handle = GL.CreateProgram();
+            this.Shaders = shaders.ToImmutableArray();
             try
             {
                 foreach (Shader s in this.Shaders)
@@ -221,9 +139,77 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Binds the <see cref="ShaderProgram"/> to the graphics context.
+        /// </summary>
+        public void Bind()
+        {
+            this.VerifyAccess();
+            GL.UseProgram(this);
+        }
+
+        /// <summary>
+        /// Gets the OpenGL info log. See remarks.
+        /// </summary>
+        /// <remarks>
+        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
+        /// commands to be executed synchronously. Use with caution.
+        /// </remarks>
+        /// <returns>The progam info log.</returns>
+        public string GetInfoLog()
+        {
+            this.VerifyAccess();
+            return GL.GetProgramInfoLog(this);
+        }
+
+        /// <summary>
+        /// Queries the interface of the program. See remarks.
+        /// </summary>
+        /// <remarks>
+        /// This method, as all <c>GL.Get***</c>-methods, stalls the rendering pipeline and forces all previously submitted
+        /// commands to be executed synchronously. Use with caution.
+        /// </remarks>
+        /// <param name="programInterface">The interface to query.</param>
+        /// <param name="interfaceParameter">The name of the interface parameter to query.</param>
+        /// <returns>The value.</returns>
+        public int GetInterface(ProgramInterface programInterface, ProgramInterfaceParameter interfaceParameter)
+        {
+            this.VerifyAccess();
+
+            int result;
+            GL.GetProgramInterface(this, programInterface, interfaceParameter, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Unbinds the <see cref="ShaderProgram"/> from the graphics context.
+        /// </summary>
+        public void Unbind()
+        {
+            this.VerifyAccess();
+            GL.UseProgram(0);
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="ShaderProgram"/> freeing all OpenGL resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        protected override void Dispose(bool disposing)
+        {
+            if (this.CheckAccess())
+            {
+                this.DeleteShaderProgram(disposing);
+            }
+            else
+            {
+                this.Dispatcher.InvokeSlim(this.DeleteShaderProgram, disposing, DispatcherPriority.Background);
+            }
+        }
+
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteShaderProgram()
+        private void DeleteShaderProgram(bool disposing)
         {
             try
             {
@@ -232,6 +218,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 
@@ -242,7 +232,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Shaders != null);
-            Contract.Invariant(!this.IsInitialized || this._Uniforms != null);
+            Contract.Invariant(this._Uniforms != null);
         }
     }
 }

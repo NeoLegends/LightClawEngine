@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,13 @@ namespace LightClaw.Engine.Graphics
     /// Represents a mechanism for binding <see cref="IBindable"/>-instances for a specified time using the
     /// 'using'-clause for convenient syntax and ensured unbinding after usage.
     /// </summary>
+    /// <remarks>
+    /// If LightClaw runs in release mode, the mechanism does NOT unbind the instance for performance reasons.
+    /// If you wish to override that behavior, set the ALWAYS_UNBIND compile time constant.
+    /// </remarks>
     /// <example>
     /// <code>
-    /// using (GLBinding bufferBinding = new GLBinding(this.Buffer))
+    /// using (Binding bufferBinding = new Binding(this.Buffer))
     /// {
     ///     // Code interacting with bound buffer
     /// }
@@ -73,7 +78,9 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         public void Unbind()
         {
+#if (DEBUG || ALWAYS_UNBIND)
             this.bindable.Unbind();
+#endif
         }
     }
 }

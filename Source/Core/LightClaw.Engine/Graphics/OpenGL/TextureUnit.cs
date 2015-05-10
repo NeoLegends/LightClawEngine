@@ -84,17 +84,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [DataMember]
         public int Unit { get; private set; }
 
+        public TextureUnit(GLTextureUnit unit) : this(unit - GLTextureUnit.Texture0) { }
+
         public TextureUnit(int unit)
             : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(unit >= 0);
 
             this.Unit = unit;
-        }
-
-        public TextureUnit(GLTextureUnit unit)
-            : this(unit - GLTextureUnit.Texture0)
-        {
         }
 
         public object Clone()

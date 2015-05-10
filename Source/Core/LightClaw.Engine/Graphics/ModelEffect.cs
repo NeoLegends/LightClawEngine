@@ -23,15 +23,9 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected ModelEffect()
-            : this(false)
-        {
-        }
+        protected ModelEffect() : this(false) { }
 
-        protected ModelEffect(bool ownsPasses)
-            : base(ownsPasses)
-        {
-        }
+        protected ModelEffect(bool ownsPasses) : base(ownsPasses) { }
 
         protected ModelEffect(ModelPart modelPart)
             : this(modelPart, false)

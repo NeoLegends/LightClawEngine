@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
 namespace LightClaw.Engine.Core
 {
@@ -30,7 +31,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Notifies about changes in the children collection.
         /// </summary>
-        public event NotifyCollectionChangedEventHandler ChildrenChanged;
+        public event NotifyCollectionChangedEventHandler ChildrenChanged
+        {
+            add
+            {
+                this.CollectionChanged += value;
+            }
+            remove
+            {
+                this.CollectionChanged -= value;
+            }
+        }
 
         /// <summary>
         /// Notifies about changes in the children collection.
@@ -184,17 +195,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Matrix _PositionMatrix;
+        private Matrix4 _PositionMatrix;
 
         /// <summary>
         /// The absolute position as translation <see cref="Matrix"/>.
         /// </summary>
         [IgnoreDataMember]
-        public Matrix PositionMatrix
+        public Matrix4 PositionMatrix
         {
             get
             {
-                return (this.IsDirty) ? (_PositionMatrix = Matrix.Translation(this.Position)) : _PositionMatrix;
+                return (this.IsDirty) ? (_PositionMatrix = Matrix4.CreateTranslation(this.Position)) : _PositionMatrix;
             }
         }
 
@@ -245,17 +256,17 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Matrix _RotationMatrix;
+        private Matrix4 _RotationMatrix;
 
         /// <summary>
         /// The absolute rotation in world space as rotation <see cref="Matrix"/>.
         /// </summary>
         [IgnoreDataMember]
-        public Matrix RotationMatrix
+        public Matrix4 RotationMatrix
         {
             get
             {
-                return (this.IsDirty) ? (_RotationMatrix = Matrix.RotationQuaternion(this.Rotation)) : _RotationMatrix;
+                return (this.IsDirty) ? (_RotationMatrix = Matrix4.CreateFromQuaternion(this.Rotation)) : _RotationMatrix;
             }
         }
 
@@ -306,24 +317,24 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Matrix _ScalingMatrix;
+        private Matrix4 _ScalingMatrix;
 
         /// <summary>
         /// The absolute scaling in world space as scaling <see cref="Matrix"/>.
         /// </summary>
         [IgnoreDataMember]
-        public Matrix ScalingMatrix
+        public Matrix4 ScalingMatrix
         {
             get
             {
-                return (this.IsDirty) ? (_ScalingMatrix = Matrix.Scaling(this.Scaling)) : _ScalingMatrix;
+                return (this.IsDirty) ? (_ScalingMatrix = Matrix4.CreateScale(this.Scaling)) : _ScalingMatrix;
             }
         }
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private Matrix _ModelMatrix;
+        private Matrix4 _ModelMatrix;
 
         /// <summary>
         /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/>.
@@ -348,7 +359,7 @@ namespace LightClaw.Engine.Core
         /// </list>
         /// </remarks>
         [IgnoreDataMember]
-        public Matrix ModelMatrix
+        public Matrix4 ModelMatrix
         {
             get
             {
@@ -375,12 +386,7 @@ namespace LightClaw.Engine.Core
                     }
                 }
 
-                NotifyCollectionChangedEventHandler handler = this.ChildrenChanged;
-                if (handler != null)
-                {
-                    handler(s, e);
-                }
-                handler = this.CollectionChanged;
+                NotifyCollectionChangedEventHandler handler = this.CollectionChanged;
                 if (handler != null)
                 {
                     handler(s, e);

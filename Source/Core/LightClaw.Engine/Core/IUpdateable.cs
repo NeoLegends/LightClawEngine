@@ -37,9 +37,11 @@ namespace LightClaw.Engine.Core
     [ContractClassFor(typeof(IUpdateable))]
     abstract class IUpdateableContracts : IUpdateable
     {
+#pragma warning disable 0067
         public event EventHandler<UpdateEventArgs> Updating;
 
         public event EventHandler<UpdateEventArgs> Updated;
+#pragma warning restore 0067
 
         public bool Update(GameTime gameTime, int pass)
         {

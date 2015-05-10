@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Configuration;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using NLog;
 using OpenTK.Graphics.OpenGL4;
@@ -16,8 +17,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     public abstract class Texture : GLObject, IBindable
     {
         private static readonly Logger staticLogger = LogManager.GetLogger(typeof(Texture).Name);
-
-        private readonly object initializationLock = new object();
 
         private TextureDescription _Description;
 
@@ -196,6 +195,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget), description.Target));
 
+            this.VerifyAccess();
+
             this.Description = description;
         }
 
@@ -207,6 +208,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public virtual void Bind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
+
+            this.VerifyAccess();
 
             GL.ActiveTexture(textureUnit);
             GL.BindTexture(this.Target, this);
@@ -221,31 +224,27 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
+            this.VerifyAccess();
+
             GL.ActiveTexture(textureUnit);
             GL.BindTexture(this.Target, 0);
         }
 
         protected override void Dispose(bool disposing)
         {
-            try
+            if (this.CheckAccess())
             {
-                lock (this.initializationLock)
-                {
-                    if (this.IsInitialized && !this.IsDisposed)
-                    {
-                        this.Dispatcher.InvokeSlim(this.DeleteTexture);
-                    }
-                }
+                this.DeleteTexture(disposing);
             }
-            finally
+            else
             {
-                base.Dispose(disposing);
+                this.Dispatcher.InvokeSlim(this.DeleteTexture, disposing, DispatcherPriority.Background);
             }
         }
 
         [System.Security.SecurityCritical]
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
-        private void DeleteTexture()
+        private void DeleteTexture(bool disposing)
         {
             try
             {
@@ -254,6 +253,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             catch (Exception ex)
             {
                 Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 
