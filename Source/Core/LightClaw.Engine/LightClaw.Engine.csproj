@@ -188,10 +188,11 @@
     <Compile Include="Core\DisposableEntity.cs" />
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
+    <Compile Include="Core\MathConverter.cs" />
     <Compile Include="Threading\DispatcherObjectExtensions.cs" />
     <Compile Include="Threading\IDispatcherObject.cs" />
     <Compile Include="Core\IGame.cs" />
-    <Compile Include="Core\Point.cs" />
+    <Compile Include="Core\Size.cs" />
     <Compile Include="Core\UpdateEventArgs.cs" />
     <Compile Include="IO\AssetNotFoundException.cs" />
     <Compile Include="Threading\ThreadModeAttribute.cs" />
@@ -224,11 +225,7 @@
     <Compile Include="Graphics\OpenGL\GLBool.cs" />
     <Compile Include="Graphics\OpenGL\LinkingFailedException.cs" />
     <Compile Include="Graphics\OpenGL\OpenGLException.cs" />
-    <Compile Include="Graphics\UniformBufferGroup.cs" />
     <Compile Include="Graphics\OpenGL\CompilationFailedException.cs" />
-    <Compile Include="Graphics\OpenGL\VertexAttributeDescription.cs" />
-    <Compile Include="Graphics\EffectData.cs" />
-    <Compile Include="Graphics\ModelEffect.cs" />
     <Compile Include="Graphics\OpenGL\DataTooLargeException.cs" />
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\EffectPass.cs" />
@@ -239,7 +236,6 @@
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
-    <Compile Include="Graphics\EffectData.StageSources.cs" />
     <Compile Include="Graphics\OpenGL\Uniform.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\OpenGL\SamplerParameterDescription.cs" />
@@ -362,7 +358,6 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>VideoSettings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Graphics\EffectData.StageData.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

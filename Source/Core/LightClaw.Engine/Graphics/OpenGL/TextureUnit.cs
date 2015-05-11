@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 {
     [DataContract]
     [JsonConverter(typeof(TextureUnitConverter))]
-    public struct TextureUnit : ICloneable, IDisposable, IEquatable<int>, IEquatable<TextureUnit>
+    public struct TextureUnit : ICloneable, IEquatable<int>, IEquatable<TextureUnit>
     {
         public static readonly TextureUnit Texture0 = new TextureUnit(0);
 
@@ -79,8 +79,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public static readonly TextureUnit Texture31 = new TextureUnit(31);
 
-        public event EventHandler<ParameterEventArgs> Disposed;
-
         [DataMember]
         public int Unit { get; private set; }
 
@@ -89,25 +87,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public TextureUnit(int unit)
             : this()
         {
-            Contract.Requires<ArgumentOutOfRangeException>(unit >= 0);
-
             this.Unit = unit;
         }
 
         public object Clone()
         {
             return new TextureUnit(this.Unit);
-        }
-
-        public void Dispose()
-        {
-            EventHandler<ParameterEventArgs> handler = this.Disposed;
-            if (handler != null)
-            {
-                handler(this, new ParameterEventArgs(this.Unit));
-            }
-
-            this.Unit = -1;
         }
 
         public override bool Equals(object obj)
@@ -197,8 +182,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public static implicit operator TextureUnit(int unit)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(unit >= 0);
-
             return new TextureUnit(unit);
         }
 
@@ -210,12 +193,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public static implicit operator TextureUnit(GLTextureUnit unit)
         {
             return new TextureUnit(unit - GLTextureUnit.Texture0);
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.Unit >= 0);
         }
 
         public class TextureUnitConverter : JsonConverter

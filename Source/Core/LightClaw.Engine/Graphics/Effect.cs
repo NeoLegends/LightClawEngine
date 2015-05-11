@@ -7,32 +7,63 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
 using LightClaw.Extensions;
+using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Graphics
 {
     [DataContract]
-    public abstract class Effect : DisposableEntity, IEnumerable<EffectPass>
+    public class Effect : DisposableEntity, IReadOnlyList<EffectPass>
     {
-        protected bool OwnsPasses { get; private set; }
+        public int Count
+        {
+            get 
+            {
+                return this.Passes.Length;
+            }
+        }
+
+        private bool _OwnsPasses;
+
+        protected bool OwnsPasses
+        {
+            get
+            {
+                return _OwnsPasses;
+            }
+            set
+            {
+                this.SetProperty(ref _OwnsPasses, value);
+            }
+        }
 
         private ImmutableArray<EffectPass> _Passes = ImmutableArray<EffectPass>.Empty;
 
+        [DataMember]
         public ImmutableArray<EffectPass> Passes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableArray<EffectPass>>() != null);
-                Contract.Ensures(Contract.Result<ImmutableArray<EffectPass>>().All(pass => pass != null));
+                // Code contracts don't like ImmutableArrayExtensions.All
+                Contract.Ensures(Enumerable.All(Contract.Result<ImmutableArray<EffectPass>>(), pass => pass != null));
 
                 return _Passes;
             }
             protected set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(pass => pass != null));
+                // Code contracts don't like ImmutableArrayExtensions.All
+                Contract.Requires<ArgumentException>(Enumerable.All(value, pass => pass != null));
 
                 this.SetProperty(ref _Passes, value);
+            }
+        }
+
+        public EffectPass this[int index]
+        {
+            get
+            {
+                return this.Passes[index];
             }
         }
 
@@ -59,14 +90,11 @@ namespace LightClaw.Engine.Graphics
             this.Passes = passes.ToImmutableArray();
         }
 
-        public void Apply(int index)
+        public Binding ApplyPass(int index)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < this.Passes.Length);
 
-            if (!this.TryApply(index))
-            {
-                throw new InvalidOperationException("The pass at index {0} could not be applied.".FormatWith(index));
-            }
+            return new Binding(this.Passes[index]);
         }
 
         public IEnumerator<EffectPass> GetEnumerator()
@@ -77,22 +105,6 @@ namespace LightClaw.Engine.Graphics
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
-        }
-
-        public bool TryApply(int index)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
-
-            ImmutableArray<EffectPass> passes = this.Passes;
-            if (passes.Length > index)
-            {
-                passes[index].Bind();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         protected override void Dispose(bool disposing)
@@ -117,7 +129,7 @@ namespace LightClaw.Engine.Graphics
         private void ObjectInvariant()
         {
             Contract.Invariant(this._Passes != null);
-            Contract.Invariant(this._Passes.All(pass => pass != null));
+            Contract.Invariant(Enumerable.All(this._Passes, ep => ep != null)); // Code Contracts complains about ImmutableArrayExtensions.All
         }
     }
 }

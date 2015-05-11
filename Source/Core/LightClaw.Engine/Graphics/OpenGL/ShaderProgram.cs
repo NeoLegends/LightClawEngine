@@ -21,34 +21,27 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Uniform Count = {Uniforms.Count}")]
     public class ShaderProgram : GLObject, IBindable
     {
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private ImmutableArray<Shader> _Shaders;
+        private ImmutableDictionary<string, int> _Attributes;
 
         /// <summary>
-        /// The <see cref="Shader"/>s the <see cref="ShaderProgram"/> consists of.
+        /// A list of all vertex attributes.
         /// </summary>
-        public ImmutableArray<Shader> Shaders
+        public ImmutableDictionary<string, int> Attributes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableArray<Shader>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, int>>() != null);
 
-                return _Shaders;
+                return _Attributes;
             }
             private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(shader => shader != null));
 
-                this.SetProperty(ref _Shaders, value);
+                this.SetProperty(ref _Attributes, value);
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private ImmutableDictionary<string, Uniform> _Uniforms;
 
         /// <summary>
@@ -62,10 +55,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 return _Uniforms;
             }
-            set
+            private set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
-                Contract.Requires<ArgumentException>(value.All(kvp => kvp.Value != null));
+                Contract.Requires<ArgumentException>(Enumerable.All(value, kvp => kvp.Value != null));
 
                 this.SetProperty(ref _Uniforms, value);
             }
@@ -98,20 +91,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.VerifyAccess();
 
             this.Handle = GL.CreateProgram();
-            this.Shaders = shaders.ToImmutableArray();
             try
             {
-                foreach (Shader s in this.Shaders)
+                foreach (Shader s in shaders)
                 {
                     s.AttachTo(this);
                 }
 
                 GL.ProgramParameter(this, ProgramParameterName.ProgramBinaryRetrievableHint, 1);
                 GL.ProgramParameter(this, ProgramParameterName.ProgramSeparable, 1);
-                foreach (VertexAttributeDescription desc in this.Shaders.SelectMany(shader => shader.VertexAttributeDescriptions))
-                {
-                    desc.ApplyIn(this);
-                }
                 GL.LinkProgram(this);
 
                 int result;
@@ -124,15 +112,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     throw new LinkingFailedException(message, infoLog, result);
                 }
 
-                int uniformCount = 0;
-                GL.GetProgramInterface(this, ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources, out uniformCount);
-                this.Uniforms = Enumerable.Range(0, uniformCount)
+                int size;
+                ActiveAttribType aat;
+                this.Attributes = Enumerable.Range(0, this.GetInterface(ProgramInterface.ProgramInput, ProgramInterfaceParameter.ActiveResources))
+                                            .Select(i => new KeyValuePair<string, int>(GL.GetActiveAttrib(this, i, out size, out aat), i))
+                                            .ToImmutableDictionary();
+                this.Uniforms = Enumerable.Range(0, this.GetInterface(ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources))
                                           .Select(uniformIndex => new Uniform(this, uniformIndex))
                                           .ToImmutableDictionary(uniform => uniform.Name);
             }
             finally
             {
-                foreach (Shader s in this.Shaders)
+                foreach (Shader s in shaders)
                 {
                     s.DetachFrom(this);
                 }
@@ -203,7 +194,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.InvokeSlim(this.DeleteShaderProgram, disposing, DispatcherPriority.Background);
+                this.Dispatcher.Invoke(this.DeleteShaderProgram, disposing, DispatcherPriority.Background).Wait();
             }
         }
 
@@ -231,7 +222,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this._Shaders != null);
+            Contract.Invariant(this._Attributes != null);
             Contract.Invariant(this._Uniforms != null);
         }
     }

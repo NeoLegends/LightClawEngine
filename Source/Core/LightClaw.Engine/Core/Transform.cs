@@ -20,7 +20,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets a <see cref="Transform"/> with default values.
         /// </summary>
-        public static Transform Null
+        public static Transform Zero
         {
             get
             {
@@ -86,26 +86,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private bool _IsDirty = true; // Transform values need to be calculated on start, even if we're not technically dirty.
-
-        /// <summary>
-        /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
-        /// </summary>
-        protected bool IsDirty
-        {
-            get
-            {
-                return _IsDirty;
-            }
-            set
-            {
-                this.SetProperty(ref _IsDirty, value);
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private ObservableCollection<Transform> _Childs = new ObservableCollection<Transform>();
 
         /// <summary>
@@ -124,9 +104,23 @@ namespace LightClaw.Engine.Core
             }
         }
 
+        private DirtyFlags _DirtyFlags = DirtyFlags.All; // Transform values need to be calculated on start, even if we're not technically dirty.
+
         /// <summary>
-        /// Backing field.
+        /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
         /// </summary>
+        protected DirtyFlags Dirty
+        {
+            get
+            {
+                return _DirtyFlags;
+            }
+            set
+            {
+                this.SetProperty(ref _DirtyFlags, value);
+            }
+        }
+
         private Transform _Parent;
 
         /// <summary>
@@ -141,22 +135,18 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Transform previous = this.Parent;
-                this.SetProperty(ref _Parent, value);
-                this.Raise(this.ParentChanged, value, previous);
-                this.IsDirty = true;
+                this.SetProperty(ref _Parent, value, this.ParentChanged);
+                this.Dirty = DirtyFlags.All;
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Vector3 _LocalPosition = Vector3.Zero;
 
         /// <summary>
         /// The <see cref="GameObject"/>s local position in relation to the parent's position.
         /// </summary>
         [DataMember]
+        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
         public Vector3 LocalPosition
         {
             get
@@ -165,10 +155,8 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Vector3 previous = this.LocalPosition;
-                this.SetProperty(ref _LocalPosition, value);
-                this.Raise(this.LocalPositionChanged, value, previous);
-                this.IsDirty = true;
+                this.SetProperty(ref _LocalPosition, value, this.LocalPositionChanged);
+                this.Dirty |= DirtyFlags.Position;
             }
         }
 
@@ -184,17 +172,12 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Vector3 previous = this.Position;
                 Vector3 newValue = value - this.GetParentPosition();
 
-                this.SetProperty(ref _LocalPosition, newValue);
-                this.Raise(this.PositionChanged, newValue, previous);
+                this.SetProperty(ref _LocalPosition, newValue, this.PositionChanged);
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Matrix4 _PositionMatrix;
 
         /// <summary>
@@ -205,19 +188,26 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.IsDirty) ? (_PositionMatrix = Matrix4.CreateTranslation(this.Position)) : _PositionMatrix;
+                if (!this.Dirty.HasFlag(DirtyFlags.Position))
+                {
+                    return _PositionMatrix;
+                }
+                else
+                {
+                    Matrix4 result = _PositionMatrix = Matrix4.CreateTranslation(this.Position);
+                    this.Dirty &= ~DirtyFlags.Position;
+                    return result;
+                }
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Quaternion _LocalRotation = Quaternion.Identity;
 
         /// <summary>
         /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
         /// </summary>
         [DataMember]
+        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
         public Quaternion LocalRotation
         {
             get
@@ -226,10 +216,8 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Quaternion previous = this.LocalRotation;
-                this.SetProperty(ref _LocalRotation, value);
-                this.Raise(this.LocalRotationChanged, value, previous);
-                this.IsDirty = true;
+                this.SetProperty(ref _LocalRotation, value, this.LocalRotationChanged);
+                this.Dirty |= DirtyFlags.Rotation;
             }
         }
 
@@ -245,17 +233,12 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Quaternion previous = this.Rotation;
                 Quaternion newValue = Quaternion.Conjugate(this.GetParentRotation()) * value;
 
-                this.SetProperty(ref _LocalRotation, newValue);
-                this.Raise(this.RotationChanged, newValue, previous);
+                this.SetProperty(ref _LocalRotation, newValue, this.RotationChanged);
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Matrix4 _RotationMatrix;
 
         /// <summary>
@@ -266,19 +249,26 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.IsDirty) ? (_RotationMatrix = Matrix4.CreateFromQuaternion(this.Rotation)) : _RotationMatrix;
+                if (!this.Dirty.HasFlag(DirtyFlags.Rotation))
+                {
+                    return _RotationMatrix;
+                }
+                else
+                {
+                    Matrix4 result = _RotationMatrix = Matrix4.CreateFromQuaternion(this.Rotation);
+                    this.Dirty &= ~DirtyFlags.Rotation;
+                    return result;
+                }
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Vector3 _LocalScaling = Vector3.One;
 
         /// <summary>
         /// The <see cref="GameObject"/>s scaling relative to the parent's scaling.
         /// </summary>
         [DataMember]
+        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
         public Vector3 LocalScaling
         {
             get
@@ -287,10 +277,8 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Vector3 previous = this.LocalScaling;
-                this.SetProperty(ref _LocalScaling, value);
-                this.Raise(this.LocalScalingChanged, previous, previous);
-                this.IsDirty = true;
+                this.SetProperty(ref _LocalScaling, value, this.LocalScalingChanged);
+                this.Dirty |= DirtyFlags.Scaling;
             }
         }
 
@@ -306,17 +294,12 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                Vector3 previous = this.Scaling;
                 Vector3 newValue = Vector3.One;
 
-                this.SetProperty(ref _LocalScaling, newValue);
-                this.Raise(this.ScalingChanged, value, previous);
+                this.SetProperty(ref _LocalScaling, newValue, this.ScalingChanged);
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Matrix4 _ScalingMatrix;
 
         /// <summary>
@@ -327,13 +310,19 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.IsDirty) ? (_ScalingMatrix = Matrix4.CreateScale(this.Scaling)) : _ScalingMatrix;
+                if (!this.Dirty.HasFlag(DirtyFlags.Scaling))
+                {
+                    return _ScalingMatrix;
+                }
+                else
+                {
+                    Matrix4 scalingMatrix = _ScalingMatrix = Matrix4.CreateScale(this.Scaling);
+                    this.Dirty &= ~DirtyFlags.Scaling;
+                    return scalingMatrix;
+                }
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Matrix4 _ModelMatrix;
 
         /// <summary>
@@ -363,7 +352,16 @@ namespace LightClaw.Engine.Core
         {
             get
             {
-                return (this.IsDirty) ? (_ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix) : _ModelMatrix;
+                if (this.Dirty == DirtyFlags.None)
+                {
+                    return _ModelMatrix;
+                }
+                else
+                {
+                    Matrix4 result = _ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix;
+                    this.Dirty &= ~(DirtyFlags.Position | DirtyFlags.Rotation | DirtyFlags.Scaling);
+                    return result;
+                }
             }
         }
 
@@ -404,10 +402,7 @@ namespace LightClaw.Engine.Core
         /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
         /// </param>
         /// <param name="localScale">The <see cref="GameObject"/>s scaling relative to the parent's scaling.</param>
-        public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
-            : this(null, localPosition, localRotation, localScale)
-        {
-        }
+        public Transform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale) : this(null, localPosition, localRotation, localScale) { }
 
         /// <summary>
         /// Initializes a new <see cref="Transform"/> the parent, position, rotation and scaling.
@@ -435,7 +430,7 @@ namespace LightClaw.Engine.Core
         /// <param name="amount">The amount to rotate by.</param>
         public void Rotate(Quaternion amount)
         {
-            this.Rotation = amount * this.Rotation;
+            this.Rotation *= amount;
         }
 
         /// <summary>
@@ -503,6 +498,38 @@ namespace LightClaw.Engine.Core
         {
             Transform parent = this.Parent;
             return (parent != null) ? parent.Scaling : Vector3.One;
+        }
+
+        /// <summary>
+        /// Represents the <see cref="Transform"/>s dirty state.
+        /// </summary>
+        [Flags]
+        protected enum DirtyFlags
+        { 
+            /// <summary>
+            /// No properties are dirty and need to be recalculated.
+            /// </summary>
+            None = 0,
+
+            /// <summary>
+            /// Position is dirty.
+            /// </summary>
+            Position = 1,
+
+            /// <summary>
+            /// Rotation is dirty.
+            /// </summary>
+            Rotation = 2,
+
+            /// <summary>
+            /// Scaling is dirty.
+            /// </summary>
+            Scaling = 4,
+            
+            /// <summary>
+            /// Everything is dirty.
+            /// </summary>
+            All = Position | Rotation | Scaling
         }
     }
 }

@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
+using LightClaw.Extensions;
 
 namespace LightClaw.Engine.Graphics
 {
     [ContentReader(typeof(EffectPassReader))]
-    public sealed class EffectPass : DisposableEntity, IBindable
+    public class EffectPass : DisposableEntity, IBindable
     {
         private readonly bool ownsProgram;
 
@@ -116,7 +117,7 @@ namespace LightClaw.Engine.Graphics
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    throw new NotSupportedException("Unknown uniform type {0}!".FormatWith(kvp.Value.Type));
                 }
             })).ToImmutableDictionary(eu => eu.Name);
         }
@@ -145,6 +146,10 @@ namespace LightClaw.Engine.Graphics
             {
                 if (ownsProgram)
                 {
+                    foreach (EffectUniform eu in this.Uniforms.Values)
+                    {
+                        eu.Dispose();
+                    }
                     this.ShaderProgram.Dispose();
                 }
             }

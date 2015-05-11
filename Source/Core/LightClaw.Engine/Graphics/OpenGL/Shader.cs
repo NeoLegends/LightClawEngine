@@ -71,31 +71,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private ImmutableArray<VertexAttributeDescription> _VertexAttributeDescriptions;
-
-        /// <summary>
-        /// The vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
-        /// shader source.
-        /// </summary>
-        public ImmutableArray<VertexAttributeDescription> VertexAttributeDescriptions
-        {
-            get
-            {
-                return _VertexAttributeDescriptions;
-            }
-            private set
-            {
-                this.SetProperty(ref _VertexAttributeDescriptions, value);
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Shader"/> without any vertex attributes.
+        /// Initializes a new <see cref="Shader"/>.
         /// </summary>
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
+        /// <param name="vad">
+        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
+        /// shader source.
+        /// </param>
         public Shader(string source, ShaderType type)
             : this(null, source, type)
         {
@@ -104,57 +87,25 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes a new <see cref="Shader"/> without any vertex attributes.
+        /// Initializes a new <see cref="Shader"/>.
         /// </summary>
         /// <param name="name">The <see cref="Shader"/>s name.</param>
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
+        /// <param name="vad">
+        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
+        /// shader source.
+        /// </param>
         public Shader(string name, string source, ShaderType type)
-            : this(name, source, type, VertexAttributeDescription.Empty)
-        {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Shader"/>.
-        /// </summary>
-        /// <param name="source">The shader source code.</param>
-        /// <param name="type">The shader type.</param>
-        /// <param name="vad">
-        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
-        /// shader source.
-        /// </param>
-        public Shader(string source, ShaderType type, params VertexAttributeDescription[] vad)
-            : this(null, source, type, vad)
-        {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
-            Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
-            Contract.Requires<ArgumentNullException>(vad != null);
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Shader"/>.
-        /// </summary>
-        /// <param name="name">The <see cref="Shader"/>s name.</param>
-        /// <param name="source">The shader source code.</param>
-        /// <param name="type">The shader type.</param>
-        /// <param name="vad">
-        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
-        /// shader source.
-        /// </param>
-        public Shader(string name, string source, ShaderType type, params VertexAttributeDescription[] vad)
             : base(name)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(source));
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(ShaderType), type));
-            Contract.Requires<ArgumentNullException>(vad != null);
 
             this.VerifyAccess();
 
             this.Source = source;
             this.Type = type;
-            this.VertexAttributeDescriptions = vad.ToImmutableArray();
 
             this.Handle = GL.CreateShader(this.Type);
             GL.ShaderSource(this, this.Source);
@@ -210,7 +161,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.InvokeSlim(this.DeleteShader, disposing, DispatcherPriority.Background);
+                this.Dispatcher.Invoke(this.DeleteShader, disposing, DispatcherPriority.Background).Wait();
             }
         }
 

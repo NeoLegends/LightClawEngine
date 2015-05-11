@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Extensions;
+using OpenTK;
 
 namespace LightClaw.Engine.Graphics
 {
     /// <summary>
     /// Represents a three-dimensional polygon model.
     /// </summary>
-    public class Model : Entity, IDrawable, IReadOnlyList<ModelPart>
+    public class Model : DisposableEntity, IReadOnlyList<ModelPart>
     {
-        /// <summary>
-        /// Notifies about a change in the <see cref="P:Component"/>.
-        /// </summary>
-        public event EventHandler<ValueChangedEventArgs<Component>> ComponentChanged;
+        private readonly bool ownsParts;
 
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -33,44 +33,25 @@ namespace LightClaw.Engine.Graphics
         public event EventHandler<ParameterEventArgs> Drawn;
 
         /// <summary>
-        /// Backing field.
+        /// Gets the amount of <see cref="ModelParts"/>.
         /// </summary>
-        private Component _Component;
-
-        /// <summary>
-        /// The <see cref="Component"/> the <see cref="Model"/> currently is attached to.
-        /// </summary>
-        public Component Component
-        {
-            get
-            {
-                return _Component;
-            }
-            internal set
-            {
-                Component previous = this.Component;
-                this.SetProperty(ref _Component, value);
-                this.Raise(this.ComponentChanged, value, previous);
-            }
-        }
-
         public int Count
         {
             get
             {
-                return this.ModelParts.Count;
+                return this.ModelParts.Length;
             }
         }
 
         /// <summary>
         /// Backing field.
         /// </summary>
-        private ObservableCollection<ModelPart> _ModelParts = new ObservableCollection<ModelPart>();
+        private ImmutableArray<ModelPart> _ModelParts;
 
         /// <summary>
         /// A collection of <see cref="ModelPart"/>s this <see cref="Model"/> consists of.
         /// </summary>
-        public ObservableCollection<ModelPart> ModelParts
+        public ImmutableArray<ModelPart> ModelParts
         {
             get
             {
@@ -78,12 +59,15 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-
                 this.SetProperty(ref _ModelParts, value);
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="ModelPart"/> at the specified <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">The index of the <see cref="ModelPart"/> to get.</param>
+        /// <returns>The <see cref="ModelPart"/> with the specified <paramref name="index"/>.</returns>
         public ModelPart this[int index]
         {
             get
@@ -95,46 +79,37 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="Model"/>.
         /// </summary>
-        public Model()
+        private Model() { }
+
+        /// <summary>
+        /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
+        /// </summary>
+        /// <param name="modelParts">The initial <see cref="ModelPart"/>s. Will be taken ownage of!</param>
+        public Model(params ModelPart[] modelParts)
+            : this(modelParts, true)
         {
-            this.ModelParts.CollectionChanged += (s, e) =>
-            {
-                if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Move)
-                {
-                    foreach (ModelPart modelMesh in e.OldItems)
-                    {
-                        if (modelMesh != null)
-                        {
-                            modelMesh.Model = null;
-                        }
-                    }
-                    foreach (ModelPart modelMesh in e.NewItems)
-                    {
-                        if (modelMesh != null)
-                        {
-                            modelMesh.Model = this;
-                        }
-                    }
-                }
-            };
+            Contract.Requires<ArgumentNullException>(modelParts != null);
         }
 
         /// <summary>
         /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
         /// </summary>
-        /// <param name="modelParts"></param>
-        public Model(IEnumerable<ModelPart> modelParts)
-            : this()
+        /// <param name="modelParts">The initial <see cref="ModelPart"/>s.</param>
+        /// <param name="ownsParts">
+        /// Indicates whether the <see cref="Model"/> owns the <paramref name="modelParts"/> and thus is allowed to dispose of them.
+        /// </param>
+        public Model(IEnumerable<ModelPart> modelParts, bool ownsParts)
         {
             Contract.Requires<ArgumentNullException>(modelParts != null);
 
-            this.ModelParts.AddRange(modelParts);
+            this.ModelParts = modelParts.ToImmutableArray();
+            this.ownsParts = ownsParts;
         }
 
         /// <summary>
         /// Draws the model to the screen.
         /// </summary>
-        public void Draw()
+        public void Draw(ref Matrix4 transform)
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
@@ -143,7 +118,7 @@ namespace LightClaw.Engine.Graphics
                     ModelPart part = this[i];
                     if (part != null)
                     {
-                        part.Draw();
+                        part.Draw(ref transform);
                     }
                 }
             }
@@ -155,7 +130,8 @@ namespace LightClaw.Engine.Graphics
         /// <returns>The <see cref="IEnumerator{T}"/>.</returns>
         public IEnumerator<ModelPart> GetEnumerator()
         {
-            return this.ModelParts.GetEnumerator();
+            return this.ModelParts.AsEnumerable()
+                                  .GetEnumerator();
         }
 
         /// <summary>
@@ -165,6 +141,39 @@ namespace LightClaw.Engine.Graphics
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="ModelPart"/> releasing all resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether managed objects shall be disposed as well.</param>
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (this.ownsParts)
+                {
+                    foreach (ModelPart part in this.ModelParts)
+                    {
+                        try
+                        {
+                            part.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warn("An exception of type {0} was thrown while disposing the {1}'s {2}s.".FormatWith(ex.GetType().FullName, typeof(Model), typeof(ModelPart)), ex);
+                        }
+                    }
+                }
+                if (disposing)
+                {
+                    this.ModelParts = new ImmutableArray<ModelPart>();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

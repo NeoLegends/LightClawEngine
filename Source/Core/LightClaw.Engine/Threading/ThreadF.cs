@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,8 +21,11 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <param name="targetThread">The thread that should be the current one.</param>
         /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCurrentThread(Thread targetThread)
         {
+            Contract.Requires<ArgumentNullException>(targetThread != null);
+
             return IsCurrentThread(targetThread.ManagedThreadId);
         }
 
@@ -29,6 +34,7 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <param name="targetThreadId">The ID of the thread that should be the current one.</param>
         /// <returns><c>true</c> if the current thread is the specified thread, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCurrentThread(int targetThreadId)
         {
             return (Thread.CurrentThread.ManagedThreadId == targetThreadId);
@@ -39,6 +45,7 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <returns><c>true</c> if the current thread is the main thread, otherwise <c>false</c>.</returns>
         /// <seealso cref="LightClawEngine.MainThreadId"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsMainThread()
         {
             return IsCurrentThread(LightClawEngine.MainThreadId);
@@ -50,8 +57,11 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <param name="targetThread">The thread that should be the current one.</param>
         /// <seealso cref="WrongThreadException"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowIfNotCurrentThread(Thread targetThread)
         {
+            Contract.Requires<ArgumentNullException>(targetThread != null);
+
             ThrowIfNotCurrentThread(targetThread.ManagedThreadId);
         }
 

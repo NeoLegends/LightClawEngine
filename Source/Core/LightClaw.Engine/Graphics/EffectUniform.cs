@@ -79,6 +79,18 @@ namespace LightClaw.Engine.Graphics
 
         public abstract void Unbind();
 
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                this.Uniform.Dispose();
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
+
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {

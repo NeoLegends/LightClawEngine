@@ -18,6 +18,8 @@ namespace LightClaw.Engine.IO
     /// </summary>
     public class FileSystemContentResolver : Entity, IContentResolver
     {
+        private static readonly Task<bool> finishedFalseTask = Task.FromResult(false);
+
         /// <summary>
         /// The root path to prepend to the relative resource strings.
         /// </summary>
@@ -27,10 +29,7 @@ namespace LightClaw.Engine.IO
         /// Initializes a new <see cref="FileSystemContentResolver"/> using the application's base directory as root path.
         /// </summary>
         /// <seealso cref="AppDomain.BaseDirectory"/>
-        public FileSystemContentResolver()
-            : this(AppDomain.CurrentDomain.BaseDirectory)
-        {
-        }
+        public FileSystemContentResolver() : this(AppDomain.CurrentDomain.BaseDirectory) { }
 
         /// <summary>
         /// Initializes a new <see cref="FileSystemContentResolver"/> from the specified root path.
@@ -52,7 +51,8 @@ namespace LightClaw.Engine.IO
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
-            return !token.IsCancellationRequested ? Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString))) : Task.FromResult(false);
+            Contract.Assume(Contract.Result<Task<bool>>() != null);
+            return !token.IsCancellationRequested ? Task.FromResult(File.Exists(Path.Combine(this.RootPath, resourceString))) : finishedFalseTask;
         }
 
         /// <summary>

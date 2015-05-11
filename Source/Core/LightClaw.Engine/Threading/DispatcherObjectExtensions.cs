@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <param name="dispatcherObject">The <see cref="IDispatcherObject"/> to check.</param>
         /// <returns><c>true</c> if the <see cref="DispatcherObject"/> may be accessed, otherwise <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CheckAccess(this IDispatcherObject dispatcherObject)
         {
             Contract.Requires<ArgumentNullException>(dispatcherObject != null);
@@ -27,6 +29,7 @@ namespace LightClaw.Engine.Threading
         /// </summary>
         /// <param name="dispatcherObject">The <see cref="IDispatcherObject"/> to check.</param>
         [Conditional("DEBUG")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void VerifyAccess(this IDispatcherObject dispatcherObject)
         {
             Contract.Requires<ArgumentNullException>(dispatcherObject != null);

@@ -20,6 +20,11 @@ namespace LightClaw.Engine.Core
         public event EventHandler<ParameterEventArgs> Disposed;
 
         /// <summary>
+        /// Notifies about changes of <see cref="P:IsDisposed"/>.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<bool>> IsDisposedChanged;
+
+        /// <summary>
         /// Backing field.
         /// </summary>
         private int _IsDisposed = 0;
@@ -36,25 +41,22 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
+                bool previous = this.IsDisposed;
                 this.SetProperty(ref _IsDisposed, value ? 1 : 0);
+                this.Raise(this.IsDisposedChanged, value, previous);
             }
         }
 
         /// <summary>
         /// Initializes a new <see cref="DisposableEntity"/>.
         /// </summary>
-        public DisposableEntity()
-        {
-        }
+        public DisposableEntity() { }
 
         /// <summary>
         /// Initializing a new <see cref="DisposableEntity"/> setting the <paramref name="name"/>.
         /// </summary>
         /// <param name="name">The <see cref="Entity"/>s name.</param>
-        public DisposableEntity(string name)
-            : base(name)
-        {
-        }
+        public DisposableEntity(string name) : base(name) { }
 
         /// <summary>
         /// Finalizes the <see cref="DisposableEntity"/> releasing all allocated resources.
@@ -99,9 +101,15 @@ namespace LightClaw.Engine.Core
         {
             if (Interlocked.CompareExchange(ref _IsDisposed, 1, 0) == 0)
             {
-                this.Dispose(disposing);
-                this.Raise(this.Disposed, this.GetDisposedArgument());
-                GC.SuppressFinalize(this);
+                try
+                {
+                    this.Dispose(disposing);
+                    this.Raise(this.Disposed, this.GetDisposedArgument());
+                }
+                finally
+                {
+                    GC.SuppressFinalize(this);
+                }
             }
         }
     }

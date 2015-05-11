@@ -129,7 +129,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix2 value, bool transpose)
+        public void Set(Matrix2 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -139,7 +139,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix2x3 value, bool transpose)
+        public void Set(Matrix2x3 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -149,7 +149,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix2x4 value, bool transpose)
+        public void Set(Matrix2x4 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -159,7 +159,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix3x2 value, bool transpose)
+        public void Set(Matrix3x2 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -169,7 +169,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix3 value, bool transpose)
+        public void Set(Matrix3 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -179,7 +179,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix3x4 value, bool transpose)
+        public void Set(Matrix3x4 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -189,7 +189,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix4x2 value, bool transpose)
+        public void Set(Matrix4x2 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -199,7 +199,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix4x3 value, bool transpose)
+        public void Set(Matrix4x3 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }
@@ -209,7 +209,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public unsafe void Set(Matrix4 value, bool transpose)
+        public void Set(Matrix4 value, bool transpose)
         {
             this.Uniform.Set(value, transpose);
         }

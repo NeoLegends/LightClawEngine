@@ -306,7 +306,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.InvokeSlim(this.DeleteBuffer, disposing, DispatcherPriority.Background);
+                this.Dispatcher.Invoke(this.DeleteBuffer, disposing, DispatcherPriority.Background).Wait();
             }
         }
 

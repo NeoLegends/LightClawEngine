@@ -238,7 +238,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.InvokeSlim(this.DeleteTexture, disposing, DispatcherPriority.Background);
+                this.Dispatcher.Invoke(this.DeleteTexture, disposing, DispatcherPriority.Background).Wait();
             }
         }
 

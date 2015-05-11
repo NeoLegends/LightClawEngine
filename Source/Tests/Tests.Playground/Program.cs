@@ -15,13 +15,7 @@ namespace Tests.Playground
     {
         static void Main(string[] args)
         {
-            EffectData data = new EffectData(
-                new EffectData.StageSources(
-                    new EffectData.StageData("Test/Basic.frag"),
-                    new EffectData.StageData("Test/Basic.vert", "inVertexPosition", "inVertexTexCoord", "inVertexNormals", "inVertexBinormals", "inVertexTangent", "inVertexColor")
-                ),
-                new[] { "mat_MVP" }
-            );
+            throw new NotImplementedException();
 
             using (FileStream fs = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "EffectData.json"), FileMode.Create, FileAccess.ReadWrite))
             using (StreamWriter sw = new StreamWriter(fs))
@@ -31,7 +25,7 @@ namespace Tests.Playground
                     DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.IgnoreAndPopulate,
                     Formatting = Newtonsoft.Json.Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
-                }.Serialize(sw, data);
+                }.Serialize(sw, (string)null);
             }
 
             Console.WriteLine("Finished");

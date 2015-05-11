@@ -113,7 +113,7 @@ namespace LightClaw.Engine.Core
         protected Entity(string name)
             : this()
         {
-            this.Name = name;
+            this.SetProperty(ref _Name, name, "Name");
         }
 
         /// <summary>
@@ -227,6 +227,24 @@ namespace LightClaw.Engine.Core
         protected void SetProperty<T>(ref T location, T newValue, [CallerMemberName] string propertyName = null)
         {
             SetProperty(this, this.PropertyChanged, ref location, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Sets the property with the specified name and raises the <see cref="E:PropertyChanged"/>-event.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the property that changed.</typeparam>
+        /// <param name="location">The property's backing field.</param>
+        /// <param name="newValue">The property's new value.</param>
+        /// <param name="valueChangedHandler">An event handler to raise during the change operation.</param>
+        /// <param name="propertyName">
+        /// The property name that changed. Leave this blank, it will be filled out by the compiler.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void SetProperty<T>(ref T location, T newValue, EventHandler<ValueChangedEventArgs<T>> valueChangedHandler, [CallerMemberName] string propertyName = null)
+        {
+            T previous = location;
+            SetProperty(ref location, newValue, propertyName);
+            this.Raise(valueChangedHandler, newValue, previous);
         }
 
         /// <summary>

@@ -32,11 +32,11 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// A common <see cref="JsonSerializer"/> used to save / load the <see cref="Scene"/>.
         /// </summary>
-        private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault(
+        private static readonly JsonSerializer serializer = JsonSerializer.Create(
             new JsonSerializerSettings()
             {
-                NullValueHandling = NullValueHandling.Ignore,
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                NullValueHandling = NullValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto
             }
         );
@@ -74,9 +74,7 @@ namespace LightClaw.Engine.Core
             }
             set
             {
-                bool previous = this.SuppressDraw;
-                this.SetProperty(ref _SuppressDraw, value);
-                this.Raise(this.SuppressDrawChanged, value, previous);
+                this.SetProperty(ref _SuppressDraw, value, this.SuppressDrawChanged);
             }
         }
 
@@ -297,7 +295,7 @@ namespace LightClaw.Engine.Core
                 Log.Info(() => "Saving scene to a stream.");
 
                 using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Saving, this.Saved))
-                using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 1024, true))
+                using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8, 4096, true))
                 using (JsonTextWriter jtw = new JsonTextWriter(sw) {  CloseOutput = false })
                 {
                     serializer.Serialize(jtw, this);
@@ -375,15 +373,48 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Asynchronously loads a compressed <see cref="Scene"/> from the specified <see cref="Stream"/>.
+        /// Asynchronously loads a <see cref="Scene"/> from the specified <see cref="Stream"/>. The scene may be compressed or uncompressed.
         /// </summary>
         /// <param name="s">The <see cref="Stream"/> to load from.</param>
         /// <returns>The loaded <see cref="Scene"/>.</returns>
         public static async Task<Scene> Load(Stream s)
         {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanRead);
+
+            // First try to load compressed, then fall back to uncompressed, if an exception occured
+
+            try
+            {
+                return await LoadCompressed(s).ConfigureAwait(false);
+            }
+            catch (InvalidDataException)
+            {
+                // If the stream can't seek, it doesn't make sense to continue since we have already
+                // read bytes from it.
+                if (!s.CanSeek)
+                {
+                    throw;
+                }
+            }
+
+            s.Position = 0;
+            return await LoadRaw(s).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asynchronously loads a compressed <see cref="Scene"/> from the specified <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="s">The <see cref="Stream"/> to load from.</param>
+        /// <returns>The loaded <see cref="Scene"/>.</returns>
+        public static async Task<Scene> LoadCompressed(Stream s)
+        {
+            Contract.Requires<ArgumentNullException>(s != null);
+            Contract.Requires<ArgumentException>(s.CanRead);
+
             using (DeflateStream deflateStream = new DeflateStream(s, CompressionMode.Decompress, true))
             {
-                return await LoadRaw(deflateStream);
+                return await LoadRaw(deflateStream).ConfigureAwait(false);
             }
         }
 
@@ -403,7 +434,7 @@ namespace LightClaw.Engine.Core
                 {
                     staticLogger.Debug("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
 
-                    using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 1024, true))
+                    using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 4096, true))
                     using (JsonTextReader jtr = new JsonTextReader(sr) { CloseInput = false })
                     {
                         return serializer.Deserialize<Scene>(jtr);
@@ -412,8 +443,8 @@ namespace LightClaw.Engine.Core
                 catch (Exception ex)
                 {
                     staticLogger.Warn("Scene loading failed. An error of type {0} occured.".FormatWith(ex.GetType().Name), ex);
+                    throw;
                 }
-                return null;
             });
         }
     }

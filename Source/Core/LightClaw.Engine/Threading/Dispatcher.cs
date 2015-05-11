@@ -521,6 +521,8 @@ namespace LightClaw.Engine.Threading
 
         private ConcurrentQueue<Action> GetPriorityQueue(DispatcherPriority priority)
         {
+            Contract.Ensures(Contract.Result<ConcurrentQueue<Action>>() != null);
+
             ConcurrentQueue<Action> queue;
             if (!this.queues.TryGetValue(priority, out queue))
             {

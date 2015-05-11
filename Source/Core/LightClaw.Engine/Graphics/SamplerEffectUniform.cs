@@ -114,9 +114,14 @@ namespace LightClaw.Engine.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            this.TextureUnit.Dispose();
-
-            base.Dispose(disposing);
+            try
+            {
+                this.TextureUnit = -1;
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         [ContractInvariantMethod]

@@ -24,9 +24,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<Scene>> SceneChanged;
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private Scene _Scene;
 
         /// <summary>
@@ -41,9 +38,28 @@ namespace LightClaw.Engine.Core
             }
             internal set
             {
-                Scene previousValue = this.Scene;
-                this.SetProperty(ref _Scene, value);
-                this.Raise(this.SceneChanged, value, previousValue);
+                this.SetProperty(ref _Scene, value, this.SceneChanged);
+            }
+        }
+
+        private Transform _Transform;
+
+        /// <summary>
+        /// The <see cref="GameObject"/>s transform.
+        /// </summary>
+        public Transform Transform
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Transform>() != null);
+
+                return _Transform;
+            }
+            private set
+            {
+                Contract.Requires<ArgumentNullException>(value != null);
+
+                this.SetProperty(ref _Transform, value);
             }
         }
 
@@ -65,7 +81,11 @@ namespace LightClaw.Engine.Core
                 this.CheckAttachability(value);
                 lock (this.Items)
                 {
-                    this.CheckRemovability(this[index]);
+                    Component c = this[index];
+                    if (c != null)
+                    {
+                        this.CheckRemovability(c);
+                    }
                     base[index] = value;
                 }
             }
@@ -86,10 +106,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(components != null);
 
             this.AddRange(components);
-            if (!components.Any(component => component is Transform))
-            {
-                this.Add(new Transform());
-            }
+            this.InitializeComponents();
         }
 
         /// <summary>
@@ -703,12 +720,14 @@ namespace LightClaw.Engine.Core
         {
             if (!this.Any(component => component is Transform))
             {
-                this.TryAdd(Transform.Null);
+                this.TryAdd(Transform.Zero);
             }
             foreach (Component component in this)
             {
                 component.GameObject = this;
             }
+
+            this.Transform = this.OfType<Transform>() ?? Transform.Zero;
         }
     }
 }

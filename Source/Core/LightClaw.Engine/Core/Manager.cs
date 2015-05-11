@@ -60,6 +60,16 @@ namespace LightClaw.Engine.Core
         public event EventHandler<ParameterEventArgs> Drawn;
 
         /// <summary>
+        /// Notifies about changes of <see cref="P:IsEnabled"/>.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<bool>> IsEnabledChanged;
+
+        /// <summary>
+        /// Notifies about changes of <see cref="P:IsLoaded"/>.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<bool>> IsLoadedChanged;
+
+        /// <summary>
         /// Notifies about the start of the loading process.
         /// </summary>
         /// <remarks>Raised before any loading operations.</remarks>
@@ -114,8 +124,10 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
+                bool previous = this.IsEnabled;
                 _IsEnabled = value;
                 this.RaisePropertyChanged();
+                this.Raise(this.IsEnabledChanged, value, previous);
             }
         }
 
@@ -136,26 +148,23 @@ namespace LightClaw.Engine.Core
             }
             private set
             {
+                bool previous = this.IsEnabled;
                 _IsLoaded = value;
                 this.RaisePropertyChanged();
+                this.Raise(this.IsLoadedChanged, value, previous);
             }
         }
 
         /// <summary>
         /// Initializes a new <see cref="Manager"/>.
         /// </summary>
-        protected Manager()
-        {
-        }
+        protected Manager() { }
 
         /// <summary>
         /// Initializes a new <see cref="Manager"/> and sets the name.
         /// </summary>
         /// <param name="name">The instance's name.</param>
-        protected Manager(string name)
-            : base(name)
-        {
-        }
+        protected Manager(string name) : base(name) { }
 
         /// <summary>
         /// Enables the instance.

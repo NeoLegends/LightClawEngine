@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
+using LightClaw.Engine.Threading;
+using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics
@@ -14,7 +16,7 @@ namespace LightClaw.Engine.Graphics
     /// Represents a subdivision of the <see cref="Model"/>-class allowing for different shaders on the same
     /// <see cref="Model"/>.
     /// </summary>
-    public class ModelPart : Entity, IDrawable
+    public abstract class ModelPart : DispatcherEntity
     {
         /// <summary>
         /// Notifies about the start of the drawing process.
@@ -31,12 +33,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Notifies about a change in the <see cref="P:Effect"/>.
         /// </summary>
-        public event EventHandler<ValueChangedEventArgs<ModelEffect>> EffectChanged;
-
-        /// <summary>
-        /// Notifies about changes in the parent <see cref="Model"/>.
-        /// </summary>
-        public event EventHandler<ValueChangedEventArgs<Model>> ModelChanged;
+        public event EventHandler<ValueChangedEventArgs<Effect>> EffectChanged;
 
         /// <summary>
         /// Notifies about changes in the <see cref="VertexArrayObject"/>.
@@ -46,12 +43,12 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private ModelEffect _Effect;
+        private Effect _Effect;
 
         /// <summary>
         /// Gets the <see cref="ModelEffect"/> used to render the <see cref="ModelPart"/>.
         /// </summary>
-        public ModelEffect Effect
+        public Effect Effect
         {
             get
             {
@@ -61,36 +58,7 @@ namespace LightClaw.Engine.Graphics
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
-                ModelEffect oldValue = _Effect;
-                if (oldValue != null)
-                {
-                    oldValue.ModelPart = null;
-                }
-                this.SetProperty(ref _Effect, value);
-                value.ModelPart = this;
-                this.Raise(this.EffectChanged, value, oldValue);
-            }
-        }
-
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private Model _Model;
-
-        /// <summary>
-        /// The <see cref="Model"/> the <see cref="ModelPart"/> is a part of.
-        /// </summary>
-        public Model Model
-        {
-            get
-            {
-                return _Model;
-            }
-            internal set
-            {
-                Model previous = this.Model;
-                this.SetProperty(ref _Model, value);
-                this.Raise(this.ModelChanged, value, previous);
+                this.SetProperty(ref _Effect, value, this.EffectChanged);
             }
         }
 
@@ -110,9 +78,7 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                VertexArrayObject previous = this.Vao;
-                this.SetProperty(ref _Vao, value);
-                this.Raise(this.VaoChanged, value, previous);
+                this.SetProperty(ref _Vao, value, this.VaoChanged);
             }
         }
 
@@ -126,7 +92,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="effect">The <see cref="ModelEffect"/> used to shade the <see cref="ModelPart"/>.</param>
         /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
-        public ModelPart(ModelEffect effect, VertexArrayObject vao)
+        public ModelPart(Effect effect, VertexArrayObject vao)
         {
             Contract.Requires<ArgumentNullException>(effect != null);
             Contract.Requires<ArgumentNullException>(vao != null);
@@ -138,24 +104,35 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Draws the <see cref="ModelPart"/> to the screen.
         /// </summary>
-        public void Draw()
+        public void Draw(ref Matrix4 transform)
         {
+            this.VerifyAccess();
+
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                Effect effect = this.Effect;
-                VertexArrayObject vao = this.Vao;
-                if ((effect != null) && (vao != null))
-                {
-                    using (Binding vaoBinding = new Binding(vao))
-                    {
-                        for (int i = 0; i < effect.Passes.Length; i++)
-                        {
-                            effect.Apply(i);
-                            GL.DrawElements(BeginMode.Triangles, vao.IndexCount, DrawElementsType.UnsignedShort, 0);
-                        }
-                    }
-                }
+                //Effect effect = this.Effect;
+                //VertexArrayObject vao = this.Vao;
+                //if ((effect != null) && (vao != null))
+                //{
+                //    using (Binding vaoBinding = new Binding(vao))
+                //    {
+                //        for (int i = 0; i < effect.Count; i++)
+                //        {
+                //            using (Binding effectPassPinding = effect.ApplyPass(i))
+                //            {
+                //                vao.DrawIndexed();
+                //            }
+                //        }
+                //    }
+                //}
+                this.OnDraw(ref transform);
             }
         }
+
+        /// <summary>
+        /// Drawing callback.
+        /// </summary>
+        /// <param name="transform">The current transformation matrix.</param>
+        protected abstract void OnDraw(ref Matrix4 transform);
     }
 }

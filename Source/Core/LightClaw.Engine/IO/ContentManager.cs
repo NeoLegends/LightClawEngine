@@ -65,10 +65,7 @@ namespace LightClaw.Engine.IO
         /// Initializes a new <see cref="ContentManager"/> using the default <see cref="IContentReader"/>s and
         /// <see cref="IContentResolver"/>s.
         /// </summary>
-        public ContentManager()
-            : this(GetDefaultReaders(), GetDefaultResolvers())
-        {
-        }
+        public ContentManager() : this(GetDefaultReaders(), GetDefaultResolvers()) { }
 
         /// <summary>
         /// Initializes a new <see cref="ContentManager"/> from the specified <see cref="IContentReader"/>s and

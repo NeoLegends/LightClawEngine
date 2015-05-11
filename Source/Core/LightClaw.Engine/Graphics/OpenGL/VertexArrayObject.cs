@@ -81,14 +81,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableArray<BufferDescription>>() != null);
-
                 return _VertexBuffers;
             }
             private set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-
                 this.SetProperty(ref _VertexBuffers, value);
             }
         }
@@ -146,7 +142,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
             GL.BindVertexArray(this);
-            this.EnableAttributeArrays();
+
+            // Use for loops for performance
+            for (int i = 0; i < this.VertexBuffers.Length; i++)
+            {
+                ImmutableArray<VertexAttributePointer> pointers = this.VertexBuffers[i].VertexAttributePointers;
+                for (int j = 0; j < pointers.Length; j++)
+                {
+                    pointers[j].Enable();
+                }
+            }
         }
 
         void IDrawable.Draw()
@@ -156,7 +161,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         public void DrawIndexed()
         {
-            this.DrawIndexed(0);
+            if (this.IndexCount > 0)
+            {
+                this.DrawIndexed(0);
+            }
         }
 
         public void DrawIndexed(int offset)
@@ -182,7 +190,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Unbind()
         {
             this.VerifyAccess();
-            this.DisableAttributeArrays();
+
+            // Use for loops for performance
+            for (int i = 0; i < this.VertexBuffers.Length; i++)
+            {
+                ImmutableArray<VertexAttributePointer> pointers = this.VertexBuffers[i].VertexAttributePointers;
+                for (int j = 0; j < pointers.Length; j++)
+                {
+                    pointers[j].Disable();
+                }
+            }
             GL.BindVertexArray(0);
         }
 
@@ -194,31 +211,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.InvokeSlim(this.DeleteVertexArrayObject, disposing, DispatcherPriority.Background);
-            }
-        }
-
-        private void EnableAttributeArrays()
-        {
-            // Use for loops for performance
-            for (int i = 0; i < this.VertexBuffers.Length; i++)
-            {
-                for (int j = 0; j < this.VertexBuffers[i].VertexAttributePointers.Length; j++)
-                {
-                    this.VertexBuffers[i].VertexAttributePointers[j].Enable();
-                }
-            }
-        }
-
-        private void DisableAttributeArrays()
-        {
-            // Use for loops for performance
-            for (int i = 0; i < this.VertexBuffers.Length; i++)
-            {
-                for (int j = 0; j < this.VertexBuffers[i].VertexAttributePointers.Length; j++)
-                {
-                    this.VertexBuffers[i].VertexAttributePointers[j].Disable();
-                }
+                this.Dispatcher.Invoke(this.DeleteVertexArrayObject, disposing, DispatcherPriority.Background).Wait();
             }
         }
 

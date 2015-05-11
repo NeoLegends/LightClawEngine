@@ -28,14 +28,23 @@ namespace LightClaw.Engine.Core
         /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
         /// </summary>
         /// <param name="dependency1">The first dependency.</param>
-        public DependsOnAttribute(Type dependency1) : this(new[] { dependency1 }) { }
+        public DependsOnAttribute(Type dependency1) 
+            : this(new[] { dependency1 }) 
+        {
+            Contract.Requires<ArgumentNullException>(dependency1 != null);
+        }
 
         /// <summary>
         /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
         /// </summary>
         /// <param name="dependency1">The first dependency.</param>
         /// <param name="dependency2">The second dependency.</param>
-        public DependsOnAttribute(Type dependency1, Type dependency2) : this(new[] { dependency1, dependency2 }) { }
+        public DependsOnAttribute(Type dependency1, Type dependency2)
+            : this(new[] { dependency1, dependency2 })
+        {
+            Contract.Requires<ArgumentNullException>(dependency1 != null);
+            Contract.Requires<ArgumentNullException>(dependency2 != null);
+        }
 
         /// <summary>
         /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.
@@ -43,7 +52,13 @@ namespace LightClaw.Engine.Core
         /// <param name="dependency1">The first dependency.</param>
         /// <param name="dependency2">The second dependency.</param>
         /// <param name="dependency3">The third dependency.</param>
-        public DependsOnAttribute(Type dependency1, Type dependency2, Type dependency3) : this(new[] { dependency1, dependency2, dependency3 }) { }
+        public DependsOnAttribute(Type dependency1, Type dependency2, Type dependency3)
+            : this(new[] { dependency1, dependency2, dependency3 })
+        {
+            Contract.Requires<ArgumentNullException>(dependency1 != null);
+            Contract.Requires<ArgumentNullException>(dependency2 != null);
+            Contract.Requires<ArgumentNullException>(dependency3 != null);
+        }
 
         /// <summary>
         /// Initialies a new <see cref="DependsOnAttribute"/> setting the dependencies.

@@ -95,6 +95,24 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Asynchronously loads a <see cref="Scene"/> from the specified <paramref name="resourceString"/>.
+        /// </summary>
+        /// <param name="slot">The slot to load the <see cref="Scene"/> into.</param>
+        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
+        /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
+        /// <remarks>
+        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
+        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
+        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
+        /// that are not supposed to overdraw it.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
+        public async Task<int> LoadAsync(int slot, ResourceString resourceString)
+        {
+            return this.Load(slot, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString).ConfigureAwait(false));
+        }
+
+        /// <summary>
         /// Asynchronously loads a <see cref="Scene"/> into the <see cref="SceneManager"/>.
         /// </summary>
         /// <param name="slot">The slot to load the <see cref="Scene"/> into.</param>
@@ -136,24 +154,6 @@ namespace LightClaw.Engine.Core
                 Log.Warn(() => "Scene insertion failed, all slots below were taken.");
                 throw new InvalidOperationException("Scene insertion failed, all slots below were taken.");
             }
-        }
-
-        /// <summary>
-        /// Asynchronously loads a <see cref="Scene"/> from the specified <paramref name="resourceString"/>.
-        /// </summary>
-        /// <param name="slot">The slot to load the <see cref="Scene"/> into.</param>
-        /// <param name="resourceString">The resource string of the <see cref="Scene"/> to load.</param>
-        /// <returns>The slot the <see cref="Scene"/> was inserted into in the end.</returns>
-        /// <remarks>
-        /// If the desired slot is already taken, the method tries to load the scene in the slot below. This is done
-        /// until a free slot is found. However, moving the scene into a lower layer during rendering (final image is a
-        /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
-        /// that are not supposed to overdraw it.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">All slots below taken, scene could not be laoded.</exception>
-        public async Task<int> LoadAsync(int slot, ResourceString resourceString)
-        {
-            return this.Load(slot, await IocC.Resolve<IContentManager>().LoadAsync<Scene>(resourceString).ConfigureAwait(false));
         }
 
         /// <summary>

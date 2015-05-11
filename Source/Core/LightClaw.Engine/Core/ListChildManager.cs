@@ -232,7 +232,7 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
             Contract.Requires<ArgumentNullException>(items != null);
-            Contract.Assert(index <= this.Count);
+            Contract.Requires(index <= this.Count);
 
             lock (this.Items)
             {

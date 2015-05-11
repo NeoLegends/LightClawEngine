@@ -308,15 +308,13 @@ namespace LightClaw.Engine.Core
             this.Dispose();
         }
 
-        /// <summary>
-        /// Loads the icon.
-        /// </summary>
         private async void LoadIcon()
         {
             try
             {
                 this.GameWindow.Icon = await this.IocC.Resolve<IContentManager>()
-                                                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath);
+                                                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath)
+                                                      .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -332,7 +330,10 @@ namespace LightClaw.Engine.Core
             TimeSpan elapsedSinceLastUpdate = TimeSpan.FromTicks((previousPreUpdateTime != 0L) ? this.preUpdateTime - previousPreUpdateTime : 0L);
 
             this.OnUpdate(elapsedSinceLastUpdate);
-            this.OnRender();
+            if (!this.SuppressDraw)
+            {
+                this.OnRender();
+            }
 
             TimeSpan timeSinceUpdate = TimeSpan.FromTicks(Stopwatch.GetTimestamp() - this.preUpdateTime);
             TimeSpan timeToSleep = frameDuration - timeSinceUpdate;

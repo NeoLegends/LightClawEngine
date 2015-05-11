@@ -21,19 +21,19 @@ namespace LightClaw.GameCode
     {
         private static readonly Vector3[] cubeData = new[]
         {
-            new Vector3(-0.5f,  0.5f, 0.0f),
-            new Vector3(-0.5f, -0.5f, 0.0f),
-            new Vector3( 0.5f, -0.5f, 0.0f),
-            new Vector3( 0.5f,  0.5f, 0.0f)
-            //new Vector3(-0.25f,  0.25f,  0.25f),
-            //new Vector3( 0.25f,  0.25f,  0.25f),
-            //new Vector3( 0.25f,  0.25f, -0.25f),
-            //new Vector3(-0.25f,  0.25f, -0.25f),
+            //new Vector3(-0.5f,  0.5f, 0.0f),
+            //new Vector3(-0.5f, -0.5f, 0.0f),
+            //new Vector3( 0.5f, -0.5f, 0.0f),
+            //new Vector3( 0.5f,  0.5f, 0.0f)
+            new Vector3(-0.25f,  0.25f,  0.25f),
+            new Vector3( 0.25f,  0.25f,  0.25f),
+            new Vector3( 0.25f,  0.25f, -0.25f),
+            new Vector3(-0.25f,  0.25f, -0.25f),
             
-            //new Vector3(-0.25f, -0.25f,  0.25f),
-            //new Vector3( 0.25f, -0.25f,  0.25f),
-            //new Vector3( 0.25f, -0.25f, -0.25f),
-            //new Vector3(-0.25f, -0.25f, -0.25f)
+            new Vector3(-0.25f, -0.25f,  0.25f),
+            new Vector3( 0.25f, -0.25f,  0.25f),
+            new Vector3( 0.25f, -0.25f, -0.25f),
+            new Vector3(-0.25f, -0.25f, -0.25f)
         };
 
         private static readonly Vector3[] colorData = new[]
@@ -43,47 +43,48 @@ namespace LightClaw.GameCode
             new Vector3(0.0f, 0.0f, 1.0f),
             new Vector3(0.5f, 0.0f, 0.5f),
             
-            //new Vector3(0.5f, 0.0f, 0.5f),
-            //new Vector3(0.0f, 0.0f, 1.0f),
-            //new Vector3(0.0f, 1.0f, 0.0f),
-            //new Vector3(1.0f, 0.0f, 0.0f),
+            new Vector3(0.5f, 0.0f, 0.5f),
+            new Vector3(0.0f, 0.0f, 1.0f),
+            new Vector3(0.0f, 1.0f, 0.0f),
+            new Vector3(1.0f, 0.0f, 0.0f),
         };
 
         private static readonly ushort[] indices = new ushort[]
         {
-            0, 1, 2,
-            0, 2, 3
-            //// Top
             //0, 1, 2,
-            //0, 2, 3,
+            //0, 2, 3
+            // Top
+            0, 1, 2,
+            0, 2, 3,
 
-            //// Front
-            //0, 5, 1,
-            //0, 4, 5,
+            // Front
+            0, 5, 1,
+            0, 4, 5,
 
-            //// Right
-            //1, 6, 2,
-            //1, 6, 5,
+            // Right
+            1, 6, 2,
+            1, 6, 5,
 
-            //// Left
-            //0, 3, 7,
-            //0, 5, 4,
+            // Left
+            0, 3, 7,
+            0, 5, 4,
 
-            //// Back
-            //2, 7, 3,
-            //2, 6, 7
+            // Back
+            2, 7, 3,
+            2, 6, 7
         };
 
-        private static readonly Matrix4 openTKMVP = 
-            Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(70), 16 / 9, 0.01f, 100f) *
-            Matrix4.LookAt(new OpenTK.Vector3(3, 3, 2), OpenTK.Vector3.Zero, new OpenTK.Vector3(0, 1, 0)) *
-            Matrix4.CreateTranslation(0, 0, 0);
+        private static readonly Matrix4 viewProjectionMatrix = 
+            Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(50), 16 / 9, 0.01f, 100f) *
+            Matrix4.LookAt(new Vector3(6, 3, 6), Vector3.Zero, new Vector3(0, 1, 0));
 
         private int getErrorCount = 0;
 
         private IBuffer colorBuffer;
 
         private IBuffer indexBuffer;
+
+        private Matrix4 modelMatrix;
 
         private VertexArrayObject vao;
 
@@ -126,25 +127,13 @@ namespace LightClaw.GameCode
 
         protected override async void OnLoad()
         {
-            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
+            IContentManager mgr = this.IocC.Resolve<IContentManager>();
+            Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
+            Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
 
             this.indexBuffer = BufferObject.Create(indices, BufferTarget.ElementArrayBuffer);
             this.colorBuffer = BufferObject.Create(colorData, BufferTarget.ArrayBuffer);
             this.vertexBuffer = BufferObject.Create(cubeData, BufferTarget.ArrayBuffer);
-
-            BufferDescription vDesc = new BufferDescription(
-                this.vertexBuffer,
-                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
-            );
-            BufferDescription cDesc = new BufferDescription(
-                this.colorBuffer,
-                new VertexAttributePointer(VertexAttributeLocation.Color, 3, VertexAttribPointerType.Float, false, 0, 0)
-            );
-            this.vao = new VertexArrayObject(this.indexBuffer, vDesc, cDesc);
-
-            IContentManager mgr = this.IocC.Resolve<IContentManager>();
-            Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
-            Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
 
             await Task.WhenAll(fragmentShaderSourceTask, vertexShaderSourceTask);
 
@@ -152,15 +141,22 @@ namespace LightClaw.GameCode
 
             Shader[] shaders = new Shader[] 
             { 
-                new Shader(
-                    vertexShaderSourceTask.Result, 
-                    ShaderType.VertexShader, 
-                    new VertexAttributeDescription("inVertexPosition", VertexAttributeLocation.Position), 
-                    new VertexAttributeDescription("inVertexColor", VertexAttributeLocation.Color)
-                ),
+                new Shader(vertexShaderSourceTask.Result, ShaderType.VertexShader),
                 new Shader(fragmentShaderSourceTask.Result, ShaderType.FragmentShader)
             };
             this.program = new ShaderProgram(shaders);
+
+            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
+
+            BufferDescription vDesc = new BufferDescription(
+                this.vertexBuffer,
+                new VertexAttributePointer(this.program.Attributes["inVertexPosition"], 3, VertexAttribPointerType.Float, false, 0, 0)
+            );
+            BufferDescription cDesc = new BufferDescription(
+                this.colorBuffer,
+                new VertexAttributePointer(this.program.Attributes["inVertexColor"], 3, VertexAttribPointerType.Float, false, 0, 0)
+            );
+            this.vao = new VertexArrayObject(this.indexBuffer, vDesc, cDesc);
         }
 
         protected override void OnDraw()
@@ -172,7 +168,9 @@ namespace LightClaw.GameCode
                 using (Binding programBinding = new Binding(program))
                 using (Binding vaoBinding = new Binding(vao))
                 {
-                    //program.Uniforms["MVP"].Set(modelViewProjectionMatrix);
+                    Matrix4 mvp = this.modelMatrix; // viewProjectionMatrix * this.modelMatrix;
+
+                    program.Uniforms["MVP"].Set(mvp);
                     if (getErrorCount < 3)
                     {
                         Log.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
@@ -185,7 +183,17 @@ namespace LightClaw.GameCode
                     }
                 }
             }
-            base.OnDraw();
+        }
+
+        protected override bool OnUpdate(GameTime gameTime, int pass)
+        {
+            if (pass == 0)
+            {
+                float degreeValue = (float)((gameTime.TotalGameTime.TotalSeconds * 90.0) % 360.0);
+                float radiansValue = MathF.DegreesToRadians(degreeValue);
+                this.modelMatrix = Matrix4.CreateRotationY(radiansValue);
+            }
+            return true;
         }
     }
 }

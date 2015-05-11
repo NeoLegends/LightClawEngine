@@ -9,6 +9,7 @@ using DryIoc;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
+using OpenTK;
 
 namespace LightClaw.Engine.Graphics
 {
@@ -22,6 +23,11 @@ namespace LightClaw.Engine.Graphics
         /// Notifies about changes in the currently rendered model.
         /// </summary>
         public event EventHandler<ValueChangedEventArgs<Model>> ModelChanged;
+
+        /// <summary>
+        /// Notifies about changes in the source.
+        /// </summary>
+        public event EventHandler<ValueChangedEventArgs<ResourceString>> SourceChanged;
 
         /// <summary>
         /// Backing field.
@@ -49,21 +55,23 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Backing field.
         /// </summary>
-        private ResourceString _ResourceString;
+        private ResourceString _Source;
 
         /// <summary>
         /// The resource string of the model to be drawn.
         /// </summary>
         [DataMember]
-        public ResourceString ResourceString
+        public ResourceString Source
         {
             get
             {
-                return _ResourceString;
+                return _Source;
             }
             private set
             {
-                this.SetProperty(ref _ResourceString, value);
+                ResourceString previous = this.Source;
+                this.SetProperty(ref _Source, value);
+                this.Raise(this.SourceChanged, value, previous);
             }
         }
 
@@ -83,7 +91,21 @@ namespace LightClaw.Engine.Graphics
             Log.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
 
             this.Name = resourceString;
-            this.ResourceString = resourceString;
+            this.Source = resourceString;
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Mesh"/>.
+        /// </summary>
+        /// <param name="model">The model to be drawn.</param>
+        public Mesh(Model model)
+        {
+            Contract.Requires<ArgumentNullException>(model != null);
+
+            Log.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(model.Name));
+
+            this.Name = model.Name;
+            this.Model = model;
         }
 
         /// <summary>
@@ -94,7 +116,8 @@ namespace LightClaw.Engine.Graphics
             Model model = this.Model;
             if (model != null)
             {
-                model.Draw();
+                Matrix4 modelMatrix = this.GameObject.Transform.ModelMatrix;
+                model.Draw(ref modelMatrix);
             }
         }
 
@@ -104,20 +127,17 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>Drawing and updating will be performed when the mesh is loaded successfully.</remarks>
         protected override async void OnLoad()
         {
-            Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.ResourceString));
+            Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.Source));
 
-            if (this.Model == null)
+            ResourceString rs = this.Source;
+            if ((this.Model == null) && (rs != null))
             {
-                IContentManager contentManager = this.IocC.Resolve<IContentManager>(IfUnresolved.ReturnNull);
-                if (contentManager == null)
-                {
-                    Log.Warn(() => "IContentManager could not be obtained, mesh '{0}' will not be loaded.".FormatWith(this.Name ?? this.ResourceString));
-                    return;
-                }
-
                 try
                 {
-                    this.Model = await contentManager.LoadAsync<Model>(this.ResourceString).ConfigureAwait(false);
+                    this.Model = await this.IocC.Resolve<IContentManager>()
+                                                .LoadAsync<Model>(rs)
+                                                .ConfigureAwait(false);
+                    this.Name = this.Model.Name;
                     Log.Debug(() => "Mesh '{0}' loaded successfully.");
                 }
                 catch (Exception ex)
@@ -125,7 +145,7 @@ namespace LightClaw.Engine.Graphics
                     Log.Error(
                         "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.".FormatWith(
                             ex.GetType().FullName,
-                            this.Name ?? this.ResourceString
+                            this.Name ?? this.Source
                         ), 
                         ex
                     );
