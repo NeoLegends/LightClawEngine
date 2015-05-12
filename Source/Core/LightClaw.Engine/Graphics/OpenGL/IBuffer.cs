@@ -13,45 +13,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL buffer, data in video memory.
     /// </summary>
     [ContractClass(typeof(IBufferContracts))]
-    public interface IBuffer : IBindable, IGLObject
+    public interface IBuffer : IReadOnlyBuffer
     {
-        /// <summary>
-        /// Gets the length of the buffer.
-        /// </summary>
-        int Length { get; }
-
-        /// <summary>
-        /// Gets the <see cref="BufferUsageHint"/>.
-        /// </summary>
-        BufferUsageHint Hint { get; }
-
-        /// <summary>
-        /// Gets the <see cref="BufferTarget"/> the <see cref="IBuffer"/> will be bound to..
-        /// </summary>
-        BufferTarget Target { get; }
-
-        /// <summary>
-        /// Gets all the data in the buffer.
-        /// </summary>
-        /// <remarks>
-        /// This operation cannot be done asynchronously, thus it may seriously affect performance if called repeatedly!
-        /// </remarks>
-        /// <typeparam name="T">The <see cref="Type"/> to get the data as.</typeparam>
-        /// <returns>The data inside the buffer as structs of the specified <see cref="Type"/>.</returns>
-        T[] Get<T>() where T : struct;
-
-        /// <summary>
-        /// Gets a range of the buffers data.
-        /// </summary>
-        /// <remarks>
-        /// This operation cannot be done asynchronously, thus it may seriously affect performance if called repeatedly!
-        /// </remarks>
-        /// <typeparam name="T">The <see cref="Type"/> to get the data as.</typeparam>
-        /// <param name="offset">The offset (in bytes).</param>
-        /// <param name="count">The amount of bytes to receive.</param>
-        /// <returns>The data inside the buffer as structs of the specified <see cref="Type"/>.</returns>
-        T[] GetRange<T>(int offset, int count) where T : struct;
-
         /// <summary>
         /// Maps the buffer.
         /// </summary>
@@ -134,7 +97,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClassFor(typeof(IBuffer))]
     internal abstract class IBufferContracts : IBuffer
     {
-        int IBuffer.Length
+        int IReadOnlyBuffer.Length
         {
             get
             {
@@ -150,7 +113,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        BufferUsageHint IBuffer.Hint
+        BufferUsageHint IReadOnlyBuffer.Hint
         {
             get
             {
@@ -158,7 +121,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        BufferTarget IBuffer.Target
+        BufferTarget IReadOnlyBuffer.Target
         {
             get
             {
@@ -166,19 +129,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        T[] IBuffer.Get<T>()
+        T[] IReadOnlyBuffer.Get<T>()
         {
-            Contract.Ensures(Contract.Result<T[]>() != null);
-
             return null;
         }
 
-        T[] IBuffer.GetRange<T>(int offset, int count)
+        T[] IReadOnlyBuffer.GetRange<T>(int offset, int count)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
-            Contract.Ensures(Contract.Result<T[]>() != null);
-
             return null;
         }
 
@@ -189,13 +146,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return IntPtr.Zero;
         }
 
-        void IBuffer.Unmap()
-        {
-        }
+        void IBuffer.Unmap() { }
 
-        void IBuffer.Set<T>(T data)
-        {
-        }
+        void IBuffer.Set<T>(T data) { }
 
         void IBuffer.Set<T>(T[] data)
         {
@@ -228,16 +181,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
         }
 
-        void IBindable.Bind()
-        {
-        }
+        void IBindable.Bind() { }
 
-        void IBindable.Unbind()
-        {
-        }
+        void IBindable.Unbind() { }
 
-        void IDisposable.Dispose()
-        {
-        }
+        void IDisposable.Dispose() { }
     }
 }

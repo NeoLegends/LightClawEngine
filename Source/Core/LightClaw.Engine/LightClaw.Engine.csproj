@@ -189,6 +189,8 @@
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\MathConverter.cs" />
+    <Compile Include="Graphics\OpenGL\ValidationFailedException.cs" />
+    <Compile Include="Graphics\OpenGL\IReadOnlyBuffer.cs" />
     <Compile Include="Threading\DispatcherObjectExtensions.cs" />
     <Compile Include="Threading\IDispatcherObject.cs" />
     <Compile Include="Core\IGame.cs" />

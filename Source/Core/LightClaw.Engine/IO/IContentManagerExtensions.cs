@@ -21,6 +21,7 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Checks whether an asset with the specified resource string exists.
         /// </summary>
+        /// <param name="manager">The <see cref="IContentManager"/> to check through.</param>
         /// <param name="resourceString">The resource string to check for.</param>
         /// <returns><c>true</c> if the asset exists, otherwise <c>false</c>.</returns>
         public static Task<bool> ExistsAsync(this IContentManager manager, ResourceString resourceString)
@@ -36,6 +37,7 @@ namespace LightClaw.Engine.IO
         /// specified resource string, it will be created.
         /// </summary>
         /// <remarks>This is the engine's main asset output (save-file, etc.) interface.</remarks>
+        /// <param name="manager">The <see cref="IContentManager"/> to get the <see cref="Stream"/> through.</param>
         /// <param name="resourceString">The resource string to obtain a <see cref="Stream"/> around.</param>
         /// <returns>A <see cref="Stream"/> wrapping the specified asset.</returns>
         /// <seealso cref="Stream"/>
@@ -53,14 +55,6 @@ namespace LightClaw.Engine.IO
         /// <typeparam name="T">The <see cref="Type"/> of asset to load.</typeparam>
         /// <param name="contentManager">The <see cref="IContentManager"/> to load the asset.</param>
         /// <param name="resourceString">The resource string of the asset to load.</param>
-        /// <param name="parameter">
-        /// A custom parameter that is handed to the <see cref="IContentReader"/>s to provide them with additional
-        /// information about the asset being read. 
-        /// <example> 
-        /// Imagine a content reader reading texture files to a generic texture class. It needs information about 
-        /// the file type of the image to load to be able to properly load it.
-        /// </example>
-        /// </param>
         /// <returns>The loaded asset.</returns>
         /// <exception cref="FileNotFoundException">The asset could not be found.</exception>
         /// <exception cref="InvalidOperationException">The asset could not be deserialized from the stream.</exception>
@@ -229,7 +223,7 @@ namespace LightClaw.Engine.IO
         /// <param name="contentManager">
         /// The <see cref="IContentManager"/> to register the <paramref name="resolvers"/> in.
         /// </param>
-        /// <param name="readers">The <see cref="IContentResolver"/>s to register.</param>
+        /// <param name="resolvers">The <see cref="IContentResolver"/>s to register.</param>
         public static void Register(this IContentManager contentManager, IEnumerable<IContentResolver> resolvers)
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);

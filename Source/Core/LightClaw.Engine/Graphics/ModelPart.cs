@@ -46,7 +46,7 @@ namespace LightClaw.Engine.Graphics
         private Effect _Effect;
 
         /// <summary>
-        /// Gets the <see cref="ModelEffect"/> used to render the <see cref="ModelPart"/>.
+        /// Gets the <see cref="Effect"/> used to render the <see cref="ModelPart"/>.
         /// </summary>
         public Effect Effect
         {
@@ -90,7 +90,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
         /// </summary>
-        /// <param name="effect">The <see cref="ModelEffect"/> used to shade the <see cref="ModelPart"/>.</param>
+        /// <param name="effect">The <see cref="Effect"/> used to shade the <see cref="ModelPart"/>.</param>
         /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
         public ModelPart(Effect effect, VertexArrayObject vao)
         {

@@ -83,8 +83,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Checks whether the specified <see cref="ActiveUniformType"/> is a sampler.
         /// </summary>
-        /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
-        /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is sampler.</returns>
+        /// <param name="aut">The <see cref="ActiveUniformType"/> to check.</param>
+        /// <returns><c>true</c> if the <paramref name="aut"/> of the uniform is sampler.</returns>
         public static bool IsSampler(this ActiveUniformType aut)
         {
             switch (aut)

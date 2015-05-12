@@ -42,7 +42,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets a random <see cref="Int32"/> that is smaller than the specified <see cref="Value"/>.
+        /// Gets a random <see cref="Int32"/> that is smaller than the specified maximum exclusive value.
         /// </summary>
         /// <param name="maxExclusive">The maximum value.</param>
         /// <returns>A random number smaller than <paramref name="maxExclusive"/>.</returns>
@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets a random number that is larger than <paramref name="minIncluse"/> and smaller than
+        /// Gets a random number that is larger than <paramref name="minInclusive"/> and smaller than
         /// <paramref name="maxExclusive"/>.
         /// </summary>
         /// <param name="minInclusive">The lower boundary of the value to obtain.</param>

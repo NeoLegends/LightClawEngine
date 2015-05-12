@@ -15,7 +15,7 @@ namespace LightClaw.Engine.Threading
         /// Gets whether the specified <paramref name="dispatcherObject"/> may be accessed from the current thread.
         /// </summary>
         /// <param name="dispatcherObject">The <see cref="IDispatcherObject"/> to check.</param>
-        /// <returns><c>true</c> if the <see cref="DispatcherObject"/> may be accessed, otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="IDispatcherObject"/> may be accessed, otherwise <c>false</c>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CheckAccess(this IDispatcherObject dispatcherObject)
         {

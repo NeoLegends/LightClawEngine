@@ -14,15 +14,28 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Represents a vertex array object.
+    /// </summary>
     [DebuggerDisplay("Handle = {Handle}, Index Count = {IndexCount}, Draw Mode = {DrawMode}, Index Type = {IndexType}")]
     public class VertexArrayObject : GLObject, IBindable, IDrawable
     {
+        /// <summary>
+        /// Notifies about the start of a drawing operation.
+        /// </summary>
         public event EventHandler<ParameterEventArgs> Drawing;
 
+        /// <summary>
+        /// Notifies about the end of a drawing operation.
+        /// </summary>
         public event EventHandler<ParameterEventArgs> Drawn;
 
         private BeginMode _DrawMode;
 
+        /// <summary>
+        /// The draw mode.
+        /// </summary>
+        /// <seealso cref="BeginMode"/>
         public BeginMode DrawMode
         {
             get
@@ -37,6 +50,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         private DrawElementsType _IndexType;
 
+        /// <summary>
+        /// The type of the index values.
+        /// </summary>
         public DrawElementsType IndexType
         {
             get
@@ -49,13 +65,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private IBuffer _IndexBuffer;
+        private IReadOnlyBuffer _IndexBuffer;
 
-        public IBuffer IndexBuffer
+        /// <summary>
+        /// The <see cref="IBuffer"/> containing the index data.
+        /// </summary>
+        public IReadOnlyBuffer IndexBuffer
         {
             get
             {
-                Contract.Ensures(Contract.Result<IBuffer>() != null);
+                Contract.Ensures(Contract.Result<IReadOnlyBuffer>() != null);
 
                 return _IndexBuffer;
             }
@@ -67,6 +86,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The amount of indices stored.
+        /// </summary>
         public int IndexCount
         {
             get
@@ -77,6 +99,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         private ImmutableArray<BufferDescription> _VertexBuffers;
 
+        /// <summary>
+        /// The buffers containing the actual vertex data.
+        /// </summary>
         public ImmutableArray<BufferDescription> VertexBuffers
         {
             get
@@ -89,7 +114,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public VertexArrayObject(IBuffer indexBuffer, params BufferDescription[] buffers)
+        /// <summary>
+        /// Initializes a new <see cref="VertexArrayObject"/> drawing triangles using <see cref="UInt16"/> indices.
+        /// </summary>
+        /// <param name="indexBuffer">The <see cref="IBuffer"/> containing the index data.</param>
+        /// <param name="buffers">The buffers containing the actual vertex data.</param>
+        public VertexArrayObject(IReadOnlyBuffer indexBuffer, params BufferDescription[] buffers)
             : this(indexBuffer, BeginMode.Triangles, DrawElementsType.UnsignedShort, buffers)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
@@ -97,7 +127,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(indexBuffer.Target == BufferTarget.ElementArrayBuffer);
         }
 
-        public VertexArrayObject(IBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType, params BufferDescription[] buffers)
+        /// <summary>
+        /// Initializes a new <see cref="VertexArrayObject"/>.
+        /// </summary>
+        /// <param name="indexBuffer">The <see cref="IBuffer"/> containing the index data.</param>
+        /// <param name="drawMode">The <see cref="BeginMode"/>.</param>
+        /// <param name="indexBufferType">The type of the indices.</param>
+        /// <param name="buffers">The buffers containing the actual vertex data.</param>
+        public VertexArrayObject(IReadOnlyBuffer indexBuffer, BeginMode drawMode, DrawElementsType indexBufferType, params BufferDescription[] buffers)
         {
             Contract.Requires<ArgumentNullException>(buffers != null);
             Contract.Requires<ArgumentNullException>(indexBuffer != null);
@@ -138,6 +175,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.IndexBuffer.Unbind();
         }
 
+        /// <summary>
+        /// Binds the <see cref="VertexArrayObject"/>.
+        /// </summary>
         public void Bind()
         {
             this.VerifyAccess();
@@ -154,11 +194,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Draws the <see cref="VertexArrayObject"/>.
+        /// </summary>
         void IDrawable.Draw()
         {
             this.DrawIndexed();
         }
 
+        /// <summary>
+        /// Draws all vertices.
+        /// </summary>
+        /// <remarks>
+        /// DOES NOT BIND THE <see cref="VertexArrayObject"/>, THIS NEEDS TO BE DONE MANUALLY!
+        /// </remarks>
         public void DrawIndexed()
         {
             if (this.IndexCount > 0)
@@ -167,6 +216,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Draws the vertices starting at a given offset.
+        /// </summary>
+        /// <remarks>
+        /// DOES NOT BIND THE <see cref="VertexArrayObject"/>, THIS NEEDS TO BE DONE MANUALLY!
+        /// </remarks>
+        /// <param name="offset">The offset to start drawing at.</param>
         public void DrawIndexed(int offset)
         {
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
@@ -175,6 +231,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.DrawIndexed(offset, this.IndexCount - offset);
         }
 
+        /// <summary>
+        /// Draws a specified amount of vertices starting at a given offset.
+        /// </summary>
+        /// <remarks>
+        /// DOES NOT BIND THE <see cref="VertexArrayObject"/>, THIS NEEDS TO BE DONE MANUALLY!
+        /// </remarks>
+        /// <param name="offset">The offset to start drawing at.</param>
+        /// <param name="count">The amount of vertices to draw.</param>
         public void DrawIndexed(int offset, int count)
         {
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
@@ -187,6 +251,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Unbinds the <see cref="VertexArrayObject"/> from the pipeline.
+        /// </summary>
         public void Unbind()
         {
             this.VerifyAccess();

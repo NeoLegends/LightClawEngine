@@ -181,7 +181,7 @@ namespace LightClaw.Engine.Core
         private Matrix4 _PositionMatrix;
 
         /// <summary>
-        /// The absolute position as translation <see cref="Matrix"/>.
+        /// The absolute position as translation <see cref="Matrix4"/>.
         /// </summary>
         [IgnoreDataMember]
         public Matrix4 PositionMatrix
@@ -242,7 +242,7 @@ namespace LightClaw.Engine.Core
         private Matrix4 _RotationMatrix;
 
         /// <summary>
-        /// The absolute rotation in world space as rotation <see cref="Matrix"/>.
+        /// The absolute rotation in world space as rotation <see cref="Matrix4"/>.
         /// </summary>
         [IgnoreDataMember]
         public Matrix4 RotationMatrix
@@ -303,7 +303,7 @@ namespace LightClaw.Engine.Core
         private Matrix4 _ScalingMatrix;
 
         /// <summary>
-        /// The absolute scaling in world space as scaling <see cref="Matrix"/>.
+        /// The absolute scaling in world space as scaling <see cref="Matrix4"/>.
         /// </summary>
         [IgnoreDataMember]
         public Matrix4 ScalingMatrix
@@ -326,7 +326,7 @@ namespace LightClaw.Engine.Core
         private Matrix4 _ModelMatrix;
 
         /// <summary>
-        /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix"/>.
+        /// The position-, rotation, and scaling matrices combined as model / world-<see cref="Matrix4"/>.
         /// </summary>
         /// <remarks>
         /// <list type="number">

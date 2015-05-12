@@ -75,10 +75,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
-        /// <param name="vad">
-        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
-        /// shader source.
-        /// </param>
         public Shader(string source, ShaderType type)
             : this(null, source, type)
         {
@@ -92,10 +88,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="name">The <see cref="Shader"/>s name.</param>
         /// <param name="source">The shader source code.</param>
         /// <param name="type">The shader type.</param>
-        /// <param name="vad">
-        /// Vertex attribute descriptions declaring how the vertex data in the buffer shall be laid out inside the
-        /// shader source.
-        /// </param>
         public Shader(string name, string source, ShaderType type)
             : base(name)
         {

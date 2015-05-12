@@ -76,7 +76,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="infoLog">The OpenGL info log.</param>
-        /// <param name="errorCode">The result code.</param>
+        /// <param name="resultCode">The result code.</param>
         protected OpenGLException(string message, string infoLog, int resultCode)
             : this(message, infoLog)
         {
@@ -87,7 +87,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Initializes a new <see cref="OpenGLException"/> and sets the message and the error code.
         /// </summary>
         /// <param name="message">The exception message.</param>
-        /// <param name="errorCode">The result code.</param>
+        /// <param name="resultCode">The result code.</param>
         protected OpenGLException(string message, int resultCode)
             : base(message)
         {

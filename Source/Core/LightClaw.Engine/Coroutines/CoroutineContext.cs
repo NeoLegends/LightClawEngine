@@ -188,6 +188,7 @@ namespace LightClaw.Engine.Coroutines
         /// Updates the <see cref="CoroutineContext"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
+        /// <param name="pass">The current updating pass.</param>
         bool IUpdateable.Update(GameTime gameTime, int pass)
         {
             this.Raise(this._Updating, gameTime, pass);

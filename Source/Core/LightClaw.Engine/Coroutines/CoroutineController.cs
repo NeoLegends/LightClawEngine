@@ -119,10 +119,11 @@ namespace LightClaw.Engine.Coroutines
         /// Updates all coroutines and removes the ones that have finished execution.
         /// </summary>
         /// <param name="gameTime">The current game time.</param>
+        /// <param name="pass">The current updating pass.</param>
         protected override bool OnUpdate(GameTime gameTime, int pass)
         {
             IEnumerable<ICoroutineContext> contexts = this.contexts;
-            if (contexts != null)
+            if (contexts != null && (pass == 0))
             {
                 lock (contexts)
                 {

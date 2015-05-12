@@ -32,7 +32,7 @@ namespace LightClaw.Engine.Core
         private Logger _Log;
 
         /// <summary>
-        /// An instance of <see cref="ILog"/> used to track application events.
+        /// An instance of <see cref="Logger"/> used to track application events.
         /// </summary>
         [IgnoreDataMember]
         protected Logger Log
@@ -145,7 +145,8 @@ namespace LightClaw.Engine.Core
         /// Raises the specified <paramref name="handler"/>.
         /// </summary>
         /// <param name="handler">The <see cref="EventHandler{T}"/> to raise.</param>
-        /// <param name="args"><see cref="ParameterEventArgs"/> containing a parameter to be parsed.</param>
+        /// <param name="gameTime">The current game time.</param>
+        /// <param name="pass">The current updating pass.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Raise(EventHandler<UpdateEventArgs> handler, GameTime gameTime, int pass)
         {

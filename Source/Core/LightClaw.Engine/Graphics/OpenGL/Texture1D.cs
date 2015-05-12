@@ -10,8 +10,15 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Represents a one-dimensional <see cref="Texture"/>.
+    /// </summary>
     public class Texture1D : Texture
     {
+        /// <summary>
+        /// Initializes a new <see cref="Texture1D"/> from a <see cref="TextureDescription"/>.
+        /// </summary>
+        /// <param name="description">The <see cref="TextureDescription"/> describing the texture layout.</param>
         public Texture1D(TextureDescription description)
             : base(description)
         {
@@ -20,10 +27,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.VerifyAccess();
             using (Binding textureBinding = new Binding(this))
             {
-                GL.TexStorage1D(TextureTarget1d.Texture1D, this.Levels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
+                GL.TexStorage1D(TextureTarget1d.Texture1D, this.MipmapLevels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }
         }
 
+        /// <summary>
+        /// Sets the texture data.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the data to set as texture data.</typeparam>
+        /// <param name="data">The texture data.</param>
+        /// <param name="pixelType">The type of a single color component inside of the <paramref name="data"/>.</param>
+        /// <param name="pixelFormat">The format of a single pixel inside of the <paramref name="data"/>.</param>
+        /// <param name="width">The width of the block to be set.</param>
+        /// <param name="xOffset">The offset in X direction of the data to be set.</param>
+        /// <param name="level">The mipmap level of the data to be set.</param>
         public void Set<T>(T[] data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
             where T : struct
         {
@@ -49,6 +66,15 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Sets the texture data.
+        /// </summary>
+        /// <param name="data">The texture data.</param>
+        /// <param name="pixelType">The type of a single color component inside of the <paramref name="data"/>.</param>
+        /// <param name="pixelFormat">The format of a single pixel inside of the <paramref name="data"/>.</param>
+        /// <param name="width">The width of the block to be set.</param>
+        /// <param name="xOffset">The horizontal offset of the data to be set.</param>
+        /// <param name="level">The mipmap level of the data to be set.</param>
         public void Set(IntPtr data, PixelType pixelType, PixelFormat pixelFormat, int width, int xOffset, int level)
         {
             Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);

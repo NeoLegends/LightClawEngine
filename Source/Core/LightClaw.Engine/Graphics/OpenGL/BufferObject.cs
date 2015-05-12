@@ -24,9 +24,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DebuggerDisplay("Target = {Target}, Usage Hint = {Hint}, Length = {Length}")]
     public class BufferObject : GLObject, IBuffer
     {
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private BufferUsageHint _Hint;
 
         /// <summary>
@@ -44,9 +41,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private int _Length;
 
         /// <summary>
@@ -64,9 +58,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        /// <summary>
-        /// Backing field.
-        /// </summary>
         private BufferTarget _Target;
 
         /// <summary>

@@ -188,7 +188,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Gets the <see cref="System.Collections.IEnumerator"/>.
         /// </summary>
-        /// <returns>The <see cref="System.Collections.IEnumerator."/></returns>
+        /// <returns>The <see cref="System.Collections.IEnumerator"/></returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();

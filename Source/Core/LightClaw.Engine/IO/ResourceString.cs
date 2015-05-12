@@ -69,7 +69,7 @@ namespace LightClaw.Engine.IO
         /// <summary>
         /// Checks whether the <see cref="ResourceString"/> equals the <paramref name="other"/> one.
         /// </summary>
-        /// <param name="obj">The <see cref="ResourceString"/> to test against.</param>
+        /// <param name="other">The <see cref="ResourceString"/> to test against.</param>
         /// <returns><c>true</c> if the <see cref="ResourceString"/> are equal, otherwise <c>false</c>.</returns>
         public bool Equals(ResourceString other)
         {

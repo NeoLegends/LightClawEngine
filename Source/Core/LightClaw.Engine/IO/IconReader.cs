@@ -16,6 +16,7 @@ namespace LightClaw.Engine.IO
         /// Checks whether the <see cref="IconReader"/> can read assets of the specified <see cref="Type"/>.
         /// </summary>
         /// <param name="assetType">The type of the asset that is about to be read.</param>
+        /// <param name="parameter">The parameter.</param>
         /// <returns>
         /// <c>true</c> if the <see cref="IconReader"/> can read assets of the specified <see cref="Type"/>, otherwise
         /// <c>false</c>.
@@ -32,8 +33,7 @@ namespace LightClaw.Engine.IO
         /// <see cref="ContentReadParameters"/> containing information about the asset to be loaded.
         /// </param>
         /// <returns>
-        /// The deserialized asset or <c>null</c> if an error occured or the specified <paramref name="assetType"/> is
-        /// not an icon.
+        /// The deserialized asset.
         /// </returns>
         public Task<object> ReadAsync(ContentReadParameters parameters)
         {

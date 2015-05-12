@@ -14,12 +14,18 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Represents an OpenGL texture.
+    /// </summary>
     public abstract class Texture : GLObject, IBindable
     {
         private static readonly Logger staticLogger = LogManager.GetLogger(typeof(Texture).Name);
 
         private TextureDescription _Description;
 
+        /// <summary>
+        /// The <see cref="TextureDescription"/> describing the pixel format, width, height, etc.
+        /// </summary>
         public TextureDescription Description
         {
             get
@@ -32,7 +38,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        public int Levels
+        /// <summary>
+        /// The amount of mipmap levels.
+        /// </summary>
+        public int MipmapLevels
         {
             get
             {
@@ -40,6 +49,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The amount of multisampling levels.
+        /// </summary>
         public int MultisamplingLevels
         {
             get
@@ -48,6 +60,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The format of the pixels.
+        /// </summary>
         public PixelInternalFormat PixelInternalFormat
         {
             get
@@ -58,6 +73,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         private TextureUnit _TextureUnit = TextureUnit.Texture0;
 
+        /// <summary>
+        /// The <see cref="TextureUnit"/> the <see cref="Texture"/> will be bound to.
+        /// </summary>
         public TextureUnit TextureUnit
         {
             get
@@ -74,6 +92,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.
+        /// </summary>
         public TextureTarget Target
         {
             get
@@ -82,6 +103,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The <see cref="Texture"/>s width.
+        /// </summary>
         public int Width
         {
             get
@@ -90,6 +114,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The <see cref="Texture"/>s height.
+        /// </summary>
         public int Height
         {
             get
@@ -98,6 +125,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The <see cref="Texture"/>s depth.
+        /// </summary>
         public int Depth
         {
             get
@@ -191,20 +221,29 @@ namespace LightClaw.Engine.Graphics.OpenGL
             staticLogger.Info(() => "Texturing set up.");
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Texture"/> from the specified <see cref="TextureDescription"/>.
+        /// </summary>
+        /// <param name="description">The <see cref="TextureDescription"/> to initialize from.</param>
         protected Texture(TextureDescription description)
         {
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget), description.Target));
 
-            this.VerifyAccess();
-
             this.Description = description;
         }
 
+        /// <summary>
+        /// Binds the <see cref="Texture"/> to the <see cref="P:TextureUnit"/>.
+        /// </summary>
         public virtual void Bind()
         {
             this.Bind(this.TextureUnit);
         }
 
+        /// <summary>
+        /// Binds the <see cref="Texture"/> to the specified <paramref name="textureUnit"/>.
+        /// </summary>
+        /// <param name="textureUnit">The <see cref="TextureUnit"/> to bind to.</param>
         public virtual void Bind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
@@ -215,11 +254,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.BindTexture(this.Target, this);
         }
 
+        /// <summary>
+        /// Unbinds the <see cref="Texture"/> from the <see cref="P:TextureUnit"/>.
+        /// </summary>
         public void Unbind()
         {
             this.Unbind(this.TextureUnit);
         }
 
+        /// <summary>
+        /// Unbinds the <see cref="Texture"/> from the specified <paramref name="textureUnit"/>.
+        /// </summary>
+        /// <param name="textureUnit">The <see cref="TextureUnit"/> to unbind from.</param>
         public virtual void Unbind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
@@ -230,6 +276,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.BindTexture(this.Target, 0);
         }
 
+        /// <summary>
+        /// Disposes the <see cref="Texture"/>.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
             if (this.CheckAccess())

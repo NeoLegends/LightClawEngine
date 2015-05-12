@@ -104,7 +104,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 int result;
                 GL.GetProgram(this, GetProgramParameterName.LinkStatus, out result);
-                if (result == GLBool.False)
+                if (result != GLBool.True)
                 {
                     string infoLog = this.GetInfoLog();
                     string message = "Linking the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
@@ -179,6 +179,28 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
             GL.UseProgram(0);
+        }
+
+        /// <summary>
+        /// Validates the <see cref="ShaderProgram"/>.
+        /// </summary>
+        /// <remarks>
+        /// Warning, this is a lengthy operation, execute only during development.
+        /// </remarks>
+        public void Validate()
+        {
+            this.VerifyAccess();
+            GL.ValidateProgram(this);
+
+            int result;
+            GL.GetProgram(this, GetProgramParameterName.ValidateStatus, out result);
+            if (result != GLBool.True)
+            {
+                string infoLog = this.GetInfoLog();
+                string message = "Validating the {0} failed. Info log: '{1}'.".FormatWith(typeof(ShaderProgram).Name, infoLog);
+                Log.Error(message);
+                throw new ValidationFailedException(message, infoLog, result);
+            }
         }
 
         /// <summary>

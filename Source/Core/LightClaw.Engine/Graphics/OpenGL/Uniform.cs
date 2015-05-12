@@ -14,13 +14,17 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace LightClaw.Engine.Graphics.OpenGL
 {
+    /// <summary>
+    /// Represents a shader uniform.
+    /// </summary>
     [DebuggerDisplay("Name = {Name}, Location = {Location}")]
     public class Uniform : DispatcherEntity
     {
-        private readonly object initializationLock = new object();
-
         private int _Location;
 
+        /// <summary>
+        /// The uniform's location.
+        /// </summary>
         public int Location
         {
             get
@@ -37,6 +41,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// The uniforms name.
+        /// </summary>
         public override string Name
         {
             get
@@ -51,6 +58,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         private ShaderProgram _Program;
 
+        /// <summary>
+        /// The <see cref="ShaderProgram"/> the <see cref="Uniform"/> belongs to.
+        /// </summary>
         public ShaderProgram Program
         {
             get
@@ -69,6 +79,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         private ActiveUniformType _Type;
 
+        /// <summary>
+        /// The <see cref="Type"/> of the <see cref="Uniform"/>.
+        /// </summary>
         public ActiveUniformType Type
         {
             get
@@ -81,6 +94,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="Uniform"/>.
+        /// </summary>
+        /// <param name="program">The <see cref="ShaderProgram"/> the <see cref="Uniform"/> belongs to.</param>
+        /// <param name="location">The uniform's location.</param>
         public Uniform(ShaderProgram program, int location)
         {
             Contract.Requires<ArgumentNullException>(program != null);
@@ -95,12 +113,20 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.Type = uniformType; // Set indirectly to fire event
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(int value)
         {
             this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         [CLSCompliant(false)]
         public void Set(uint value)
         {
@@ -108,24 +134,42 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(float value)
         {
             this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(double value)
         {
             this.VerifyAccess();
             GL.ProgramUniform1(this.Program, this.Location, value);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
         public void Set(int value1, int value2)
         {
             this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2)
         {
@@ -133,24 +177,46 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
         public void Set(float value1, float value2)
         {
             this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
         public void Set(double value1, double value2)
         {
             this.VerifyAccess();
             GL.ProgramUniform2(this.Program, this.Location, value1, value2);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
         public void Set(int value1, int value2, int value3)
         {
             this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3)
         {
@@ -158,24 +224,50 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
         public void Set(float value1, float value2, float value3)
         {
             this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
         public void Set(double value1, double value2, double value3)
         {
             this.VerifyAccess();
             GL.ProgramUniform3(this.Program, this.Location, value1, value2, value3);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
+        /// <param name="value4">The fourth value.</param>
         public void Set(int value1, int value2, int value3, int value4)
         {
             this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
+        /// <param name="value4">The fourth value.</param>
         [CLSCompliant(false)]
         public void Set(uint value1, uint value2, uint value3, uint value4)
         {
@@ -183,43 +275,83 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
+        /// <param name="value4">The fourth value.</param>
         public void Set(float value1, float value2, float value3, float value4)
         {
             this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
+        /// <summary>
+        /// Sets the values of the uniform.
+        /// </summary>
+        /// <param name="value1">The first value.</param>
+        /// <param name="value2">The second value.</param>
+        /// <param name="value3">The third value.</param>
+        /// <param name="value4">The fourth value.</param>
         public void Set(double value1, double value2, double value3, double value4)
         {
             this.VerifyAccess();
             GL.ProgramUniform4(this.Program, this.Location, value1, value2, value3, value4);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(Vector2 value)
         {
             this.Set(value.X, value.Y);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(Vector3 value)
         {
             this.Set(value.X, value.Y, value.Z);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(Vector4 value)
         {
             this.Set(value.X, value.Y, value.Z, value.W);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public void Set(Quaternion value)
         {
             this.Set(value.X, value.Y, value.Z, value.W);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix2 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix2 value, bool transpose)
         {
             this.VerifyAccess();
@@ -228,11 +360,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix2x3 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix2x3 value, bool transpose)
         {
             this.VerifyAccess();
@@ -241,11 +383,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix2x3(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix2x4 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix2x4 value, bool transpose)
         {
             this.VerifyAccess();
@@ -254,11 +406,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix2x4(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix3x2 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix3x2 value, bool transpose)
         {
             this.VerifyAccess();
@@ -267,11 +429,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix3 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix3 value, bool transpose)
         {
             this.VerifyAccess();
@@ -280,11 +452,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix3x4 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix3x4 value, bool transpose)
         {
             this.VerifyAccess();
@@ -293,11 +475,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix3x4(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix4x2 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix4x2 value, bool transpose)
         {
             this.VerifyAccess();
@@ -306,11 +498,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix4x2(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix4x3 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix4x3 value, bool transpose)
         {
             this.VerifyAccess();
@@ -319,11 +521,21 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.ProgramUniformMatrix4x3(this.Program, this.Location, 1, transpose, pValue);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
         public void Set(Matrix4 value)
         {
             this.Set(value, false);
         }
 
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
         public unsafe void Set(Matrix4 value, bool transpose)
         {
             this.VerifyAccess();

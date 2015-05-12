@@ -18,6 +18,10 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     public class Model : DisposableEntity, IReadOnlyList<ModelPart>
     {
+        /// <summary>
+        /// Indicates whether the <see cref="Model"/> owns the <see cref="ModelPart"/>s it
+        /// has been given inside the constructor.
+        /// </summary>
         private readonly bool ownsParts;
 
         /// <summary>
@@ -135,9 +139,9 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
-        /// Gets the <see cref="IEnumerator"/>.
+        /// Gets the <see cref="System.Collections.IEnumerator"/>.
         /// </summary>
-        /// <returns>The <see cref="IEnumerator"/>.</returns>
+        /// <returns>The <see cref="System.Collections.IEnumerator"/>.</returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();

@@ -178,7 +178,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Adds the specified <paramref name="Component"/> to the <see cref="GameObject"/>, if possible, and sets
+        /// Adds the specified <paramref name="component"/> to the <see cref="GameObject"/>, if possible, and sets
         /// <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>
         /// , if attachment fails.
         /// </summary>
@@ -312,7 +312,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Tries to add a range of <see cref="Component"/>s.
         /// </summary>
-        /// <param name="item">The <see cref="Component"/>s to add.</param>
+        /// <param name="items">The <see cref="Component"/>s to add.</param>
         /// <returns><c>true</c> if the <see cref="Component"/>s was added, otherwise <c>false</c>.</returns>
         public bool TryAddRange(IEnumerable<Component> items)
         {
@@ -362,7 +362,7 @@ namespace LightClaw.Engine.Core
         /// Tries to insert the specified <see cref="Component"/>s.
         /// </summary>
         /// <param name="index">The index to insert at.</param>
-        /// <param name="item">The items to insert.</param>
+        /// <param name="items">The items to insert.</param>
         /// <returns><c>true</c> if the items could be inserted, otherwise <c>false</c>.</returns>
         public bool TryInsertRange(int index, IEnumerable<Component> items)
         {
@@ -546,6 +546,7 @@ namespace LightClaw.Engine.Core
         /// Callback updating the children with the specified <see cref="GameTime"/>.
         /// </summary>
         /// <param name="gameTime">The current <see cref="GameTime"/>.</param>
+        /// <param name="pass">The current updating pass.</param>
         protected override bool OnUpdate(GameTime gameTime, int pass)
         {
             bool result = true;
@@ -653,7 +654,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Tries to ensure that the specified <see cref="Component"/>s can be attached.
         /// </summary>
-        /// <param name="component">The <see cref="Component"/>s that are about to be attached</param>
+        /// <param name="components">The <see cref="Component"/>s that are about to be attached</param>
         /// <returns><c>true</c> if the <paramref name="components"/> can be attached, otherwise <c>false</c>.</returns>
         private bool TryCheckAttachability(IEnumerable<Component> components)
         {

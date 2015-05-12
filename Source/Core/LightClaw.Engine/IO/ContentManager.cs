@@ -296,6 +296,7 @@ namespace LightClaw.Engine.IO
         /// Gets the <see cref="IContentReader"/> for the specified <paramref name="assetType"/>.
         /// </summary>
         /// <param name="assetType">The <see cref="Type"/> of asset to get the <see cref="IContentReader"/> for.</param>
+        /// <param name="parameter">The content read parameter.</param>
         /// <returns>The <see cref="IContentReader"/> for the asset of the specified <see cref="Type"/>.</returns>
         private IContentReader GetReader(Type assetType, object parameter)
         {

@@ -52,6 +52,7 @@ namespace LightClaw.Engine.IO
         /// <param name="resourceString">The resource string of the asset to be loaded.</param>
         /// <param name="assetType">A <see cref="Stream"/> of the asset's data.</param>
         /// <param name="assetStream">The <see cref="Type"/> of asset to read.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> to cancel the asynchronous loading process.</param>
         /// <param name="parameter">A parameter the client specifies when requesting an asset. This may be null.</param>
         public ContentReadParameters(
                 IContentManager contentManager, 

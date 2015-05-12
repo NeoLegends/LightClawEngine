@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Threading
     public interface IDispatcherObject
     {
         /// <summary>
-        /// Gets the <see cref="Dispatcher"/> associated with the <see cref="IGame"/>.
+        /// Gets the <see cref="Dispatcher"/> associated with the <see cref="IDispatcherObject"/>.
         /// </summary>
         Dispatcher Dispatcher { get; }
     }
