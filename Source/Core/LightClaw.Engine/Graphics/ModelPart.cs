@@ -54,7 +54,7 @@ namespace LightClaw.Engine.Graphics
             {
                 return _Effect;
             }
-            set
+            protected set
             {
                 Contract.Requires<ArgumentNullException>(value != null);
 
@@ -76,8 +76,10 @@ namespace LightClaw.Engine.Graphics
             {
                 return _Vao;
             }
-            set
+            protected set
             {
+                Contract.Requires<ArgumentNullException>(value != null);
+
                 this.SetProperty(ref _Vao, value, this.VaoChanged);
             }
         }
@@ -85,14 +87,14 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/>.
         /// </summary>
-        public ModelPart() { }
+        protected ModelPart() { }
 
         /// <summary>
         /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
         /// </summary>
         /// <param name="effect">The <see cref="Effect"/> used to shade the <see cref="ModelPart"/>.</param>
         /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
-        public ModelPart(Effect effect, VertexArrayObject vao)
+        protected ModelPart(Effect effect, VertexArrayObject vao)
         {
             Contract.Requires<ArgumentNullException>(effect != null);
             Contract.Requires<ArgumentNullException>(vao != null);
@@ -104,28 +106,14 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Draws the <see cref="ModelPart"/> to the screen.
         /// </summary>
-        public void Draw(ref Matrix4 transform)
+        /// <param name="mvp">The model view projection matrix used to draw the <see cref="ModelPart"/>.</param>
+        public void Draw(ref Matrix4 mvp)
         {
             this.VerifyAccess();
 
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
-                //Effect effect = this.Effect;
-                //VertexArrayObject vao = this.Vao;
-                //if ((effect != null) && (vao != null))
-                //{
-                //    using (Binding vaoBinding = new Binding(vao))
-                //    {
-                //        for (int i = 0; i < effect.Count; i++)
-                //        {
-                //            using (Binding effectPassPinding = effect.ApplyPass(i))
-                //            {
-                //                vao.DrawIndexed();
-                //            }
-                //        }
-                //    }
-                //}
-                this.OnDraw(ref transform);
+                this.OnDraw(ref mvp);
             }
         }
 

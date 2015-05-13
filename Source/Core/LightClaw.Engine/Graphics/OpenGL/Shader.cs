@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
 using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
@@ -23,6 +24,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// the graphics pipeline to draw.
     /// </remarks>
     /// <seealso href="http://www.opengl.org/wiki/Shader"/>
+    [ContentReader(typeof(ShaderReader))]
     [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Type = {Type}, Vertex Attribute Count = {VertexAttributeDescriptions.Length}")]
     public class Shader : GLObject
     {

@@ -159,7 +159,7 @@ namespace LightClaw.Engine.IO
             token.ThrowIfCancellationRequested();
             Log.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
-            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync().ConfigureAwait(false))
+            using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync(token).ConfigureAwait(false))
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
                 WeakReference<object> cachedAsset = null;
@@ -193,8 +193,17 @@ namespace LightClaw.Engine.IO
                         {
                             Log.Trace(() => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(resourceString, assetType.FullName));
                             token.ThrowIfCancellationRequested();
-                            asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter))
-                                                .ConfigureAwait(false);
+                            try
+                            {
+                                asset = await reader.ReadAsync(new ContentReadParameters(this, resourceString, assetType, assetStream, token, parameter))
+                                                    .ConfigureAwait(false);
+                            }
+                            catch (Exception ex)
+                            {
+                                string message = "Asset '{0}' could not be deserialized. An error of type {1} occured.".FormatWith(resourceString, ex.GetType().FullName);
+                                Log.Error(message, ex);
+                                throw new InvalidOperationException(message, ex);
+                            }
                         }
                         else
                         {

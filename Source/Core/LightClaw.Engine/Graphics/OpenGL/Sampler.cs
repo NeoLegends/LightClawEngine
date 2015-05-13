@@ -88,10 +88,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="Sampler"/> to the <see cref="P:TextureUnit"/>.
         /// </summary>
-        public void Bind()
+        public Binding Bind()
         {
             this.VerifyAccess();
             GL.BindSampler(this.TextureUnit, this);
+            return new Binding(this);
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             else
             {
-                this.Dispatcher.Invoke(this.DeleteSampler, disposing, DispatcherPriority.Background).Wait();
+                this.Dispatcher.Invoke(this.DeleteSampler, disposing, DispatcherPriority.Background);
             }
         }
 

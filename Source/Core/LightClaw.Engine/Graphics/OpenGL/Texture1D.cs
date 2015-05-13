@@ -25,7 +25,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(description.Target.IsTexture1DTarget());
 
             this.VerifyAccess();
-            using (Binding textureBinding = new Binding(this))
+            using (Binding textureBinding = this.Bind())
             {
                 GL.TexStorage1D(TextureTarget1d.Texture1D, this.MipmapLevels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
             }
@@ -83,7 +83,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(level >= 0);
 
             this.VerifyAccess();
-            using (Binding textureBinding = new Binding(this))
+            using (Binding textureBinding = this.Bind())
             {
                 GL.TexSubImage1D(this.Target, level, xOffset, width, pixelFormat, pixelType, data);
             }

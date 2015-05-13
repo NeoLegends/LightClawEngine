@@ -235,16 +235,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="Texture"/> to the <see cref="P:TextureUnit"/>.
         /// </summary>
-        public virtual void Bind()
+        public virtual Binding Bind()
         {
-            this.Bind(this.TextureUnit);
+            return this.Bind(this.TextureUnit);
         }
 
         /// <summary>
         /// Binds the <see cref="Texture"/> to the specified <paramref name="textureUnit"/>.
         /// </summary>
         /// <param name="textureUnit">The <see cref="TextureUnit"/> to bind to.</param>
-        public virtual void Bind(TextureUnit textureUnit)
+        public virtual Binding Bind(TextureUnit textureUnit)
         {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
 
@@ -252,6 +252,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             GL.ActiveTexture(textureUnit);
             GL.BindTexture(this.Target, this);
+            return new Binding(this);
         }
 
         /// <summary>

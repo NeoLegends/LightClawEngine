@@ -70,9 +70,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
             );
         }
 
-        void IBindable.Bind()
+        Binding IBindable.Bind()
         {
-            this.Enable();
+            return this.Enable();
         }
 
         public object Clone()
@@ -85,9 +85,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             GL.DisableVertexAttribArray(this.Index);
         }
 
-        public void Enable()
+        public Binding Enable()
         {
             GL.EnableVertexAttribArray(this.Index);
+            return new Binding(this);
         }
 
         public override bool Equals(object obj)

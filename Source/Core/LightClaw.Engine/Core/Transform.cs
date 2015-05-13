@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using OpenTK;
 
 namespace LightClaw.Engine.Core
@@ -146,7 +147,7 @@ namespace LightClaw.Engine.Core
         /// The <see cref="GameObject"/>s local position in relation to the parent's position.
         /// </summary>
         [DataMember]
-        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
+        [JsonConverter(typeof(MathConverter))]
         public Vector3 LocalPosition
         {
             get
@@ -183,7 +184,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute position as translation <see cref="Matrix4"/>.
         /// </summary>
-        [IgnoreDataMember]
         public Matrix4 PositionMatrix
         {
             get
@@ -207,7 +207,7 @@ namespace LightClaw.Engine.Core
         /// The <see cref="GameObject"/>s local rotation in relation to the parent's rotation.
         /// </summary>
         [DataMember]
-        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
+        [JsonConverter(typeof(MathConverter))]
         public Quaternion LocalRotation
         {
             get
@@ -244,7 +244,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute rotation in world space as rotation <see cref="Matrix4"/>.
         /// </summary>
-        [IgnoreDataMember]
         public Matrix4 RotationMatrix
         {
             get
@@ -268,7 +267,7 @@ namespace LightClaw.Engine.Core
         /// The <see cref="GameObject"/>s scaling relative to the parent's scaling.
         /// </summary>
         [DataMember]
-        [Newtonsoft.Json.JsonConverter(typeof(MathConverter))]
+        [JsonConverter(typeof(MathConverter))]
         public Vector3 LocalScaling
         {
             get
@@ -305,7 +304,6 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// The absolute scaling in world space as scaling <see cref="Matrix4"/>.
         /// </summary>
-        [IgnoreDataMember]
         public Matrix4 ScalingMatrix
         {
             get
@@ -347,7 +345,6 @@ namespace LightClaw.Engine.Core
         ///     </item> 
         /// </list>
         /// </remarks>
-        [IgnoreDataMember]
         public Matrix4 ModelMatrix
         {
             get

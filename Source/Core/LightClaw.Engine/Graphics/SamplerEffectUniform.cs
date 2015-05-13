@@ -66,20 +66,20 @@ namespace LightClaw.Engine.Graphics
             this.TextureUnit = textureUnit;
         }
 
-        public override void Bind()
+        public override Binding Bind()
         {
             Texture texture = this.Texture;
             if (texture != null)
             {
-                this.Uniform.Set(this.TextureUnit);
-                texture.Bind();
-
                 Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
                     if (sampler.TextureUnit == texture.TextureUnit)
                     {
+                        this.Uniform.Set(this.TextureUnit);
+                        texture.Bind();
                         sampler.Bind();
+                        return new Binding(this);
                     }
                     else
                     {
@@ -91,6 +91,8 @@ namespace LightClaw.Engine.Graphics
             {
                 Log.Warn(() => "Texture to bind to the sampler in the shader was null and thus will not be bound. This is presumably unwanted behaviour!");
             }
+
+            return default(Binding);
         }
 
         public void Set(Sampler sampler)

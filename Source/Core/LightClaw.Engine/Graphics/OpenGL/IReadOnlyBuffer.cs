@@ -103,7 +103,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             return null;
         }
 
-        void IBindable.Bind() { }
+        Binding IBindable.Bind() 
+        {
+            return default(Binding);
+        }
 
         void IBindable.Unbind() { }
 

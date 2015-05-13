@@ -18,13 +18,13 @@ namespace LightClaw.Engine.Graphics
     /// </remarks>
     /// <example>
     /// <code>
-    /// using (Binding bufferBinding = new Binding(this.Buffer))
+    /// using (Binding bufferBinding = this.Buffer.Bind())
     /// {
     ///     // Code interacting with bound buffer
     /// }
     /// </code>
     /// </example>
-    public struct Binding : IDisposable, IBindable
+    public struct Binding : IDisposable
     {
         /// <summary>
         /// The <see cref="IBindable"/> to (un)bind.
@@ -36,33 +36,10 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
         public Binding(IBindable bindable)
-            : this(bindable, true)
-        {
-            Contract.Requires<ArgumentNullException>(bindable != null);
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="Binding"/>.
-        /// </summary>
-        /// <param name="bindable">The <see cref="IBindable"/> to (un)bind.</param>
-        /// <param name="bindImmediately">Indicates whether to bind the element upon creation of this struct.</param>
-        public Binding(IBindable bindable, bool bindImmediately)
         {
             Contract.Requires<ArgumentNullException>(bindable != null);
 
             this.bindable = bindable;
-            if (bindImmediately)
-            {
-                this.Bind();
-            }
-        }
-
-        /// <summary>
-        /// Binds the <see cref="IBindable"/>.
-        /// </summary>
-        public void Bind()
-        {
-            this.bindable.Bind();
         }
 
         /// <summary>
@@ -79,7 +56,10 @@ namespace LightClaw.Engine.Graphics
         public void Unbind()
         {
 #if (DEBUG || ALWAYS_UNBIND)
-            this.bindable.Unbind();
+            if (this.bindable != null)
+            {
+                this.bindable.Unbind();
+            }
 #endif
         }
     }

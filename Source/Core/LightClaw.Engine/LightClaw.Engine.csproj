@@ -188,9 +188,15 @@
     <Compile Include="Core\DisposableEntity.cs" />
     <Compile Include="Core\HashF.cs" />
     <Compile Include="Core\GameTime.cs" />
+    <Compile Include="Core\LightClawContractResolver.cs" />
     <Compile Include="Core\MathConverter.cs" />
+    <Compile Include="Graphics\EffectPassDescription.cs" />
+    <Compile Include="Graphics\LightClawModelPart.cs" />
     <Compile Include="Graphics\OpenGL\ValidationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\IReadOnlyBuffer.cs" />
+    <Compile Include="IO\EffectReader.cs" />
+    <Compile Include="IO\ShaderReader.cs" />
+    <Compile Include="IO\TextureReader.cs" />
     <Compile Include="Threading\DispatcherObjectExtensions.cs" />
     <Compile Include="Threading\IDispatcherObject.cs" />
     <Compile Include="Core\IGame.cs" />
@@ -303,6 +309,10 @@
     <Compile Include="UI\DefaultCommands.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CjClutter.ObjLoader.Loader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\CjClutter.ObjLoader.Loader.dll</HintPath>
+    </Reference>
     <Reference Include="DryIoc, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\DryIoc.dll.1.4.1\lib\net40\DryIoc.dll</HintPath>
@@ -361,6 +371,15 @@
       <LastGenOutput>VideoSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Shaders\Basic.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Basic.shr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Shaders\Basic.vert">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -375,6 +394,12 @@
       <Project>{fd0e2831-4a34-44d8-be62-10a0cf38fcb3}</Project>
       <Name>LightClaw.Extensions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CjClutter.ObjLoader.Loader.dll" />
+    <None Include="Shaders\Basic.pass">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -40,7 +40,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
         {
             this.VerifyAccess();
-            using (Binding texture2dBinding = new Binding(this))
+            using (Binding texture2dBinding = this.Bind())
             {
                 GL.TexSubImage3D(this.Target, level, xOffset, yOffset, zOffset, width, height, depth, pixelFormat, pixelType, data);
             }

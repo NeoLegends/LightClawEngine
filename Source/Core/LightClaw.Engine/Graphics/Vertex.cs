@@ -34,10 +34,10 @@ namespace LightClaw.Engine.Graphics
             new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, SizeInBytes, 12),
             new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, SizeInBytes, 24),
             new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 32),
-            new VertexAttributePointer(VertexAttributeLocation.BoneWeight0, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 36),
-            new VertexAttributePointer(VertexAttributeLocation.BoneWeight1, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 44),
-            new VertexAttributePointer(VertexAttributeLocation.BoneWeight2, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 52),
-            new VertexAttributePointer(VertexAttributeLocation.BoneWeight3, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 60),
+            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight0, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 36),
+            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight1, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 44),
+            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight2, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 52),
+            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight3, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 60),
         };
 
         /// <summary> 
@@ -106,29 +106,29 @@ namespace LightClaw.Engine.Graphics
         [DataMember]
         public Color Color;
 
-        /// <summary>
-        /// The first bone weighting.
-        /// </summary>
-        [DataMember]
-        public BoneWeighting BoneWeight0;
+        ///// <summary>
+        ///// The first bone weighting.
+        ///// </summary>
+        //[DataMember]
+        //public BoneWeighting BoneWeight0;
 
-        /// <summary>
-        /// The second bone weighting.
-        /// </summary>
-        [DataMember]
-        public BoneWeighting BoneWeight1;
+        ///// <summary>
+        ///// The second bone weighting.
+        ///// </summary>
+        //[DataMember]
+        //public BoneWeighting BoneWeight1;
 
-        /// <summary>
-        /// The third bone weighting.
-        /// </summary>
-        [DataMember]
-        public BoneWeighting BoneWeight2;
+        ///// <summary>
+        ///// The third bone weighting.
+        ///// </summary>
+        //[DataMember]
+        //public BoneWeighting BoneWeight2;
 
-        /// <summary>
-        /// The fourth bone weighting.
-        /// </summary>
-        [DataMember]
-        public BoneWeighting BoneWeight3;
+        ///// <summary>
+        ///// The fourth bone weighting.
+        ///// </summary>
+        //[DataMember]
+        //public BoneWeighting BoneWeight3;
 
         /// <summary>
         /// Initializes a new <see cref="Vertex"/> from a position, a normal, a color and a texture coordinate.
@@ -167,9 +167,9 @@ namespace LightClaw.Engine.Graphics
         public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) &&
-                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color) &&
-                   (this.BoneWeight0 == other.BoneWeight0) && (this.BoneWeight1 == other.BoneWeight1) &&
-                   (this.BoneWeight2 == other.BoneWeight2) && (this.BoneWeight3 == other.BoneWeight3);
+                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color); // &&
+                   //(this.BoneWeight0 == other.BoneWeight0) && (this.BoneWeight1 == other.BoneWeight1) &&
+                   //(this.BoneWeight2 == other.BoneWeight2) && (this.BoneWeight3 == other.BoneWeight3);
         }
 
         /// <summary>
@@ -179,8 +179,8 @@ namespace LightClaw.Engine.Graphics
         public override int GetHashCode()
         {
             return HashF.GetHashCode(
-                this.Position, this.Normal, this.TexCoord, this.Color,
-                HashF.GetHashCode(this.BoneWeight0, this.BoneWeight1, this.BoneWeight2, this.BoneWeight3)
+                this.Position, this.Normal, this.TexCoord, this.Color
+                //HashF.GetHashCode(this.BoneWeight0, this.BoneWeight1, this.BoneWeight2, this.BoneWeight3)
             );
         }
 
@@ -204,6 +204,24 @@ namespace LightClaw.Engine.Graphics
         public static bool operator !=(Vertex left, Vertex right)
         {
             return !(left == right);
+        }
+
+        /// <summary>
+        /// Gets <see cref="VertexAttributePointer"/>s for an interleaved vertex data format.
+        /// </summary>
+        /// <param name="positionIndex">The index of the position attribute.</param>
+        /// <param name="normalIndex">The index of the normal attribute.</param>
+        /// <param name="textureIndex">The index of the UV attribute.</param>
+        /// <param name="colorIndex">The index of the color attribute.</param>
+        /// <returns>Interleaved <see cref="VertexAttributePointer"/>s.</returns>
+        public static VertexAttributePointer[] GetInterleavedVaps(VertexAttributeLocation positionIndex, VertexAttributeLocation normalIndex, VertexAttributeLocation textureIndex, VertexAttributeLocation colorIndex)
+        {
+            return new[] {
+                new VertexAttributePointer(positionIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0),
+                new VertexAttributePointer(normalIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 12),
+                new VertexAttributePointer(textureIndex, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 24),
+                new VertexAttributePointer(colorIndex, 4, VertexAttribPointerType.UnsignedByte, false, Vertex.SizeInBytes, 32)
+            };
         }
     }
 }

@@ -155,11 +155,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 GL.BindVertexArray(this);
                 foreach (BufferDescription desc in this.VertexBuffers)
                 {
-                    using (Binding vboBinding = new Binding(desc.Buffer))
+                    using (Binding vboBinding = desc.Buffer.Bind())
                     {
                         foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
                         {
-                            using (Binding pointerBinding = new Binding(vertexPointer))
+                            using (Binding pointerBinding = vertexPointer.Enable())
                             {
                                 vertexPointer.Apply();
                             }
@@ -178,7 +178,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="VertexArrayObject"/>.
         /// </summary>
-        public void Bind()
+        public Binding Bind()
         {
             this.VerifyAccess();
             GL.BindVertexArray(this);
@@ -192,6 +192,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     pointers[j].Enable();
                 }
             }
+
+            return new Binding(this);
         }
 
         /// <summary>

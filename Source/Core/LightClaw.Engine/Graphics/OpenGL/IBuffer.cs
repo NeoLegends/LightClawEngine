@@ -181,7 +181,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
         }
 
-        void IBindable.Bind() { }
+        Binding IBindable.Bind() 
+        {
+            return default(Binding);
+        }
 
         void IBindable.Unbind() { }
 

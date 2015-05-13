@@ -242,7 +242,7 @@ namespace LightClaw.Engine.Threading
             Contract.Requires<ArgumentNullException>(func != null);
             this.CheckDisposed();
 
-            if (priority == DispatcherPriority.Immediate)
+            if (priority == DispatcherPriority.Immediate && ThreadF.IsCurrentThread(this.Thread))
             {
                 return func();
             }
@@ -400,7 +400,7 @@ namespace LightClaw.Engine.Threading
             Contract.Requires<ArgumentNullException>(action != null);
             this.CheckDisposed();
 
-            if (priority == DispatcherPriority.Immediate)
+            if (priority >= DispatcherPriority.Immediate && ThreadF.IsCurrentThread(this.Thread))
             {
                 action();
             }

@@ -16,6 +16,14 @@ namespace LightClaw.Engine.Graphics
     [DataContract]
     public class Camera : Component
     {
+        /// <summary>
+        /// Gets the <see cref="Camera"/> that will be used to render the current view.
+        /// </summary>
+        public static Camera Current { get; set; }
+
+        /// <summary>
+        /// Indicates whether the projection matrix needs to be recalculated.
+        /// </summary>
         private volatile bool isDirty = true;
 
         /// <summary>
@@ -94,6 +102,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Gets a <see cref="Matrix4"/> that represents the projection matrix of the <see cref="Camera"/>.
         /// </summary>
+        [IgnoreDataMember]
         public Matrix4 ProjectionMatrix
         {
             get
@@ -141,7 +150,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private float _Zoom;
+        private float _Zoom = 1.0f;
 
         /// <summary>
         /// Gets the <see cref="Camera"/>s zoom level.

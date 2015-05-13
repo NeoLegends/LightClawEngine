@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace LightClaw.Engine.Graphics
 {
-    [DataContract]
+    [ContentReader(typeof(EffectReader))]
     public class Effect : DisposableEntity, IReadOnlyList<EffectPass>
     {
         public int Count
@@ -40,7 +40,6 @@ namespace LightClaw.Engine.Graphics
 
         private ImmutableArray<EffectPass> _Passes = ImmutableArray<EffectPass>.Empty;
 
-        [DataMember]
         public ImmutableArray<EffectPass> Passes
         {
             get
@@ -67,22 +66,20 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected Effect() : this(false) { }
+        public Effect() : this(false) { }
 
-        protected Effect(bool ownsPasses)
+        public Effect(bool ownsPasses)
         {
             this.OwnsPasses = ownsPasses;
         }
 
-        protected Effect(IEnumerable<EffectPass> passes)
-            : this(passes, false)
+        public Effect(params EffectPass[] passes)
+            : this(passes, true)
         {
             Contract.Requires<ArgumentNullException>(passes != null);
-
-            this.Passes = passes.ToImmutableArray();
         }
 
-        protected Effect(IEnumerable<EffectPass> passes, bool ownsPasses)
+        public Effect(IEnumerable<EffectPass> passes, bool ownsPasses)
             : this(ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(passes != null);

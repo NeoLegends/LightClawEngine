@@ -201,11 +201,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="RangedBuffer"/> to its <see cref="RangeTarget"/>.
         /// </summary>
-        public void Bind()
+        public Binding Bind()
         {
             this.VerifyAccess();
 
             GL.BindBufferRange(this.RangeTarget, this.Index, this.BaseBuffer.Handle, (IntPtr)this.Range.Start, (IntPtr)this.Range.Length);
+            return new Binding(this);
         }
 
         /// <summary>

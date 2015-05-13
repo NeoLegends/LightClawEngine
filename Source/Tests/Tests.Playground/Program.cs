@@ -15,9 +15,7 @@ namespace Tests.Playground
     {
         static void Main(string[] args)
         {
-            throw new NotImplementedException();
-
-            using (FileStream fs = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "EffectData.json"), FileMode.Create, FileAccess.ReadWrite))
+            using (FileStream fs = new FileStream("Shaders/Basic.shr", FileMode.Create, FileAccess.ReadWrite))
             using (StreamWriter sw = new StreamWriter(fs))
             {
                 new JsonSerializer()
@@ -25,7 +23,7 @@ namespace Tests.Playground
                     DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.IgnoreAndPopulate,
                     Formatting = Newtonsoft.Json.Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
-                }.Serialize(sw, (string)null);
+                }.Serialize(sw, new EffectPassDescription("Shaders/Basic.vert", "Shaders/Basic.frag"));
             }
 
             Console.WriteLine("Finished");

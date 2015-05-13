@@ -10,7 +10,7 @@ using LightClaw.Engine.Threading;
 namespace LightClaw.Engine.Core
 {
     /// <summary>
-    /// Represents an asynchronous lock built around a <see cref="SemaphoreSlim"/> for use with the 'using'-dispose-pattern.
+    /// Represents an asynchronous lightweight lock built around a <see cref="SemaphoreSlim"/> for use with the 'using'-dispose-pattern.
     /// </summary>
     /// <remarks>
     /// Always make sure to release lock via <see cref="M:AsyncLockReleaser.Release"/> or
@@ -18,14 +18,14 @@ namespace LightClaw.Engine.Core
     /// </remarks>
     /// <example>
     /// <code>
-    /// using (AsyncLockReleaser releaser = await this.asyncLock.LockAsync())
+    /// using (await this.asyncLock.LockAsync())
     /// {
     ///     // do locked stuff here
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     /// <seealso cref="SemaphoreSlim"/>
-    [ThreadMode(true)]
-    public class AsyncLock
+    public class AsyncLock : IDisposable
     {
         /// <summary>
         /// The underlying <see cref="SemaphoreSlim"/> performing the locking.
@@ -33,12 +33,13 @@ namespace LightClaw.Engine.Core
         private readonly SemaphoreSlim semaphore;
 
         /// <summary>
-        /// Initializes a new <see cref="AsyncLock"/> with an initial count of 1 (= only one thread has access at a time).
+        /// Initializes a new <see cref="AsyncLock"/> with an initial count of 1. See remarks.
         /// </summary>
-        public AsyncLock()
-            : this(1)
-        {
-        }
+        /// <remarks>
+        /// If the initial count is set to one, the <see cref="AsyncLock"/> behaves just like a regular lock,
+        /// just that it allows using it together with async / await.
+        /// </remarks>
+        public AsyncLock() : this(1) { }
 
         /// <summary>
         /// Initializes a new <see cref="AsyncLock"/> setting the amount of threads that can acquire the lock.
@@ -52,44 +53,92 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Finalizes the <see cref="AsyncLock"/>.
+        /// </summary>
+        ~AsyncLock()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="AsyncLock"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        /// <summary>
         /// Synchronously takes the lock.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="Festify.AsyncLock.LockAsync()"/> if UI
         /// responsiveness is of the essence.
         /// </remarks>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
         public AsyncLockReleaser Lock()
         {
-            return this.Lock(Timeout.Infinite);
+            return this.Lock(Timeout.InfiniteTimeSpan);
         }
 
         /// <summary>
         /// Synchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// <p>
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="Festify.AsyncLock.LockAsync()"/> if UI
         /// responsiveness is of the essence.
+        /// </p>
+        /// <p>
+        /// A property on <see cref="AsyncLockReleaser"/> indicates whether the lock has been taken.
+        /// </p>
         /// </remarks>
         /// <param name="millisecondsTimeOut">The time which to wait until the lock is taken.</param>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
         public AsyncLockReleaser Lock(int millisecondsTimeOut)
         {
-            return new AsyncLockReleaser(this.semaphore, this.semaphore.Wait(millisecondsTimeOut));
+            return this.Lock(TimeSpan.FromMilliseconds(millisecondsTimeOut));
         }
 
         /// <summary>
         /// Synchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
         /// <remarks>
-        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="LockAsync"/> if UI
+        /// <p>
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="Festify.AsyncLock.LockAsync()"/> if UI
         /// responsiveness is of the essence.
+        /// </p>
+        /// <p>
+        /// A property on <see cref="AsyncLockReleaser"/> indicates whether the lock has been taken.
+        /// </p>
         /// </remarks>
         /// <param name="timeOut">The time which to wait until the lock is taken.</param>
         /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
         public AsyncLockReleaser Lock(TimeSpan timeOut)
         {
             return new AsyncLockReleaser(this.semaphore, this.semaphore.Wait(timeOut));
+        }
+
+        /// <summary>
+        /// Synchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
+        /// </summary>
+        /// <remarks>
+        /// <p>
+        /// This method <u>blocks</u> the calling thread until the lock can be taken. Use <see cref="Festify.AsyncLock.LockAsync()"/> if UI
+        /// responsiveness is of the essence.
+        /// </p>
+        /// <p>
+        /// A property on <see cref="AsyncLockReleaser"/> indicates whether the lock has been taken.
+        /// </p>
+        /// </remarks>
+        /// <param name="token">The <see cref="CancellationToken"/> to observe while waiting.</param>
+        /// <returns>A <see cref="AsyncLockReleaser"/> used to release the lock.</returns>
+        public AsyncLockReleaser Lock(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            this.semaphore.Wait(token);
+            return new AsyncLockReleaser(this.semaphore);
         }
 
         /// <summary>
@@ -101,12 +150,15 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public Task<AsyncLockReleaser> LockAsync()
         {
-            return this.LockAsync(Timeout.Infinite);
+            return this.LockAsync(Timeout.InfiniteTimeSpan);
         }
 
         /// <summary>
         /// Asynchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
+        /// <remarks>
+        /// A property on <see cref="AsyncLockReleaser"/> indicates whether the lock has been taken.
+        /// </remarks>
         /// <param name="millisecondsTimeOut">The time which to wait until the lock is taken.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
@@ -114,20 +166,59 @@ namespace LightClaw.Engine.Core
         /// </returns>
         public Task<AsyncLockReleaser> LockAsync(int millisecondsTimeOut)
         {
-            return this.semaphore.WaitAsync(millisecondsTimeOut).ContinueWith(t => new AsyncLockReleaser(this.semaphore, t.Result), TaskContinuationOptions.ExecuteSynchronously);
+            return this.LockAsync(TimeSpan.FromMilliseconds(millisecondsTimeOut));
         }
 
         /// <summary>
         /// Asynchronously tries to take the lock during the specified time and indicates whether the lock has been taken.
         /// </summary>
+        /// <remarks>
+        /// A property on <see cref="AsyncLockReleaser"/> indicates whether the lock has been taken.
+        /// </remarks>
         /// <param name="timeOut">The time which to wait until the lock is taken.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
         /// the lock.
         /// </returns>
-        public Task<AsyncLockReleaser> LockAsync(TimeSpan timeOut)
+        public async Task<AsyncLockReleaser> LockAsync(TimeSpan timeOut)
         {
-            return this.semaphore.WaitAsync(timeOut).ContinueWith(t => new AsyncLockReleaser(this.semaphore, t.Result), TaskContinuationOptions.ExecuteSynchronously);
+            return new AsyncLockReleaser(semaphore, await this.semaphore.WaitAsync(timeOut).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Asynchronously tries to take the lock.
+        /// </summary>
+        /// <remarks>
+        /// An Exception will be thrown if the lock could not be taken during the time the <paramref name="token"/> is valid.
+        /// </remarks>
+        /// <param name="token">A <see cref="CancellationToken"/> used to cancel the asynchronous waiting.</param>
+        /// <returns>
+        /// A <see cref="Task{T}"/> representing the asynchronous waiting operation. Its return value is used to free
+        /// the lock.
+        /// </returns>
+        /// <exception cref="OperationCanceledException">The <see cref="CancellationToken"/> was cancelled.</exception>
+        public async Task<AsyncLockReleaser> LockAsync(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            await this.semaphore.WaitAsync(token).ConfigureAwait(false);
+            return new AsyncLockReleaser(semaphore);
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="AsyncLock"/>.
+        /// </summary>
+        /// <param name="disposing">Indicates whether to dispose managed resources as well.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            try
+            {
+                this.semaphore.Dispose();
+            }
+            finally
+            {
+                GC.SuppressFinalize(this);
+            }
         }
 
         /// <summary>
@@ -187,7 +278,7 @@ namespace LightClaw.Engine.Core
             /// </summary>
             public void Release()
             {
-                if (this.LockTaken)
+                if (this.LockTaken && this.semaphore != null)
                 {
                     this.semaphore.Release();
                 }

@@ -21,6 +21,7 @@ namespace LightClaw.Engine.IO
         {
             get
             {
+                Contract.Assume(this.Data != null);
                 return (Type)this.Data["AssetType"];
             }
             private set
@@ -36,6 +37,7 @@ namespace LightClaw.Engine.IO
         {
             get
             {
+                Contract.Assume(this.Data != null);
                 return (ResourceString)this.Data["ResourceString"];
             }
             private set

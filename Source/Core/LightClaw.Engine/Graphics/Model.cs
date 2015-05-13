@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using OpenTK;
 
@@ -16,6 +17,7 @@ namespace LightClaw.Engine.Graphics
     /// <summary>
     /// Represents a three-dimensional polygon model.
     /// </summary>
+    [ContentReader(typeof(ModelReader))]
     public class Model : DisposableEntity, IReadOnlyList<ModelPart>
     {
         /// <summary>
@@ -88,7 +90,7 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
         /// </summary>
-        /// <param name="modelParts">The initial <see cref="ModelPart"/>s. Will be taken ownage of!</param>
+        /// <param name="modelParts">The initial <see cref="ModelPart"/>s. Will be taken ownage of.</param>
         public Model(params ModelPart[] modelParts)
             : this(modelParts, true)
         {
@@ -113,7 +115,8 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Draws the model to the screen.
         /// </summary>
-        public void Draw(ref Matrix4 transform)
+        /// <param name="mvp">The model view projection matrix used to draw the <see cref="Model"/>.</param>
+        public void Draw(ref Matrix4 mvp)
         {
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
@@ -122,7 +125,7 @@ namespace LightClaw.Engine.Graphics
                     ModelPart part = this[i];
                     if (part != null)
                     {
-                        part.Draw(ref transform);
+                        part.Draw(ref mvp);
                     }
                 }
             }

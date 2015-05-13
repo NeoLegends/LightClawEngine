@@ -25,7 +25,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
 
-            using (Binding textureBinding = new Binding(this))
+            using (Binding textureBinding = this.Bind())
             {
                 switch (this.Target)
                 {

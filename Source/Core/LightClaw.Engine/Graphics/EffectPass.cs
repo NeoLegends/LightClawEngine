@@ -17,6 +17,16 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly bool ownsProgram;
 
+        public ImmutableDictionary<string, int> Attributes
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, int>>() != null);
+
+                return this.ShaderProgram.Attributes;
+            }
+        }
+
         private ImmutableDictionary<string, DataEffectUniform> _DataUniforms;
 
         public ImmutableDictionary<string, DataEffectUniform> DataUniforms
@@ -122,13 +132,14 @@ namespace LightClaw.Engine.Graphics
             })).ToImmutableDictionary(eu => eu.Name);
         }
 
-        public void Bind()
+        public Binding Bind()
         {
             this.ShaderProgram.Bind();
             foreach (EffectUniform uniform in this.Uniforms.Values)
             {
                 uniform.Bind();
             }
+            return new Binding(this);
         }
 
         public void Unbind()

@@ -94,10 +94,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the buffer to the specified <see cref="BufferTarget"/>.
         /// </summary>
-        public void Bind()
+        public Binding Bind()
         {
             this.VerifyAccess();
             GL.BindBuffer(this.Target, this);
+            return new Binding(this);
         }
 
         /// <summary>
@@ -124,7 +125,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.VerifyAccess();
 
             T[] results = new T[count];
-            using (Binding bufferBinding = new Binding(this))
+            using (Binding bufferBinding = this.Bind())
             {
                 GL.GetBufferSubData(this.Target, (IntPtr)offset, (IntPtr)count, results);
             }
@@ -260,7 +261,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
 
-            using (Binding bufferBinding = new Binding(this))
+            using (Binding bufferBinding = this.Bind())
             {
                 GL.BufferData(this.Target, (IntPtr)sizeInBytes, data, this.Hint);
             }
@@ -277,7 +278,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
 
-            using (Binding bufferBinding = new Binding(this))
+            using (Binding bufferBinding = this.Bind())
             {
                 GL.BufferSubData(this.Target, (IntPtr)offset, (IntPtr)sizeInBytes, data);
             }

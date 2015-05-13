@@ -124,97 +124,100 @@ namespace LightClaw.Engine.Graphics
             this.Uniform.Set(value);
         }
 
-        public void Set(Matrix2 value)
+        public void Set(ref Matrix2 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix2 value, bool transpose)
+        public void Set(ref Matrix2 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix2x3 value)
+        public void Set(ref Matrix2x3 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix2x3 value, bool transpose)
+        public void Set(ref Matrix2x3 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix2x4 value)
+        public void Set(ref Matrix2x4 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix2x4 value, bool transpose)
+        public void Set(ref Matrix2x4 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix3x2 value)
+        public void Set(ref Matrix3x2 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix3x2 value, bool transpose)
+        public void Set(ref Matrix3x2 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix3 value)
+        public void Set(ref Matrix3 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix3 value, bool transpose)
+        public void Set(ref Matrix3 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix3x4 value)
+        public void Set(ref Matrix3x4 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix3x4 value, bool transpose)
+        public void Set(ref Matrix3x4 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix4x2 value)
+        public void Set(ref Matrix4x2 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix4x2 value, bool transpose)
+        public void Set(ref Matrix4x2 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix4x3 value)
+        public void Set(ref Matrix4x3 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix4x3 value, bool transpose)
+        public void Set(ref Matrix4x3 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public void Set(Matrix4 value)
+        public void Set(ref Matrix4 value)
         {
-            this.Uniform.Set(value);
+            this.Uniform.Set(ref value);
         }
 
-        public void Set(Matrix4 value, bool transpose)
+        public void Set(ref Matrix4 value, bool transpose)
         {
-            this.Uniform.Set(value, transpose);
+            this.Uniform.Set(ref value, transpose);
         }
 
-        public override void Bind() { }
+        public override Binding Bind() 
+        {
+            return default(Binding);
+        }
 
         public override void Unbind() { }
     }

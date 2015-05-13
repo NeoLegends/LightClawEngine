@@ -80,109 +80,53 @@ namespace LightClaw.GameCode
 
         private int getErrorCount = 0;
 
-        private IBuffer colorBuffer;
-
-        private IBuffer indexBuffer;
+        private Model model;
 
         private Matrix4 modelMatrix;
-
-        private VertexArrayObject vao;
-
-        private ShaderProgram program;
-
-        private IBuffer vertexBuffer;
 
         public BasicMesh() { }
 
         protected override void Dispose(bool disposing)
         {
-            VertexArrayObject vao = this.vao;
-            if (vao != null)
-            {
-                vao.Dispose();
-            }
-            IBuffer cBuffer = this.colorBuffer;
-            if (cBuffer != null)
-            {
-                cBuffer.Dispose();
-            }
-            IBuffer iBuffer = this.indexBuffer;
-            if (iBuffer != null)
-            {
-                iBuffer.Dispose();
-            }
-            IBuffer vBuffer = this.vertexBuffer;
-            if (vBuffer != null)
-            {
-                vBuffer.Dispose();
-            }
-            ShaderProgram program = this.program;
-            if (program != null)
-            {
-                program.Dispose();
-            }
-
             base.Dispose(disposing);
         }
 
         protected override async void OnLoad()
         {
             IContentManager mgr = this.IocC.Resolve<IContentManager>();
-            Task<string> fragmentShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.frag");
-            Task<string> vertexShaderSourceTask = mgr.LoadAsync<string>("Shaders/Basic.vert");
-
-            this.indexBuffer = BufferObject.Create(indices, BufferTarget.ElementArrayBuffer);
-            this.colorBuffer = BufferObject.Create(colorData, BufferTarget.ArrayBuffer);
-            this.vertexBuffer = BufferObject.Create(cubeData, BufferTarget.ArrayBuffer);
-
-            await Task.WhenAll(fragmentShaderSourceTask, vertexShaderSourceTask);
-
-            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
-
-            Shader[] shaders = new Shader[] 
-            { 
-                new Shader(vertexShaderSourceTask.Result, ShaderType.VertexShader),
-                new Shader(fragmentShaderSourceTask.Result, ShaderType.FragmentShader)
-            };
-            this.program = new ShaderProgram(shaders);
-
-            ThreadF.ThrowIfNotCurrentThread(this.IocC.Resolve<Dispatcher>().Thread);
-
-            BufferDescription vDesc = new BufferDescription(
-                this.vertexBuffer,
-                new VertexAttributePointer(this.program.Attributes["inVertexPosition"], 3, VertexAttribPointerType.Float, false, 0, 0)
-            );
-            BufferDescription cDesc = new BufferDescription(
-                this.colorBuffer,
-                new VertexAttributePointer(this.program.Attributes["inVertexColor"], 3, VertexAttribPointerType.Float, false, 0, 0)
-            );
-            this.vao = new VertexArrayObject(this.indexBuffer, vDesc, cDesc);
+            this.model = await mgr.LoadAsync<Model>("Game/teapot.obj");
         }
 
         protected override void OnDraw()
         {
-            VertexArrayObject vao = this.vao;
-            ShaderProgram program = this.program;
-            if (vao != null && program != null)
+            Model m = this.model;
+            if (m != null)
             {
-                using (Binding programBinding = new Binding(program))
-                using (Binding vaoBinding = new Binding(vao))
-                {
-                    Matrix4 mvp = this.modelMatrix; // viewProjectionMatrix * this.modelMatrix;
-
-                    program.Uniforms["MVP"].Set(mvp);
-                    if (getErrorCount < 3)
-                    {
-                        Log.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
-                    }
-                    vao.DrawIndexed();
-                    if (getErrorCount < 3)
-                    {
-                        Log.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
-                        getErrorCount++;
-                    }
-                }
+                Matrix4 identiy;
+                m.Draw(ref identiy);
             }
+            //VertexArrayObject vao = this.vao;
+            //ShaderProgram program = this.program;
+            //if (vao != null && program != null)
+            //{
+            //    using (Binding programBinding = program.Bind())
+            //    using (Binding vaoBinding = vao.Bind())
+            //    {
+            //        Matrix4 mvp = this.modelMatrix; // viewProjectionMatrix * this.modelMatrix;
+
+            //        program.Uniforms["MVP"].Set(ref mvp);
+            //        if (getErrorCount < 3)
+            //        {
+            //            Log.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
+            //        }
+            //        vao.DrawIndexed();
+            //        if (getErrorCount < 3)
+            //        {
+            //            Log.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
+            //            getErrorCount++;
+            //        }
+            //    }
+            //}
         }
 
         protected override bool OnUpdate(GameTime gameTime, int pass)

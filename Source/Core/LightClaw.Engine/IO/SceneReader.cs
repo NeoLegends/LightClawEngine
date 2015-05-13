@@ -35,28 +35,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The deserialized <see cref="Scene"/>.</returns>
         public async Task<object> ReadAsync(ContentReadParameters parameters)
         {
-            try
-            {
-                return await Scene.Load(parameters.AssetStream);
-            }
-            catch (Exception ex)
-            {
-                Log.Info("Loading scene '{0}' from the compressed format failed (exception of type '{1}' was thrown), trying to load uncompressed...".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
-            }
-
-            try
-            {
-                if (parameters.AssetStream.CanSeek)
-                {
-                    parameters.AssetStream.Position = 0;
-                }
-                return await Scene.LoadRaw(parameters.AssetStream);
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("Loading the scene '{0}' uncompressed failed as well. An exception of type '{1}' occured.".FormatWith(parameters.ResourceString, ex.GetType().FullName), ex);
-                return null;
-            }
+            return await Scene.Load(parameters.AssetStream); // await for covariance
         }
     }
 }

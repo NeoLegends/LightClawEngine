@@ -43,7 +43,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             this.VerifyAccess();
 
-            using (Binding texture2dBinding = new Binding(this))
+            using (Binding texture2dBinding = this.Bind())
             {
                 GL.TexSubImage3D(this.Target, level, xOffset, yOffset, zOffset, width, height, depth, pixelFormat, pixelType, data);
             }

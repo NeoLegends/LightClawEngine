@@ -26,7 +26,7 @@ namespace LightClaw.Engine.Core
             {
                 return _Dispatcher;
             }
-            private set
+            protected set
             {
                 _Dispatcher = value;
             }

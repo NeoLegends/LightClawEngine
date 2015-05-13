@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>
         /// Binding shall not fail in case of something already bound, instead the previous binding shall be overwritten.
         /// </remarks>
-        void Bind();
+        Binding Bind();
 
         /// <summary>
         /// Unbinds the element from the graphics pipeline.

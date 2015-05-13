@@ -133,10 +133,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="ShaderProgram"/> to the graphics context.
         /// </summary>
-        public void Bind()
+        public Binding Bind()
         {
             this.VerifyAccess();
             GL.UseProgram(this);
+            return new Binding(this);
         }
 
         /// <summary>

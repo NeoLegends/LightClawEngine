@@ -75,7 +75,7 @@ namespace LightClaw.Engine.Graphics
             this.Uniform = uniform;
         }
 
-        public abstract void Bind();
+        public abstract Binding Bind();
 
         public abstract void Unbind();
 

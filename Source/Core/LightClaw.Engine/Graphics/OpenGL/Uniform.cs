@@ -342,9 +342,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <remarks>The value will not be transposed.</remarks>
         /// <param name="value">The value.</param>
-        public void Set(Matrix2 value)
+        public void Set(ref Matrix2 value)
         {
-            this.Set(value, false);
+            this.Set(ref value, false);
         }
 
         /// <summary>
@@ -352,12 +352,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix2 value, bool transpose)
+        public unsafe void Set(ref Matrix2 value, bool transpose)
         {
             this.VerifyAccess();
 
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
+            fixed (Matrix2* pValue = &value)
+            {
+                GL.ProgramUniformMatrix2(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
         }
 
         /// <summary>
@@ -365,9 +367,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <remarks>The value will not be transposed.</remarks>
         /// <param name="value">The value.</param>
-        public void Set(Matrix2x3 value)
+        public void Set(ref Matrix2x3 value)
         {
-            this.Set(value, false);
+            this.Set(ref value, false);
         }
 
         /// <summary>
@@ -375,12 +377,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix2x3 value, bool transpose)
+        public unsafe void Set(ref Matrix2x3 value, bool transpose)
         {
             this.VerifyAccess();
 
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix2x3(this.Program, this.Location, 1, transpose, pValue);
+            fixed (Matrix2x3* pValue = &value)
+            {
+                GL.ProgramUniformMatrix2x3(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
         }
 
         /// <summary>
@@ -388,9 +392,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <remarks>The value will not be transposed.</remarks>
         /// <param name="value">The value.</param>
-        public void Set(Matrix2x4 value)
+        public void Set(ref Matrix2x4 value)
         {
-            this.Set(value, false);
+            this.Set(ref value, false);
         }
 
         /// <summary>
@@ -398,12 +402,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix2x4 value, bool transpose)
+        public unsafe void Set(ref Matrix2x4 value, bool transpose)
         {
             this.VerifyAccess();
 
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix2x4(this.Program, this.Location, 1, transpose, pValue);
+            fixed (Matrix2x4* pValue = &value)
+            {
+                GL.ProgramUniformMatrix2x4(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
         }
 
         /// <summary>
@@ -411,9 +417,9 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <remarks>The value will not be transposed.</remarks>
         /// <param name="value">The value.</param>
-        public void Set(Matrix3x2 value)
+        public void Set(ref Matrix3x2 value)
         {
-            this.Set(value, false);
+            this.Set(ref value, false);
         }
 
         /// <summary>
@@ -421,127 +427,139 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix3x2 value, bool transpose)
-        {
-            this.VerifyAccess();
-
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, pValue);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <remarks>The value will not be transposed.</remarks>
-        /// <param name="value">The value.</param>
-        public void Set(Matrix3 value)
-        {
-            this.Set(value, false);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix3 value, bool transpose)
-        {
-            this.VerifyAccess();
-
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, pValue);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <remarks>The value will not be transposed.</remarks>
-        /// <param name="value">The value.</param>
-        public void Set(Matrix3x4 value)
-        {
-            this.Set(value, false);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix3x4 value, bool transpose)
-        {
-            this.VerifyAccess();
-
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix3x4(this.Program, this.Location, 1, transpose, pValue);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <remarks>The value will not be transposed.</remarks>
-        /// <param name="value">The value.</param>
-        public void Set(Matrix4x2 value)
-        {
-            this.Set(value, false);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix4x2 value, bool transpose)
-        {
-            this.VerifyAccess();
-
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix4x2(this.Program, this.Location, 1, transpose, pValue);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <remarks>The value will not be transposed.</remarks>
-        /// <param name="value">The value.</param>
-        public void Set(Matrix4x3 value)
-        {
-            this.Set(value, false);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix4x3 value, bool transpose)
-        {
-            this.VerifyAccess();
-
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix4x3(this.Program, this.Location, 1, transpose, pValue);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <remarks>The value will not be transposed.</remarks>
-        /// <param name="value">The value.</param>
-        public void Set(Matrix4 value)
-        {
-            this.Set(value, false);
-        }
-
-        /// <summary>
-        /// Sets the value of the uniform.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
-        public unsafe void Set(Matrix4 value, bool transpose)
+        public unsafe void Set(ref Matrix3x2 value, bool transpose)
         {
             this.VerifyAccess();
             
-            float* pValue = (float*)&value;
-            GL.ProgramUniformMatrix4(this.Program, this.Location, 1, transpose, pValue);
+            fixed (Matrix3x2* pValue = &value)
+            {
+                GL.ProgramUniformMatrix3x2(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
+        public void Set(ref Matrix3 value)
+        {
+            this.Set(ref value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
+        public unsafe void Set(ref Matrix3 value, bool transpose)
+        {
+            this.VerifyAccess();
+            
+            fixed (Matrix3* pValue = &value)
+            {
+                GL.ProgramUniformMatrix3(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
+        public void Set(ref Matrix3x4 value)
+        {
+            this.Set(ref value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
+        public unsafe void Set(ref Matrix3x4 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            fixed (Matrix3x4* pValue = &value)
+            {
+                GL.ProgramUniformMatrix3x4(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
+        public void Set(ref Matrix4x2 value)
+        {
+            this.Set(ref value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
+        public unsafe void Set(ref Matrix4x2 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            fixed (Matrix4x2* pValue = &value)
+            {
+                GL.ProgramUniformMatrix4x2(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
+        public void Set(ref Matrix4x3 value)
+        {
+            this.Set(ref value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
+        public unsafe void Set(ref Matrix4x3 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            fixed (Matrix4x3* pValue = &value)
+            {
+                GL.ProgramUniformMatrix4x3(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <remarks>The value will not be transposed.</remarks>
+        /// <param name="value">The value.</param>
+        public void Set(ref Matrix4 value)
+        {
+            this.Set(ref value, false);
+        }
+
+        /// <summary>
+        /// Sets the value of the uniform.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="transpose">Indicates whether to transpose the matrix value before transmitting it to the shader.</param>
+        public unsafe void Set(ref Matrix4 value, bool transpose)
+        {
+            this.VerifyAccess();
+
+            fixed (Matrix4* pValue = &value)
+            {
+                GL.ProgramUniformMatrix4(this.Program, this.Location, 1, transpose, (float*)pValue);
+            }
         }
 
         [ContractInvariantMethod]

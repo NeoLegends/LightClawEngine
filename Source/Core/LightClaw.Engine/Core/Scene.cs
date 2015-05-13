@@ -35,6 +35,7 @@ namespace LightClaw.Engine.Core
         private static readonly JsonSerializer serializer = JsonSerializer.Create(
             new JsonSerializerSettings()
             {
+                ContractResolver = new LightClawContractResolver(),
                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                 NullValueHandling = NullValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto

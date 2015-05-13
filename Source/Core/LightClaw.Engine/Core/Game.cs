@@ -335,12 +335,16 @@ namespace LightClaw.Engine.Core
                 this.OnRender();
             }
 
-            TimeSpan timeSinceUpdate = TimeSpan.FromTicks(Stopwatch.GetTimestamp() - this.preUpdateTime);
-            TimeSpan timeToSleep = frameDuration - timeSinceUpdate;
-            if (timeToSleep > TimeSpan.Zero)
-            {
-                Thread.Sleep(timeToSleep);
-            }
+            // Always sleep two milliseconds for now
+            Thread.Sleep(2);
+
+            // TODO: Switch to more advanced sleeping algorithm
+            //TimeSpan timeSinceUpdate = TimeSpan.FromTicks(Stopwatch.GetTimestamp() - this.preUpdateTime);
+            //TimeSpan timeToSleep = frameDuration - timeSinceUpdate;
+            //if (timeToSleep > TimeSpan.Zero)
+            //{
+            //    Thread.Sleep(timeToSleep);
+            //}
 
             this.Dispatcher.InvokeSlim(this.cachedOnTickAction); // Small perf hack
         }
