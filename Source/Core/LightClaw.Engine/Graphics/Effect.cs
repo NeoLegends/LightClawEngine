@@ -16,6 +16,14 @@ namespace LightClaw.Engine.Graphics
     [ContentReader(typeof(EffectReader))]
     public class Effect : DisposableEntity, IReadOnlyList<EffectPass>
     {
+        public ImmutableDictionary<string, int> Attributes
+        {
+            get
+            {
+                return this.Passes.First().Attributes;
+            }
+        }
+
         public int Count
         {
             get 
@@ -77,12 +85,16 @@ namespace LightClaw.Engine.Graphics
             : this(passes, true)
         {
             Contract.Requires<ArgumentNullException>(passes != null);
+            Contract.Requires<ArgumentException>(passes.Any());
+            Contract.Requires<ArgumentException>(AttributeSignatureMatches(passes));
         }
 
         public Effect(IEnumerable<EffectPass> passes, bool ownsPasses)
             : this(ownsPasses)
         {
             Contract.Requires<ArgumentNullException>(passes != null);
+            Contract.Requires<ArgumentException>(passes.Any());
+            Contract.Requires<ArgumentException>(AttributeSignatureMatches(passes));
 
             this.Passes = passes.ToImmutableArray();
         }
@@ -91,7 +103,7 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Requires<ArgumentOutOfRangeException>(index >= 0 && index < this.Passes.Length);
 
-            return new Binding(this.Passes[index]);
+            return this.Passes[index].Bind();
         }
 
         public IEnumerator<EffectPass> GetEnumerator()
@@ -127,6 +139,34 @@ namespace LightClaw.Engine.Graphics
         {
             Contract.Invariant(this._Passes != null);
             Contract.Invariant(Enumerable.All(this._Passes, ep => ep != null)); // Code Contracts complains about ImmutableArrayExtensions.All
+        }
+
+        [Pure]
+        public static bool AttributeSignatureMatches(params EffectPass[] passes)
+        {
+            Contract.Requires<ArgumentNullException>(passes != null);
+
+            return AttributeSignatureMatches((IEnumerable<EffectPass>)passes);
+        }
+
+        [Pure]
+        public static bool AttributeSignatureMatches(IEnumerable<EffectPass> passes)
+        {
+            Contract.Requires<ArgumentNullException>(passes != null);
+
+            if (!passes.Any())
+            {
+                return true;
+            }
+            
+            bool result = true;
+            ImmutableDictionary<string, int> current = passes.First().Attributes;
+            foreach (EffectPass p in passes)
+            {
+                ImmutableDictionary<string, int> prev = current;
+                result &= prev.SequenceEqual(current = p.Attributes);
+            }
+            return result;
         }
     }
 }

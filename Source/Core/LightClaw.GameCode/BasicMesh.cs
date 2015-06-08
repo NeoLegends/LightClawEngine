@@ -46,7 +46,27 @@ namespace LightClaw.GameCode
             new Vector3(0.5f, 0.0f, 0.5f),
             new Vector3(0.0f, 0.0f, 1.0f),
             new Vector3(0.0f, 1.0f, 0.0f),
+            new Vector3(1.0f, 0.0f, 0.0f)
+        };
+
+        public static readonly Vector3[] vertexData = new[] 
+        {
+            new Vector3(-0.25f,  0.25f,  0.25f),
             new Vector3(1.0f, 0.0f, 0.0f),
+            new Vector3( 0.25f,  0.25f,  0.25f),
+            new Vector3(0.0f, 1.0f, 0.0f),
+            new Vector3( 0.25f,  0.25f, -0.25f),
+            new Vector3(0.0f, 0.0f, 1.0f),
+            new Vector3(-0.25f,  0.25f, -0.25f),
+            new Vector3(0.5f, 0.0f, 0.5f),
+            new Vector3(-0.25f, -0.25f,  0.25f),
+            new Vector3(0.5f, 0.0f, 0.5f),
+            new Vector3( 0.25f, -0.25f,  0.25f),
+            new Vector3(0.0f, 0.0f, 1.0f),
+            new Vector3( 0.25f, -0.25f, -0.25f),
+            new Vector3(0.0f, 1.0f, 0.0f),
+            new Vector3(-0.25f, -0.25f, -0.25f),
+            new Vector3(1.0f, 0.0f, 0.0f)
         };
 
         private static readonly ushort[] indices = new ushort[]
@@ -88,13 +108,45 @@ namespace LightClaw.GameCode
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
+            try
+            {
+                Model m = this.model;
+                if (m != null)
+                {
+                    m.Dispose();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         protected override async void OnLoad()
         {
             IContentManager mgr = this.IocC.Resolve<IContentManager>();
-            this.model = await mgr.LoadAsync<Model>("Game/teapot.obj");
+            this.model = await mgr.LoadAsync<Model>("Game/Dragonborn.FBX");
+
+            //Effect e = await this.IocC.Resolve<IContentManager>().LoadAsync<Effect>("Shaders/Basic.shr");
+            //EffectPass pass = e.First();
+
+            //ModelPart mp = new LightClawModelPart(
+            //    e,
+            //    new VertexArrayObject(
+            //        BufferObject.Create(indices, BufferTarget.ElementArrayBuffer),
+            //        new BufferDescription(
+            //            BufferObject.Create(cubeData, BufferTarget.ArrayBuffer),
+            //            new VertexAttributePointer(pass.Attributes["inVertexPosition"], 3, VertexAttribPointerType.Float, false, 0, 0)
+            //        ),
+            //        new BufferDescription(
+            //            BufferObject.Create(colorData, BufferTarget.ArrayBuffer),
+            //            new VertexAttributePointer(pass.Attributes["inVertexColor"], 3, VertexAttribPointerType.Float, false, 0, 0)
+            //        )
+            //    ),
+            //    null
+            //);
+
+            //this.model = new Model(mp);
         }
 
         protected override void OnDraw()
@@ -102,8 +154,7 @@ namespace LightClaw.GameCode
             Model m = this.model;
             if (m != null)
             {
-                Matrix4 identiy;
-                m.Draw(ref identiy);
+                m.Draw(ref this.modelMatrix);
             }
             //VertexArrayObject vao = this.vao;
             //ShaderProgram program = this.program;

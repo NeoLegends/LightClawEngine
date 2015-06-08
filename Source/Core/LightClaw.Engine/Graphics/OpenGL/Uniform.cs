@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents a shader uniform.
     /// </summary>
-    [DebuggerDisplay("Name = {Name}, Location = {Location}")]
+    [DebuggerDisplay("Name: {Name}, Location: {Location}, Type: {Type}")]
     public class Uniform : DispatcherEntity
     {
         private int _Location;

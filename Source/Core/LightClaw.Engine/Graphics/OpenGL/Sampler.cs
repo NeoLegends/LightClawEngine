@@ -16,7 +16,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL sampler, an object that stores texture sampling parameters.
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Sampler_Object"/>
-    [DebuggerDisplay("Handle = {Handle}, Texture Unit = {TextureUnit}, Parameter Count = {Parameters.Length}")]
+    [DebuggerDisplay("Texture Unit: {TextureUnit}, Parameter Count: {Parameters.Length}")]
     public class Sampler : GLObject, IBindable
     {
         /// <summary>
@@ -110,14 +110,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to release managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteSampler(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteSampler, disposing, DispatcherPriority.Background);
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteSampler, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]

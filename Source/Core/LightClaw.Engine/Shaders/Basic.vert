@@ -2,15 +2,14 @@
 
 uniform mat4 MVP;
 
-in vec3 inVertexPosition;
-in vec3 inVertexNormal;
-in vec2 inVertexTexCoords;
-in vec4 inVertexColor;
+layout(location = 0) in vec3 inVertexPosition;
+layout(location = 1) in vec3 inVertexNormal;
+layout(location = 4) in vec2 inVertexTexCoords;
 
-out vec4 vertexColor;
+out vec3 vertexColor;
 
 void main(void)
 {
-	gl_Position = vec4(inVertexPosition, 1.0f);
-	vertexColor = inVertexColor;
+	gl_Position = MVP * vec4(inVertexPosition, 1.0f);
+	vertexColor = vec3(1.0f, 0.0, 0.0);
 }

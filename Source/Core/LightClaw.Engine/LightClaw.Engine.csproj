@@ -30,7 +30,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>18a80fc3</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>0bc05597</NuGetPackageImportStamp>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup>
@@ -195,6 +195,7 @@
     <Compile Include="Graphics\OpenGL\ValidationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\IReadOnlyBuffer.cs" />
     <Compile Include="IO\EffectReader.cs" />
+    <Compile Include="IO\LightClawIOSystem.cs" />
     <Compile Include="IO\ShaderReader.cs" />
     <Compile Include="IO\TextureReader.cs" />
     <Compile Include="Threading\DispatcherObjectExtensions.cs" />
@@ -309,9 +310,8 @@
     <Compile Include="UI\DefaultCommands.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CjClutter.ObjLoader.Loader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\CjClutter.ObjLoader.Loader.dll</HintPath>
+    <Reference Include="AssimpNet">
+      <HintPath>..\..\packages\AssimpNet.3.3.1\lib\net45\AssimpNet.dll</HintPath>
     </Reference>
     <Reference Include="DryIoc, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -396,10 +396,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CjClutter.ObjLoader.Loader.dll" />
     <None Include="Shaders\Basic.pass">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assimp32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assimp64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Internals\Default.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -407,5 +417,7 @@
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\..\packages\AssimpNet.3.3.1\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\AssimpNet.3.3.1\build\AssimpNet.targets'))" />
   </Target>
+  <Import Project="..\..\packages\AssimpNet.3.3.1\build\AssimpNet.targets" Condition="Exists('..\..\packages\AssimpNet.3.3.1\build\AssimpNet.targets')" />
 </Project>

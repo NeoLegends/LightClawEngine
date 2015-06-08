@@ -17,7 +17,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// <summary>
     /// Represents a vertex array object.
     /// </summary>
-    [DebuggerDisplay("Handle = {Handle}, Index Count = {IndexCount}, Draw Mode = {DrawMode}, Index Type = {IndexType}")]
+    [DebuggerDisplay("Index Count: {IndexCount}, Draw Mode: {DrawMode}, Index Type: {IndexType}")]
     public class VertexArrayObject : GLObject, IBindable, IDrawable
     {
         /// <summary>
@@ -45,23 +45,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             private set
             {
                 this.SetProperty(ref _DrawMode, value);
-            }
-        }
-
-        private DrawElementsType _IndexType;
-
-        /// <summary>
-        /// The type of the index values.
-        /// </summary>
-        public DrawElementsType IndexType
-        {
-            get
-            {
-                return _IndexType;
-            }
-            private set
-            {
-                this.SetProperty(ref _IndexType, value);
             }
         }
 
@@ -94,6 +77,23 @@ namespace LightClaw.Engine.Graphics.OpenGL
             get
             {
                 return this.IndexBuffer.Length / this.IndexType.GetElementSize();
+            }
+        }
+
+        private DrawElementsType _IndexType;
+
+        /// <summary>
+        /// The type of the index values.
+        /// </summary>
+        public DrawElementsType IndexType
+        {
+            get
+            {
+                return _IndexType;
+            }
+            private set
+            {
+                this.SetProperty(ref _IndexType, value);
             }
         }
 
@@ -155,12 +155,13 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 GL.BindVertexArray(this);
                 foreach (BufferDescription desc in this.VertexBuffers)
                 {
-                    using (Binding vboBinding = desc.Buffer.Bind())
+                    if (desc.Buffer != null)
                     {
-                        foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers)
+                        using (Binding vboBinding = desc.Buffer.Bind())
                         {
-                            using (Binding pointerBinding = vertexPointer.Enable())
+                            foreach (VertexAttributePointer vertexPointer in desc.VertexAttributePointers.OrderBy(vap => vap.Index))
                             {
+                                vertexPointer.Enable();
                                 vertexPointer.Apply();
                             }
                         }
@@ -274,14 +275,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteVertexArrayObject(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteVertexArrayObject, disposing, DispatcherPriority.Background).Wait();
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteVertexArrayObject, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]
@@ -291,6 +285,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             try
             {
                 GL.DeleteVertexArray(this);
+                this.IndexBuffer.Dispose();
+                foreach (IReadOnlyBuffer buf in this.VertexBuffers.Select(vbo => vbo.Buffer))
+                {
+                    buf.Dispose();
+                }
             }
             catch (Exception ex)
             {

@@ -14,7 +14,8 @@ using LightClaw.Extensions;
 namespace LightClaw.Engine.IO
 {
     /// <summary>
-    /// Represents a caching <see cref="IContentManager"/>.
+    /// The default implementation of <see cref="IContentManager"/>. Automatically caches all assets using
+    /// a weak reference to the loaded item.
     /// </summary>
     /// <seealso cref="IContentManager"/>
     public class ContentManager : DisposableEntity, IContentManager
@@ -160,13 +161,14 @@ namespace LightClaw.Engine.IO
             Log.Debug(() => "Loading an asset of type '{0}' from resource '{1}'.".FormatWith(assetType.AssemblyQualifiedName, resourceString));
 
             using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync(token).ConfigureAwait(false))
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
+            using (new ParameterEventArgsRaiser(this, this.AssetLoading, this.AssetLoaded, resourceString, resourceString))
             {
-                WeakReference<object> cachedAsset = null;
                 object asset = null;
+                WeakReference<object> cachedAsset = null;
+                ResourceKey key = new ResourceKey(resourceString, assetType);
 
                 if (forceReload || // Load if reload forced,
-                    !this.cachedAssets.TryGetValue(new ResourceKey(resourceString, assetType), out cachedAsset) || // no cache available or
+                    !this.cachedAssets.TryGetValue(key, out cachedAsset) || // no cache available or
                     !cachedAsset.TryGetTarget(out asset)) // weak reference to cached asset collected.
                 {
                     Log.Debug(
@@ -213,14 +215,14 @@ namespace LightClaw.Engine.IO
                         // If no content reader was able to deserialize the asset, forget it and throw exception
                         if (asset == null)
                         {
-                            string message = "Asset '{0}' could not be deserialized.".FormatWith(resourceString);
+                            string message = "Asset '{0}' could not be deserialized. It was null.".FormatWith(resourceString);
                             Log.Warn(message);
                             throw new InvalidOperationException(message);
                         }
                     }
 
                     cachedAsset = new WeakReference<object>(asset);
-                    this.cachedAssets.TryAdd(new ResourceKey(resourceString, assetType), cachedAsset);
+                    this.cachedAssets[key] = cachedAsset;
                 }
                 else
                 {

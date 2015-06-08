@@ -283,14 +283,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">Indicates whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteTexture(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteTexture, disposing, DispatcherPriority.Background).Wait();
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteTexture, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]

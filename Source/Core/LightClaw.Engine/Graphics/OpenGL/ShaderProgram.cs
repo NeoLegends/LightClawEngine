@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents an OpenGL shader program.
     /// </summary>
     /// <seealso href="http://www.opengl.org/wiki/Program_Object"/>
-    [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Uniform Count = {Uniforms.Count}")]
+    [DebuggerDisplay("Attribute Count: {Attributes.Count}, Uniform Count: {Uniforms.Count}")]
     public class ShaderProgram : GLObject, IBindable
     {
         private ImmutableDictionary<string, int> _Attributes;
@@ -211,14 +211,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteShaderProgram(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteShaderProgram, disposing, DispatcherPriority.Background).Wait();
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteShaderProgram, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,11 @@ namespace LightClaw.Engine.IO
             using (JsonTextReader jtr = new JsonTextReader(sr))
             {
                 effects = serializer.Deserialize<List<string>>(jtr);
+            }
+
+            if (!effects.Any())
+            {
+                throw new InvalidOperationException("The given effect file did not contain any passes.");
             }
 
             return new Effect(

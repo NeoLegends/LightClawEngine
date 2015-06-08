@@ -34,7 +34,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public BufferDescription(IReadOnlyBuffer vertexBuffer, params VertexAttributePointer[] vertexAttributePointers)
             : this()
         {
-            Contract.Requires<ArgumentNullException>(vertexBuffer != null);
             Contract.Requires<ArgumentNullException>(vertexAttributePointers != null);
 
             this.Buffer = vertexBuffer;

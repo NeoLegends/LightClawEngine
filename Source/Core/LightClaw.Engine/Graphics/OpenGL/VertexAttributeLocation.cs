@@ -13,17 +13,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
 {
     [Serializable, DataContract]
     [JsonConverter(typeof(VertexAttributeLocationConverter))]
-    public struct VertexAttributeLocation : ICloneable, IEquatable<int>, IEquatable<VertexAttributeLocation>
+    public struct VertexAttributeLocation : ICloneable, IComparable<VertexAttributeLocation>, IEquatable<int>, IEquatable<VertexAttributeLocation>
     {
         public static readonly VertexAttributeLocation Position = new VertexAttributeLocation(0);
 
-        public static readonly VertexAttributeLocation TexCoords = new VertexAttributeLocation(1);
+        public static readonly VertexAttributeLocation Normals = new VertexAttributeLocation(1);
 
-        public static readonly VertexAttributeLocation Normals = new VertexAttributeLocation(2);
+        public static readonly VertexAttributeLocation Binormals = new VertexAttributeLocation(2);
 
-        public static readonly VertexAttributeLocation Binormals = new VertexAttributeLocation(3);
+        public static readonly VertexAttributeLocation Tangent = new VertexAttributeLocation(3);
 
-        public static readonly VertexAttributeLocation Tangent = new VertexAttributeLocation(4);
+        public static readonly VertexAttributeLocation TexCoords = new VertexAttributeLocation(4);
 
         public static readonly VertexAttributeLocation Color = new VertexAttributeLocation(5);
 
@@ -49,6 +49,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public object Clone()
         {
             return new VertexAttributeLocation(this.Location);
+        }
+
+        public int CompareTo(VertexAttributeLocation other)
+        {
+            return this.Location.CompareTo(other.Location);
         }
 
         public override bool Equals(object obj)

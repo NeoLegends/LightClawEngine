@@ -18,6 +18,8 @@ namespace LightClaw.Engine.IO
 {
     public class EffectPassReader : DispatcherEntity, IContentReader
     {
+        private static readonly Task<Shader> finishedShaderTask = Task.FromResult<Shader>(null);
+
         private static readonly JsonSerializer serializer = JsonSerializer.CreateDefault();
 
         public bool CanRead(Type assetType, object parameter)
@@ -53,7 +55,7 @@ namespace LightClaw.Engine.IO
                 TryLoadAsync(desc.FragmentShader, ShaderType.FragmentShader, mgr, token)
             ).ConfigureAwait(false)).FilterNull();
 
-            ShaderProgram program = await this.Dispatcher.Invoke(() => new ShaderProgram(shaders.ToArray()), DispatcherPriority.Normal, token)
+            ShaderProgram program = await this.Dispatcher.Invoke(ct => new ShaderProgram(shaders.ToArray()), DispatcherPriority.Normal, token)
                                                          .ConfigureAwait(false);
             return new EffectPass(program, true);
         }
@@ -62,7 +64,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(contentManager != null);
 
-            return rs.IsValid ? contentManager.LoadAsync<Shader>(rs, type, token) : Task.FromResult<Shader>(null);
+            return rs.IsValid ? contentManager.LoadAsync<Shader>(rs, type, token) : finishedShaderTask;
         }
     }
 }

@@ -18,12 +18,10 @@ namespace LightClaw.Engine.Threading
     /// <summary>
     /// Represents a message pump.
     /// </summary>
-    [ThreadMode(ThreadMode.Safe)]
+    [ThreadMode(true)]
     [DebuggerDisplay("Thread: {Thread.ManagedThreadId}, Count: {Count}")]
     public class Dispatcher : DisposableEntity
     {
-        private const int PM_REMOVE = 1;
-
         /// <summary>
         /// All living dispatchers.
         /// </summary>
@@ -43,23 +41,25 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
-        /// The work queues.
+        /// A list to temporarily store the actions to be executed.
         /// </summary>
-        private readonly SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>> queues = new SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>>(
-            new Dictionary<DispatcherPriority, ConcurrentQueue<Action>>
-            {
-                { DispatcherPriority.Immediate, new ConcurrentQueue<Action>() },
-                { DispatcherPriority.High, new ConcurrentQueue<Action>() },
-                { DispatcherPriority.Normal, new ConcurrentQueue<Action>() },
-                { DispatcherPriority.Background, new ConcurrentQueue<Action>() },
-            },
-            new ReverseComparer<DispatcherPriority>()
-        );
+        private readonly List<Action> actionList = new List<Action>();
 
         /// <summary>
         /// Indicates whether the <see cref="Dispatcher"/> is currently running.
         /// </summary>
-        private int isRunning = 0;
+        private volatile int isRunning = 0;
+
+        /// <summary>
+        /// The work queues.
+        /// </summary>
+        private readonly SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>> queues = new SortedDictionary<DispatcherPriority, ConcurrentQueue<Action>>(
+            ((DispatcherPriority[])Enum.GetValues(typeof(DispatcherPriority))).ToDictionary(
+                dp => dp, 
+                dp => new ConcurrentQueue<Action>()
+            ),
+            new ReverseComparer<DispatcherPriority>()
+        );
 
         /// <summary>
         /// The <see cref="AutoResetEvent"/> used to trigger when new operations have arrived.
@@ -79,6 +79,17 @@ namespace LightClaw.Engine.Threading
             get
             {
                 return this.queues.Values.Sum(q => q.Count);
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the current thread is the <see cref="Thread"/> associated with the <see cref="Dispatcher"/>.
+        /// </summary>
+        public bool IsOnThread
+        {
+            get
+            {
+                return ThreadF.IsCurrentThread(this.Thread);
             }
         }
 
@@ -133,7 +144,7 @@ namespace LightClaw.Engine.Threading
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            return this.Invoke(action, priority, CancellationToken.None);
+            return this.Invoke(ct => action(), priority, CancellationToken.None);
         }
 
         /// <summary>
@@ -144,12 +155,12 @@ namespace LightClaw.Engine.Threading
         /// <param name="priority">The priority of the action to run.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous execution of the <paramref name="action"/>.</returns>
-        public Task Invoke(Action action, DispatcherPriority priority, CancellationToken token)
+        public Task Invoke(Action<CancellationToken> action, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
             this.CheckDisposed();
 
-            return this.Invoke(() => { action(); return true; }, priority, token);
+            return this.Invoke(ct => { action(ct); return true; }, priority, token);
         }
 
         /// <summary>
@@ -179,7 +190,7 @@ namespace LightClaw.Engine.Threading
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            return this.Invoke(action, param, priority, CancellationToken.None);
+            return this.Invoke((ct, p) => action(p), param, priority, CancellationToken.None);
         }
 
         /// <summary>
@@ -192,12 +203,12 @@ namespace LightClaw.Engine.Threading
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous execution of the <paramref name="action"/>.</returns>
-        public Task Invoke<TParam>(Action<TParam> action, TParam param, DispatcherPriority priority, CancellationToken token)
+        public Task Invoke<TParam>(Action<CancellationToken, TParam> action, TParam param, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
             this.CheckDisposed();
 
-            return this.Invoke(() => action(param), priority, token);
+            return this.Invoke(ct => action(ct, param), priority, token);
         }
 
         /// <summary>
@@ -225,7 +236,7 @@ namespace LightClaw.Engine.Threading
         {
             Contract.Requires<ArgumentNullException>(func != null);
 
-            return this.Invoke(func, priority, CancellationToken.None);
+            return this.Invoke(ct => func(), priority, CancellationToken.None);
         }
 
         /// <summary>
@@ -237,14 +248,14 @@ namespace LightClaw.Engine.Threading
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
         /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
-        public async Task<TResult> Invoke<TResult>(Func<TResult> func, DispatcherPriority priority, CancellationToken token)
+        public async Task<TResult> Invoke<TResult>(Func<CancellationToken, TResult> func, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(func != null);
             this.CheckDisposed();
 
             if (priority == DispatcherPriority.Immediate && ThreadF.IsCurrentThread(this.Thread))
             {
-                return func();
+                return func(token);
             }
             else
             {
@@ -255,7 +266,7 @@ namespace LightClaw.Engine.Threading
                     {
                         try
                         {
-                            tcs.TrySetResult(func());
+                            tcs.TrySetResult(func(token));
                         }
                         catch (Exception ex)
                         {
@@ -297,7 +308,7 @@ namespace LightClaw.Engine.Threading
         {
             Contract.Requires<ArgumentNullException>(func != null);
 
-            return this.Invoke(func, param, priority, CancellationToken.None);
+            return this.Invoke((ct, p) => func(p), param, priority, CancellationToken.None);
         }
 
         /// <summary>
@@ -311,62 +322,12 @@ namespace LightClaw.Engine.Threading
         /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
         /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
         /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
-        public Task<TResult> Invoke<TParam, TResult>(Func<TParam, TResult> func, TParam param, DispatcherPriority priority, CancellationToken token)
+        public Task<TResult> Invoke<TParam, TResult>(Func<CancellationToken, TParam, TResult> func, TParam param, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(func != null);
             this.CheckDisposed();
 
-            return this.Invoke(() => func(param), priority, token);
-        }
-
-        /// <summary>
-        /// Asynchronously invokes the specified delegate on the target thread with late binding.
-        /// </summary>
-        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
-        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
-        /// <param name="parameters">Delegate parameters.</param>
-        /// <returns>The value returned by the <see cref="Delegate"/>.</returns>
-        public Task<object> InvokeDynamic(Delegate del, params object[] parameters)
-        {
-            Contract.Requires<ArgumentNullException>(del != null);
-            Contract.Requires<ArgumentNullException>(parameters != null);
-
-            return this.InvokeDynamic(del, DispatcherPriority.Normal, parameters);
-        }
-
-        /// <summary>
-        /// Asynchronously invokes the specified delegate on the target thread with the specified <paramref name="priority"/> 
-        /// with late binding.
-        /// </summary>
-        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
-        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
-        /// <param name="parameters">Delegate parameters.</param>
-        /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
-        /// <returns>The value returned by the <see cref="Delegate"/>.</returns>
-        public Task<object> InvokeDynamic(Delegate del, DispatcherPriority priority, params object[] parameters)
-        {
-            Contract.Requires<ArgumentNullException>(del != null);
-            Contract.Requires<ArgumentNullException>(parameters != null);
-
-            return this.InvokeDynamic(del, priority, CancellationToken.None, parameters);
-        }
-
-        /// <summary>
-        /// Asynchronously invokes the specified delegate on the target thread with the specified <paramref name="priority"/> 
-        /// with late binding and allows for cancellation.
-        /// </summary>
-        /// <remarks>Warning: Do not use this method in tight loops, it is slow!</remarks>
-        /// <param name="del">The <see cref="Delegate"/> to invoke.</param>
-        /// <param name="parameters">Delegate parameters.</param>
-        /// <param name="priority">The <paramref name="priority"/> of the action to run.</param>
-        /// <param name="token">A <see cref="CancellationToken"/> used to signal cancellation to the method.</param>
-        /// <returns>The value returned by the <see cref="Delegate"/>.</returns>
-        public Task<object> InvokeDynamic(Delegate del, DispatcherPriority priority, CancellationToken token, params object[] parameters)
-        {
-            Contract.Requires<ArgumentNullException>(del != null);
-            Contract.Requires<ArgumentNullException>(parameters != null);
-
-            return this.Invoke(new Func<object[], object>(del.DynamicInvoke), parameters, priority, token);
+            return this.Invoke(ct => func(ct, param), priority, token);
         }
 
         /// <summary>
@@ -449,6 +410,79 @@ namespace LightClaw.Engine.Threading
         }
 
         /// <summary>
+        /// Executes the specified <paramref name="action"/> immediately, if the calling thread is the <see cref="Dispatcher"/>s thread,
+        /// or enqueues it with the specified <see cref="DispatcherPriority"/> if not.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="priority">The <paramref name="priority"/> of the action to run, if it cannot be run instantly.</param>
+        /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
+        public async Task ImmediateOr(Action action, DispatcherPriority priority)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            if (ThreadF.IsCurrentThread(this.Thread))
+            {
+                action();
+            }
+            else
+            {
+                await this.Invoke(action, priority);
+            }
+        }
+
+        /// <summary>
+        /// Executes the specified <paramref name="action"/> immediately, if the calling thread is the <see cref="Dispatcher"/>s thread,
+        /// or enqueues it with the specified <see cref="DispatcherPriority"/> if not.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="priority">The <paramref name="priority"/> of the action to run, if it cannot be run instantly.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> to cancel the execution.</param>
+        /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
+        public Task ImmediateOr(Action<CancellationToken> action, DispatcherPriority priority, CancellationToken token)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            return this.ImmediateOr(() => action(token), priority);
+        }
+
+        /// <summary>
+        /// Executes the specified <paramref name="action"/> immediately, if the calling thread is the <see cref="Dispatcher"/>s thread,
+        /// or enqueues it with the specified <see cref="DispatcherPriority"/> if not.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="priority">The <paramref name="priority"/> of the action to run, if it cannot be run instantly.</param>
+        /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
+        public Task ImmediateOr<TParam>(Action<TParam> action, TParam param, DispatcherPriority priority)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+
+            return this.ImmediateOr((ct, p) => action(p), param, priority, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes the specified <paramref name="action"/> immediately, if the calling thread is the <see cref="Dispatcher"/>s thread,
+        /// or enqueues it with the specified <see cref="DispatcherPriority"/> if not.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="priority">The <paramref name="priority"/> of the action to run, if it cannot be run instantly.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> to cancel the execution.</param>
+        /// <returns>A <see cref="Task{T}"/> representing the asynchronous execution of the <paramref name="func"/>.</returns>
+        public async Task ImmediateOr<TParam>(Action<CancellationToken, TParam> action, TParam param, DispatcherPriority priority, CancellationToken token)
+        {
+            Contract.Requires<ArgumentNullException>(action != null);
+            
+            if (ThreadF.IsCurrentThread(this.Thread))
+            {
+                action(token, param);
+            }
+            else
+            {
+                await this.Invoke(action, param, priority, token);
+            }
+        }
+
+        /// <summary>
         /// Starts the dispatcher loop.
         /// </summary>
         /// <remarks>
@@ -474,7 +508,7 @@ namespace LightClaw.Engine.Threading
 
                 // Empty the execution stack if we're disposed.
                 int tries = 0; // Make sure we don't get stuck in infinite loops
-                while (!this.queues.Values.All(q => q.IsEmpty) && tries ++ < 5)
+                while (!this.queues.Values.All(q => q.IsEmpty) && tries++ < 5)
                 {
                     this.ExecuteStack();
                 }
@@ -488,6 +522,7 @@ namespace LightClaw.Engine.Threading
         /// <summary>
         /// Stops a running dispatcher loop.
         /// </summary>
+        [ThreadMode(true)]
         public void Stop()
         {
             this.isRunning = 0;
@@ -497,11 +532,13 @@ namespace LightClaw.Engine.Threading
         /// Disposes the <see cref="Dispatcher"/>.
         /// </summary>
         /// <param name="disposing"><c>true</c> if managed resources should be disposed.</param>
-        [ThreadMode(ThreadMode.Affine)]
+        [ThreadMode(ThreadMode.Safe)]
         protected override void Dispose(bool disposing)
         {
             try
             {
+                this.Stop();
+
                 Dispatcher outVal;
                 dispatchers.TryRemove(this.Thread, out outVal);
             }
@@ -523,60 +560,65 @@ namespace LightClaw.Engine.Threading
         {
             Contract.Ensures(Contract.Result<ConcurrentQueue<Action>>() != null);
 
+            // As long as we're not adding items during runtime to the queue list,
+            // we can use it concurrently as per https://msdn.microsoft.com/de-de/library/ms132319(v=vs.110).aspx
             ConcurrentQueue<Action> queue;
             if (!this.queues.TryGetValue(priority, out queue))
             {
                 throw new ArgumentException("Parameter priority was not one of the predefined values!");
+            }
+            if (queue == null)
+            {
+                throw new InvalidOperationException("The queue of priority '{0}' was null!".FormatWith(priority));
             }
             return queue;
         }
 
         private void ExecuteStack()
         {
-            List<Action> actions = null; // Do not allocate the list, if we can avoid it
             foreach (ConcurrentQueue<Action> queue in this.queues.Values)
             {
+                this.actionList.Clear();
+
                 Action action;
                 while (queue.TryDequeue(out action))
                 {
                     if (action != null)
                     {
-                        if (actions == null)
-                        {
-                            actions = new List<Action>();
-                        }
-                        actions.Add(action);
+                        this.actionList.Add(action);
                     }
                 }
 
-                if (actions != null)
+                int count = this.actionList.Count; // Small performance gain
+                for (int i = 0; i < count; i++)
                 {
-                    for (int i = 0; i < actions.Count; i++)
+                    try
                     {
-                        try
+                        this.actionList[i].Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        UnhandledDispatcherExceptionEventArgs e = new UnhandledDispatcherExceptionEventArgs(ex);
+                        this.Raise(this.UnhandledException, e);
+                        this.Log.Error(
+                            "An {0}exception of type '{1}' was thrown inside the {2}.".FormatWith(
+                                e.IsHandled ? string.Empty : "unhandled ",
+                                ex.GetType().FullName,
+                                typeof(Dispatcher).Name
+                            ),
+                            ex
+                        );
+                        if (!e.IsHandled)
                         {
-                            actions[i].Invoke();
-                        }
-                        catch (Exception ex)
-                        {
-                            UnhandledDispatcherExceptionEventArgs e = new UnhandledDispatcherExceptionEventArgs(ex);
-                            this.Raise(this.UnhandledException, e);
-                            this.Log.Error(
-                                "An {0}exception of type '{1}' was thrown inside the {2}.".FormatWith(
-                                    e.IsHandled ? string.Empty : "unhandled ",
-                                    ex.GetType().FullName,
-                                    typeof(Dispatcher).Name
-                                ),
-                                ex
-                            );
-                            if (!e.IsHandled)
+                            // If we have an error, copy the rest of the elements back into the queue
+                            // so we won't loose them.
+                            for (int j = i + 1; j < count; j++)
                             {
-                                throw;
+                                queue.Enqueue(this.actionList[j]);
                             }
+                            throw;
                         }
                     }
-
-                    actions.Clear();
                 }
             }
         }

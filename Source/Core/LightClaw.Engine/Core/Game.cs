@@ -189,7 +189,8 @@ namespace LightClaw.Engine.Core
             
             Log.Debug(() => "Creating {0} from start scene '{1}.'".FormatWith(typeof(SceneManager).Name, startScene));
             this.SceneManager = new SceneManager(startScene);
-            
+
+            this.IocC.RegisterInstance<IGame>(this);
             this.IocC.RegisterInstance(this.SceneManager);
             this.IocC.RegisterInstance(this.Dispatcher);
 

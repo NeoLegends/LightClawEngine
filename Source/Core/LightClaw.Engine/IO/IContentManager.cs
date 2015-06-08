@@ -121,6 +121,7 @@ namespace LightClaw.Engine.IO
         Task<bool> IContentManager.ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
+            Contract.Ensures(Contract.Result<Task<bool>>() != null);
 
             return null;
         }
@@ -128,6 +129,7 @@ namespace LightClaw.Engine.IO
         Task<Stream> IContentManager.GetStreamAsync(ResourceString resourceString, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
+            Contract.Ensures(Contract.Result<Task<Stream>>() != null);
 
             return null;
         }
@@ -136,6 +138,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
             Contract.Requires<ArgumentNullException>(assetType != null);
+            Contract.Ensures(Contract.Result<Task<object>>() != null);
 
             return null;
         }

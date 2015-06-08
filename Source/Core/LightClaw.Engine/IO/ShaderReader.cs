@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 using LightClaw.Engine.Graphics.OpenGL;
-using LightClaw.Engine.Threading;
 using LightClaw.Extensions;
 using OpenTK.Graphics.OpenGL4;
 
@@ -27,7 +26,7 @@ namespace LightClaw.Engine.IO
             }
 
             string source;
-            using (StreamReader sr = new StreamReader(parameters.AssetStream, Encoding.UTF8, true, 4096, true))
+            using (StreamReader sr = new StreamReader(parameters.AssetStream, Encoding.UTF8, true, 2048, true))
             {
                 source = await sr.ReadToEndAsync().ConfigureAwait(false);
             }

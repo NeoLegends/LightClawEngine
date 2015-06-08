@@ -24,34 +24,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// the graphics pipeline to draw.
     /// </remarks>
     /// <seealso href="http://www.opengl.org/wiki/Shader"/>
+    /// <seealso cref="ShaderProgram"/>
     [ContentReader(typeof(ShaderReader))]
-    [DebuggerDisplay("Name = {Name}, Handle = {Handle}, Type = {Type}, Vertex Attribute Count = {VertexAttributeDescriptions.Length}")]
+    [DebuggerDisplay("Type: {Type}, Name: {Name}")]
     public class Shader : GLObject
     {
-        /// <summary>
-        /// Backing field.
-        /// </summary>
-        private string _Source;
-
-        /// <summary>
-        /// The shader source code.
-        /// </summary>
-        public string Source
-        {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-
-                return _Source;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(value));
-
-                this.SetProperty(ref _Source, value);
-            }
-        }
-
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -98,11 +75,10 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
             this.VerifyAccess();
 
-            this.Source = source;
             this.Type = type;
 
             this.Handle = GL.CreateShader(this.Type);
-            GL.ShaderSource(this, this.Source);
+            GL.ShaderSource(this, source);
             GL.CompileShader(this);
 
             int result;
@@ -149,14 +125,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteShader(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteShader, disposing, DispatcherPriority.Background).Wait();
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteShader, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]
@@ -175,15 +144,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             {
                 base.Dispose(disposing);
             }
-        }
-
-        /// <summary>
-        /// Contains Contract.Invariant definitions.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(!string.IsNullOrWhiteSpace(this._Source));
         }
     }
 }

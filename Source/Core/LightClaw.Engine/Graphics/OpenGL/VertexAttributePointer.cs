@@ -12,7 +12,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace LightClaw.Engine.Graphics.OpenGL
 {
     [Serializable, DataContract]
-    [DebuggerDisplay("Index = {Index}, Size = {Size}, Type = {Type}, Stride = {Stride}, Offset = {Offset}, Normalize = {Normalize}")]
+    [DebuggerDisplay("Index: {Index}, Size: {Size}, Type: {Type}, Stride: {Stride}, Offset: {Offset}, Normalize: {Normalize}")]
     public struct VertexAttributePointer : IBindable, ICloneable, IEquatable<VertexAttributePointer>
     {
         [DataMember]

@@ -21,7 +21,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// with <see cref="System.Buffer"/>. Visual Studio gets confused when setting breakpoints and you'd have to 
     /// redefine it in every class you include the System-namespace anyway.
     /// </remarks>
-    [DebuggerDisplay("Target = {Target}, Usage Hint = {Hint}, Length = {Length}")]
+    [DebuggerDisplay("Target: {Target}, Length: {Length}, Usage Hint: {Hint}")]
     public class BufferObject : GLObject, IBuffer
     {
         private BufferUsageHint _Hint;
@@ -292,14 +292,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="disposing">A boolean indicating whether to dispose managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            if (this.CheckAccess())
-            {
-                this.DeleteBuffer(disposing);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(this.DeleteBuffer, disposing, DispatcherPriority.Background).Wait();
-            }
+            this.Dispatcher.ImmediateOr(this.DeleteBuffer, disposing, DispatcherPriority.Background);
         }
 
         [System.Security.SecurityCritical]

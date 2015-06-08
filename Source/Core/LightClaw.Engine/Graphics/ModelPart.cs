@@ -18,6 +18,10 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     public abstract class ModelPart : DispatcherEntity
     {
+        protected readonly bool OwnsEffect;
+
+        protected readonly bool OwnsVao;
+
         /// <summary>
         /// Notifies about the start of the drawing process.
         /// </summary>
@@ -93,13 +97,29 @@ namespace LightClaw.Engine.Graphics
         /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
         /// </summary>
         /// <param name="effect">The <see cref="Effect"/> used to shade the <see cref="ModelPart"/>.</param>
-        /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
+        /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data. Will be taken ownage of.</param>
         protected ModelPart(Effect effect, VertexArrayObject vao)
+            : this(effect, vao, false, true)
+        {
+            Contract.Requires<ArgumentNullException>(effect != null);
+            Contract.Requires<ArgumentNullException>(vao != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="ModelPart"/> and sets <see cref="P:Material"/> and <see cref="P:Vao"/>.
+        /// </summary>
+        /// <param name="effect">The <see cref="Effect"/> used to shade the <see cref="ModelPart"/>.</param>
+        /// <param name="vao">The <see cref="VertexArrayObject"/> storing the geometry data.</param>
+        /// <param name="ownsEffect">Indicates whether the <paramref cref="effect"/> will be taken ownage of.</param>
+        /// <param name="ownsEffect">Indicates whether the <paramref cref="vao"/> will be taken ownage of.</param>
+        protected ModelPart(Effect effect, VertexArrayObject vao, bool ownsEffect, bool ownsVao)
         {
             Contract.Requires<ArgumentNullException>(effect != null);
             Contract.Requires<ArgumentNullException>(vao != null);
 
             this.Effect = effect;
+            this.OwnsEffect = ownsEffect;
+            this.OwnsVao = ownsVao;
             this.Vao = vao;
         }
 
@@ -114,6 +134,29 @@ namespace LightClaw.Engine.Graphics
             using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
                 this.OnDraw(ref mvp);
+            }
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="ModelPart"/> and releases all associated resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> if managed resources are to be disposed as well, otherwise <c>false</c>.</param>
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (this.OwnsEffect)
+                {
+                    this.Effect.Dispose();
+                }
+                if (this.OwnsVao)
+                {
+                    this.Vao.Dispose();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

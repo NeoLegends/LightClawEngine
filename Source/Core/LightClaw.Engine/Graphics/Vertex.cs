@@ -26,63 +26,6 @@ namespace LightClaw.Engine.Graphics
         public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vertex));
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private static readonly VertexAttributePointer[] _Interleaved = new[]
-        {
-            new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, SizeInBytes, 0),
-            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, SizeInBytes, 12),
-            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, SizeInBytes, 24),
-            new VertexAttributePointer(VertexAttributeLocation.Color, 4, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 32),
-            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight0, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 36),
-            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight1, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 44),
-            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight2, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 52),
-            //new VertexAttributePointer(VertexAttributeLocation.BoneWeight3, 2, VertexAttribPointerType.UnsignedByte, false, SizeInBytes, 60),
-        };
-
-        /// <summary> 
-        /// Gets a default <see cref="VertexAttributePointer"/>-configuration for the <see
-        /// cref="Vertex"/>. The configuration can be used for interleaved vertex data. 
-        /// </summary>
-        /// <remarks> 
-        /// <para> 
-        /// Attribute location in GLSL will be assumed as follows: 
-        /// <list type="bullet"> 
-        ///     <item> 
-        ///         <description> 
-        ///             Vertex Position (3 float): <see cref="VertexAttributeLocation.Position"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description> 
-        ///             Vertex Normal (3 float): <see cref="VertexAttributeLocation.Normals"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description> 
-        ///             Texture Coordinates (2 float): <see cref="VertexAttributeLocation.TexCoords"/>
-        ///         </description> 
-        ///     </item> 
-        ///     <item>
-        ///         <description>
-        ///             Color (4 unsigned byte): <see cref="VertexAttributeLocation.Color"/> 
-        ///         </description> 
-        ///     </item> 
-        /// </list> 
-        /// </para> 
-        /// </remarks>
-        public static VertexAttributePointer[] Interleaved
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<VertexAttributePointer[]>() != null);
-                Contract.Ensures(Contract.Result<VertexAttributePointer[]>().Length == 3);
-
-                return _Interleaved.ToArray();
-            }
-        }
-
-        /// <summary>
         /// The <see cref="Vertex"/>'s position.
         /// </summary>
         [DataMember]
@@ -93,6 +36,18 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         [DataMember]
         public Vector3 Normal;
+
+        /// <summary>
+        /// The <see cref="Vertex"/>'s binormal.
+        /// </summary>
+        [DataMember]
+        public Vector3 Binormal;
+
+        /// <summary>
+        /// The <see cref="Vertex"/>'s tangent.
+        /// </summary>
+        [DataMember]
+        public Vector3 Tangent;
 
         /// <summary>
         /// The <see cref="Vertex"/>'s texture coordinates.
@@ -106,30 +61,6 @@ namespace LightClaw.Engine.Graphics
         [DataMember]
         public Color Color;
 
-        ///// <summary>
-        ///// The first bone weighting.
-        ///// </summary>
-        //[DataMember]
-        //public BoneWeighting BoneWeight0;
-
-        ///// <summary>
-        ///// The second bone weighting.
-        ///// </summary>
-        //[DataMember]
-        //public BoneWeighting BoneWeight1;
-
-        ///// <summary>
-        ///// The third bone weighting.
-        ///// </summary>
-        //[DataMember]
-        //public BoneWeighting BoneWeight2;
-
-        ///// <summary>
-        ///// The fourth bone weighting.
-        ///// </summary>
-        //[DataMember]
-        //public BoneWeighting BoneWeight3;
-
         /// <summary>
         /// Initializes a new <see cref="Vertex"/> from a position, a normal, a color and a texture coordinate.
         /// </summary>
@@ -137,13 +68,15 @@ namespace LightClaw.Engine.Graphics
         /// <param name="normal">The <see cref="Vertex"/>'s normal.</param>
         /// <param name="texCoord">The <see cref="Vertex"/>'s texture coordinates.</param>
         /// <param name="color">The <see cref="Vertex"/>'s color.</param>
-        public Vertex(Vector3 position, Vector3 normal, Vector2 texCoord, Color color)
+        public Vertex(Vector3 position, Vector3 normal, Vector3 binormal, Vector3 tangent, Vector2 texCoord, Color color)
             : this()
         {
+            this.Binormal = binormal;
+            this.Color = color;
             this.Normal = normal;
             this.Position = position;
+            this.Tangent = tangent;
             this.TexCoord = texCoord;
-            this.Color = color;
         }
 
         /// <summary>
@@ -167,9 +100,8 @@ namespace LightClaw.Engine.Graphics
         public bool Equals(Vertex other)
         {
             return (this.Position == other.Position) && (this.Normal == other.Normal) &&
-                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color); // &&
-                   //(this.BoneWeight0 == other.BoneWeight0) && (this.BoneWeight1 == other.BoneWeight1) &&
-                   //(this.BoneWeight2 == other.BoneWeight2) && (this.BoneWeight3 == other.BoneWeight3);
+                   (this.Binormal == other.Binormal) && (this.Tangent == other.Tangent) &&
+                   (this.TexCoord == other.TexCoord) && (this.Color == other.Color);
         }
 
         /// <summary>
@@ -179,8 +111,9 @@ namespace LightClaw.Engine.Graphics
         public override int GetHashCode()
         {
             return HashF.GetHashCode(
-                this.Position, this.Normal, this.TexCoord, this.Color
-                //HashF.GetHashCode(this.BoneWeight0, this.BoneWeight1, this.BoneWeight2, this.BoneWeight3)
+                this.Position, 
+                HashF.GetHashCode(this.Normal, this.Binormal, this.Tangent),
+                this.TexCoord, this.Color
             );
         }
 
@@ -214,13 +147,22 @@ namespace LightClaw.Engine.Graphics
         /// <param name="textureIndex">The index of the UV attribute.</param>
         /// <param name="colorIndex">The index of the color attribute.</param>
         /// <returns>Interleaved <see cref="VertexAttributePointer"/>s.</returns>
-        public static VertexAttributePointer[] GetInterleavedVaps(VertexAttributeLocation positionIndex, VertexAttributeLocation normalIndex, VertexAttributeLocation textureIndex, VertexAttributeLocation colorIndex)
+        public static VertexAttributePointer[] GetInterleavedVaps(
+                VertexAttributeLocation positionIndex, 
+                VertexAttributeLocation normalIndex, 
+                VertexAttributeLocation binormalIndex, 
+                VertexAttributeLocation tangentIndex,
+                VertexAttributeLocation textureIndex, 
+                VertexAttributeLocation colorIndex
+            )
         {
             return new[] {
                 new VertexAttributePointer(positionIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 0),
                 new VertexAttributePointer(normalIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 12),
-                new VertexAttributePointer(textureIndex, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 24),
-                new VertexAttributePointer(colorIndex, 4, VertexAttribPointerType.UnsignedByte, false, Vertex.SizeInBytes, 32)
+                new VertexAttributePointer(binormalIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 24),
+                new VertexAttributePointer(tangentIndex, 3, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 36),
+                new VertexAttributePointer(textureIndex, 2, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 48),
+                new VertexAttributePointer(colorIndex, 4, VertexAttribPointerType.Float, false, Vertex.SizeInBytes, 56)
             };
         }
     }

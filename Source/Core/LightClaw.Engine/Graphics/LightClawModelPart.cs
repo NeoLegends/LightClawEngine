@@ -14,6 +14,11 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     public class LightClawModelPart : ModelPart
     {
+        /// <summary>
+        /// Indicates whether the <see cref="LightClawModelPart"/> owns its diffuse texture.
+        /// </summary>
+        protected readonly bool OwnsDiffuse;
+
         private Texture2D _Diffuse;
 
         /// <summary>
@@ -36,11 +41,49 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="effect">The <see cref="Effect"/>.</param>
         /// <param name="vao">The <see cref="VertexArrayObject"/>.</param>
-        public LightClawModelPart(Effect effect, VertexArrayObject vao, Texture2D texture)
-            : base(effect, vao)
+        public LightClawModelPart(Effect effect, VertexArrayObject vao, Texture2D diffuse)
+            : this(effect, vao, diffuse, false, true, false)
         {
             Contract.Requires<ArgumentNullException>(effect != null);
             Contract.Requires<ArgumentNullException>(vao != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="LightClawModelPart"/>.
+        /// </summary>
+        /// <param name="effect">The <see cref="Effect"/>.</param>
+        /// <param name="vao">The <see cref="VertexArrayObject"/>.</param>
+        /// <param name="diffuse">The diffuse texture.</param>
+        /// <param name="ownsEffect">Indicates whether the <paramref cref="effect"/> will be taken ownage of.</param>
+        /// <param name="ownsVao">Indicates whether the <paramref cref="vao"/> will be taken ownage of.</param>
+        /// <param name="ownsTexture">Indicates whether the <paramref cref="diffuse"/> texture will be taken ownage of.</param>
+        public LightClawModelPart(Effect effect, VertexArrayObject vao, Texture2D diffuse, bool ownsEffect, bool ownsVao, bool ownsTexture)
+            : base(effect, vao, ownsEffect, ownsVao)
+        {
+            Contract.Requires<ArgumentNullException>(effect != null);
+            Contract.Requires<ArgumentNullException>(vao != null);
+
+            this.Diffuse = diffuse;
+            this.OwnsDiffuse = ownsTexture;
+        }
+
+        /// <summary>
+        /// Disposes the <see cref="LightClawModelPart"/> and releases all associated resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> if managed resources are to be disposed as well, otherwise <c>false</c>.</param>
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (this.OwnsDiffuse)
+                {
+                    this.Diffuse.Dispose();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         /// <summary>

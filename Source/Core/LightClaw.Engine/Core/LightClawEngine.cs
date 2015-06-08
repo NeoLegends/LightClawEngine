@@ -77,7 +77,7 @@ namespace LightClaw.Engine.Core
                 () => "LightClaw starting up on {0}, {1} bit.".FormatWith(Environment.OSVersion.VersionString, Environment.Is64BitProcess ? "64" : "32")
             );
 
-#if DESKTOP
+#if DESKTOP && !DEBUG
             string profileRoot = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "LightClaw",

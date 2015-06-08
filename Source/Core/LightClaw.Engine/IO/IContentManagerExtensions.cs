@@ -28,6 +28,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(resourceString));
+            Contract.Ensures(Contract.Result<Task<bool>>() != null);
 
             return manager.ExistsAsync(resourceString, CancellationToken.None);
         }
@@ -45,6 +46,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(manager != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(resourceString));
+            Contract.Ensures(Contract.Result<Task<Stream>>() != null);
 
             return manager.GetStreamAsync(resourceString, CancellationToken.None);
         }
