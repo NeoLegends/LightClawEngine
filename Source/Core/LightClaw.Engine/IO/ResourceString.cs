@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -13,6 +14,7 @@ namespace LightClaw.Engine.IO
     /// Represents a unique ID of an asset.
     /// </summary>
     [DataContract]
+    [DebuggerDisplay("{Path}")]
     [JsonConverter(typeof(ResourceStringConverter))]
     public struct ResourceString : ICloneable, IEquatable<ResourceString>
     {

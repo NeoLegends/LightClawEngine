@@ -19,6 +19,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DebuggerDisplay("Texture Unit: {TextureUnit}, Parameter Count: {Parameters.Length}")]
     public class Sampler : GLObject, IBindable
     {
+        private TextureUnit textureUnit;
+
         /// <summary>
         /// Backing field.
         /// </summary>
@@ -40,42 +42,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Backing field.
-        /// </summary>
-        private TextureUnit _TextureUnit;
-
-        /// <summary>
-        /// The <see cref="TextureUnit"/> the <see cref="Sampler"/> will be bound to.
-        /// </summary>
-        public TextureUnit TextureUnit
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<TextureUnit>() >= 0);
-
-                return _TextureUnit;
-            }
-            private set
-            {
-                Contract.Requires<ArgumentOutOfRangeException>(value >= 0);
-
-                this.SetProperty(ref _TextureUnit, value);
-            }
-        }
-
-        /// <summary>
         /// Initializes a new <see cref="Sampler"/>.
         /// </summary>
         /// <param name="textureUnit">The <see cref="TextureUnit"/> to bind the <see cref="Sampler"/> to.</param>
         /// <param name="parameters">Sampler parameters.</param>
-        public Sampler(TextureUnit textureUnit, IEnumerable<SamplerParameterDescription> parameters)
+        public Sampler(IEnumerable<SamplerParameterDescription> parameters)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= 0);
             Contract.Requires<ArgumentNullException>(parameters != null);
 
             this.VerifyAccess();
 
-            this.TextureUnit = textureUnit;
             this.Parameters = parameters.ToImmutableArray();
 
             this.Handle = GL.GenSampler();
@@ -88,10 +64,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Binds the <see cref="Sampler"/> to the <see cref="P:TextureUnit"/>.
         /// </summary>
-        public Binding Bind()
+        public Binding Bind(TextureUnit textureUnit)
         {
             this.VerifyAccess();
-            GL.BindSampler(this.TextureUnit, this);
+
+            this.textureUnit = textureUnit;
+            GL.BindSampler(textureUnit, this);
             return new Binding(this);
         }
 
@@ -101,7 +79,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public void Unbind()
         {
             this.VerifyAccess();
-            GL.BindSampler(this.TextureUnit, 0);
+            GL.BindSampler(this.textureUnit, 0);
         }
 
         /// <summary>
@@ -137,7 +115,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(this._TextureUnit >= 0);
+            Contract.Invariant(this.textureUnit >= 0);
         }
     }
 }

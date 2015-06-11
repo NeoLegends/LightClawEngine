@@ -22,6 +22,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public Texture1DArray(TextureDescription description)
             : base(description)
         {
+            Contract.Requires<ArgumentNullException>(description != null);
             Contract.Requires<ArgumentException>(description.Target.IsTexture1DArrayTarget());
         }
 
@@ -46,7 +47,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Creates a new <see cref="Texture2D"/> from the specified <see cref="TextureDescription"/> and sets the texture data.
+        /// Creates a new <see cref="Texture1DArray"/> from the specified <see cref="TextureDescription"/> and sets the texture data.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the data to set as texture data.</typeparam>
         /// <param name="desc">The <see cref="TextureDescription"/> describing the texture layout.</param>
@@ -61,6 +62,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The newly created texture.</returns>
         public static Texture1DArray Create<T>(TextureDescription desc, T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
+            Contract.Requires<ArgumentNullException>(desc != null);
+            Contract.Requires<ArgumentException>(desc.Target.IsTexture1DArrayTarget());
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -84,7 +87,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Creates a new <see cref="Texture2D"/> from the specified <see cref="TextureDescription"/> and sets the texture data.
+        /// Creates a new <see cref="Texture1DArray"/> from the specified <see cref="TextureDescription"/> and sets the texture data.
         /// </summary>
         /// <param name="desc">The <see cref="TextureDescription"/> describing the texture layout.</param>
         /// <param name="data">The texture data.</param>
@@ -98,6 +101,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The newly created texture.</returns>
         public static Texture1DArray Create(TextureDescription desc, IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
+            Contract.Requires<ArgumentNullException>(desc != null);
+            Contract.Requires<ArgumentException>(desc.Target.IsTexture1DArrayTarget());
             Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);

@@ -17,11 +17,11 @@ namespace LightClaw.Engine.Graphics
     {
         private readonly bool ownsProgram;
 
-        public ImmutableDictionary<string, int> Attributes
+        public ImmutableDictionary<string, ProgramAttribute> Attributes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableDictionary<string, int>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, ProgramAttribute>>() != null);
 
                 return this.ShaderProgram.Attributes;
             }
@@ -115,7 +115,7 @@ namespace LightClaw.Engine.Graphics
 
             this.ownsProgram = ownsProgram;
             this.ShaderProgram = program;
-            this.Uniforms = this.ShaderProgram.Uniforms.Select((Func<KeyValuePair<string, Uniform>, EffectUniform>)(kvp =>
+            this.Uniforms = this.ShaderProgram.Uniforms.Select((Func<KeyValuePair<string, ProgramUniform>, EffectUniform>)(kvp =>
             {
                 if (kvp.Value.Type.IsSampler())
                 {

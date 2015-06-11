@@ -192,6 +192,7 @@
     <Compile Include="Core\MathConverter.cs" />
     <Compile Include="Graphics\EffectPassDescription.cs" />
     <Compile Include="Graphics\LightClawModelPart.cs" />
+    <Compile Include="Graphics\OpenGL\ProgramAttribute.cs" />
     <Compile Include="Graphics\OpenGL\ValidationFailedException.cs" />
     <Compile Include="Graphics\OpenGL\IReadOnlyBuffer.cs" />
     <Compile Include="IO\EffectReader.cs" />
@@ -245,7 +246,7 @@
     <Compile Include="Graphics\OpenGL\RangedBuffer.cs" />
     <Compile Include="Graphics\OpenGL\Sampler.cs" />
     <Compile Include="Graphics\OpenGL\Shader.cs" />
-    <Compile Include="Graphics\OpenGL\Uniform.cs" />
+    <Compile Include="Graphics\OpenGL\ProgramUniform.cs" />
     <Compile Include="Graphics\SamplerEffectUniform.cs" />
     <Compile Include="Graphics\OpenGL\SamplerParameterDescription.cs" />
     <Compile Include="Graphics\OpenGL\ShaderProgram.cs" />
@@ -374,7 +375,7 @@
     <None Include="Shaders\Basic.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Basic.shr">
+    <None Include="Shaders\Basic.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Basic.vert">

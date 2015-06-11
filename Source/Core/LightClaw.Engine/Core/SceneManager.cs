@@ -125,6 +125,7 @@ namespace LightClaw.Engine.Core
         /// to overdraw it. So make sure to check on the return value and move the scene accordingly, if required.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
+        [ContractVerification(false)]
         public int Load(int slot, Scene s)
         {
             Log.Debug(() => "Loading a new scene into position {0}.".FormatWith(slot));

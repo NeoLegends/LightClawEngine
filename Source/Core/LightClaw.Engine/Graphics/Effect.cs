@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
+using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Engine.IO;
 using LightClaw.Extensions;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace LightClaw.Engine.Graphics
     [ContentReader(typeof(EffectReader))]
     public class Effect : DisposableEntity, IReadOnlyList<EffectPass>
     {
-        public ImmutableDictionary<string, int> Attributes
+        public ImmutableDictionary<string, ProgramAttribute> Attributes
         {
             get
             {
@@ -160,10 +161,10 @@ namespace LightClaw.Engine.Graphics
             }
             
             bool result = true;
-            ImmutableDictionary<string, int> current = passes.First().Attributes;
+            ImmutableDictionary<string, ProgramAttribute> current = passes.First().Attributes;
             foreach (EffectPass p in passes)
             {
-                ImmutableDictionary<string, int> prev = current;
+                ImmutableDictionary<string, ProgramAttribute> prev = current;
                 result &= prev.SequenceEqual(current = p.Attributes);
             }
             return result;

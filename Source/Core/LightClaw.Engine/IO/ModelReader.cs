@@ -66,12 +66,30 @@ namespace LightClaw.Engine.IO
                    Path.GetExtension(parameters.ResourceString)
                 );
             };
-            Task<Effect> shaderLoadTask = parameters.ContentManager.LoadAsync<Effect>("Shaders/Basic.shr", parameters.CancellationToken);
+            Task<Effect> shaderLoadTask = parameters.ContentManager.LoadAsync<Effect>("Shaders/Basic.fx", parameters.CancellationToken);
             AssimpScene s = this.Dispatcher.IsOnThread ? await Task.Run(f).ConfigureAwait(false) : f(); // Make sure we don't pollute the main thread with IO
-            Effect effect = await shaderLoadTask.ConfigureAwait(false);
 
-            Dictionary<AssimpMesh, VertexArrayObject> vaos = new Dictionary<AssimpMesh, VertexArrayObject>();
-            await this.Dispatcher.ImmediateOr(() =>
+            ConcurrentDictionary<AssimpMesh, MeshInfo> meshData = new ConcurrentDictionary<AssimpMesh, MeshInfo>();
+
+            // Two separate tasks since one of them can be loaded asynchronously, and the other one
+            // must be loaded on the main thread.
+            Task textureLoadTask = Task.WhenAll(s.Meshes.Select(async mesh =>
+            {
+                Material mat = s.Materials[mesh.MaterialIndex];
+                Texture2D tex2D = await parameters.ContentManager.LoadAsync<Texture2D>(
+                    mat.HasTextureDiffuse ?
+                        Path.Combine(Path.GetDirectoryName(parameters.ResourceString), mat.TextureDiffuse.FilePath) :
+                        "Internals/Default.png",
+                    parameters.CancellationToken
+                ).ConfigureAwait(false);
+
+                meshData.AddOrUpdate(mesh, new MeshInfo() { Texture = tex2D }, (m, mi) =>
+                {
+                    mi.Texture = tex2D;
+                    return mi;
+                });
+            }));
+            Task vaoCreateTask = this.Dispatcher.ImmediateOr(() =>
             {
                 foreach (AssimpMesh mesh in s.Meshes)
                 {
@@ -81,49 +99,34 @@ namespace LightClaw.Engine.IO
                         continue;
                     }
 
-                    BufferObject indexBuffer = BufferObject.Create(mesh.GetIndicesUInt16(), BufferTarget.ElementArrayBuffer);
-
-                    BufferObject normalBuffer = BufferObject.Create(mesh.Normals.ToArray(), BufferTarget.ArrayBuffer);
-                    BufferObject texCoordBuffer = mesh.HasTextureCoords(0) ?
-                        BufferObject.Create(mesh.TextureCoordinateChannels[0].ToArray(), BufferTarget.ArrayBuffer) :
-                        null;
-                    BufferObject vertexBuffer = BufferObject.Create(mesh.Vertices.ToArray(), BufferTarget.ArrayBuffer);
-
-                    vaos.Add(
-                        mesh,
-                        new VertexArrayObject(
-                            indexBuffer,
-                            new BufferDescription(
-                                normalBuffer,
-                                new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, 0, 0)
-                            ),
-                            new BufferDescription(
-                                texCoordBuffer,
-                                new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, 0, 0)
-                            ),
-                            new BufferDescription(
-                                vertexBuffer,
-                                new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
-                            )
+                    VertexArrayObject vao = new VertexArrayObject(
+                        BufferObject.Create(mesh.GetIndicesUInt16(), BufferTarget.ElementArrayBuffer),
+                        new BufferDescription(
+                            BufferObject.Create(mesh.Normals.ToArray(), BufferTarget.ArrayBuffer),
+                            new VertexAttributePointer(VertexAttributeLocation.Normals, 3, VertexAttribPointerType.Float, false, 0, 0)
+                        ),
+                        new BufferDescription(
+                            mesh.HasTextureCoords(0) ?
+                                BufferObject.Create(mesh.TextureCoordinateChannels[0].Select(v => new Vector2(v.X, v.Y)).ToArray(), BufferTarget.ArrayBuffer) :
+                                null,
+                            new VertexAttributePointer(VertexAttributeLocation.TexCoords, 2, VertexAttribPointerType.Float, false, 0, 0)
+                        ),
+                        new BufferDescription(
+                            BufferObject.Create(mesh.Vertices.ToArray(), BufferTarget.ArrayBuffer),
+                            new VertexAttributePointer(VertexAttributeLocation.Position, 3, VertexAttribPointerType.Float, false, 0, 0)
                         )
                     );
+                    meshData.AddOrUpdate(mesh, new MeshInfo() { Vao = vao }, (m, mi) =>
+                    {
+                        mi.Vao = vao;
+                        return mi;
+                    });
                 }
-            }, DispatcherPriority.Normal).ConfigureAwait(false);
+            }, DispatcherPriority.Normal);
 
-            IEnumerable<ModelPart> modelParts = await Task.WhenAll(vaos.Select(async kvp =>
-            {
-                Material mat = s.Materials[kvp.Key.MaterialIndex];
-                
-                Texture2D diffuse= await parameters.ContentManager.LoadAsync<Texture2D>(
-                    mat.HasTextureDiffuse ? 
-                        Path.Combine(Path.GetDirectoryName(parameters.ResourceString), s.Materials[kvp.Key.MaterialIndex].TextureDiffuse.FilePath) :
-                        "Internals/Default.png",
-                    parameters.CancellationToken
-                ).ConfigureAwait(false);
-                
-                return new LightClawModelPart(effect, kvp.Value, diffuse, false, true, false);
-            }));
+            await Task.WhenAll(shaderLoadTask, textureLoadTask, vaoCreateTask).ConfigureAwait(false);
 
+            IEnumerable<ModelPart> modelParts = meshData.Values.Select(mi => new LightClawModelPart(shaderLoadTask.Result, mi.Vao, mi.Texture, false, true, false));
             return new Model(modelParts, true);
         }
 
@@ -143,6 +146,13 @@ namespace LightClaw.Engine.IO
         private static void OnLogMessage(string msg, string userData)
         {
             assimpLog.Info(msg);
+        }
+
+        private class MeshInfo
+        {
+            public Texture2D Texture { get; set; }
+
+            public VertexArrayObject Vao { get; set; }
         }
     }
 

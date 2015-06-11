@@ -21,16 +21,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [DebuggerDisplay("Attribute Count: {Attributes.Count}, Uniform Count: {Uniforms.Count}")]
     public class ShaderProgram : GLObject, IBindable
     {
-        private ImmutableDictionary<string, int> _Attributes;
+        private ImmutableDictionary<string, ProgramAttribute> _Attributes;
 
         /// <summary>
         /// A list of all vertex attributes.
         /// </summary>
-        public ImmutableDictionary<string, int> Attributes
+        public ImmutableDictionary<string, ProgramAttribute> Attributes
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableDictionary<string, int>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, ProgramAttribute>>() != null);
 
                 return _Attributes;
             }
@@ -42,16 +42,16 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        private ImmutableDictionary<string, Uniform> _Uniforms;
+        private ImmutableDictionary<string, ProgramUniform> _Uniforms;
 
         /// <summary>
-        /// The <see cref="Uniform"/>s of the <see cref="ShaderProgram"/>.
+        /// The <see cref="ProgramUniform"/>s of the <see cref="ShaderProgram"/>.
         /// </summary>
-        public ImmutableDictionary<string, Uniform> Uniforms
+        public ImmutableDictionary<string, ProgramUniform> Uniforms
         {
             get
             {
-                Contract.Ensures(Contract.Result<ImmutableDictionary<string, Uniform>>() != null);
+                Contract.Ensures(Contract.Result<ImmutableDictionary<string, ProgramUniform>>() != null);
 
                 return _Uniforms;
             }
@@ -112,13 +112,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
                     throw new LinkingFailedException(message, infoLog, result);
                 }
 
-                int size;
-                ActiveAttribType aat;
+
                 this.Attributes = Enumerable.Range(0, this.GetInterface(ProgramInterface.ProgramInput, ProgramInterfaceParameter.ActiveResources))
-                                            .Select(i => new KeyValuePair<string, int>(GL.GetActiveAttrib(this, i, out size, out aat), i))
-                                            .ToImmutableDictionary();
+                                            .Select(uniformIndex => new ProgramAttribute(this, uniformIndex))
+                                            .ToImmutableDictionary(attribute => attribute.Name);
                 this.Uniforms = Enumerable.Range(0, this.GetInterface(ProgramInterface.Uniform, ProgramInterfaceParameter.ActiveResources))
-                                          .Select(uniformIndex => new Uniform(this, uniformIndex))
+                                          .Select(uniformIndex => new ProgramUniform(this, uniformIndex))
                                           .ToImmutableDictionary(uniform => uniform.Name);
             }
             finally

@@ -506,7 +506,7 @@ namespace LightClaw.Engine.Threading
                     this.ExecuteStack();
                 }
 
-                // Empty the execution stack if we're disposed.
+                // Empty the execution stack if we're stopping.
                 int tries = 0; // Make sure we don't get stuck in infinite loops
                 while (!this.queues.Values.All(q => q.IsEmpty) && tries++ < 5)
                 {

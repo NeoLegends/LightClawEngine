@@ -14,7 +14,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// A format descriptor for texture data.
     /// </summary>
     [DataContract]
-    public struct TextureDescription : ICloneable, IEquatable<TextureDescription>
+    public sealed class TextureDescription : ICloneable, IEquatable<TextureDescription>
     {
         /// <summary>
         /// The width of the texture.
@@ -57,6 +57,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         [DataMember]
         public TextureTarget Target { get; private set; }
+
+        /// <summary>
+        /// Constructor for serialization.
+        /// </summary>
+        private TextureDescription() { }
 
         /// <summary>
         /// Initializes a new one-dimensional <see cref="TextureDescription"/>.
@@ -106,7 +111,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="target">The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.</param>
         /// <param name="pixelInternalFormat">The format of the pixels.</param>
         public TextureDescription(int width, int height, int depth, int texLevels, int msLevels, TextureTarget3d target, PixelInternalFormat pixelInternalFormat)
-            : this()
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
@@ -153,7 +157,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             if (ReferenceEquals(obj, null))
                 return false;
 
-            return (obj is TextureDescription) ? this.Equals((TextureDescription)obj) : false;
+            return this.Equals(obj as TextureDescription);
         }
 
         /// <summary>
@@ -163,6 +167,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns><c>true</c> if the <see cref="TextureDescription"/>s are equal, otherwise <c>false</c>.</returns>
         public bool Equals(TextureDescription other)
         {
+            if (ReferenceEquals(other, this))
+                return true;
+            if (ReferenceEquals(other, null))
+                return false;
+
             return (this.Depth == other.Depth) && (this.Height == other.Height) &&
                    (this.PixelInternalFormat == other.PixelInternalFormat) && (this.Levels == other.Levels) &&
                    (this.MultisamplingLevels == other.MultisamplingLevels) &&
@@ -188,7 +197,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The maximum amount of mipmap levels.</returns>
         public static int GetMaxTextureLevels(int width)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Ensures(Contract.Result<int>() > 0);
 
             return Math.Max((int)Math.Log(width, 2), 1);
@@ -202,11 +211,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The maximum amount of mipmap levels.</returns>
         public static int GetMaxTextureLevels(int width, int height)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
             Contract.Ensures(Contract.Result<int>() > 0);
 
-            return Math.Max((int)Math.Min(Math.Log(width, 2), Math.Log(height, 2)) + 1, 1);
+            return Math.Max((int)Math.Min(Math.Log(width, 2), Math.Log(height, 2)), 1);
         }
 
         /// <summary>
@@ -218,12 +227,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The maximum amount of mipmap levels.</returns>
         public static int GetMaxTextureLevels(int width, int height, int depth)
         {
-            Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
-            Contract.Requires<ArgumentOutOfRangeException>(depth >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(width > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(height > 0);
+            Contract.Requires<ArgumentOutOfRangeException>(depth > 0);
             Contract.Ensures(Contract.Result<int>() > 0);
 
-            return Math.Max((int)Math.Min(Math.Min(Math.Log(width, 2), Math.Log(height, 2)), Math.Log(depth, 2)) + 1, 1);
+            return Math.Max((int)Math.Min(Math.Min(Math.Log(width, 2), Math.Log(height, 2)), Math.Log(depth, 2)), 1);
         }
 
         /// <summary>
@@ -234,6 +243,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns><c>true</c> if the <see cref="TextureDescription"/>s are equal, otherwise <c>false</c>.</returns>
         public static bool operator ==(TextureDescription left, TextureDescription right)
         {
+            if (ReferenceEquals(left, right))
+                return true;
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+                return false;
+
             return left.Equals(right);
         }
 

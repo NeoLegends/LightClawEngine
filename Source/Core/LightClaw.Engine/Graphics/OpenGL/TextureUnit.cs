@@ -18,12 +18,17 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [JsonConverter(typeof(TextureUnitConverter))]
     public struct TextureUnit : ICloneable, IEquatable<int>, IEquatable<TextureUnit>
     {
+        /// <summary>
+        /// Zero.
+        /// </summary>
+        public static TextureUnit Zero = new TextureUnit(0);
+
         #region Predefined Units
 
         /// <summary>
         /// Texture unit 0.
         /// </summary>
-        public static readonly TextureUnit Texture0 = new TextureUnit(0);
+        public static readonly TextureUnit Texture0 = Zero;
 
         /// <summary>
         /// Texture unit 1.

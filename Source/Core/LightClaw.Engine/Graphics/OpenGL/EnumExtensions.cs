@@ -19,6 +19,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="drawElementsType">The <see cref="DrawElementsType"/> to get the machine unit size from.</param>
         /// <returns>The size of the specified element in machine units.</returns>
+        [ContractVerification(false)]
         public static int GetElementSize(this DrawElementsType drawElementsType)
         {
             switch (drawElementsType)
@@ -65,6 +66,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
         /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is primitive value.</returns>
+        [ContractVerification(false)]
         public static bool IsPrimitiveValue(this ActiveUniformType type)
         {
             switch (type)

@@ -23,9 +23,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         protected Texture3DBase(TextureDescription description)
             : base(description)
         {
+            Contract.Requires<ArgumentNullException>(description != null);
+
             this.VerifyAccess();
 
-            using (Binding textureBinding = this.Bind())
+            using (Binding textureBinding = this.Bind(0))
             {
                 switch (this.Target)
                 {
@@ -117,7 +119,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [ContractClassFor(typeof(Texture3DBase))]
     internal abstract class Texture3DBaseContracts : Texture3DBase
     {
-        public Texture3DBaseContracts() : base(new TextureDescription()) { }
+        public Texture3DBaseContracts() : base(null) { }
 
         public override void Set(IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int depth, int xOffset, int yOffset, int zOffset, int level)
         {

@@ -96,10 +96,14 @@ namespace LightClaw.Engine.Graphics
             VertexArrayObject vao = this.Vao;
             if ((effect != null) && (vao != null))
             {
+                EffectPass pass = effect.First();
+
+                pass.DataUniforms["MVP"].Set(ref mvp);
+                pass.SamplerUniforms["diffuse"].Set(this.Diffuse, TextureUnit.Texture0);
+
                 using (Binding vaoBinding = vao.Bind())
-                using (Binding effectPassPinding = effect.ApplyPass(0))
+                using (Binding effectPassPinding = pass.Bind())
                 {
-                    //effect.First().DataUniforms["MVP"].Set(ref mvp);
                     vao.DrawIndexed();
                 }
             }

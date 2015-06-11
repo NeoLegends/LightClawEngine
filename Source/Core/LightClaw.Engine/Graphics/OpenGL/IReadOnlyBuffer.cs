@@ -30,6 +30,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         BufferTarget Target { get; }
 
         /// <summary>
+        /// Binds the buffer.
+        /// </summary>
+        /// <returns>A <see cref="Binding"/> to release the buffer.</returns>
+        Binding Bind();
+
+        /// <summary>
         /// Gets all the data in the buffer.
         /// </summary>
         /// <remarks>
@@ -87,6 +93,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        Binding IReadOnlyBuffer.Bind()
+        {
+            return default(Binding);
+        }
+
         T[] IReadOnlyBuffer.Get<T>()
         {
             Contract.Ensures(Contract.Result<T[]>() != null);
@@ -101,11 +112,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Ensures(Contract.Result<T[]>() != null);
 
             return null;
-        }
-
-        Binding IBindable.Bind() 
-        {
-            return default(Binding);
         }
 
         void IBindable.Unbind() { }

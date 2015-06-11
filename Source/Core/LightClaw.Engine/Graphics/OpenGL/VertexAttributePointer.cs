@@ -70,11 +70,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             );
         }
 
-        Binding IBindable.Bind()
-        {
-            return this.Enable();
-        }
-
         public object Clone()
         {
             return new VertexAttributePointer(this.Index, this.Size, this.Type, this.Normalize, this.Stride, this.Offset);

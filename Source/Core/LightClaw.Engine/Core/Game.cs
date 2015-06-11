@@ -347,7 +347,7 @@ namespace LightClaw.Engine.Core
             //    Thread.Sleep(timeToSleep);
             //}
 
-            this.Dispatcher.InvokeSlim(this.cachedOnTickAction); // Small perf hack
+            this.Dispatcher.InvokeSlim(this.cachedOnTickAction, DispatcherPriority.High); // Small perf hack
         }
 
         /// <summary>

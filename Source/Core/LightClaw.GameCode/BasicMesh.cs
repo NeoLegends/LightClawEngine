@@ -98,6 +98,8 @@ namespace LightClaw.GameCode
             Matrix4.CreatePerspectiveFieldOfView(MathF.DegreesToRadians(50), 16 / 9, 0.01f, 100f) *
             Matrix4.LookAt(new Vector3(6, 3, 6), Vector3.Zero, new Vector3(0, 1, 0));
 
+        private static readonly Matrix4 rot = Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(Vector3.UnitX, MathF.DegreesToRadians(-90.0f)));
+
         private int getErrorCount = 0;
 
         private Model model;
@@ -126,27 +128,6 @@ namespace LightClaw.GameCode
         {
             IContentManager mgr = this.IocC.Resolve<IContentManager>();
             this.model = await mgr.LoadAsync<Model>("Game/Dragonborn.FBX");
-
-            //Effect e = await this.IocC.Resolve<IContentManager>().LoadAsync<Effect>("Shaders/Basic.shr");
-            //EffectPass pass = e.First();
-
-            //ModelPart mp = new LightClawModelPart(
-            //    e,
-            //    new VertexArrayObject(
-            //        BufferObject.Create(indices, BufferTarget.ElementArrayBuffer),
-            //        new BufferDescription(
-            //            BufferObject.Create(cubeData, BufferTarget.ArrayBuffer),
-            //            new VertexAttributePointer(pass.Attributes["inVertexPosition"], 3, VertexAttribPointerType.Float, false, 0, 0)
-            //        ),
-            //        new BufferDescription(
-            //            BufferObject.Create(colorData, BufferTarget.ArrayBuffer),
-            //            new VertexAttributePointer(pass.Attributes["inVertexColor"], 3, VertexAttribPointerType.Float, false, 0, 0)
-            //        )
-            //    ),
-            //    null
-            //);
-
-            //this.model = new Model(mp);
         }
 
         protected override void OnDraw()
@@ -156,28 +137,6 @@ namespace LightClaw.GameCode
             {
                 m.Draw(ref this.modelMatrix);
             }
-            //VertexArrayObject vao = this.vao;
-            //ShaderProgram program = this.program;
-            //if (vao != null && program != null)
-            //{
-            //    using (Binding programBinding = program.Bind())
-            //    using (Binding vaoBinding = vao.Bind())
-            //    {
-            //        Matrix4 mvp = this.modelMatrix; // viewProjectionMatrix * this.modelMatrix;
-
-            //        program.Uniforms["MVP"].Set(ref mvp);
-            //        if (getErrorCount < 3)
-            //        {
-            //            Log.Warn(() => "Current OpenGL-Error after setting uniform: {0}".FormatWith(GL.GetError()));
-            //        }
-            //        vao.DrawIndexed();
-            //        if (getErrorCount < 3)
-            //        {
-            //            Log.Warn(() => "Current OpenGL-Error after rendering: {0}".FormatWith(GL.GetError()));
-            //            getErrorCount++;
-            //        }
-            //    }
-            //}
         }
 
         protected override bool OnUpdate(GameTime gameTime, int pass)
@@ -186,7 +145,7 @@ namespace LightClaw.GameCode
             {
                 float degreeValue = (float)((gameTime.TotalGameTime.TotalSeconds * 90.0) % 360.0);
                 float radiansValue = MathF.DegreesToRadians(degreeValue);
-                this.modelMatrix = Matrix4.CreateRotationY(radiansValue);
+                this.modelMatrix = rot * Matrix4.CreateRotationY(radiansValue);
             }
             return true;
         }

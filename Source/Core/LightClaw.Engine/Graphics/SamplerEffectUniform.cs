@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Graphics.OpenGL;
 using LightClaw.Extensions;
-
-using LCTextureUnit = LightClaw.Engine.Graphics.OpenGL.TextureUnit;
 
 namespace LightClaw.Engine.Graphics
 {
     public class SamplerEffectUniform : EffectUniform, IBindable
     {
+        private int isDirty = 1;
+
         private Sampler _Sampler;
 
         public Sampler Sampler
@@ -43,25 +44,38 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private LCTextureUnit _TextureUnit = 0;
+        private TextureUnit _TextureUnit = 0;
 
-        public LCTextureUnit TextureUnit
+        public TextureUnit TextureUnit
         {
             get
             {
+                Contract.Ensures(Contract.Result<TextureUnit>() >= TextureUnit.Zero);
+
                 return _TextureUnit;
             }
-            private set
+            set
             {
+                Contract.Requires<ArgumentNullException>(value >= TextureUnit.Zero);
+
                 this.SetProperty(ref _TextureUnit, value);
+                this.isDirty = 1;
             }
         }
 
-        public SamplerEffectUniform(EffectPass pass, Uniform uniform, LCTextureUnit textureUnit)
+        public SamplerEffectUniform(EffectPass pass, ProgramUniform uniform)
+            : this(pass, uniform, 0)
+        {
+            Contract.Requires<ArgumentNullException>(pass != null);
+            Contract.Requires<ArgumentNullException>(uniform != null);
+        }
+
+        public SamplerEffectUniform(EffectPass pass, ProgramUniform uniform, TextureUnit textureUnit)
             : base(pass, uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(uniform != null);
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= TextureUnit.Zero);
 
             this.TextureUnit = textureUnit;
         }
@@ -71,21 +85,19 @@ namespace LightClaw.Engine.Graphics
             Texture texture = this.Texture;
             if (texture != null)
             {
+                if (Interlocked.CompareExchange(ref this.isDirty, 0, 1) == 1)
+                {
+                    this.Uniform.Set(this.TextureUnit);
+                }
+
                 Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
-                    if (sampler.TextureUnit == texture.TextureUnit)
-                    {
-                        this.Uniform.Set(this.TextureUnit);
-                        texture.Bind();
-                        sampler.Bind();
-                        return new Binding(this);
-                    }
-                    else
-                    {
-                        Log.Warn(() => "The texture unit of the sampler to bind ({0}) didn't match the texture unit of the texture ({1}). The sampler will not be bound.".FormatWith(sampler.TextureUnit, texture.TextureUnit));
-                    }
+                    sampler.Bind(this.TextureUnit);
                 }
+
+                texture.Bind(this.TextureUnit);
+                return new Binding(this);
             }
             else
             {
@@ -95,9 +107,14 @@ namespace LightClaw.Engine.Graphics
             return default(Binding);
         }
 
-        public void Set(Sampler sampler)
+        public void Set(Texture texture, TextureUnit textureUnit)
         {
-            this.Sampler = sampler;
+            Contract.Requires<ArgumentNullException>(textureUnit != null);
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= TextureUnit.Zero);
+
+            this.Texture = texture;
+            this.TextureUnit = textureUnit;
+            this.isDirty = 1;
         }
 
         public override void Unbind()

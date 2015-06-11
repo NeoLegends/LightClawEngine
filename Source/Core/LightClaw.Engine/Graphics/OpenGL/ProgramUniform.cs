@@ -18,7 +18,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
     /// Represents a shader uniform.
     /// </summary>
     [DebuggerDisplay("Name: {Name}, Location: {Location}, Type: {Type}")]
-    public class Uniform : DispatcherEntity
+    public class ProgramUniform : DispatcherEntity
     {
         private int _Location;
 
@@ -52,14 +52,14 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             set
             {
-                throw new NotSupportedException("The {0}s name cannot be set. It is hardcoded in the shader file.".FormatWith(typeof(Uniform).Name));
+                throw new NotSupportedException("The {0}s name cannot be set. It is hardcoded in the shader file.".FormatWith(typeof(ProgramUniform).Name));
             }
         }
 
         private ShaderProgram _Program;
 
         /// <summary>
-        /// The <see cref="ShaderProgram"/> the <see cref="Uniform"/> belongs to.
+        /// The <see cref="ShaderProgram"/> the <see cref="ProgramUniform"/> belongs to.
         /// </summary>
         public ShaderProgram Program
         {
@@ -80,7 +80,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         private ActiveUniformType _Type;
 
         /// <summary>
-        /// The <see cref="Type"/> of the <see cref="Uniform"/>.
+        /// The <see cref="Type"/> of the <see cref="ProgramUniform"/>.
         /// </summary>
         public ActiveUniformType Type
         {
@@ -95,21 +95,22 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
-        /// Initializes a new <see cref="Uniform"/>.
+        /// Initializes a new <see cref="ProgramUniform"/>.
         /// </summary>
-        /// <param name="program">The <see cref="ShaderProgram"/> the <see cref="Uniform"/> belongs to.</param>
-        /// <param name="location">The uniform's location.</param>
-        public Uniform(ShaderProgram program, int location)
+        /// <param name="program">The <see cref="ShaderProgram"/> the <see cref="ProgramUniform"/> belongs to.</param>
+        /// <param name="index">The uniform index as per GL.GetProgramInterface.</param>
+        public ProgramUniform(ShaderProgram program, int index)
         {
             Contract.Requires<ArgumentNullException>(program != null);
-            Contract.Requires<ArgumentOutOfRangeException>(location >= 0);
+            Contract.Requires<ArgumentOutOfRangeException>(index >= 0);
 
-            this.Location = location;
             this.Program = program;
 
-            int nameLength;
+            int size;
             ActiveUniformType uniformType;
-            base.Name = GL.GetActiveUniform(this.Program, this.Location, out nameLength, out uniformType);
+            base.Name = GL.GetActiveUniform(this.Program, index, out size, out uniformType);
+            this.Location = GL.GetUniformLocation(program, this.Name);
+
             this.Type = uniformType; // Set indirectly to fire event
         }
 

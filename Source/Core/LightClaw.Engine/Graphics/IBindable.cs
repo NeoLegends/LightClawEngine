@@ -12,14 +12,6 @@ namespace LightClaw.Engine.Graphics
     public interface IBindable
     {
         /// <summary>
-        /// Binds the object to the graphics pipeline.
-        /// </summary>
-        /// <remarks>
-        /// Binding shall not fail in case of something already bound, instead the previous binding shall be overwritten.
-        /// </remarks>
-        Binding Bind();
-
-        /// <summary>
         /// Unbinds the element from the graphics pipeline.
         /// </summary>
         void Unbind();

@@ -1,10 +1,12 @@
 ﻿#version 400
 
-in vec3 vertexColor;
+uniform sampler2D diffuse;
+
+in vec2 texCoords;
 
 out vec4 finalColor;
 
 void main(void)
 {
-	finalColor = vec4(vertexColor, 1.0f);
+	finalColor = texture(diffuse, texCoords).rgba;
 }

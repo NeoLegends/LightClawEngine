@@ -63,6 +63,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The newly created texture.</returns>
         public static Texture2D Create<T>(TextureDescription desc, T[] data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
+            Contract.Requires<ArgumentNullException>(desc != null);
+            Contract.Requires<ArgumentException>(desc.Target.IsTexture2DTarget());
             Contract.Requires<ArgumentNullException>(data != null);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);
@@ -100,6 +102,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The newly created texture.</returns>
         public static Texture2D Create(TextureDescription desc, IntPtr data, PixelFormat pixelFormat, PixelType pixelType, int width, int height, int xOffset, int yOffset, int level)
         {
+            Contract.Requires<ArgumentNullException>(desc != null);
+            Contract.Requires<ArgumentException>(desc.Target.IsTexture2DTarget());
             Contract.Requires<ArgumentNullException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(width > 0);
             Contract.Requires<ArgumentOutOfRangeException>(height > 0);

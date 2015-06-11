@@ -129,6 +129,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
+        Binding IReadOnlyBuffer.Bind()
+        {
+            return default(Binding);
+        }
+
         T[] IReadOnlyBuffer.Get<T>()
         {
             return null;
@@ -179,11 +184,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
             Contract.Requires<ArgumentException>(data != IntPtr.Zero);
             Contract.Requires<ArgumentOutOfRangeException>(offset >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(sizeInBytes > 0);
-        }
-
-        Binding IBindable.Bind() 
-        {
-            return default(Binding);
         }
 
         void IBindable.Unbind() { }

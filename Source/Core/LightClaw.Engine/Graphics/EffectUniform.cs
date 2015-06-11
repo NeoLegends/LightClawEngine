@@ -48,13 +48,13 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        private Uniform _Uniform;
+        private ProgramUniform _Uniform;
 
-        public Uniform Uniform
+        public ProgramUniform Uniform
         {
             get
             {
-                Contract.Ensures(Contract.Result<Uniform>() != null);
+                Contract.Ensures(Contract.Result<ProgramUniform>() != null);
 
                 return _Uniform;
             }
@@ -66,7 +66,7 @@ namespace LightClaw.Engine.Graphics
             }
         }
 
-        protected EffectUniform(EffectPass pass, Uniform uniform)
+        protected EffectUniform(EffectPass pass, ProgramUniform uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);
             Contract.Requires<ArgumentNullException>(uniform != null);

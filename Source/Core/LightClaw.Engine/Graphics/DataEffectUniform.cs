@@ -13,7 +13,7 @@ namespace LightClaw.Engine.Graphics
 {
     public class DataEffectUniform : EffectUniform
     {
-        public DataEffectUniform(EffectPass pass, Uniform uniform)
+        public DataEffectUniform(EffectPass pass, ProgramUniform uniform)
             : base(pass, uniform)
         {
             Contract.Requires<ArgumentNullException>(pass != null);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
@@ -417,6 +418,7 @@ namespace LightClaw.Engine.IO
         /// Because an asset can be loaded as different types (e.g. shader source as string or as shader) storing the
         /// <see cref="ResourceString"/> as cache key is not enough.
         /// </remarks>
+        [DebuggerDisplay("{Type.Name}://{ResourceString}")]
         private struct ResourceKey : ICloneable, IEquatable<ResourceKey>
         {
             /// <summary>
