@@ -18,8 +18,14 @@ namespace LightClaw.Engine.Graphics
     /// </summary>
     public abstract class ModelPart : DispatcherEntity
     {
+        /// <summary>
+        /// Indicates whether the <see cref="ModelPart"/> owns the <see cref="Effect"/> and whether it can be disposed.
+        /// </summary>
         protected readonly bool OwnsEffect;
 
+        /// <summary>
+        /// Indicates whether the <see cref="ModelPart"/> owns the <see cref="VertexArrayObject"/> and whether it can be disposed.
+        /// </summary>
         protected readonly bool OwnsVao;
 
         /// <summary>
@@ -131,7 +137,7 @@ namespace LightClaw.Engine.Graphics
         {
             this.VerifyAccess();
 
-            using (ParameterEventArgsRaiser raiser = new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
+            using (new ParameterEventArgsRaiser(this, this.Drawing, this.Drawn))
             {
                 this.OnDraw(ref mvp);
             }

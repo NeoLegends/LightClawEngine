@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Represents a request of a coroutine to wait for the next step until the specified time has passed.
@@ -42,10 +42,7 @@ namespace LightClaw.Engine.Coroutines
         /// Initializes a new <see cref="TimeBlockRequest"/> setting the blocking time.
         /// </summary>
         /// <param name="blockingTime">The time that should pass until the coroutine is executed again.</param>
-        public TimeBlockRequest(TimeSpan blockingTime)
-            : this(blockingTime.Ticks)
-        {
-        }
+        public TimeBlockRequest(TimeSpan blockingTime) : this(blockingTime.Ticks) { }
 
         /// <summary>
         /// Initializes a new <see cref="TimeBlockRequest"/> setting the blocking time.

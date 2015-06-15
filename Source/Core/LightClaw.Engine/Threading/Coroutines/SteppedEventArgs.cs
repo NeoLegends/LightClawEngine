@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Event arguments for the <see cref="E:CoroutineContext.Stepped"/>-event.

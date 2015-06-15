@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Contains extensions to <see cref="ICoroutineContext"/>s.

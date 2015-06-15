@@ -33,6 +33,67 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Gets a single random byte.
+        /// </summary>
+        /// <returns>A random <see cref="Byte"/>.</returns>
+        public static byte GetByte()
+        {
+            lock (random)
+            {
+                return (byte)random.Next(0, 256);
+            }
+        }
+
+        /// <summary>
+        /// Gets an array of random <see cref="Byte"/>s.
+        /// </summary>
+        /// <param name="count">The amount of <see cref="Byte"/>s to get.</param>
+        /// <returns>The array of <see cref="Byte"/>s.</returns>
+        public static byte[] GetBytes(int count)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
+            Contract.Ensures(Contract.Result<byte[]>().Length == count);
+
+            byte[] buffer = new byte[count];
+            lock (random)
+            {
+                random.NextBytes(buffer);
+            }
+            return buffer;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="Double"/> in the range of 0.0 to 1.0.
+        /// </summary>
+        /// <returns>The random number.</returns>
+        public static double GetDouble()
+        {
+            Contract.Ensures(Contract.Result<double>() >= 0.0f);
+
+            lock (random)
+            {
+                return random.NextDouble();
+            }
+        }
+
+        /// <summary>
+        /// Gets an array of <see cref="Double"/>s in the range of 0.0 to 1.0.
+        /// </summary>
+        /// <param name="count">The amount of <see cref="Double"/>s to get.</param>
+        /// <returns>The array of random <see cref="Double"/>s.</returns>
+        public static double[] GetDoubles(int count)
+        {
+            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
+            Contract.Ensures(Contract.Result<double[]>().Length == count);
+            Contract.Ensures(Contract.Result<double[]>().All(d => (d >= 0.0) && (d <= 1.0)));
+
+            lock (random)
+            {
+                return Enumerable.Range(0, count).Select(i => random.NextDouble()).ToArray();
+            }
+        }
+
+        /// <summary>
         /// Gets a random <see cref="Int32"/>.
         /// </summary>
         /// <returns>A random number.</returns>
@@ -87,33 +148,21 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Gets a single random byte.
+        /// Returns random elements from the specified <paramref name="array"/>.
         /// </summary>
-        /// <returns>A random <see cref="Byte"/>.</returns>
-        public static byte GetByte()
+        /// <typeparam name="T">The <see cref="Type"/> of elements to obtain.</typeparam>
+        /// <param name="array">The source array.</param>
+        /// <param name="count">The amount of elements to obtain.</param>
+        /// <returns>An array of random elements from the input array.</returns>
+        public static T[] GetRandomElements<T>(T[] array, int count)
         {
+            Contract.Requires<ArgumentNullException>(array != null);
+            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
+
             lock (random)
             {
-                return (byte)random.Next(0, 256);
+                return Enumerable.Range(0, count).Select(i => array[random.Next(0, array.Length)]).ToArray();
             }
-        }
-
-        /// <summary>
-        /// Gets an array of random <see cref="Byte"/>s.
-        /// </summary>
-        /// <param name="count">The amount of <see cref="Byte"/>s to get.</param>
-        /// <returns>The array of <see cref="Byte"/>s.</returns>
-        public static byte[] GetBytes(int count)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
-            Contract.Ensures(Contract.Result<byte[]>().Length == count);
-
-            byte[] buffer = new byte[count];
-            lock (random)
-            {
-                random.NextBytes(buffer);
-            }
-            return buffer;
         }
 
         /// <summary>
@@ -144,55 +193,6 @@ namespace LightClaw.Engine.Core
             lock (random)
             {
                 return Enumerable.Range(0, count).Select(i => (float)random.NextDouble()).ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Gets a <see cref="Double"/> in the range of 0.0 to 1.0.
-        /// </summary>
-        /// <returns>The random number.</returns>
-        public static double GetDouble()
-        {
-            Contract.Ensures(Contract.Result<double>() >= 0.0f);
-
-            lock (random)
-            {
-                return random.NextDouble();
-            }
-        }
-
-        /// <summary>
-        /// Gets an array of <see cref="Double"/>s in the range of 0.0 to 1.0.
-        /// </summary>
-        /// <param name="count">The amount of <see cref="Double"/>s to get.</param>
-        /// <returns>The array of random <see cref="Double"/>s.</returns>
-        public static double[] GetDoubles(int count)
-        {
-            Contract.Requires<ArgumentOutOfRangeException>(count > 0);
-            Contract.Ensures(Contract.Result<double[]>().Length == count);
-            Contract.Ensures(Contract.Result<double[]>().All(d => (d >= 0.0) && (d <= 1.0)));
-
-            lock (random)
-            {
-                return Enumerable.Range(0, count).Select(i => random.NextDouble()).ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Returns random elements from the specified <paramref name="array"/>.
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of elements to obtain.</typeparam>
-        /// <param name="array">The source array.</param>
-        /// <param name="count">The amount of elements to obtain.</param>
-        /// <returns>An array of random elements from the input array.</returns>
-        public static T[] GetRandomElements<T>(T[] array, int count)
-        {
-            Contract.Requires<ArgumentNullException>(array != null);
-            Contract.Requires<ArgumentOutOfRangeException>(count >= 0);
-
-            lock (random)
-            {
-                return Enumerable.Range(0, count).Select(i => array[random.Next(0, array.Length)]).ToArray();
             }
         }
 

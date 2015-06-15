@@ -130,6 +130,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke(Action action)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.Invoke(action, DispatcherPriority.Normal);
         }
@@ -143,6 +144,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke(Action action, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.Invoke(ct => action(), priority, CancellationToken.None);
         }
@@ -158,6 +160,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke(Action<CancellationToken> action, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
             this.CheckDisposed();
 
             return this.Invoke(ct => { action(ct); return true; }, priority, token);
@@ -173,6 +176,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke<TParam>(Action<TParam> action, TParam param)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.Invoke(action, param, DispatcherPriority.Normal);
         }
@@ -189,6 +193,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke<TParam>(Action<TParam> action, TParam param, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.Invoke((ct, p) => action(p), param, priority, CancellationToken.None);
         }
@@ -206,6 +211,7 @@ namespace LightClaw.Engine.Threading
         public Task Invoke<TParam>(Action<CancellationToken, TParam> action, TParam param, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
             this.CheckDisposed();
 
             return this.Invoke(ct => action(ct, param), priority, token);
@@ -220,6 +226,7 @@ namespace LightClaw.Engine.Threading
         public Task<TResult> Invoke<TResult>(Func<TResult> func)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
             return this.Invoke(func, DispatcherPriority.Normal);
         }
@@ -235,6 +242,7 @@ namespace LightClaw.Engine.Threading
         public Task<TResult> Invoke<TResult>(Func<TResult> func, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
             return this.Invoke(ct => func(), priority, CancellationToken.None);
         }
@@ -251,6 +259,7 @@ namespace LightClaw.Engine.Threading
         public async Task<TResult> Invoke<TResult>(Func<CancellationToken, TResult> func, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
             this.CheckDisposed();
 
             if (priority == DispatcherPriority.Immediate && ThreadF.IsCurrentThread(this.Thread))
@@ -290,6 +299,7 @@ namespace LightClaw.Engine.Threading
         public Task<TResult> Invoke<TParam, TResult>(Func<TParam, TResult> func, TParam param)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
             return this.Invoke(func, param, DispatcherPriority.Normal);
         }
@@ -307,6 +317,7 @@ namespace LightClaw.Engine.Threading
         public Task<TResult> Invoke<TParam, TResult>(Func<TParam, TResult> func, TParam param, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
             return this.Invoke((ct, p) => func(p), param, priority, CancellationToken.None);
         }
@@ -325,6 +336,7 @@ namespace LightClaw.Engine.Threading
         public Task<TResult> Invoke<TParam, TResult>(Func<CancellationToken, TParam, TResult> func, TParam param, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(func != null);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
             this.CheckDisposed();
 
             return this.Invoke(ct => func(ct, param), priority, token);
@@ -419,6 +431,7 @@ namespace LightClaw.Engine.Threading
         public async Task ImmediateOr(Action action, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             if (ThreadF.IsCurrentThread(this.Thread))
             {
@@ -441,6 +454,7 @@ namespace LightClaw.Engine.Threading
         public Task ImmediateOr(Action<CancellationToken> action, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.ImmediateOr(() => action(token), priority);
         }
@@ -455,6 +469,7 @@ namespace LightClaw.Engine.Threading
         public Task ImmediateOr<TParam>(Action<TParam> action, TParam param, DispatcherPriority priority)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
 
             return this.ImmediateOr((ct, p) => action(p), param, priority, CancellationToken.None);
         }
@@ -471,6 +486,7 @@ namespace LightClaw.Engine.Threading
         public async Task ImmediateOr<TParam>(Action<CancellationToken, TParam> action, TParam param, DispatcherPriority priority, CancellationToken token)
         {
             Contract.Requires<ArgumentNullException>(action != null);
+            Contract.Ensures(Contract.Result<Task>() != null);
             
             if (ThreadF.IsCurrentThread(this.Thread))
             {

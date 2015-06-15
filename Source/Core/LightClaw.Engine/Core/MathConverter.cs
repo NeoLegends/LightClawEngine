@@ -49,7 +49,7 @@ namespace LightClaw.Engine.Core
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
         /// <returns>The newly created object.</returns>
-        [ContractVerification(false)]
+        [ContractVerification(false)] // Contracts complain about length of deserialized array
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // We use a combination of dictionary and switch for performance here.

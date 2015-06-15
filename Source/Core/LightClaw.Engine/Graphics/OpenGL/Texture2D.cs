@@ -24,6 +24,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public Texture2D(TextureDescription description)
             : base(description)
         {
+            Contract.Requires<ArgumentNullException>(description != null);
             Contract.Requires<ArgumentException>(description.Target.IsTexture2DTarget());
         }
 

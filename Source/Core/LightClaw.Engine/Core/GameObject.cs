@@ -179,8 +179,8 @@ namespace LightClaw.Engine.Core
 
         /// <summary>
         /// Adds the specified <paramref name="component"/> to the <see cref="GameObject"/>, if possible, and sets
-        /// <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>
-        /// , if attachment fails.
+        /// <paramref name="result"/> to the first <see cref="Component"/> that matches the <paramref name="predicate"/>,
+        /// if attachment fails.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of <see cref="Component"/> to add.</typeparam>
         /// <param name="predicate">

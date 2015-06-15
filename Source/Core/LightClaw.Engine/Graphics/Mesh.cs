@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -46,9 +47,7 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
-                Model previous = this.Model;
-                this.SetProperty(ref _Model, value);
-                this.Raise(this.ModelChanged, value, previous);
+                this.SetProperty(ref _Model, value, this.ModelChanged);
             }
         }
 
@@ -69,9 +68,7 @@ namespace LightClaw.Engine.Graphics
             }
             private set
             {
-                ResourceString previous = this.Source;
-                this.SetProperty(ref _Source, value);
-                this.Raise(this.SourceChanged, value, previous);
+                this.SetProperty(ref _Source, value, this.SourceChanged);
             }
         }
 
@@ -85,26 +82,54 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="resourceString">The resource string of the model to be drawn.</param>
         public Mesh(ResourceString resourceString)
+            : this(Path.GetFileName(resourceString), resourceString)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Mesh"/>.
+        /// </summary>
+        /// <remarks>
+        /// Warning, the model does not survive deserialization, since the source of the <paramref name="model"/> is unknown!
+        /// Use this for temporary objects only, and make sure to clean them up / remove them form the scene graph afterwards.
+        /// </remarks>
+        /// <param name="model">The model to be drawn.</param>
+        public Mesh(Model model)
+            : this(model.Name, model)
+        {
+            Contract.Requires<ArgumentNullException>(model != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Mesh"/> and sets the resource string of the model to load.
+        /// </summary>
+        /// <param name="name">The <see cref="Mesh"/>s name.</param>
+        /// <param name="resourceString">The resource string of the model to be drawn.</param>
+        public Mesh(string name, ResourceString resourceString)
+            : base(name)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));
 
             Log.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(resourceString));
-
-            this.Name = resourceString;
             this.Source = resourceString;
         }
 
         /// <summary>
         /// Initializes a new <see cref="Mesh"/>.
         /// </summary>
+        /// <remarks>
+        /// Warning, the model does not survive deserialization, since the source of the <paramref name="model"/> is unknown!
+        /// Use this for temporary objects only, and make sure to clean them up / remove them form the scene graph afterwards.
+        /// </remarks>
+        /// <param name="name">The <see cref="Mesh"/>s name.</param>
         /// <param name="model">The model to be drawn.</param>
-        public Mesh(Model model)
+        public Mesh(string name, Model model)
+            : base(name)
         {
             Contract.Requires<ArgumentNullException>(model != null);
 
             Log.Info(() => "Initializing a new mesh from model '{0}'.".FormatWith(model.Name));
-
-            this.Name = model.Name;
             this.Model = model;
         }
 
@@ -116,8 +141,7 @@ namespace LightClaw.Engine.Graphics
             Model model = this.Model;
             if (model != null)
             {
-                Matrix4 modelMatrix = this.GameObject.Transform.ModelMatrix;
-                model.Draw(ref modelMatrix);
+                model.Draw(ref this.Transform.ModelMatrixField);
             }
         }
 
@@ -130,14 +154,17 @@ namespace LightClaw.Engine.Graphics
             Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.Source));
 
             ResourceString rs = this.Source;
-            if ((this.Model == null) && (rs != null))
+            if ((this.Model == null) && rs.IsValid)
             {
                 try
                 {
                     this.Model = await this.IocC.Resolve<IContentManager>()
                                                 .LoadAsync<Model>(rs)
                                                 .ConfigureAwait(false);
-                    this.Name = this.Model.Name;
+                    if (string.IsNullOrWhiteSpace(this.Name) && !string.IsNullOrWhiteSpace(this.Model.Name))
+                    {
+                        this.Name = this.Model.Name;
+                    }
                     Log.Debug(() => "Mesh '{0}' loaded successfully.");
                 }
                 catch (Exception ex)

@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Represents a controller for the execution of a coroutine.
@@ -191,9 +191,15 @@ namespace LightClaw.Engine.Coroutines
         /// <param name="pass">The current updating pass.</param>
         bool IUpdateable.Update(GameTime gameTime, int pass)
         {
-            this.Raise(this._Updating, gameTime, pass);
-            this.Step();
-            this.Raise(this._Updated, gameTime, pass);
+            try
+            {
+                this.Raise(this._Updating, gameTime, pass);
+                this.Step();
+            }
+            finally
+            {
+                this.Raise(this._Updated, gameTime, pass);
+            }
 
             return true;
         }

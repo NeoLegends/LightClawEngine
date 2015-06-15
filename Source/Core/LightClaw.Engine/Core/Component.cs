@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -11,7 +12,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Represents the base class of a class in the game hierarchy.
     /// </summary>
-    [DataContract(IsReference = true), JsonObject]
+    [DataContract(IsReference = true), JsonObject(IsReference = true)]
     public abstract class Component : Manager
     {
         private static readonly Task finishedTask = Task.FromResult(true);
@@ -43,6 +44,31 @@ namespace LightClaw.Engine.Core
                 this.Raise(this.GameObjectChanged, value, previous);
             }
         }
+
+        /// <summary>
+        /// A shortcut to the <see cref="GameObject"/>s transform.
+        /// </summary>
+        public Transform Transform
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Transform>() != null);
+
+                GameObject go = this.GameObject;
+                return (go != null) ? go.Transform : Transform.Zero;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Component"/>.
+        /// </summary>
+        protected Component() { }
+
+        /// <summary>
+        /// Initializes a new <see cref="Component"/>.
+        /// </summary>
+        /// <param name="name">The <see cref="Component"/>s name.</param>
+        protected Component(string name) : base(name) { }
 
         /// <summary>
         /// Callback when the <see cref="Component"/> is enabled.

@@ -22,6 +22,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         [ContractVerification(false)]
         public static int GetElementSize(this DrawElementsType drawElementsType)
         {
+            Contract.Ensures(Contract.Result<int>() > 0);
+
             switch (drawElementsType)
             {
                 case DrawElementsType.UnsignedByte:

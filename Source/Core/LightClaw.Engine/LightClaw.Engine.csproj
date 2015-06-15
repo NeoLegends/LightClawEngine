@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == 'Debug' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,11 +11,13 @@
     <RootNamespace>LightClaw.Engine</RootNamespace>
     <AssemblyName>LightClaw.Engine</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>0bc05597</NuGetPackageImportStamp>
+    <RestorePackages>true</RestorePackages>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,8 +32,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>0bc05597</NuGetPackageImportStamp>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -260,14 +260,14 @@
     <Compile Include="IO\ContentReaderAttribute.cs" />
     <Compile Include="IO\EffectPassReader.cs" />
     <Compile Include="IO\ResourceString.cs" />
-    <Compile Include="Coroutines\IExecutionBlockRequest.cs" />
-    <Compile Include="Coroutines\TimeBlockRequest.cs" />
-    <Compile Include="Coroutines\CoroutineContext.cs" />
-    <Compile Include="Coroutines\CoroutineController.cs" />
-    <Compile Include="Coroutines\ICoroutineContextExtensions.cs" />
-    <Compile Include="Coroutines\ICoroutineContext.cs" />
-    <Compile Include="Coroutines\SteppedEventArgs.cs" />
-    <Compile Include="Coroutines\UpdateCountBlockRequest.cs" />
+    <Compile Include="Threading\Coroutines\IExecutionBlockRequest.cs" />
+    <Compile Include="Threading\Coroutines\TimeBlockRequest.cs" />
+    <Compile Include="Threading\Coroutines\CoroutineContext.cs" />
+    <Compile Include="Threading\Coroutines\CoroutineController.cs" />
+    <Compile Include="Threading\Coroutines\ICoroutineContextExtensions.cs" />
+    <Compile Include="Threading\Coroutines\ICoroutineContext.cs" />
+    <Compile Include="Threading\Coroutines\SteppedEventArgs.cs" />
+    <Compile Include="Threading\Coroutines\UpdateCountBlockRequest.cs" />
     <Compile Include="Graphics\Binding.cs" />
     <Compile Include="Graphics\OpenGL\BufferDescription.cs" />
     <Compile Include="Graphics\Camera.cs" />
@@ -330,6 +330,8 @@
       <HintPath>..\..\packages\NLog.3.2.1\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Collections" />
     <Reference Include="System.Collections.Immutable, Version=1.1.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.1.29-beta\lib\portable-net45+win8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -337,8 +339,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
   </ItemGroup>

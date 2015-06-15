@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Represents an <see cref="IExecutionBlockRequest"/> with a specified amount of calls to

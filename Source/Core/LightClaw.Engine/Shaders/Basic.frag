@@ -8,5 +8,5 @@ out vec4 finalColor;
 
 void main(void)
 {
-	finalColor = texture(diffuse, texCoords).rgba;
+	finalColor = vec4(texture(diffuse, texCoords).rgb, 1.0f);
 }

@@ -92,7 +92,7 @@ namespace LightClaw.Engine.Graphics
         /// </summary>
         /// <param name="modelParts">The initial <see cref="ModelPart"/>s. Will be taken ownage of.</param>
         public Model(params ModelPart[] modelParts)
-            : this(modelParts, true)
+            : this(null, modelParts)
         {
             Contract.Requires<ArgumentNullException>(modelParts != null);
         }
@@ -105,6 +105,32 @@ namespace LightClaw.Engine.Graphics
         /// Indicates whether the <see cref="Model"/> owns the <paramref name="modelParts"/> and thus is allowed to dispose of them.
         /// </param>
         public Model(IEnumerable<ModelPart> modelParts, bool ownsParts)
+            : this(null, modelParts, ownsParts)
+        {
+            Contract.Requires<ArgumentNullException>(modelParts != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
+        /// </summary>
+        /// <param name="name">The <see cref="Model"/>s name.</param>
+        /// <param name="modelParts">The initial <see cref="ModelPart"/>s. Will be taken ownage of.</param>
+        public Model(string name, params ModelPart[] modelParts)
+            : this(name, modelParts, true)
+        {
+            Contract.Requires<ArgumentNullException>(modelParts != null);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="Model"/> from a range of <see cref="ModelPart"/>s.
+        /// </summary>
+        /// <param name="name">The <see cref="Model"/>s name.</param>
+        /// <param name="modelParts">The initial <see cref="ModelPart"/>s.</param>
+        /// <param name="ownsParts">
+        /// Indicates whether the <see cref="Model"/> owns the <paramref name="modelParts"/> and thus is allowed to dispose of them.
+        /// </param>
+        public Model(string name, IEnumerable<ModelPart> modelParts, bool ownsParts)
+            : base(name)
         {
             Contract.Requires<ArgumentNullException>(modelParts != null);
 

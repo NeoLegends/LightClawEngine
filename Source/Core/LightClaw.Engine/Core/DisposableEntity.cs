@@ -94,7 +94,7 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
-        /// Callback for <see cref="M:Dispose()"/> and <see cref="M:Finalize"/>
+        /// Callback for <see cref="M:Dispose()"/> and <see cref="M:Finalize"/>.
         /// </summary>
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         private void DisposeInternal(bool disposing)

@@ -8,13 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using LightClaw.Engine.Core;
 
-namespace LightClaw.Engine.Coroutines
+namespace LightClaw.Engine.Threading.Coroutines
 {
     /// <summary>
     /// Represents a lightweight <see cref="Component"/> that controls execution of coroutines.
     /// </summary>
     [DataContract]
-    [Solitary(typeof(CoroutineController), "More than one CoroutineController induces unnecessary overhead.")]
+    [Solitary(typeof(CoroutineController), "More than one controller induces unnecessary overhead.")]
     public class CoroutineController : Component
     {
         /// <summary>
@@ -31,9 +31,7 @@ namespace LightClaw.Engine.Coroutines
         /// <summary>
         /// Initializes a new <see cref="CoroutineController"/>.
         /// </summary>
-        public CoroutineController()
-        {
-        }
+        public CoroutineController() { }
 
         /// <summary>
         /// Initializes a new <see cref="CoroutineController"/> from a <see cref="Func{T}"/>.

@@ -38,8 +38,6 @@ namespace LightClaw.Engine.Graphics
             }
             set
             {
-                Contract.Requires<ArgumentNullException>(value != null);
-
                 this.SetProperty(ref _Texture, value);
             }
         }
@@ -90,13 +88,14 @@ namespace LightClaw.Engine.Graphics
                     this.Uniform.Set(this.TextureUnit);
                 }
 
+                texture.Bind(this.TextureUnit);
+
                 Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
                     sampler.Bind(this.TextureUnit);
                 }
 
-                texture.Bind(this.TextureUnit);
                 return new Binding(this);
             }
             else
@@ -109,12 +108,18 @@ namespace LightClaw.Engine.Graphics
 
         public void Set(Texture texture, TextureUnit textureUnit)
         {
-            Contract.Requires<ArgumentNullException>(textureUnit != null);
+            Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= TextureUnit.Zero);
+
+            this.Set(texture, null, textureUnit);
+        }
+
+        public void Set(Texture texture, Sampler sampler, TextureUnit textureUnit)
+        {
             Contract.Requires<ArgumentOutOfRangeException>(textureUnit >= TextureUnit.Zero);
 
             this.Texture = texture;
             this.TextureUnit = textureUnit;
-            this.isDirty = 1;
+            this.Sampler = sampler;
         }
 
         public override void Unbind()

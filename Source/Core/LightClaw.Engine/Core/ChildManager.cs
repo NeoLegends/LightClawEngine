@@ -49,9 +49,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="ChildManager{T}"/>.
         /// </summary>
-        protected ChildManager()
-        {
-        }
+        protected ChildManager() { }
 
         /// <summary>
         /// Initializes a new <see cref="ChildManager{T}"/> using a collection of children.

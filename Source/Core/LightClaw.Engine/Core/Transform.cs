@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -14,7 +15,7 @@ namespace LightClaw.Engine.Core
     /// <summary>
     /// Contains an object's position, rotation and scaling relative to its parent and in world space.
     /// </summary>
-    [DataContract(IsReference = true)]
+    [DataContract(IsReference = true), JsonObject(IsReference = true)]
     [NonRemovable, Solitary(typeof(Transform), "A GameObject cannot have multiple transformations at the same time.")]
     public class Transform : Component, INotifyCollectionChanged
     {
@@ -25,6 +26,8 @@ namespace LightClaw.Engine.Core
         {
             get
             {
+                Contract.Ensures(Contract.Result<Transform>() != null);
+
                 return new Transform();
             }
         }
@@ -110,6 +113,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Indicates whether the <see cref="Transform"/> has changed and the matrices need to be recalculated.
         /// </summary>
+        [IgnoreDataMember]
         protected DirtyFlags Dirty
         {
             get
@@ -355,12 +359,18 @@ namespace LightClaw.Engine.Core
                 }
                 else
                 {
-                    Matrix4 result = _ModelMatrix = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix;
+                    Matrix4 result = _ModelMatrix = ModelMatrixField = this.PositionMatrix * this.RotationMatrix * this.ScalingMatrix;
                     this.Dirty &= ~(DirtyFlags.Position | DirtyFlags.Rotation | DirtyFlags.Scaling);
                     return result;
                 }
             }
         }
+
+        /// <summary>
+        /// The <see cref="ModelMatrix"/> as field. Modifying this has no effect on <see cref="Transform"/>,
+        /// it will be recalculated every time one of the properties change.
+        /// </summary>
+        public Matrix4 ModelMatrixField;
 
         /// <summary>
         /// Initializes a new <see cref="Transform"/>.
@@ -422,6 +432,14 @@ namespace LightClaw.Engine.Core
         }
 
         /// <summary>
+        /// Refreshes the property values.
+        /// </summary>
+        public void Refresh()
+        {
+            this.Dirty = DirtyFlags.All;
+        }
+
+        /// <summary>
         /// Rotates the <see cref="GameObject"/> by the specified amount.
         /// </summary>
         /// <param name="amount">The amount to rotate by.</param>
@@ -456,6 +474,7 @@ namespace LightClaw.Engine.Core
             this.LocalPosition = Vector3.Zero;
             this.LocalRotation = Quaternion.Identity;
             this.LocalScaling = Vector3.One;
+            this.Dirty = DirtyFlags.All;
         }
 
         /// <summary>

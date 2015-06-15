@@ -139,7 +139,7 @@ namespace LightClaw.Extensions
         /// <param name="superset">The superset.</param>
         /// <returns><c>true</c> if <paramref name="subset"/> is a subset of <paramref name="superset"/>.</returns>
         [Pure]
-        public static bool IsSubsetOf<T>(IEnumerable<T> subset, IEnumerable<T> superset)
+        public static bool IsSubsetOf<T>(this IEnumerable<T> subset, IEnumerable<T> superset)
         {
             Contract.Requires<ArgumentNullException>(subset != null);
             Contract.Requires<ArgumentNullException>(superset != null);

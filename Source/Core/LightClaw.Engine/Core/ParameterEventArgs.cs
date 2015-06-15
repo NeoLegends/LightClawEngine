@@ -35,9 +35,7 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Initializes a new <see cref="ParameterEventArgs"/>.
         /// </summary>
-        public ParameterEventArgs()
-        {
-        }
+        public ParameterEventArgs() { }
 
         /// <summary>
         /// Initializes a new <see cref="ParameterEventArgs"/> and sets the parameter.

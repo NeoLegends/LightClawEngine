@@ -62,11 +62,6 @@ namespace LightClaw.Engine.Core
             );
         }
 
-        public void Start()
-        {
-
-        }
-
         /// <summary>
         /// Main entry point.
         /// </summary>

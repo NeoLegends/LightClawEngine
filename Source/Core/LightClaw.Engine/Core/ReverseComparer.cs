@@ -22,10 +22,7 @@ namespace LightClaw.Engine.Core
         /// Initializes a new <see cref="ReverseComparer{T}"/> using the default comparer.
         /// </summary>
         /// <seealso cref="P:Comparer{T}.Default"/>
-        public ReverseComparer()
-            : this(Comparer<T>.Default)
-        {
-        }
+        public ReverseComparer() : this(Comparer<T>.Default) { }
 
         /// <summary>
         /// Initializes a new <see cref="ReverseComparer{T}"/> using the specified <see cref="IComparer{T}"/>.

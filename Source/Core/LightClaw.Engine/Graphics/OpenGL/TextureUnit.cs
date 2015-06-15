@@ -194,6 +194,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public int Unit { get; private set; }
 
         /// <summary>
+        /// The <see cref="GLTextureUnit"/>.
+        /// </summary>
+        [IgnoreDataMember]
+        public GLTextureUnit GLUnit
+        {
+            get
+            {
+                return (GLTextureUnit)(GLTextureUnit.Texture0 + this.Unit);
+            }
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="TextureUnit"/> from the specified <see cref="GLTextureUnit"/>.
         /// </summary>
         /// <param name="unit">The unit to initialize from.</param>
@@ -206,6 +218,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         public TextureUnit(int unit)
             : this()
         {
+            Contract.Requires<ArgumentOutOfRangeException>(unit >= 0);
+
             this.Unit = unit;
         }
 
@@ -266,7 +280,54 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The <see cref="TextureUnit"/> as <see cref="String"/>.</returns>
         public override string ToString()
         {
-            return this.Unit.ToString();
+            return this.GLUnit.ToString();
+        }
+
+        /// <summary>
+        /// Parses a <see cref="TextureUnit"/> from a string. The string may either contain the value as integer, 
+        /// or as instance of <see cref="GLTextureUnit"/>.
+        /// </summary>
+        /// <param name="value">The string value to parse.</param>
+        /// <returns>The parsed <see cref="TextureUnit"/>.</returns>
+        /// <exception cref="FormatException">The value could not be parsed.</exception>
+        public static TextureUnit Parse(string value)
+        {
+            Contract.Requires<ArgumentNullException>(value != null);
+
+            TextureUnit unit;
+            if (!TryParse(value, out unit))
+            {
+                throw new FormatException("Value could not be parsed to a " + typeof(TextureUnit).Name);
+            }
+            return unit;
+        }
+
+        /// <summary>
+        /// Attempts to parse a <see cref="TextureUnit"/> from a string. The string may either contain the value as integer, 
+        /// or as instance of <see cref="GLTextureUnit"/>.
+        /// </summary>
+        /// <param name="value">The string value to parse.</param>
+        /// <param name="textureUnit">When the method returns, the parsed texture unit.</param>
+        /// <returns><c>true</c> if the <paramref name="value"/> could be parsed, otherwise <c>false</c>.</returns>
+        public static bool TryParse(string value, out TextureUnit textureUnit)
+        {
+            GLTextureUnit glUnit;
+            int unit;
+            if (Enum.TryParse(value, out glUnit))
+            {
+                textureUnit = new TextureUnit(glUnit);
+                return true;
+            }
+            else if (int.TryParse(value, out unit))
+            {
+                textureUnit = new TextureUnit(unit);
+                return true;
+            }
+            else
+            {
+                textureUnit = default(TextureUnit);
+                return false;
+            }
         }
 
         /// <summary>
@@ -352,6 +413,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <returns>The conversion result.</returns>
         public static implicit operator TextureUnit(int unit)
         {
+            Contract.Requires<ArgumentOutOfRangeException>(unit >= 0);
+
             return new TextureUnit(unit);
         }
 
@@ -404,7 +467,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 int unit = serializer.Deserialize<int>(reader);
-                if (unit >= 0)
+                if (unit < 0)
                 {
                     throw new InvalidOperationException("The value to deserialize into a TextureUnit was smaller than zero.");
                 }
