@@ -97,6 +97,7 @@ namespace LightClaw.Engine.IO
         public async Task<bool> ExistsAsync(ResourceString resourceString, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
+
             using (await this.assetLocks.GetOrAdd(resourceString, key => new AsyncLock()).LockAsync())
             {
                 return await this.resolvers.Select(resolver => resolver.ExistsAsync(resourceString, token)).AnyAsync(b => b);
@@ -194,7 +195,7 @@ namespace LightClaw.Engine.IO
                         IContentReader reader = this.GetReader(assetType, parameter);
                         if (reader != null)
                         {
-                            Log.Trace(() => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(resourceString, assetType.FullName));
+                            Log.Debug(() => "Reader for asset '{0}' of type '{1}' obtained, deserializing...".FormatWith(resourceString, assetType.FullName));
                             token.ThrowIfCancellationRequested();
                             try
                             {
@@ -204,7 +205,7 @@ namespace LightClaw.Engine.IO
                             catch (Exception ex)
                             {
                                 string message = "Asset '{0}' could not be deserialized. An error of type {1} occured.".FormatWith(resourceString, ex.GetType().FullName);
-                                Log.Error(message, ex);
+                                Log.Error(ex, message);
                                 throw new InvalidOperationException(message, ex);
                             }
                         }
@@ -271,37 +272,42 @@ namespace LightClaw.Engine.IO
         /// <param name="disposing">Indicates whether to dispose of managed resources as well.</param>
         protected override void Dispose(bool disposing)
         {
-            // Some funny ODE occurs here w/o the blocks. I wonder whether any of the readers / resolvers will be
-            // disposed before the ODE is thrown by the ConcurrentBag...?!
             try
             {
-                IContentResolver resolver;
-                while (this.resolvers.TryTake(out resolver))
+                // Some funny ODE occurs here w/o the blocks. I wonder whether any of the readers / resolvers will be
+                // disposed before the ODE is thrown by the ConcurrentBag...?!
+                try
                 {
-                    IDisposable disposableResolver = resolver as IDisposable;
-                    if (disposableResolver != null)
+                    IContentResolver resolver;
+                    while (this.resolvers.TryTake(out resolver))
                     {
-                        disposableResolver.Dispose();
+                        IDisposable disposableResolver = resolver as IDisposable;
+                        if (disposableResolver != null)
+                        {
+                            disposableResolver.Dispose();
+                        }
                     }
                 }
-            }
-            catch (ObjectDisposedException) { }
+                catch (ObjectDisposedException) { }
 
-            try
+                try
+                {
+                    IContentReader reader;
+                    while (this.readers.TryTake(out reader))
+                    {
+                        IDisposable disposableReader = reader as IDisposable;
+                        if (disposableReader != null)
+                        {
+                            disposableReader.Dispose();
+                        }
+                    }
+                }
+                catch (ObjectDisposedException) { }
+            }
+            finally
             {
-                IContentReader reader;
-                while (this.readers.TryTake(out reader))
-                {
-                    IDisposable disposableReader = reader as IDisposable;
-                    if (disposableReader != null)
-                    {
-                        disposableReader.Dispose();
-                    }
-                }
+                base.Dispose(disposing);
             }
-            catch (ObjectDisposedException) { }
-
-            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -314,17 +320,20 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(assetType != null);
 
-            IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType, parameter));
-            if (reader == null)
+            lock (assetType)
             {
-                Log.Debug(() => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, assetType.FullName));
-                ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
-                if (attr != null && (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
+                IContentReader reader = this.readers.FirstOrDefault(rdr => rdr.CanRead(assetType, parameter));
+                if (reader == null)
                 {
-                    this.readers.Add(reader);
+                    Log.Debug(() => "None of the registered readers could read assets of the specified type. Attempting to get the {0} through the attribute for an asset of type '{1}'.".FormatWith(typeof(IContentReader).Name, assetType.FullName));
+                    ContentReaderAttribute attr = assetType.GetCustomAttribute<ContentReaderAttribute>();
+                    if (attr != null && (reader = (IContentReader)CreateInstanceOrDefault(attr.ContentReaderType)) != null)
+                    {
+                        this.readers.Add(reader);
+                    }
                 }
+                return (reader != null && reader.CanRead(assetType, parameter)) ? reader : null;
             }
-            return (reader != null && reader.CanRead(assetType, parameter)) ? reader : null;
         }
 
         /// <summary>

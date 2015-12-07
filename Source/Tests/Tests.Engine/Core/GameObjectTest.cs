@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LightClaw.Engine.Core;
-using LightClaw.Engine.Coroutines;
+using LightClaw.Engine.Threading.Coroutines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.Core

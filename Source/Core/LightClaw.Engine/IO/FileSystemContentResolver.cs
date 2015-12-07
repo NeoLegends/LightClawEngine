@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
@@ -21,6 +22,11 @@ namespace LightClaw.Engine.IO
         private static readonly Task<bool> finishedFalseTask = Task.FromResult(false);
 
         /// <summary>
+        /// A dictionary serving as path cache.
+        /// </summary>
+        private readonly ConcurrentDictionary<ResourceString, string> pathCache = new ConcurrentDictionary<ResourceString, string>();
+
+        /// <summary>
         /// The root path to prepend to the relative resource strings.
         /// </summary>
         public string RootPath { get; private set; }
@@ -39,7 +45,7 @@ namespace LightClaw.Engine.IO
         {
             Contract.Requires<ArgumentNullException>(rootPath != null);
 
-            this.RootPath = rootPath;
+            this.RootPath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(rootPath));
             Log.Debug(() => "Initialized a new {0}. Root path will be '{1}'.".FormatWith(typeof(FileSystemContentResolver).Name, rootPath));
         }
 
@@ -69,7 +75,7 @@ namespace LightClaw.Engine.IO
             {
                 token.ThrowIfCancellationRequested();
                 result = new FileStream(
-                    Path.GetFullPath(Path.Combine(this.RootPath, resourceString)),
+                    pathCache.GetOrAdd(resourceString, rs => Path.Combine(this.RootPath, rs)),
                     writable ? FileMode.OpenOrCreate : FileMode.Open,
                     writable ? FileAccess.ReadWrite : FileAccess.Read
                 );
@@ -84,7 +90,11 @@ namespace LightClaw.Engine.IO
             }
             catch (Exception ex)
             {
-                Log.Warn("An error of type '{0}' occured while obtaining the stream to asset '{1}'. Returning null.".FormatWith(ex.GetType().AssemblyQualifiedName, resourceString), ex);
+                Log.Warn(
+                    ex,
+                    "An error of type '{0}' occured while obtaining the stream to asset '{1}'. Returning null.",
+                    ex.GetType().Name, resourceString
+                );
             }
             return Task.FromResult(result);
         }

@@ -12,8 +12,6 @@ namespace LightClaw.Engine.Graphics
 {
     public class SamplerEffectUniform : EffectUniform, IBindable
     {
-        private int isDirty = 1;
-
         private Sampler _Sampler;
 
         public Sampler Sampler
@@ -57,7 +55,6 @@ namespace LightClaw.Engine.Graphics
                 Contract.Requires<ArgumentNullException>(value >= TextureUnit.Zero);
 
                 this.SetProperty(ref _TextureUnit, value);
-                this.isDirty = 1;
             }
         }
 
@@ -83,18 +80,15 @@ namespace LightClaw.Engine.Graphics
             Texture texture = this.Texture;
             if (texture != null)
             {
-                if (Interlocked.CompareExchange(ref this.isDirty, 0, 1) == 1)
-                {
-                    this.Uniform.Set(this.TextureUnit);
-                }
-
-                texture.Bind(this.TextureUnit);
+                this.Uniform.Set(this.TextureUnit);
 
                 Sampler sampler = this.Sampler;
                 if (sampler != null)
                 {
                     sampler.Bind(this.TextureUnit);
                 }
+
+                texture.Bind(this.TextureUnit);
 
                 return new Binding(this);
             }
@@ -133,18 +127,6 @@ namespace LightClaw.Engine.Graphics
             if (sampler != null)
             {
                 sampler.Unbind();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                this.TextureUnit = -1;
-            }
-            finally
-            {
-                base.Dispose(disposing);
             }
         }
 

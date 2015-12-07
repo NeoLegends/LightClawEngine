@@ -433,7 +433,7 @@ namespace LightClaw.Engine.Core
             {
                 try
                 {
-                    staticLogger.Debug("Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
+                    staticLogger.Debug(() => "Loading a {0} from a stream.".FormatWith(typeof(Scene).Name));
 
                     using (StreamReader sr = new StreamReader(s, Encoding.UTF8, true, 4096, true))
                     using (JsonTextReader jtr = new JsonTextReader(sr) { CloseInput = false })
@@ -443,7 +443,11 @@ namespace LightClaw.Engine.Core
                 }
                 catch (Exception ex)
                 {
-                    staticLogger.Warn("Scene loading failed. An error of type {0} occured.".FormatWith(ex.GetType().Name), ex);
+                    staticLogger.Error(
+                        ex,
+                        "Scene loading failed. An error of type {0} occured.",
+                        ex.GetType().Name
+                    );
                     throw;
                 }
             });

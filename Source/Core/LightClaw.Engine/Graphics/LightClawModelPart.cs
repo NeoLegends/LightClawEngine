@@ -99,7 +99,7 @@ namespace LightClaw.Engine.Graphics
                 EffectPass pass = effect.First();
 
                 pass.DataUniforms["MVP"].Set(ref mvp);
-                pass.SamplerUniforms["diffuse"].Set(this.Diffuse, TextureUnit.Texture0);
+                //pass.SamplerUniforms["diffuse"].Set(this.Diffuse, TextureUnit.Texture0);
 
                 using (Binding vaoBinding = vao.Bind())
                 using (Binding effectPassPinding = pass.Bind())

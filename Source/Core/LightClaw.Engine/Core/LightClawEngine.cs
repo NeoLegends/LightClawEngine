@@ -107,7 +107,11 @@ namespace LightClaw.Engine.Core
             }
             catch (Exception ex)
             {
-                logger.Fatal("An error of type '{0}' with message '{1}' occured. Engine shutting down.".FormatWith(ex.GetType().AssemblyQualifiedName, ex.Message), ex);
+                logger.Fatal(
+                    ex, 
+                    "An error of type '{0}' with message '{1}' occured. Engine shutting down.",
+                    ex.GetType().AssemblyQualifiedName, ex.Message
+                );
                 throw;
             }
             finally

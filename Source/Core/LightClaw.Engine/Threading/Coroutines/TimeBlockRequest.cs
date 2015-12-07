@@ -30,13 +30,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// <summary>
         /// The time (as <see cref="TimeSpan"/>) that should pass until the coroutine can be executed again.
         /// </summary>
-        public TimeSpan BlockingTime
-        {
-            get
-            {
-                return new TimeSpan(this.BlockingTicks);
-            }
-        }
+        public TimeSpan BlockingTime => new TimeSpan(this.BlockingTicks);
 
         /// <summary>
         /// Initializes a new <see cref="TimeBlockRequest"/> setting the blocking time.
@@ -64,10 +58,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// Determines whether the coroutine can be executed again.
         /// </summary>
         /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
-        public bool CanExecute()
-        {
-            return ((Stopwatch.GetTimestamp() - this.startTicks) > this.BlockingTicks);
-        }
+        public bool CanExecute() => ((Stopwatch.GetTimestamp() - this.startTicks) > this.BlockingTicks);
 
         /// <summary>
         /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
@@ -96,10 +87,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// Gets the hash code.
         /// </summary>
         /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            return HashF.GetHashCode(this.startTicks, this.BlockingTicks);
-        }
+        public override int GetHashCode() => HashF.GetHashCode(this.startTicks, this.BlockingTicks);
 
         /// <summary>
         /// Checks whether the two <see cref="TimeBlockRequest"/>s are equal.
@@ -107,10 +95,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns><c>true</c> if the <see cref="TimeBlockRequest"/>s are equal, otherwise <c>false</c>.</returns>
-        public static bool operator ==(TimeBlockRequest left, TimeBlockRequest right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(TimeBlockRequest left, TimeBlockRequest right) => left.Equals(right);
 
         /// <summary>
         /// Checks whether the two <see cref="TimeBlockRequest"/>s are inequal.
@@ -118,9 +103,6 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// <param name="left">The first operand.</param>
         /// <param name="right">The second operand.</param>
         /// <returns><c>true</c> if the <see cref="TimeBlockRequest"/>s are inequal, otherwise <c>false</c>.</returns>
-        public static bool operator !=(TimeBlockRequest left, TimeBlockRequest right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(TimeBlockRequest left, TimeBlockRequest right) => !(left == right);
     }
 }

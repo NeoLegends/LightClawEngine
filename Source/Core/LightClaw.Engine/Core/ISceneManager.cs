@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -123,6 +124,7 @@ namespace LightClaw.Engine.Core
             return null;
         }
 
+        [SuppressMessage("Microsoft.Contracts", "CC1036", Justification = "Weird bug since .NET Framework update.")]
         Task<int> ISceneManager.LoadAsync(int slot, ResourceString resourceString)
         {
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(resourceString));

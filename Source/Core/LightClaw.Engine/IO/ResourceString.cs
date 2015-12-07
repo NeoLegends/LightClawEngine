@@ -19,7 +19,18 @@ namespace LightClaw.Engine.IO
     public struct ResourceString : ICloneable, IEquatable<ResourceString>
     {
         /// <summary>
-        /// Indicates whether the <see cref="ResourceString"/> is valid, respectively <c>!string.IsNullOrWhiteSpace</c>.
+        /// Gets an empty resource string.
+        /// </summary>
+        public static ResourceString Empty
+        {
+            get
+            {
+                return new ResourceString();
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the <see cref="ResourceString"/> is valid.
         /// </summary>
         [IgnoreDataMember]
         public bool IsValid
@@ -43,7 +54,8 @@ namespace LightClaw.Engine.IO
         public ResourceString(string path)
             : this()
         {
-            this.Path = path;
+            this.Path = !string.IsNullOrWhiteSpace(path) ? path.Replace('\\', System.IO.Path.DirectorySeparatorChar)
+                                                               .Replace('/', System.IO.Path.DirectorySeparatorChar) : path;
         }
 
         /// <summary>
@@ -93,7 +105,7 @@ namespace LightClaw.Engine.IO
         /// <returns>The <see cref="ResourceString"/> as <see cref="String"/>.</returns>
         public override string ToString()
         {
-            return this.Path ?? "Invalid Path";
+            return this.Path;
         }
 
         /// <summary>
@@ -203,7 +215,7 @@ namespace LightClaw.Engine.IO
             /// <param name="serializer">The <see cref="JsonSerializer"/> that triggered the serialization process.</param>
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                serializer.Serialize(writer, ((ResourceString)value).Path);
+                serializer.Serialize(writer, ((ResourceString)(value ?? ResourceString.Empty)).Path);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                         GL.TexStorage2DMultisample(
                             (TextureTargetMultisample2d)this.Target,
                             this.MultisamplingLevels,
-                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.SizedInternalFormat,
                             this.Width,
                             this.Height,
                             false
@@ -46,7 +46,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                         GL.TexStorage2D(
                             (TextureTarget2d)this.Target,
                             this.MipmapLevels,
-                            (SizedInternalFormat)this.PixelInternalFormat,
+                            this.SizedInternalFormat,
                             this.Width,
                             this.Height
                         );

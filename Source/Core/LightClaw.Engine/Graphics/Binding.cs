@@ -53,14 +53,13 @@ namespace LightClaw.Engine.Graphics
         /// <summary>
         /// Unbinds the <see cref="IBindable"/>.
         /// </summary>
+        [Conditional("DEBUG"), Conditional("ALWAYS_UNBIND")]
         public void Unbind()
         {
-#if (DEBUG || ALWAYS_UNBIND)
             if (this.bindable != null)
             {
                 this.bindable.Unbind();
             }
-#endif
         }
     }
 }

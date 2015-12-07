@@ -617,12 +617,10 @@ namespace LightClaw.Engine.Threading
                         UnhandledDispatcherExceptionEventArgs e = new UnhandledDispatcherExceptionEventArgs(ex);
                         this.Raise(this.UnhandledException, e);
                         this.Log.Error(
-                            "An {0}exception of type '{1}' was thrown inside the {2}.".FormatWith(
-                                e.IsHandled ? string.Empty : "unhandled ",
-                                ex.GetType().FullName,
-                                typeof(Dispatcher).Name
-                            ),
-                            ex
+                            ex, 
+                            "An {0}exception of type '{1}' was thrown inside the {2}.", e.IsHandled ? string.Empty : "unhandled ",
+                            ex.GetType().FullName,
+                            typeof(Dispatcher).Name
                         );
                         if (!e.IsHandled)
                         {

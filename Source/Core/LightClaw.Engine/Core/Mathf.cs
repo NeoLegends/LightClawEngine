@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -16,19 +17,20 @@ namespace LightClaw.Engine.Core
         /// <summary>
         /// Backing field.
         /// </summary>
-        private static readonly double[] _ZeroThresholds = Enumerable.Range(0, 16).Select(i => Math.Pow(10, -i)).ToArray();
+        private static readonly ImmutableArray<double> _ZeroThresholds = Enumerable.Range(0, 16)
+                                                                                   .Select(i => Math.Pow(10, -i))
+                                                                                   .ToImmutableArray();
 
         /// <summary>
         /// Contains the thesholds used to determine whether a value is almost zero or not.
         /// </summary>
-        public static double[] ZeroThresholds
+        public static ImmutableArray<double> ZeroThresholds
         {
             get
             {
-                Contract.Ensures(Contract.Result<double[]>() != null);
-                Contract.Ensures(Contract.Result<double[]>().Length == 16);
+                Contract.Ensures(Contract.Result<ImmutableArray<double>>().Length == 16);
 
-                return _ZeroThresholds.ToArray();
+                return _ZeroThresholds;
             }
         }
 
@@ -200,7 +202,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The value in radians.</returns>
         public static float DegreesToRadians(float value)
         {
-            return (float)(value * (Math.PI / 180));
+            return (float)(value * (Math.PI / 180.0));
         }
 
         /// <summary>
@@ -210,7 +212,7 @@ namespace LightClaw.Engine.Core
         /// <returns>The value in radians.</returns>
         public static double DegreesToRadians(double value)
         {
-            return value * (Math.PI / 180);
+            return value * (Math.PI / 180.0);
         }
 
         /// <summary>
@@ -313,7 +315,7 @@ namespace LightClaw.Engine.Core
         /// </remarks>
         public static bool IsAlmostZero(double value)
         {
-            return (-DefaultZeroThreshold < value) && (value < DefaultZeroThreshold);
+            return IsInRange(value, -DefaultZeroThreshold, DefaultZeroThreshold);
         }
 
         /// <summary>
@@ -331,7 +333,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(decimalPlaceCount < ZeroThresholds.Length);
 
-            return (-ZeroThresholds[decimalPlaceCount] < value) && (value < ZeroThresholds[decimalPlaceCount]);
+            return IsInRange(value, -ZeroThresholds[decimalPlaceCount], ZeroThresholds[decimalPlaceCount]);
         }
 
         /// <summary>
@@ -626,12 +628,12 @@ namespace LightClaw.Engine.Core
         /// <list type="bullet">
         ///     <item>
         ///         <description>
-        ///             <code>RoundUp(1, 10) = 10</code>
+        ///             <code>RoundToMultiple(1, 10) = 10</code>
         ///         </description> 
         ///     </item> 
         ///     <item>
         ///         <description>
-        ///             <code>RoundUp(11, 10) = 20</code>
+        ///             <code>RoundToMultiple(11, 10) = 20</code>
         ///         </description> 
         ///     </item> 
         /// </list>
@@ -653,12 +655,12 @@ namespace LightClaw.Engine.Core
         /// <list type="bullet">
         ///     <item>
         ///         <description>
-        ///             <code>RoundUp(1, 10) = 10</code>
+        ///             <code>RoundToMultiple(1, 10) = 10</code>
         ///         </description> 
         ///     </item> 
         ///     <item>
         ///         <description>
-        ///             <code>RoundUp(11, 10) = 20</code>
+        ///             <code>RoundToMultiple(11, 10) = 20</code>
         ///         </description> 
         ///     </item> 
         /// </list>
@@ -675,7 +677,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
-        [ContractVerification(false)]
         public static float SmoothStep(float amount)
         {
             return (amount <= 0.0f) ?
@@ -690,7 +691,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
-        [ContractVerification(false)]
         public static double SmoothStep(double amount)
         {
             return (amount <= 0.0) ?
@@ -705,7 +705,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
-        [ContractVerification(false)]
         public static float SmootherStep(float amount)
         {
             return (amount <= 0.0f) ?
@@ -720,7 +719,6 @@ namespace LightClaw.Engine.Core
         /// </summary>
         /// <remarks>See https://en.wikipedia.org/wiki/Smoothstep</remarks>
         /// <param name="amount">Value between 0 and 1 indicating interpolation amount.</param>
-        [ContractVerification(false)]
         public static double SmootherStep(double amount)
         {
             return (amount <= 0.0) ?
@@ -740,14 +738,19 @@ namespace LightClaw.Engine.Core
             /// <summary>
             /// Backing field.
             /// </summary>
-            private static readonly string[] hexData = Enumerable.Range(0, 256).Select(i => i.ToString("X2")).ToArray();
+            private static readonly ImmutableArray<string> _HexData = Enumerable.Range(0, 256)
+                                                                                .Select(i => i.ToString("X2"))
+                                                                                .ToImmutableArray();
 
             /// <summary>
             /// Gets the hexadecimal representation of all byte values.
             /// </summary>
-            public static string[] GetHexData()
+            public static ImmutableArray<string> HexData
             {
-                return hexData.ToArray();
+                get
+                {
+                    return _HexData;
+                }
             }
 
             /// <summary>
@@ -757,7 +760,7 @@ namespace LightClaw.Engine.Core
             /// <returns>The byte's representation as hex string.</returns>
             public static string GetHexData(byte index)
             {
-                return hexData[index];
+                return HexData[index];
             }
 
             /// <summary>
@@ -766,7 +769,7 @@ namespace LightClaw.Engine.Core
             [ContractInvariantMethod]
             private static void ObjectInvariant()
             {
-                Contract.Invariant(hexData.Length > byte.MaxValue);
+                Contract.Invariant(HexData.Length == 256);
             }
         }
     }

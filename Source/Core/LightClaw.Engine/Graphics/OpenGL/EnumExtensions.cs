@@ -14,29 +14,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
     [Pure]
     public static class EnumExtensions
     {
-        /// <summary>
-        /// Gets the size in machine units of the unit represented by the specified <paramref name="drawElementsType"/>.
-        /// </summary>
-        /// <param name="drawElementsType">The <see cref="DrawElementsType"/> to get the machine unit size from.</param>
-        /// <returns>The size of the specified element in machine units.</returns>
-        [ContractVerification(false)]
-        public static int GetElementSize(this DrawElementsType drawElementsType)
-        {
-            Contract.Ensures(Contract.Result<int>() > 0);
-
-            switch (drawElementsType)
-            {
-                case DrawElementsType.UnsignedByte:
-                    return sizeof(byte);
-                case DrawElementsType.UnsignedInt:
-                    return sizeof(uint);
-                case DrawElementsType.UnsignedShort:
-                    return sizeof(ushort);
-                default:
-                    throw new InvalidOperationException("The size of the index element cannot be determined. Enum value is invalid.");
-            }
-        }
-
         #region ActiveUniformType
 
         /// <summary>
@@ -68,7 +45,6 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// </summary>
         /// <param name="type">The <see cref="ActiveUniformType"/> to check.</param>
         /// <returns><c>true</c> if the <paramref name="type"/> of the uniform is primitive value.</returns>
-        [ContractVerification(false)]
         public static bool IsPrimitiveValue(this ActiveUniformType type)
         {
             switch (type)
@@ -168,6 +144,96 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
         #endregion
 
+        /// <summary>
+        /// Converts a <see cref="BufferAccess"/> into a <see cref="BufferAccessMask"/>.
+        /// </summary>
+        /// <param name="access">The <see cref="BufferAccess"/> to convert.</param>
+        /// <returns>The conversion result.</returns>
+        public static BufferAccessMask ToAccessMask(this BufferAccess access)
+        {
+            switch (access)
+            {
+                case BufferAccess.ReadOnly:
+                    return BufferAccessMask.MapReadBit;
+                case BufferAccess.ReadWrite:
+                    return BufferAccessMask.MapWriteBit | BufferAccessMask.MapReadBit;
+                case BufferAccess.WriteOnly:
+                    return BufferAccessMask.MapWriteBit;
+                default:
+                    throw new InvalidOperationException("The access-parameter had a wrong value.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the size in machine units of the unit represented by the specified <paramref name="drawElementsType"/>.
+        /// </summary>
+        /// <param name="drawElementsType">The <see cref="DrawElementsType"/> to get the machine unit size from.</param>
+        /// <returns>The size of the specified element in machine units.</returns>
+        public static int GetElementSize(this DrawElementsType drawElementsType)
+        {
+            Contract.Ensures(Contract.Result<int>() > 0);
+
+            switch (drawElementsType)
+            {
+                case DrawElementsType.UnsignedByte:
+                    return sizeof(byte);
+                case DrawElementsType.UnsignedInt:
+                    return sizeof(uint);
+                case DrawElementsType.UnsignedShort:
+                    return sizeof(ushort);
+                default:
+                    throw new InvalidOperationException("The size of the index element cannot be determined. Enum value is invalid.");
+            }
+        }
+
+        /// <summary>
+        /// Converts the specified <see cref="OpenTK.Graphics.OpenGL4.PixelFormat"/> into a <see cref="System.Drawing.Imaging.PixelFormat"/>.
+        /// </summary>
+        /// <param name="format">The format to convert.</param>
+        /// <returns>The converted format.</returns>
+        public static System.Drawing.Imaging.PixelFormat ToGdiPixelFormat(this OpenTK.Graphics.OpenGL4.PixelFormat format)
+        {
+            switch (format)
+            {
+                case PixelFormat.Alpha:
+                    return System.Drawing.Imaging.PixelFormat.Alpha;
+                case PixelFormat.Bgr:
+                    return System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+                case PixelFormat.Bgra:
+                    return System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+                case PixelFormat.ColorIndex:
+                    return System.Drawing.Imaging.PixelFormat.Indexed;
+                default:
+                    throw new NotSupportedException("The format is not supported in GDI.");
+            }
+        }
+
+        /// <summary>
+        /// Converts the specified <see cref="OpenTK.Graphics.OpenGL4.PixelFormat"/> into a <see cref="System.Drawing.Imaging.PixelFormat"/>.
+        /// </summary>
+        /// <param name="format">The format to convert.</param>
+        /// <returns>The converted format.</returns>
+        public static OpenTK.Graphics.OpenGL4.PixelFormat ToGlPixelFormat(this System.Drawing.Imaging.PixelFormat format)
+        {
+            switch (format)
+            {
+                case System.Drawing.Imaging.PixelFormat.Alpha:
+                    return PixelFormat.Alpha;
+                case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+                    return PixelFormat.Bgr;
+                case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                    return PixelFormat.Bgra;
+                case System.Drawing.Imaging.PixelFormat.Format48bppRgb:
+                    return PixelFormat.Bgr;
+                case System.Drawing.Imaging.PixelFormat.Format64bppArgb:
+                    return PixelFormat.BgraInteger;
+                case System.Drawing.Imaging.PixelFormat.Indexed:
+                    return PixelFormat.ColorIndex;
+                default:
+                    throw new NotSupportedException("Unsupported format!");
+            }
+        }
+
         #region TextureTarget
 
         /// <summary>
@@ -250,25 +316,5 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         #endregion
-
-        /// <summary>
-        /// Converts a <see cref="BufferAccess"/> into a <see cref="BufferAccessMask"/>.
-        /// </summary>
-        /// <param name="access">The <see cref="BufferAccess"/> to convert.</param>
-        /// <returns>The conversion result.</returns>
-        public static BufferAccessMask ToAccessMask(this BufferAccess access)
-        {
-            switch (access)
-            {
-                case BufferAccess.ReadOnly:
-                    return BufferAccessMask.MapReadBit;
-                case BufferAccess.ReadWrite:
-                    return BufferAccessMask.MapWriteBit | BufferAccessMask.MapReadBit;
-                case BufferAccess.WriteOnly:
-                    return BufferAccessMask.MapWriteBit;
-                default:
-                    throw new InvalidOperationException("The access-parameter had a wrong value.");
-            }
-        }
     }
 }

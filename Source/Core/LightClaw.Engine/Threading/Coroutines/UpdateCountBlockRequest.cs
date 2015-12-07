@@ -46,10 +46,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// Determines whether the coroutine can be executed again.
         /// </summary>
         /// <returns><c>true</c> if the coroutine can be stepped, otherwise <c>false</c>.</returns>
-        public bool CanExecute()
-        {
-            return (Interlocked.Increment(ref this.tries) > this.RequiredTries);
-        }
+        public bool CanExecute() => (Interlocked.Increment(ref this.tries) > this.RequiredTries);
 
         /// <summary>
         /// Checks whether the <see cref="TimeBlockRequest"/> and the specified object are equal.
@@ -83,10 +80,7 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// Gets the hash code.
         /// </summary>
         /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            return HashF.GetHashCode(this.tries, this.RequiredTries);
-        }
+        public override int GetHashCode() => HashF.GetHashCode(this.tries, this.RequiredTries);
 
         /// <summary>
         /// Checks whether the two <see cref="UpdateCountBlockRequest"/>s are equal.
@@ -114,9 +108,6 @@ namespace LightClaw.Engine.Threading.Coroutines
         /// <returns>
         /// <c>true</c> if the <see cref="UpdateCountBlockRequest"/>s are inequal, otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(UpdateCountBlockRequest left, UpdateCountBlockRequest right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(UpdateCountBlockRequest left, UpdateCountBlockRequest right) => !(left == right);
     }
 }

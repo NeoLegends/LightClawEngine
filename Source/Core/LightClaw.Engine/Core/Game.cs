@@ -194,8 +194,6 @@ namespace LightClaw.Engine.Core
             this.IocC.RegisterInstance(this.SceneManager);
             this.IocC.RegisterInstance(this.Dispatcher);
 
-            this.LoadIcon();
-
             Log.Debug(() => "Game successfully created.");
         }
 
@@ -213,18 +211,13 @@ namespace LightClaw.Engine.Core
                     "Entering game loop with unlimited frame rate."
             );
 
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthFunc(DepthFunction.Less);
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-
             SynchronizationContext.SetSynchronizationContext(new LightClawSynchronizationContext());
             this.SceneManager.Load();
             this.SceneManager.Enable();
 
             this.GameWindow.Visible = true;
 
-            this.Dispatcher.InvokeSlim(this.OnTick);
+            this.Dispatcher.InvokeSlim(this.cachedOnTickAction, DispatcherPriority.High);
             this.Dispatcher.Run();
         }
 
@@ -307,20 +300,6 @@ namespace LightClaw.Engine.Core
         protected virtual void OnUnload()
         {
             this.Dispose();
-        }
-
-        private async void LoadIcon()
-        {
-            try
-            {
-                this.GameWindow.Icon = await this.IocC.Resolve<IContentManager>()
-                                                      .LoadAsync<System.Drawing.Icon>(GeneralSettings.Default.IconPath)
-                                                      .ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("An error of type {0} occured while loading the game's icon.".FormatWith(ex.GetType().FullName), ex);
-            }
         }
 
         private void OnTick()

@@ -194,13 +194,17 @@ namespace LightClaw.Engine.Graphics
                         }
                         catch (Exception ex)
                         {
-                            Log.Warn("An exception of type {0} was thrown while disposing the {1}'s {2}s.".FormatWith(ex.GetType().FullName, typeof(Model), typeof(ModelPart)), ex);
+                            Log.Warn(
+                                ex,
+                                "An exception of type {0} was thrown while disposing the {1}'s {2}s.",
+                                ex.GetType().Name, typeof(Model), typeof(ModelPart)
+                            );
                         }
                     }
                 }
                 if (disposing)
                 {
-                    this.ModelParts = new ImmutableArray<ModelPart>();
+                    this.ModelParts = ImmutableArray<ModelPart>.Empty;
                 }
             }
             finally

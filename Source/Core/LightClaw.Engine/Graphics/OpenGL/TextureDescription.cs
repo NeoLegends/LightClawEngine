@@ -50,7 +50,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// The format of the pixels.
         /// </summary>
         [DataMember]
-        public PixelInternalFormat PixelInternalFormat { get; private set; }
+        public SizedInternalFormat SizedInternalFormat { get; private set; }
 
         /// <summary>
         /// The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.
@@ -71,7 +71,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="msLevels">The amount of multisampling levels.</param>
         /// <param name="target">The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.</param>
         /// <param name="pixelInternalFormat">The format of the pixels.</param>
-        public TextureDescription(int width, int texLevels, int msLevels, TextureTarget1d target, PixelInternalFormat pixelInternalFormat)
+        public TextureDescription(int width, int texLevels, int msLevels, TextureTarget1d target, SizedInternalFormat pixelInternalFormat)
             : this(width, 0, texLevels, msLevels, (TextureTarget2d)target, pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
@@ -89,7 +89,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="msLevels">The amount of multisampling levels.</param>
         /// <param name="target">The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.</param>
         /// <param name="pixelInternalFormat">The format of the pixels.</param>
-        public TextureDescription(int width, int height, int texLevels, int msLevels, TextureTarget2d target, PixelInternalFormat pixelInternalFormat)
+        public TextureDescription(int width, int height, int texLevels, int msLevels, TextureTarget2d target, SizedInternalFormat pixelInternalFormat)
             : this(width, height, 0, texLevels, msLevels, (TextureTarget3d)target, pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
@@ -110,7 +110,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <param name="msLevels">The amount of multisampling levels.</param>
         /// <param name="target">The <see cref="TextureTarget"/> the <see cref="Texture"/> will be bound to.</param>
         /// <param name="pixelInternalFormat">The format of the pixels.</param>
-        public TextureDescription(int width, int height, int depth, int texLevels, int msLevels, TextureTarget3d target, PixelInternalFormat pixelInternalFormat)
+        public TextureDescription(int width, int height, int depth, int texLevels, int msLevels, TextureTarget3d target, SizedInternalFormat pixelInternalFormat)
         {
             Contract.Requires<ArgumentOutOfRangeException>(width >= 0);
             Contract.Requires<ArgumentOutOfRangeException>(height >= 0);
@@ -127,7 +127,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.MultisamplingLevels = msLevels;
             this.Target = (TextureTarget)target;
             this.Levels = texLevels;
-            this.PixelInternalFormat = pixelInternalFormat;
+            this.SizedInternalFormat = pixelInternalFormat;
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 this.Levels,
                 this.MultisamplingLevels,
                 (TextureTarget3d)this.Target,
-                this.PixelInternalFormat
+                this.SizedInternalFormat
             );
         }
 
@@ -173,7 +173,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
                 return false;
 
             return (this.Depth == other.Depth) && (this.Height == other.Height) &&
-                   (this.PixelInternalFormat == other.PixelInternalFormat) && (this.Levels == other.Levels) &&
+                   (this.SizedInternalFormat == other.SizedInternalFormat) && (this.Levels == other.Levels) &&
                    (this.MultisamplingLevels == other.MultisamplingLevels) &&
                    (this.Target == other.Target) && (this.Width == other.Width);
         }
@@ -186,7 +186,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             return HashF.GetHashCode(
                 HashF.GetHashCode(this.Width, this.Height, this.Depth, this.Levels),
-                HashF.GetHashCode(this.MultisamplingLevels, this.PixelInternalFormat, this.Target)
+                HashF.GetHashCode(this.MultisamplingLevels, this.SizedInternalFormat, this.Target)
             );
         }
 

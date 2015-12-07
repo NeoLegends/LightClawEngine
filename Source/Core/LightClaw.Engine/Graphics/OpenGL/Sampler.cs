@@ -101,7 +101,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             catch (Exception ex)
             {
-                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(Sampler).Name), ex);
+                Log.Warn(
+                    ex, 
+                    "A {0} was thrown while disposing of a {1}. In most cases, this should be nothing to worry about. Check the error message to make sure there really is nothing to worry about, though.", 
+                    ex.GetType().Name, typeof(Sampler).Name
+                );
             }
             finally
             {

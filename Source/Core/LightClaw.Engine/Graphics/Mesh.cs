@@ -52,6 +52,22 @@ namespace LightClaw.Engine.Graphics
         }
 
         /// <summary>
+        /// The <see cref="Mesh"/>s name.
+        /// </summary>
+        public override string Name
+        {
+            get
+            {
+                string name = base.Name;
+                return !string.IsNullOrWhiteSpace(name) ? name : (string)this.Source;
+            }
+            set
+            {
+                base.Name = value;
+            }
+        }
+
+        /// <summary>
         /// Backing field.
         /// </summary>
         private ResourceString _Source;
@@ -151,7 +167,7 @@ namespace LightClaw.Engine.Graphics
         /// <remarks>Drawing and updating will be performed when the mesh is loaded successfully.</remarks>
         protected override async void OnLoad()
         {
-            Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name ?? this.Source));
+            Log.Debug(() => "Loading mesh '{0}'.".FormatWith(this.Name));
 
             ResourceString rs = this.Source;
             if ((this.Model == null) && rs.IsValid)
@@ -165,16 +181,14 @@ namespace LightClaw.Engine.Graphics
                     {
                         this.Name = this.Model.Name;
                     }
-                    Log.Debug(() => "Mesh '{0}' loaded successfully.");
+                    Log.Debug(() => "Mesh '{0}' loaded successfully.".FormatWith(this.Name));
                 }
                 catch (Exception ex)
                 {
                     Log.Error(
-                        "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.".FormatWith(
-                            ex.GetType().FullName,
-                            this.Name ?? this.Source
-                        ), 
-                        ex
+                        ex,
+                        "Mesh '{0}' could not be loaded, an exception of type {1} occured. it will not be rendered.",
+                        this.Name, ex.GetType().Name
                     );
                 }
             }

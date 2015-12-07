@@ -125,16 +125,14 @@ namespace LightClaw.Engine.IO
                 }
             }, DispatcherPriority.Normal);
 
-            // Calculate vertex data size, and if it surpasses 85kb, turn on LoH compaction
-            if (s.Meshes.Any(mesh => (mesh.VertexCount * 3 * 4) >= 85000))
-            {
-                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            }
-
             await Task.WhenAll(shaderLoadTask, textureLoadTask, vaoCreateTask).ConfigureAwait(false);
 
             IEnumerable<ModelPart> modelParts = meshData.Values.Select(mi => new LightClawModelPart(shaderLoadTask.Result, mi.Vao, mi.Texture, false, true, false));
-            return new Model(s.HasMeshes ? s.Meshes[0].Name : null, modelParts, true);
+            return new Model(
+                (s.HasMeshes && !string.IsNullOrWhiteSpace(s.Meshes[0].Name)) ? s.Meshes[0].Name : Path.GetFileName(parameters.ResourceString), 
+                modelParts, 
+                true
+            );
         }
 
         protected override void Dispose(bool disposing)

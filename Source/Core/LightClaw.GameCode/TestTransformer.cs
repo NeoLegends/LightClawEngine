@@ -28,7 +28,7 @@ namespace LightClaw.GameCode
             if (pass == 0)
             {
                 float degreeValue = (float)((gameTime.TotalGameTime.TotalSeconds * 90.0) % 360.0);
-                this.Transform.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathF.DegreesToRadians(degreeValue));
+                //this.Transform.LocalRotation = Quaternion.FromAxisAngle(Vector3.UnitY, MathF.DegreesToRadians(degreeValue));
             }
             return true;
         }

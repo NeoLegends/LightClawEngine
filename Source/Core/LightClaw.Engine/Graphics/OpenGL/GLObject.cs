@@ -26,9 +26,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// Contains all supported OpenGL extensions.
         /// </summary>
-        private static volatile List<string> supportedExtensions;
+        private static volatile List<string> supportedExtensions; // Volatile needed for double checked locking
 
-        private static Version _MaxOpenGLVersion;
+        private static readonly Lazy<Version> _MaxOpenGLVersion = new Lazy<Version>(
+            () => new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion)), 
+            true
+        );
 
         /// <summary>
         /// Gets the maximum supported OpenGL version.
@@ -37,7 +40,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         {
             get
             {
-                return _MaxOpenGLVersion ?? (_MaxOpenGLVersion = new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion)));
+                return _MaxOpenGLVersion.Value;
             }
         }
 
@@ -88,6 +91,18 @@ namespace LightClaw.Engine.Graphics.OpenGL
         }
 
         /// <summary>
+        /// Static constructor of <see cref="GLObject"/>.
+        /// </summary>
+        static GLObject()
+        {
+            // Assume GLContext is present
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+        }
+
+        /// <summary>
         /// Protected dispose-callback freeing all unmanaged and optionally managed resources as well.
         /// </summary>
         /// <param name="disposing">Indicates whether to free managed resources as well.</param>
@@ -110,7 +125,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// Gets the last OpenGL error.
         /// </summary>
         /// <returns>The last error.</returns>
-        public static ErrorCode GetError()
+        public static ErrorCode GetLastError()
         {
             return GL.GetError();
         }

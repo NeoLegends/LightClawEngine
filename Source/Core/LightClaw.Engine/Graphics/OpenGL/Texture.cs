@@ -77,11 +77,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
         /// <summary>
         /// The format of the pixels.
         /// </summary>
-        public PixelInternalFormat PixelInternalFormat
+        public SizedInternalFormat SizedInternalFormat
         {
             get
             {
-                return this.Description.PixelInternalFormat;
+                return this.Description.SizedInternalFormat;
             }
         }
 
@@ -129,24 +129,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
         }
 
-        static Texture() // Assume GLContext is present
-        {
-            // Not sure whether bug still exists, but on
-            // http://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation it states that ATI cards had
-            // problems with automatic mipmap generation if Texture2D wasn't enabled. But since I own an NVIDIA card, I
-            // can't test that.
-
-            GL.Enable(EnableCap.Texture1D);
-            GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.TextureCubeMap);
-            GL.Enable(EnableCap.TextureCubeMapSeamless);
-        }
-
         /// <summary>
         /// Initializes a new <see cref="Texture"/> from the specified <see cref="TextureDescription"/>.
         /// </summary>
         /// <param name="description">The <see cref="TextureDescription"/> to initialize from.</param>
         protected Texture(TextureDescription description)
+            : base(GL.GenTexture())
         {
             Contract.Requires<ArgumentNullException>(description != null);
             Contract.Requires<ArgumentException>(Enum.IsDefined(typeof(TextureTarget), description.Target));
@@ -156,6 +144,8 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.VerifyAccess();
             using (this.Bind(0))
             {
+                GL.GenerateMipmap((GenerateMipmapTarget)this.Target);
+
                 // Set anisotropic filtering level and min and mag filter
                 int linearMipmapLinear = Texture.linearMipmapLinear;
                 int linear = Texture.linear;
@@ -164,14 +154,12 @@ namespace LightClaw.Engine.Graphics.OpenGL
 
                 if (VideoSettings.Default.AnisotropicFiltering && SupportsExtension("GL_EXT_texture_filter_anisotropic"))
                 {
-                    // User might want higher aniso level than the h/w supports.
+                    // User might want higher aniso level than the h/w supports, so use the smaller value.
                     float requestedAnisoLevel = VideoSettings.Default.AnisotropicLevel;
                     float maxSupportedAnisoLevel = GL.GetFloat((GetPName)OpenTK.Graphics.OpenGL.ExtTextureFilterAnisotropic.MaxTextureMaxAnisotropyExt);
 
                     GL.TexParameter(this.Target, anisoParameterName, Math.Min(requestedAnisoLevel, maxSupportedAnisoLevel));
                 }
-
-                GL.GenerateMipmap((GenerateMipmapTarget)this.Target);
             }
         }
 
@@ -233,7 +221,11 @@ namespace LightClaw.Engine.Graphics.OpenGL
             }
             catch (Exception ex)
             {
-                Log.Warn("An {0} was thrown while disposing of a {1}. This might or might not be an unwanted condition.".FormatWith(ex.GetType().Name, typeof(ShaderProgram).Name), ex);
+                Log.Warn(
+                    ex,
+                    "A {0} was thrown while disposing of a {1}. In most cases, this should be nothing to worry about. Check the error message to make sure there really is nothing to worry about, though.",
+                    ex.GetType().Name, typeof(ShaderProgram).Name
+                );
             }
             finally
             {

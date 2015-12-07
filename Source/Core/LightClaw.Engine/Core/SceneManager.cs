@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using DryIoc;
@@ -68,7 +69,7 @@ namespace LightClaw.Engine.Core
             Contract.Requires<ArgumentNullException>(startScene != null);
 
             Log.Info(() => "Initializing scene manager from scene '{0}'".FormatWith(startScene.Name ?? "N/A"));
-            this.Load(0, startScene);
+            this.Load(1, startScene);
         }
 
         /// <summary>
@@ -125,13 +126,13 @@ namespace LightClaw.Engine.Core
         /// to overdraw it. So make sure to check on the return value and move the scene accordingly, if required.
         /// </remarks>
         /// <exception cref="InvalidOperationException">All slots below taken, scene could not be loaded.</exception>
-        [ContractVerification(false)]
         public int Load(int slot, Scene s)
         {
             Log.Debug(() => "Loading a new scene into position {0}.".FormatWith(slot));
 
             if (this.IsLoaded && !s.IsLoaded)
             {
+                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
                 s.Load();
             }
             lock (this.scenes)
@@ -172,7 +173,6 @@ namespace LightClaw.Engine.Core
         /// composition of all scenes drawing on top of each other) poses a higher risk of being overdrawn by scenes
         /// that are not supposed to overdraw it.
         /// </remarks>
-        [ContractVerification(false)] // Contracts show some obscure warning about a constant value. If sb is smarter than me and knows how to properly get rid of the warning, please do.
         public int Move(int slot, int newSlot)
         {
             Log.Debug(() => "Moving a scene from {0} to position {1}.".FormatWith(slot, newSlot));
@@ -278,6 +278,7 @@ namespace LightClaw.Engine.Core
         /// </summary>
         protected override void OnLoad()
         {
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             this.DoForAll(s => s.Load());
         }
 
@@ -303,14 +304,14 @@ namespace LightClaw.Engine.Core
         {
             Contract.Requires<ArgumentNullException>(action != null);
 
-            List<Scene> workingCopy = null;
+            Scene[] workingCopy = null;
             Scene scene = null;
             lock (this.scenes)
             {
-                // If we have only one scene, don't create a list. Call the action directly on it instead.
+                // If we have only one scene, don't create an array. Call the action directly on it instead.
                 if (this.scenes.Count > 1)
                 {
-                    (workingCopy = new List<Scene>()).AddRange(this.scenes.Values);
+                    workingCopy = this.scenes.Values.ToArray();
                 }
                 else
                 {
@@ -320,7 +321,7 @@ namespace LightClaw.Engine.Core
 
             if (workingCopy != null)
             {
-                for (int i = 0; i < workingCopy.Count; i++)
+                for (int i = 0; i < workingCopy.Length; i++)
                 {
                     action(workingCopy[i]);
                 }

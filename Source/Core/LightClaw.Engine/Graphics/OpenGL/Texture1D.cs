@@ -28,7 +28,7 @@ namespace LightClaw.Engine.Graphics.OpenGL
             this.VerifyAccess();
             using (Binding textureBinding = this.Bind(0))
             {
-                GL.TexStorage1D(TextureTarget1d.Texture1D, this.MipmapLevels, (SizedInternalFormat)this.PixelInternalFormat, this.Width);
+                GL.TexStorage1D(TextureTarget1d.Texture1D, this.MipmapLevels, this.SizedInternalFormat, this.Width);
             }
         }
 
